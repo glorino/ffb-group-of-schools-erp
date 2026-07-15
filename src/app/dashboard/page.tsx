@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 import {
   Users,
   UserPlus,
@@ -18,117 +20,93 @@ import {
   Bus,
   Library,
 } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
+import { StatCard } from "@/components/ui/stat-card";
 
-const kpiData = [
-  {
-    label: "Total Students",
-    value: 2847,
-    change: "+12%",
-    trend: "up",
-    icon: Users,
-    color: "from-blue-500 to-blue-600",
-  },
-  {
-    label: "Total Teachers",
-    value: 156,
-    change: "+5%",
-    trend: "up",
-    icon: GraduationCap,
-    color: "from-emerald-500 to-emerald-600",
-  },
-  {
-    label: "Revenue (Month)",
-    value: "₦45.2M",
-    change: "+18%",
-    trend: "up",
-    icon: CreditCard,
-    color: "from-purple-500 to-purple-600",
-  },
-  {
-    label: "Attendance Rate",
-    value: "94.2%",
-    change: "+2.1%",
-    trend: "up",
-    icon: CheckCircle,
-    color: "from-[var(--accent)] to-emerald-400",
-  },
-];
-
-const recentActivities = [
-  {
-    title: "New admission application received",
-    description: "Chidi Okonkwo applied for JSS1",
-    time: "5 minutes ago",
-    icon: UserPlus,
-    color: "text-blue-400",
-  },
-  {
-    title: "School fees payment confirmed",
-    description: "Amina Mohammed paid ₦125,000",
-    time: "12 minutes ago",
-    icon: CreditCard,
-    color: "text-emerald-400",
-  },
-  {
-    title: "Examination results uploaded",
-    description: "SS3 Mathematics results published",
-    time: "1 hour ago",
-    icon: BookOpen,
-    color: "text-purple-400",
-  },
-  {
-    title: "Hostel allocation updated",
-    description: "Block A, Room 12 - 3 new students",
-    time: "2 hours ago",
-    icon: Building,
-    color: "text-orange-400",
-  },
-  {
-    title: "Transport route optimized",
-    description: "Route 3 (Mainland) time updated",
-    time: "3 hours ago",
-    icon: Bus,
-    color: "text-cyan-400",
-  },
-];
-
-const upcomingEvents = [
-  {
-    title: "Mid-Term Examination",
-    date: "Jan 20, 2025",
-    type: "exam",
-    status: "upcoming",
-  },
-  {
-    title: "Parent-Teacher Meeting",
-    date: "Jan 22, 2025",
-    type: "meeting",
-    status: "upcoming",
-  },
-  {
-    title: "School Sports Day",
-    date: "Jan 25, 2025",
-    type: "event",
-    status: "upcoming",
-  },
-  {
-    title: "Board Meeting",
-    date: "Jan 28, 2025",
-    type: "admin",
-    status: "upcoming",
-  },
-];
-
-const classPerformance = [
-  { name: "JSS1", pass: 85, fail: 15 },
-  { name: "JSS2", pass: 78, fail: 22 },
-  { name: "JSS3", pass: 92, fail: 8 },
-  { name: "SS1", pass: 74, fail: 26 },
-  { name: "SS2", pass: 88, fail: 12 },
-  { name: "SS3", pass: 95, fail: 5 },
-];
+interface DashboardStats {
+  totalStudents: number;
+  totalTeachers: number;
+  attendance: { present: number; absent: number; late: number; rate: string };
+  totalRevenue: number;
+  monthlyRevenue: { month: string; revenue: number }[];
+  classPerformance: { name: string; students: number; teacher: string; capacity: number }[];
+  recentActivities: { title: string; description: string; time: string; type: string }[];
+  pendingAdmissions: number;
+}
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/dashboard/stats")
+      .then((res) => res.json())
+      .then((data) => setStats(data))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const userName = session?.user?.name?.split(" ")[0] || "Admin";
+  const greeting = new Date().getHours() < 12 ? "Good Morning" : new Date().getHours() < 17 ? "Good Afternoon" : "Good Evening";
+
+  const kpiData = [
+    {
+      label: "Total Students",
+      value: stats?.totalStudents ?? 0,
+      change: "",
+      trend: "up" as const,
+      icon: Users,
+      color: "from-blue-500 to-blue-600",
+    },
+    {
+      label: "Total Teachers",
+      value: stats?.totalTeachers ?? 0,
+      change: "",
+      trend: "up" as const,
+      icon: GraduationCap,
+      color: "from-emerald-500 to-emerald-600",
+    },
+    {
+      label: "Revenue (Total)",
+      value: stats ? `₦${(stats.totalRevenue / 1_000_000).toFixed(1)}M` : "₦0",
+      change: "",
+      trend: "up" as const,
+      icon: CreditCard,
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      label: "Attendance Rate",
+      value: stats ? `${stats.attendance.rate}%` : "0%",
+      change: "",
+      trend: "up" as const,
+      icon: CheckCircle,
+      color: "from-[var(--accent)] to-emerald-400",
+    },
+  ];
+
+  const quickStats = [
+    { label: "Pending Admissions", value: String(stats?.pendingAdmissions ?? 0), icon: AlertCircle, color: "text-orange-400" },
+    { label: "Present Today", value: String(stats?.attendance.present ?? 0), icon: CheckCircle, color: "text-emerald-400" },
+    { label: "Absent Today", value: String(stats?.attendance.absent ?? 0), icon: AlertCircle, color: "text-red-400" },
+    { label: "Late Today", value: String(stats?.attendance.late ?? 0), icon: Clock, color: "text-yellow-400" },
+  ];
+
+  const activityIconMap: Record<string, any> = {
+    payment: CreditCard,
+    admission: UserPlus,
+  };
+
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
@@ -140,20 +118,17 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h2 className="text-2xl font-bold text-white mb-1">
-              Good Morning, Admin 👋
+              {greeting}, {userName}
             </h2>
             <p className="text-white/60">
               Here&apos;s what&apos;s happening at your school today. You have{" "}
-              <span className="text-[var(--accent)] font-semibold">3 new admissions</span> and{" "}
-              <span className="text-[var(--accent)] font-semibold">₦2.5M</span> in pending payments.
+              <span className="text-[var(--accent)] font-semibold">{stats?.pendingAdmissions ?? 0} pending admissions</span> and{" "}
+              <span className="text-[var(--accent)] font-semibold">{stats?.attendance.present ?? 0} students present</span> today.
             </p>
           </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all">
               View Reports
-            </button>
-            <button className="px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/10 transition-all">
-              Quick Actions
             </button>
           </div>
         </div>
@@ -162,42 +137,16 @@ export default function DashboardPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiData.map((kpi, i) => (
-          <motion.div
+          <StatCard
             key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card group"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-white/50 text-sm mb-1">{kpi.label}</p>
-                <p className="text-3xl font-bold text-white animate-count">
-                  {kpi.value}
-                </p>
-                <div className="flex items-center gap-1 mt-2">
-                  {kpi.trend === "up" ? (
-                    <TrendingUp className="w-4 h-4 text-emerald-400" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4 text-red-400" />
-                  )}
-                  <span
-                    className={`text-sm font-medium ${
-                      kpi.trend === "up" ? "text-emerald-400" : "text-red-400"
-                    }`}
-                  >
-                    {kpi.change}
-                  </span>
-                  <span className="text-white/40 text-sm">vs last month</span>
-                </div>
-              </div>
-              <div
-                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center shadow-lg`}
-              >
-                <kpi.icon className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </motion.div>
+            title={kpi.label}
+            value={kpi.value}
+            change={kpi.change}
+            trend={kpi.trend}
+            icon={kpi.icon}
+            color={kpi.color}
+            delay={i * 0.1}
+          />
         ))}
       </div>
 
@@ -211,34 +160,49 @@ export default function DashboardPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-white font-semibold text-lg">Recent Activities</h3>
-            <button className="text-[var(--accent)] text-sm hover:underline">
-              View All
-            </button>
           </div>
           <div className="space-y-4">
-            {recentActivities.map((activity, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-4 p-3 rounded-xl hover:bg-white/5 transition-all"
-              >
-                <div
-                  className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center ${activity.color}`}
-                >
-                  <activity.icon className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-white text-sm font-medium">{activity.title}</p>
-                  <p className="text-white/40 text-xs">{activity.description}</p>
-                </div>
-                <span className="text-white/30 text-xs whitespace-nowrap">
-                  {activity.time}
-                </span>
-              </div>
-            ))}
+            {loading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="flex items-start gap-4 p-3">
+                    <div className="skeleton w-10 h-10 rounded-xl" />
+                    <div className="flex-1 space-y-2">
+                      <div className="skeleton h-4 w-3/4" />
+                      <div className="skeleton h-3 w-1/2" />
+                    </div>
+                  </div>
+                ))
+              : stats?.recentActivities.map((activity, i) => {
+                  const ActivityIcon = activityIconMap[activity.type] || BookOpen;
+                  const colorMap: Record<string, string> = {
+                    payment: "text-emerald-400",
+                    admission: "text-blue-400",
+                  };
+                  const timeAgo = getTimeAgo(activity.time);
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-start gap-4 p-3 rounded-xl hover:bg-white/5 transition-all"
+                    >
+                      <div
+                        className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center ${colorMap[activity.type] || "text-white/40"}`}
+                      >
+                        <ActivityIcon className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white text-sm font-medium">{activity.title}</p>
+                        <p className="text-white/40 text-xs">{activity.description}</p>
+                      </div>
+                      <span className="text-white/30 text-xs whitespace-nowrap">
+                        {timeAgo}
+                      </span>
+                    </div>
+                  );
+                })}
           </div>
         </motion.div>
 
-        {/* Upcoming Events */}
+        {/* Monthly Revenue Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -246,23 +210,27 @@ export default function DashboardPage() {
           className="card"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white font-semibold text-lg">Upcoming Events</h3>
-            <Calendar className="w-5 h-5 text-white/40" />
+            <h3 className="text-white font-semibold text-lg">Revenue Trend</h3>
           </div>
-          <div className="space-y-3">
-            {upcomingEvents.map((event, i) => (
-              <div
-                key={i}
-                className="p-3 rounded-xl bg-white/5 hover:bg-white/8 transition-all"
-              >
-                <p className="text-white text-sm font-medium">{event.title}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Clock className="w-3 h-3 text-white/30" />
-                  <span className="text-white/40 text-xs">{event.date}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          {stats?.monthlyRevenue ? (
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={stats.monthlyRevenue}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <XAxis dataKey="month" tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 11 }} />
+                <YAxis tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 11 }} />
+                <Tooltip
+                  contentStyle={{ background: "rgba(15,23,42,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }}
+                  labelStyle={{ color: "rgba(255,255,255,0.6)" }}
+                  formatter={(value: any) => [`₦${(Number(value) / 1_000_000).toFixed(1)}M`, "Revenue"]}
+                />
+                <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} dot={{ fill: "#10b981", r: 4 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[250px] flex items-center justify-center text-white/30">
+              Loading chart...
+            </div>
+          )}
         </motion.div>
       </div>
 
@@ -275,47 +243,36 @@ export default function DashboardPage() {
       >
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-white font-semibold text-lg">Class Performance Overview</h3>
-          <div className="flex gap-4 text-xs">
-            <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-emerald-500" />
-              Pass Rate
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-red-500" />
-              Fail Rate
-            </span>
+        </div>
+        {stats?.classPerformance ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={stats.classPerformance}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 12 }} />
+              <YAxis tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 12 }} />
+              <Tooltip
+                contentStyle={{ background: "rgba(15,23,42,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }}
+                labelStyle={{ color: "rgba(255,255,255,0.6)" }}
+              />
+              <Bar dataKey="students" fill="url(#barGradient)" radius={[4, 4, 0, 0]} />
+              <defs>
+                <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#6366f1" />
+                  <stop offset="100%" stopColor="#06b6d4" />
+                </linearGradient>
+              </defs>
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-[300px] flex items-center justify-center text-white/30">
+            Loading chart...
           </div>
-        </div>
-        <div className="grid grid-cols-6 gap-4">
-          {classPerformance.map((cls, i) => (
-            <div key={i} className="text-center">
-              <div className="relative h-40 flex items-end justify-center mb-2">
-                <div className="w-full max-w-[60px] relative">
-                  <div
-                    className="w-full bg-emerald-500/80 rounded-t-lg transition-all duration-500"
-                    style={{ height: `${cls.pass * 1.5}px` }}
-                  />
-                  <div
-                    className="w-full bg-red-500/80 rounded-b-lg transition-all duration-500"
-                    style={{ height: `${cls.fail * 1.5}px` }}
-                  />
-                </div>
-              </div>
-              <p className="text-white text-sm font-medium">{cls.name}</p>
-              <p className="text-white/40 text-xs">{cls.pass}% pass</p>
-            </div>
-          ))}
-        </div>
+        )}
       </motion.div>
 
       {/* Quick Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "Pending Admissions", value: "12", icon: AlertCircle, color: "text-orange-400" },
-          { label: "Fee Collections Today", value: "₦1.2M", icon: CreditCard, color: "text-emerald-400" },
-          { label: "Library Books Borrowed", value: "34", icon: Library, color: "text-blue-400" },
-          { label: "Absent Today", value: "23", icon: AlertCircle, color: "text-red-400" },
-        ].map((stat, i) => (
+        {quickStats.map((stat, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
@@ -335,4 +292,14 @@ export default function DashboardPage() {
       </div>
     </div>
   );
+}
+
+function getTimeAgo(dateStr: string): string {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+  if (diff < 60) return "just now";
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
 }

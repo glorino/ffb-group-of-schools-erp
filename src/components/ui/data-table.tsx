@@ -55,9 +55,33 @@ export function DataTable<T extends Record<string, any>>({
   }, [data, search]);
 
   const totalPages = Math.ceil(filteredData.length / pageSize);
+  const safePage = Math.min(Math.max(1, page), totalPages || 1);
   const paginatedData = pagination
-    ? filteredData.slice((page - 1) * pageSize, page * pageSize)
+    ? filteredData.slice((safePage - 1) * pageSize, safePage * pageSize)
     : filteredData;
+
+  const startItem = filteredData.length === 0 ? 0 : (safePage - 1) * pageSize + 1;
+  const endItem = Math.min(safePage * pageSize, filteredData.length);
+
+  const pageNumbers = useMemo(() => {
+    const pages: (number | string)[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (safePage > 3) pages.push("...");
+      for (
+        let i = Math.max(2, safePage - 1);
+        i <= Math.min(totalPages - 1, safePage + 1);
+        i++
+      ) {
+        pages.push(i);
+      }
+      if (safePage < totalPages - 2) pages.push("...");
+      pages.push(totalPages);
+    }
+    return pages;
+  }, [totalPages, safePage]);
 
   return (
     <div className="space-y-4">
@@ -117,9 +141,7 @@ export function DataTable<T extends Record<string, any>>({
                   >
                     {columns.map((col) => (
                       <td key={col.key} className={col.className}>
-                        {col.render
-                          ? col.render(row)
-                          : row[col.key]}
+                        {col.render ? col.render(row) : row[col.key]}
                       </td>
                     ))}
                   </motion.tr>
@@ -133,51 +155,38 @@ export function DataTable<T extends Record<string, any>>({
       {pagination && totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-white/50">
           <p>
-            Showing {(page - 1) * pageSize + 1}–
-            {Math.min(page * pageSize, filteredData.length)} of{" "}
-            {filteredData.length}
+            Showing {startItem}–{endItem} of {filteredData.length}
           </p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
+              disabled={safePage === 1}
               className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter(
-                (p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1
+            {pageNumbers.map((p, i) =>
+              typeof p === "string" ? (
+                <span key={`dots-${i}`} className="text-white/30 px-1">
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+                    safePage === p
+                      ? "bg-[var(--primary)] text-white"
+                      : "bg-white/5 text-white/50 hover:bg-white/10"
+                  }`}
+                >
+                  {p}
+                </button>
               )
-              .reduce<(number | string)[]>((acc, p, i, arr) => {
-                if (i > 0 && typeof arr[i - 1] === "number" && (p as number) - (arr[i - 1] as number) > 1) {
-                  acc.push("...");
-                }
-                acc.push(p);
-                return acc;
-              }, [])
-              .map((p, i) =>
-                typeof p === "string" ? (
-                  <span key={`dots-${i}`} className="text-white/30 px-1">
-                    ...
-                  </span>
-                ) : (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                      page === p
-                        ? "bg-[var(--primary)] text-white"
-                        : "bg-white/5 text-white/50 hover:bg-white/10"
-                    }`}
-                  >
-                    {p}
-                  </button>
-                )
-              )}
+            )}
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
+              disabled={safePage === totalPages}
               className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
               <ChevronRight className="w-4 h-4" />

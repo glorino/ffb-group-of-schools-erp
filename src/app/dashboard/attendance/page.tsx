@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useState } from "react";
 import {
   CheckCircle,
   XCircle,
@@ -12,49 +12,65 @@ import {
   Calendar,
   Download,
   Search,
-  Filter,
   AlertTriangle,
 } from "lucide-react";
 
-const todayStats = [
-  { label: "Total Students", value: 2847, icon: Users, color: "from-blue-500 to-blue-600" },
-  { label: "Present", value: 2681, icon: CheckCircle, color: "from-emerald-500 to-emerald-600" },
-  { label: "Absent", value: 98, icon: XCircle, color: "from-red-500 to-red-600" },
-  { label: "Late", value: 68, icon: Clock, color: "from-yellow-500 to-yellow-600" },
-];
+interface AttendanceStats {
+  present: number;
+  absent: number;
+  late: number;
+  total: number;
+}
 
-const classAttendance = [
-  { className: "JSS1A", present: 42, absent: 3, late: 2, rate: 93.3 },
-  { className: "JSS1B", present: 40, absent: 5, late: 1, rate: 88.9 },
-  { className: "JSS2A", present: 38, absent: 2, late: 4, rate: 88.4 },
-  { className: "JSS2B", present: 41, absent: 1, late: 3, rate: 93.2 },
-  { className: "JSS3", present: 44, absent: 2, late: 1, rate: 95.7 },
-  { className: "SS1A", present: 36, absent: 4, late: 2, rate: 85.7 },
-  { className: "SS1B", present: 38, absent: 3, late: 1, rate: 90.5 },
-  { className: "SS2A", present: 35, absent: 1, late: 3, rate: 89.7 },
-  { className: "SS2B", present: 37, absent: 2, late: 2, rate: 90.2 },
-  { className: "SS3", present: 45, absent: 0, late: 2, rate: 95.7 },
-];
+interface ClassAttendance {
+  className: string;
+  present: number;
+  absent: number;
+  late: number;
+  rate: number;
+}
 
-const absentStudents = [
-  { name: "Oluwaseun Akindele", class: "SS3", reason: "Sick", notified: true },
-  { name: "Blessing Eze", class: "JSS1A", reason: "Family emergency", notified: true },
-  { name: "Yusuf Aliyu", class: "JSS2B", reason: "Not reported", notified: false },
-  { name: "Ngozi Okoro", class: "SS1A", reason: "Medical appointment", notified: true },
-  { name: "Tunde Bakare", class: "SS2A", reason: "Not reported", notified: false },
-];
+interface AbsentStudent {
+  name: string;
+  class: string;
+  reason: string;
+  notified: boolean;
+}
 
-const weeklyTrend = [
-  { day: "Mon", rate: 94.2 },
-  { day: "Tue", rate: 92.8 },
-  { day: "Wed", rate: 95.1 },
-  { day: "Thu", rate: 93.5 },
-  { day: "Fri", rate: 89.7 },
-];
+interface AttendanceResponse {
+  stats: AttendanceStats;
+  classAttendance: ClassAttendance[];
+  absentStudents: AbsentStudent[];
+}
 
 export default function AttendancePage() {
-  const [selectedDate, setSelectedDate] = useState("2025-01-15");
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [selectedSession, setSelectedSession] = useState("morning");
+  const [data, setData] = useState<AttendanceResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const params = new URLSearchParams({
+      date: selectedDate,
+      session: selectedSession,
+    });
+
+    fetch(`/api/attendance?${params}`)
+      .then((res) => res.json())
+      .then((d) => setData(d))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [selectedDate, selectedSession]);
+
+  const todayStats = [
+    { label: "Total Students", value: data?.stats?.total ?? 0, icon: Users, color: "from-blue-500 to-blue-600" },
+    { label: "Present", value: data?.stats?.present ?? 0, icon: CheckCircle, color: "from-emerald-500 to-emerald-600" },
+    { label: "Absent", value: data?.stats?.absent ?? 0, icon: XCircle, color: "from-red-500 to-red-600" },
+    { label: "Late", value: data?.stats?.late ?? 0, icon: Clock, color: "from-yellow-500 to-yellow-600" },
+  ];
 
   return (
     <div className="space-y-6">
@@ -117,7 +133,7 @@ export default function AttendancePage() {
                 <stat.icon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">{stat.value.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-white">{Number(stat.value).toLocaleString()}</p>
                 <p className="text-white/40 text-xs">{stat.label}</p>
               </div>
             </div>
@@ -135,9 +151,6 @@ export default function AttendancePage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-white font-semibold text-lg">Class Attendance</h3>
-            <button className="text-[var(--accent)] text-sm hover:underline">
-              View All
-            </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full table-premium">
@@ -151,61 +164,101 @@ export default function AttendancePage() {
                 </tr>
               </thead>
               <tbody>
-                {classAttendance.map((cls, i) => (
-                  <tr key={i}>
-                    <td className="text-white font-medium">{cls.className}</td>
-                    <td className="text-emerald-400">{cls.present}</td>
-                    <td className="text-red-400">{cls.absent}</td>
-                    <td className="text-yellow-400">{cls.late}</td>
-                    <td>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 max-w-[100px] h-2 bg-white/10 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${
-                              cls.rate >= 90
-                                ? "bg-emerald-500"
-                                : cls.rate >= 80
-                                ? "bg-yellow-500"
-                                : "bg-red-500"
-                            }`}
-                            style={{ width: `${cls.rate}%` }}
-                          />
-                        </div>
-                        <span className="text-white/60 text-sm">{cls.rate}%</span>
-                      </div>
+                {loading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan={5} className="p-4"><div className="skeleton h-4 w-full" /></td>
+                    </tr>
+                  ))
+                ) : data?.classAttendance?.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-8 text-white/40">
+                      No attendance data for this date
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  data?.classAttendance?.map((cls, i) => (
+                    <tr key={i}>
+                      <td className="text-white font-medium">{cls.className}</td>
+                      <td className="text-emerald-400">{cls.present}</td>
+                      <td className="text-red-400">{cls.absent}</td>
+                      <td className="text-yellow-400">{cls.late}</td>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 max-w-[100px] h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                cls.rate >= 90
+                                  ? "bg-emerald-500"
+                                  : cls.rate >= 80
+                                  ? "bg-yellow-500"
+                                  : "bg-red-500"
+                              }`}
+                              style={{ width: `${cls.rate}%` }}
+                            />
+                          </div>
+                          <span className="text-white/60 text-sm">{cls.rate.toFixed(1)}%</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         </motion.div>
 
-        {/* Weekly Trend */}
+        {/* Attendance Rate Summary */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           className="card"
         >
-          <h3 className="text-white font-semibold text-lg mb-6">Weekly Trend</h3>
-          <div className="space-y-3">
-            {weeklyTrend.map((day, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="text-white/60 text-sm w-10">{day.day}</span>
-                <div className="flex-1 h-8 bg-white/5 rounded-lg overflow-hidden relative">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${day.rate}%` }}
-                    transition={{ delay: 0.6 + i * 0.1, duration: 0.8 }}
-                    className="h-full bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] rounded-lg"
-                  />
-                  <span className="absolute inset-0 flex items-center justify-center text-white text-xs font-medium">
-                    {day.rate}%
-                  </span>
-                </div>
+          <h3 className="text-white font-semibold text-lg mb-6">Today&apos;s Summary</h3>
+          <div className="space-y-4">
+            <div className="p-4 rounded-xl bg-white/5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-white text-sm font-medium">Present</span>
+                <span className="text-emerald-400 text-sm font-bold">
+                  {data?.stats?.total ? ((data.stats.present / data.stats.total) * 100).toFixed(1) : 0}%
+                </span>
               </div>
-            ))}
+              <div className="w-full bg-white/10 rounded-full h-2">
+                <div
+                  className="bg-emerald-500 h-2 rounded-full"
+                  style={{ width: `${data?.stats?.total ? (data.stats.present / data.stats.total) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+            <div className="p-4 rounded-xl bg-white/5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-white text-sm font-medium">Absent</span>
+                <span className="text-red-400 text-sm font-bold">
+                  {data?.stats?.total ? ((data.stats.absent / data.stats.total) * 100).toFixed(1) : 0}%
+                </span>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2">
+                <div
+                  className="bg-red-500 h-2 rounded-full"
+                  style={{ width: `${data?.stats?.total ? (data.stats.absent / data.stats.total) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+            <div className="p-4 rounded-xl bg-white/5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-white text-sm font-medium">Late</span>
+                <span className="text-yellow-400 text-sm font-bold">
+                  {data?.stats?.total ? ((data.stats.late / data.stats.total) * 100).toFixed(1) : 0}%
+                </span>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2">
+                <div
+                  className="bg-yellow-500 h-2 rounded-full"
+                  style={{ width: `${data?.stats?.total ? (data.stats.late / data.stats.total) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -237,24 +290,38 @@ export default function AttendancePage() {
               </tr>
             </thead>
             <tbody>
-              {absentStudents.map((student, i) => (
-                <tr key={i}>
-                  <td className="text-white font-medium">{student.name}</td>
-                  <td className="text-white/60">{student.class}</td>
-                  <td className="text-white/60">{student.reason}</td>
-                  <td>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        student.notified
-                          ? "bg-emerald-500/20 text-emerald-400"
-                          : "bg-red-500/20 text-red-400"
-                      }`}
-                    >
-                      {student.notified ? "Notified" : "Not Notified"}
-                    </span>
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <tr key={i}>
+                    <td colSpan={4} className="p-4"><div className="skeleton h-4 w-full" /></td>
+                  </tr>
+                ))
+              ) : data?.absentStudents?.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="text-center py-8 text-white/40">
+                    No absent students recorded
                   </td>
                 </tr>
-              ))}
+              ) : (
+                data?.absentStudents?.map((student, i) => (
+                  <tr key={i}>
+                    <td className="text-white font-medium">{student.name}</td>
+                    <td className="text-white/60">{student.class}</td>
+                    <td className="text-white/60">{student.reason}</td>
+                    <td>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          student.notified
+                            ? "bg-emerald-500/20 text-emerald-400"
+                            : "bg-red-500/20 text-red-400"
+                        }`}
+                      >
+                        {student.notified ? "Notified" : "Not Notified"}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

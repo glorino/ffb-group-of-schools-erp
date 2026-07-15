@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import { useEffect, useRef } from "react";
 import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 
 interface StatCardProps {

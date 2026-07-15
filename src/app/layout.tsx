@@ -1,24 +1,35 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 import { Toaster } from "sonner";
 
-const inter = Inter({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-dm-sans",
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-jakarta",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
-  title: "FFB Group of Schools ERP",
+  title: "FFB Group of Schools",
   description:
-    "Premium Enterprise School Management System - Powered by AI",
+    "Excellence, Discipline, Integrity - FFB Group of Schools Management Portal",
   keywords: [
-    "school ERP",
-    "education management",
-    "student information system",
+    "FFB Group of Schools",
+    "school portal",
+    "student management",
+    "education",
   ],
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -28,7 +39,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body
+        className={`${dmSans.variable} ${jakarta.variable} font-sans antialiased`}
+      >
         <AuthProvider>
           <ThemeProvider>
             {children}

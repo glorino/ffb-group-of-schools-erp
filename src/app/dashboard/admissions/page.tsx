@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useState } from "react";
 import {
   Search,
   Plus,
@@ -11,63 +11,21 @@ import {
   Clock,
   FileText,
   Calendar,
-  UserPlus,
   AlertCircle,
   ArrowRight,
 } from "lucide-react";
+import { DataTable } from "@/components/ui/data-table";
 
-const mockApplications = [
-  {
-    id: "1",
-    appNo: "APP/2025/001",
-    name: "Blessing Eze",
-    class: "JSS1",
-    date: "2025-01-15",
-    status: "pending",
-    examScore: null,
-    feePaid: false,
-  },
-  {
-    id: "2",
-    appNo: "APP/2025/002",
-    name: "Yusuf Aliyu",
-    class: "SS1",
-    date: "2025-01-14",
-    status: "exam",
-    examScore: 78,
-    feePaid: true,
-  },
-  {
-    id: "3",
-    appNo: "APP/2025/003",
-    name: "Ngozi Okoro",
-    class: "JSS2",
-    date: "2025-01-13",
-    status: "interview",
-    examScore: 85,
-    feePaid: true,
-  },
-  {
-    id: "4",
-    appNo: "APP/2025/004",
-    name: "Tunde Bakare",
-    class: "SS2",
-    date: "2025-01-12",
-    status: "admitted",
-    examScore: 92,
-    feePaid: true,
-  },
-  {
-    id: "5",
-    appNo: "APP/2025/005",
-    name: "Halima Suleiman",
-    class: "JSS1",
-    date: "2025-01-11",
-    status: "rejected",
-    examScore: 35,
-    feePaid: false,
-  },
-];
+interface Applicant {
+  id: string;
+  applicationNumber: string;
+  firstName: string;
+  lastName: string;
+  classAppliedFor: string;
+  status: string;
+  submittedAt: string;
+  admissionFeePaid: boolean;
+}
 
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-500/20 text-yellow-400",
@@ -85,16 +43,105 @@ const statusIcons: Record<string, any> = {
   rejected: XCircle,
 };
 
-const workflowSteps = [
-  { step: "Application", count: 12, color: "bg-blue-500" },
-  { step: "Screening", count: 8, color: "bg-yellow-500" },
-  { step: "Exam", count: 5, color: "bg-purple-500" },
-  { step: "Interview", count: 3, color: "bg-orange-500" },
-  { step: "Admitted", count: 18, color: "bg-emerald-500" },
-];
-
 export default function AdmissionsPage() {
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("applications");
+
+  useEffect(() => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+
+    fetch(`/api/admissions?${params}`)
+      .then((res) => res.json())
+      .then((data) => setApplicants(data.applicants ?? []))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [search]);
+
+  const workflowSteps = [
+    { step: "Application", count: applicants.filter((a) => a.status === "pending").length, color: "bg-blue-500" },
+    { step: "Exam", count: applicants.filter((a) => a.status === "exam").length, color: "bg-yellow-500" },
+    { step: "Interview", count: applicants.filter((a) => a.status === "interview").length, color: "bg-purple-500" },
+    { step: "Admitted", count: applicants.filter((a) => a.status === "admitted").length, color: "bg-emerald-500" },
+    { step: "Rejected", count: applicants.filter((a) => a.status === "rejected").length, color: "bg-red-500" },
+  ];
+
+  const columns = [
+    {
+      key: "name",
+      label: "Applicant",
+      render: (row: Applicant) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-xs font-bold">
+            {row.firstName[0]}{row.lastName[0]}
+          </div>
+          <span className="text-white font-medium">{row.firstName} {row.lastName}</span>
+        </div>
+      ),
+    },
+    { key: "applicationNumber", label: "Application No." },
+    { key: "classAppliedFor", label: "Class Applied" },
+    {
+      key: "submittedAt",
+      label: "Date",
+      render: (row: Applicant) => new Date(row.submittedAt).toLocaleDateString(),
+    },
+    {
+      key: "admissionFeePaid",
+      label: "Fee Status",
+      render: (row: Applicant) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium ${
+            row.admissionFeePaid
+              ? "bg-emerald-500/20 text-emerald-400"
+              : "bg-red-500/20 text-red-400"
+          }`}
+        >
+          {row.admissionFeePaid ? "Paid" : "Unpaid"}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (row: Applicant) => {
+        const StatusIcon = statusIcons[row.status] || Clock;
+        return (
+          <span
+            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${statusColors[row.status] || "bg-white/10 text-white/60"}`}
+          >
+            <StatusIcon className="w-3 h-3" />
+            {row.status}
+          </span>
+        );
+      },
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      className: "text-right",
+      render: (row: Applicant) => (
+        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-all">
+            <Eye className="w-4 h-4" />
+          </button>
+          {row.status === "pending" && (
+            <>
+              <button className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 hover:bg-emerald-500/20 transition-all">
+                <CheckCircle className="w-4 h-4" />
+              </button>
+              <button className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition-all">
+                <XCircle className="w-4 h-4" />
+              </button>
+            </>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -163,106 +210,16 @@ export default function AdmissionsPage() {
         transition={{ delay: 0.3 }}
         className="card overflow-hidden"
       >
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex-1 max-w-md relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
-            <input
-              type="text"
-              placeholder="Search applications..."
-              className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-            />
-          </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full table-premium">
-            <thead>
-              <tr>
-                <th>Applicant</th>
-                <th>Application No.</th>
-                <th>Class Applied</th>
-                <th>Date</th>
-                <th>Exam Score</th>
-                <th>Fee Status</th>
-                <th>Status</th>
-                <th className="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mockApplications.map((app) => {
-                const StatusIcon = statusIcons[app.status];
-                return (
-                  <tr key={app.id} className="group">
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-xs font-bold">
-                          {app.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </div>
-                        <span className="text-white font-medium">{app.name}</span>
-                      </div>
-                    </td>
-                    <td className="text-white/60">{app.appNo}</td>
-                    <td className="text-white/60">{app.class}</td>
-                    <td className="text-white/60">{app.date}</td>
-                    <td className="text-white/60">
-                      {app.examScore ? (
-                        <span
-                          className={`font-semibold ${
-                            app.examScore >= 50
-                              ? "text-emerald-400"
-                              : "text-red-400"
-                          }`}
-                        >
-                          {app.examScore}%
-                        </span>
-                      ) : (
-                        <span className="text-white/30">—</span>
-                      )}
-                    </td>
-                    <td>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          app.feePaid
-                            ? "bg-emerald-500/20 text-emerald-400"
-                            : "bg-red-500/20 text-red-400"
-                        }`}
-                      >
-                        {app.feePaid ? "Paid" : "Unpaid"}
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${statusColors[app.status]}`}
-                      >
-                        <StatusIcon className="w-3 h-3" />
-                        {app.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-all">
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        {app.status === "pending" && (
-                          <>
-                            <button className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 hover:bg-emerald-500/20 transition-all">
-                              <CheckCircle className="w-4 h-4" />
-                            </button>
-                            <button className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition-all">
-                              <XCircle className="w-4 h-4" />
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="p-4">
+          <DataTable
+            columns={columns}
+            data={applicants}
+            loading={loading}
+            searchable={false}
+            pagination={true}
+            pageSize={10}
+            emptyMessage="No applications found"
+          />
         </div>
       </motion.div>
     </div>
