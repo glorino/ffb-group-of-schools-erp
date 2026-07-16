@@ -86,7 +86,7 @@ export default function ApplyPage() {
     setSubmitting(false);
   };
 
-  const inputStyle: React.CSSProperties = { background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "16px", padding: "14px 18px", color: "#fff", fontSize: "14px", outline: "none", width: "100%", fontFamily: "'Poppins', sans-serif" };
+  const inputStyle: React.CSSProperties = { background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "16px", padding: "14px 18px", color: "#fff", fontSize: "14px", outline: "none", width: "100%", fontFamily: "'Poppins', sans-serif", colorScheme: "dark" };
   const inputErrorStyle: React.CSSProperties = { ...inputStyle, borderColor: "rgba(239,68,68,0.6)" };
   const labelStyle: React.CSSProperties = { fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "6px", display: "block", fontWeight: 600 };
 
