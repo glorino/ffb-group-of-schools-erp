@@ -1,315 +1,271 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
-import {
-  GraduationCap,
-  ArrowLeft,
-  ArrowRight,
-  Upload,
-  CheckCircle,
-  CreditCard,
-  FileText,
-  User,
-} from "lucide-react";
-import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
-const steps = [
-  { id: 1, title: "Personal Info", icon: User },
-  { id: 2, title: "Academic Info", icon: FileText },
-  { id: 3, title: "Documents", icon: Upload },
-  { id: 4, title: "Payment", icon: CreditCard },
-  { id: 5, title: "Confirmation", icon: CheckCircle },
+const particles = Array.from({ length: 80 }, (_, i) => ({
+  id: i, left: `${Math.random() * 100}%`, duration: `${10 + Math.random() * 20}s`,
+  delay: `${Math.random() * 10}s`, size: `${3 + Math.random() * 3}px`,
+}));
+
+const steps = ["Personal Info", "Academic Info", "Guardian Info", "Documents", "Review"];
+
+const classOptions = [
+  { section: "Crèche & Nursery", classes: ["Crèche", "Nursery 1", "Nursery 2", "Nursery 3"] },
+  { section: "Primary", classes: ["Primary 1", "Primary 2", "Primary 3", "Primary 4", "Primary 5", "Primary 6"] },
+  { section: "Junior Secondary", classes: ["JSS 1", "JSS 2", "JSS 3"] },
+  { section: "Senior Secondary", classes: ["SSS 1", "SSS 2", "SSS 3"] },
 ];
 
 export default function ApplyPage() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    middleName: "",
-    email: "",
-    phone: "",
-    dateOfBirth: "",
-    gender: "",
-    address: "",
-    city: "",
-    state: "",
-    previousSchool: "",
-    classAppliedFor: "",
-    guardianName: "",
-    guardianPhone: "",
-    guardianEmail: "",
-    guardianRelationship: "",
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [step, setStep] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [appNumber, setAppNumber] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [form, setForm] = useState({
+    firstName: "", lastName: "", middleName: "", dateOfBirth: "", gender: "", bloodGroup: "", nationality: "Nigerian", stateOfOrigin: "", homeAddress: "",
+    previousSchool: "", classApplying: "",
+    guardianName: "", guardianPhone: "", guardianEmail: "", guardianRelationship: "",
+    birthCert: "", reportCard: "", medicalCert: "",
   });
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const update = (field: string, value: string) => {
+    setForm({ ...form, [field]: value });
+    if (errors[field]) setErrors({ ...errors, [field]: "" });
   };
 
-  const handleSubmit = () => {
-    toast.success("Application submitted successfully! You will receive a confirmation email.");
+  const validate = (): boolean => {
+    const e: Record<string, string> = {};
+    if (step === 0) {
+      if (!form.firstName.trim()) e.firstName = "Required";
+      if (!form.lastName.trim()) e.lastName = "Required";
+      if (!form.dateOfBirth) e.dateOfBirth = "Required";
+      if (!form.gender) e.gender = "Required";
+    }
+    if (step === 1) {
+      if (!form.classApplying) e.classApplying = "Required";
+    }
+    if (step === 2) {
+      if (!form.guardianName.trim()) e.guardianName = "Required";
+      if (!form.guardianPhone.trim()) e.guardianPhone = "Required";
+      if (!form.guardianRelationship) e.guardianRelationship = "Required";
+    }
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
+
+  const nextStep = () => { if (validate()) setStep(step + 1); };
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/admissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: form.firstName, lastName: form.lastName, middleName: form.middleName,
+          email: "", phone: "", dateOfBirth: form.dateOfBirth, gender: form.gender,
+          classAppliedFor: form.classApplying, previousSchool: form.previousSchool,
+          schoolId: "school_ffb",
+          guardianName: form.guardianName, guardianPhone: form.guardianPhone,
+          guardianEmail: form.guardianEmail, guardianRelationship: form.guardianRelationship,
+          address: form.homeAddress, nationality: form.nationality,
+          stateOfOrigin: form.stateOfOrigin, bloodGroup: form.bloodGroup,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAppNumber(data.applicationNumber);
+        setSubmitted(true);
+      }
+    } catch { }
+    setSubmitting(false);
+  };
+
+  const inputStyle: React.CSSProperties = { background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "16px", padding: "14px 18px", color: "#fff", fontSize: "14px", outline: "none", width: "100%", fontFamily: "'Poppins', sans-serif" };
+  const inputErrorStyle: React.CSSProperties = { ...inputStyle, borderColor: "rgba(239,68,68,0.6)" };
+  const labelStyle: React.CSSProperties = { fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "6px", display: "block", fontWeight: 600 };
+
+  if (submitted) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", position: "relative" }}>
+        {particles.map((p) => (
+          <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
+        ))}
+        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} style={{ textAlign: "center", maxWidth: "500px" }}>
+          <div style={{ width: "90px", height: "90px", borderRadius: "50%", background: "linear-gradient(135deg, #28ff9c, #0055ff)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 25px", fontSize: "42px" }}>✓</div>
+          <h1 style={{ fontSize: "32px", fontWeight: 800, marginBottom: "12px" }}>Application Submitted!</h1>
+          <p style={{ color: "rgba(255,255,255,0.6)", marginBottom: "20px", lineHeight: 1.7 }}>Your admission application has been received successfully.</p>
+          <div style={{ background: "rgba(40,255,156,0.08)", border: "1px solid rgba(40,255,156,0.2)", borderRadius: "16px", padding: "18px", marginBottom: "25px" }}>
+            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px", marginBottom: "5px" }}>APPLICATION NUMBER</p>
+            <p style={{ fontSize: "22px", fontWeight: 800, color: "#28ff9c", letterSpacing: "1px" }}>{appNumber}</p>
+          </div>
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", marginBottom: "25px" }}>
+            Use this number to track your admission status.
+          </p>
+          <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+            <Link href="/portal/track" className="btn-primary" style={{ display: "inline-block" }}>Track Application</Link>
+            <Link href="/" className="btn-primary" style={{ display: "inline-block", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff" }}>Return Home</Link>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-animated">
-      {/* Header */}
-      <header className="glass border-b border-white/10">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-white/60 hover:text-white">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-white font-bold">FFB ERP</span>
+    <>
+      {particles.map((p) => (
+        <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
+      ))}
+
+      <div className="navbar">
+        <div className="nav-inner">
+          <Link href="/" className="flex items-center gap-2"><img src="/logo.svg" alt="FFB" style={{ height: "50px" }} /></Link>
+          <div className={`nav-links ${mobileMenuOpen ? "active" : ""}`}>
+            <Link href="/">Home</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#001f5f" }}>Admissions</Link>
+            <Link href="/auth/login" className="menu-btn portal-btn">Portal</Link>
+          </div>
+          <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <span></span><span></span><span></span>
           </div>
         </div>
-      </header>
+      </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-10">
-          {steps.map((step, i) => (
-            <div key={step.id} className="flex items-center">
-              <div
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all ${
-                  currentStep >= step.id
-                    ? "bg-[var(--primary)]/20 text-[var(--accent)]"
-                    : "text-white/30"
-                }`}
-              >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    currentStep >= step.id
-                      ? "bg-[var(--primary)] text-white"
-                      : "bg-white/10 text-white/40"
-                  }`}
-                >
-                  {currentStep > step.id ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    step.id
-                  )}
-                </div>
-                <span className="hidden md:inline text-sm font-medium">
-                  {step.title}
-                </span>
+      <section style={{ marginTop: "80px", padding: "40px 20px 20px", textAlign: "center" }}>
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800 }}>
+          Admission <span className="accent">Application</span>
+        </motion.h1>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.6)", maxWidth: "500px", margin: "10px auto 0" }}>
+          Complete the form below to apply for admission.
+        </motion.p>
+      </section>
+
+      <section className="glass-section" style={{ maxWidth: "700px", margin: "0 auto" }}>
+        {/* Progress */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "30px", position: "relative" }}>
+          <div style={{ position: "absolute", top: "15px", left: "0", right: "0", height: "2px", background: "rgba(255,255,255,0.1)" }}></div>
+          <div style={{ position: "absolute", top: "15px", left: "0", height: "2px", background: "#28ff9c", width: `${(step / (steps.length - 1)) * 100}%`, transition: "0.5s" }}></div>
+          {steps.map((s, i) => (
+            <div key={i} style={{ textAlign: "center", position: "relative", zIndex: 1, flex: 1 }}>
+              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: i <= step ? "#28ff9c" : "rgba(255,255,255,0.1)", color: i <= step ? "#001f5f" : "rgba(255,255,255,0.4)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 6px", fontSize: "13px", fontWeight: 700, transition: "0.3s" }}>
+                {i < step ? "✓" : i + 1}
               </div>
-              {i < steps.length - 1 && (
-                <div
-                  className={`hidden md:block w-12 h-0.5 mx-2 ${
-                    currentStep > step.id ? "bg-[var(--primary)]" : "bg-white/10"
-                  }`}
-                />
-              )}
+              <span style={{ fontSize: "11px", color: i <= step ? "#28ff9c" : "rgba(255,255,255,0.3)", fontWeight: 600 }}>{s}</span>
             </div>
           ))}
         </div>
 
-        {/* Form Content */}
-        <motion.div
-          key={currentStep}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="card"
-        >
-          {currentStep === 1 && (
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-2">Personal Information</h2>
-              <p className="text-white/50 mb-8">Provide the student&apos;s personal details</p>
-              <div className="grid md:grid-cols-2 gap-6">
+        <AnimatePresence mode="wait">
+          <motion.div key={step} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }}>
+            {step === 0 && (
+              <div>
+                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px" }}>Personal Information</h2>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                  <div><label style={labelStyle}>First Name *</label><input style={errors.firstName ? inputErrorStyle : inputStyle} value={form.firstName} onChange={(e) => update("firstName", e.target.value)} />{errors.firstName && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.firstName}</span>}</div>
+                  <div><label style={labelStyle}>Last Name *</label><input style={errors.lastName ? inputErrorStyle : inputStyle} value={form.lastName} onChange={(e) => update("lastName", e.target.value)} />{errors.lastName && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.lastName}</span>}</div>
+                  <div><label style={labelStyle}>Middle Name</label><input style={inputStyle} value={form.middleName} onChange={(e) => update("middleName", e.target.value)} /></div>
+                  <div><label style={labelStyle}>Date of Birth *</label><input style={errors.dateOfBirth ? inputErrorStyle : inputStyle} type="date" value={form.dateOfBirth} onChange={(e) => update("dateOfBirth", e.target.value)} />{errors.dateOfBirth && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.dateOfBirth}</span>}</div>
+                  <div><label style={labelStyle}>Gender *</label><select style={errors.gender ? inputErrorStyle : inputStyle} value={form.gender} onChange={(e) => update("gender", e.target.value)}><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select>{errors.gender && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.gender}</span>}</div>
+                  <div><label style={labelStyle}>Blood Group</label><select style={inputStyle} value={form.bloodGroup} onChange={(e) => update("bloodGroup", e.target.value)}><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
+                  <div><label style={labelStyle}>Nationality</label><input style={inputStyle} value={form.nationality} onChange={(e) => update("nationality", e.target.value)} /></div>
+                  <div><label style={labelStyle}>State of Origin</label><input style={inputStyle} value={form.stateOfOrigin} onChange={(e) => update("stateOfOrigin", e.target.value)} /></div>
+                </div>
+                <div style={{ marginTop: "14px" }}><label style={labelStyle}>Home Address</label><textarea style={{ ...inputStyle, minHeight: "80px", resize: "vertical" }} value={form.homeAddress} onChange={(e) => update("homeAddress", e.target.value)} /></div>
+              </div>
+            )}
+
+            {step === 1 && (
+              <div>
+                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px" }}>Academic Information</h2>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                  <div style={{ gridColumn: "1 / -1" }}><label style={labelStyle}>Class Applying For *</label><select style={errors.classApplying ? inputErrorStyle : inputStyle} value={form.classApplying} onChange={(e) => update("classApplying", e.target.value)}><option value="">Select a class</option>{classOptions.map((section) => (<optgroup key={section.section} label={section.section}>{section.classes.map((c) => (<option key={c} value={c}>{c}</option>))}</optgroup>))}</select>{errors.classApplying && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.classApplying}</span>}</div>
+                  <div style={{ gridColumn: "1 / -1" }}><label style={labelStyle}>Previous School</label><input style={inputStyle} value={form.previousSchool} onChange={(e) => update("previousSchool", e.target.value)} placeholder="Enter previous school name" /></div>
+                </div>
+              </div>
+            )}
+
+            {step === 2 && (
+              <div>
+                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px" }}>Parent / Guardian Information</h2>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                  <div><label style={labelStyle}>Full Name *</label><input style={errors.guardianName ? inputErrorStyle : inputStyle} value={form.guardianName} onChange={(e) => update("guardianName", e.target.value)} />{errors.guardianName && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.guardianName}</span>}</div>
+                  <div><label style={labelStyle}>Relationship *</label><select style={errors.guardianRelationship ? inputErrorStyle : inputStyle} value={form.guardianRelationship} onChange={(e) => update("guardianRelationship", e.target.value)}><option value="">Select</option><option>Father</option><option>Mother</option><option>Guardian</option><option>Uncle</option><option>Aunt</option><option>Other</option></select>{errors.guardianRelationship && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.guardianRelationship}</span>}</div>
+                  <div><label style={labelStyle}>Phone *</label><input style={errors.guardianPhone ? inputErrorStyle : inputStyle} value={form.guardianPhone} onChange={(e) => update("guardianPhone", e.target.value)} placeholder="+234..." />{errors.guardianPhone && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.guardianPhone}</span>}</div>
+                  <div><label style={labelStyle}>Email</label><input style={inputStyle} type="email" value={form.guardianEmail} onChange={(e) => update("guardianEmail", e.target.value)} /></div>
+                </div>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div>
+                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "8px" }}>Documents</h2>
+                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", marginBottom: "20px" }}>Upload required documents (PDF, JPG or PNG, max 5MB each)</p>
                 {[
-                  { label: "First Name", field: "firstName", placeholder: "Enter first name" },
-                  { label: "Last Name", field: "lastName", placeholder: "Enter last name" },
-                  { label: "Middle Name", field: "middleName", placeholder: "Enter middle name (optional)" },
-                  { label: "Email", field: "email", type: "email", placeholder: "student@email.com" },
-                  { label: "Phone", field: "phone", placeholder: "08012345678" },
-                  { label: "Date of Birth", field: "dateOfBirth", type: "date" },
-                ].map((input) => (
-                  <div key={input.field}>
-                    <label className="block text-white/70 text-sm font-medium mb-2">
-                      {input.label}
-                    </label>
-                    <input
-                      type={input.type || "text"}
-                      value={(formData as any)[input.field]}
-                      onChange={(e) => handleInputChange(input.field, e.target.value)}
-                      placeholder={input.placeholder}
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                    />
+                  { key: "birthCert", label: "Birth Certificate" },
+                  { key: "reportCard", label: "Last School Report Card" },
+                  { key: "medicalCert", label: "Medical Certificate" },
+                ].map((doc) => (
+                  <div key={doc.key} style={{ marginBottom: "16px", padding: "20px", border: "2px dashed rgba(255,255,255,0.15)", borderRadius: "16px", textAlign: "center", cursor: "pointer" }}>
+                    <div style={{ fontSize: "24px", marginBottom: "8px" }}>📄</div>
+                    <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", marginBottom: "6px" }}>{doc.label}</p>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }} id={doc.key} onChange={(e) => update(doc.key, e.target.files?.[0]?.name || "")} />
+                    <label htmlFor={doc.key} className="btn-primary" style={{ fontSize: "12px", padding: "8px 20px", cursor: "pointer" }}>Choose File</label>
+                    {form[doc.key as keyof typeof form] && <p style={{ fontSize: "12px", color: "#28ff9c", marginTop: "8px" }}>✓ {form[doc.key as keyof typeof form]}</p>}
                   </div>
                 ))}
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">Gender</label>
-                  <select
-                    value={formData.gender}
-                    onChange={(e) => handleInputChange("gender", e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
+              </div>
+            )}
+
+            {step === 4 && (
+              <div>
+                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px" }}>Review Application</h2>
+                {[
+                  { label: "Name", value: `${form.firstName} ${form.middleName} ${form.lastName}` },
+                  { label: "Date of Birth", value: form.dateOfBirth },
+                  { label: "Gender", value: form.gender },
+                  { label: "Class Applying", value: form.classApplying },
+                  { label: "Guardian Name", value: form.guardianName },
+                  { label: "Guardian Phone", value: form.guardianPhone },
+                  { label: "Guardian Relationship", value: form.guardianRelationship },
+                  { label: "Address", value: form.homeAddress },
+                ].map((r, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                    <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)" }}>{r.label}</span>
+                    <span style={{ fontSize: "13px", fontWeight: 600 }}>{r.value || "—"}</span>
+                  </div>
+                ))}
+                <div style={{ marginTop: "20px", padding: "14px", background: "rgba(40,255,156,0.06)", border: "1px solid rgba(40,255,156,0.2)", borderRadius: "12px", fontSize: "13px", color: "#28ff9c" }}>
+                  By submitting, you confirm all information provided is accurate. False information may result in disqualification.
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </motion.div>
+        </AnimatePresence>
 
-          {currentStep === 2 && (
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-2">Academic Information</h2>
-              <p className="text-white/50 mb-8">Provide academic and guardian details</p>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">
-                    Class Applying For
-                  </label>
-                  <select
-                    value={formData.classAppliedFor}
-                    onChange={(e) => handleInputChange("classAppliedFor", e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                  >
-                    <option value="">Select Class</option>
-                    <option value="jss1">JSS1</option>
-                    <option value="jss2">JSS2</option>
-                    <option value="jss3">JSS3</option>
-                    <option value="ss1">SS1</option>
-                    <option value="ss2">SS2</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">
-                    Previous School
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.previousSchool}
-                    onChange={(e) => handleInputChange("previousSchool", e.target.value)}
-                    placeholder="Enter previous school name"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <h3 className="text-white font-semibold mb-4 mt-4">Guardian Information</h3>
-                </div>
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">
-                    Guardian Name
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.guardianName}
-                    onChange={(e) => handleInputChange("guardianName", e.target.value)}
-                    placeholder="Enter guardian name"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">
-                    Guardian Phone
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.guardianPhone}
-                    onChange={(e) => handleInputChange("guardianPhone", e.target.value)}
-                    placeholder="08012345678"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                  />
-                </div>
-              </div>
-            </div>
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
+          <button onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0} style={{ padding: "12px 28px", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: step === 0 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.7)", cursor: step === 0 ? "not-allowed" : "pointer", fontSize: "14px", fontWeight: 600 }}>
+            Previous
+          </button>
+          {step < steps.length - 1 ? (
+            <motion.button onClick={nextStep} className="btn-primary" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: "12px 35px" }}>
+              Next Step
+            </motion.button>
+          ) : (
+            <motion.button onClick={handleSubmit} className="btn-primary" disabled={submitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: "12px 35px", opacity: submitting ? 0.6 : 1 }}>
+              {submitting ? "Submitting..." : "Submit Application"}
+            </motion.button>
           )}
+        </div>
+      </section>
 
-          {currentStep === 3 && (
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-2">Document Upload</h2>
-              <p className="text-white/50 mb-8">Upload required documents</p>
-              <div className="grid md:grid-cols-2 gap-6">
-                {["Birth Certificate", "Previous Report Card", "Passport Photograph", "Medical Record"].map(
-                  (doc) => (
-                    <div
-                      key={doc}
-                      className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-[var(--primary)] transition-colors cursor-pointer"
-                    >
-                      <Upload className="w-8 h-8 text-white/30 mx-auto mb-3" />
-                      <p className="text-white/60 text-sm font-medium">{doc}</p>
-                      <p className="text-white/30 text-xs mt-1">PDF, JPG, PNG (Max 5MB)</p>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-          )}
-
-          {currentStep === 4 && (
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-2">Application Fee</h2>
-              <p className="text-white/50 mb-8">Pay the application fee to complete your application</p>
-              <div className="text-center py-10">
-                <div className="text-5xl font-bold text-[var(--accent)] mb-2">₦10,000</div>
-                <p className="text-white/50 mb-8">Application Processing Fee</p>
-                <button className="px-8 py-4 rounded-2xl bg-gradient-to-r from-[var(--primary)] to-[var(--blue-2)] text-white font-bold text-lg hover:opacity-90 transition-all">
-                  Pay with Flutterwave
-                </button>
-                <p className="text-white/30 text-sm mt-4">
-                  Secure payment powered by Flutterwave
-                </p>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 5 && (
-            <div className="text-center py-10">
-              <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-10 h-10 text-emerald-400" />
-              </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Application Submitted!</h2>
-              <p className="text-white/50 mb-4 max-w-md mx-auto">
-                Your application has been submitted successfully. You will receive a
-                confirmation email with your application number.
-              </p>
-              <p className="text-[var(--accent)] font-mono text-lg mb-8">
-                Application No: APP/2025/006
-              </p>
-              <Link
-                href="/"
-                className="px-6 py-3 rounded-xl bg-[var(--primary)] text-white font-semibold hover:opacity-90 transition-all inline-block"
-              >
-                Return to Home
-              </Link>
-            </div>
-          )}
-        </motion.div>
-
-        {/* Navigation Buttons */}
-        {currentStep < 5 && (
-          <div className="flex justify-between mt-6">
-            <button
-              onClick={() => setCurrentStep((s) => Math.max(1, s - 1))}
-              disabled={currentStep === 1}
-              className="px-6 py-3 rounded-xl glass border border-white/20 text-white font-medium hover:bg-white/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => {
-                if (currentStep === 4) {
-                  handleSubmit();
-                }
-                setCurrentStep((s) => Math.min(5, s + 1));
-              }}
-              className="px-6 py-3 rounded-xl bg-[var(--primary)] text-white font-semibold hover:opacity-90 transition-all flex items-center gap-2"
-            >
-              {currentStep === 4 ? "Submit Application" : "Continue"}
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+      <footer className="footer" style={{ marginTop: "40px" }}>
+        <div className="footer-bottom">© 2025 FFB Group of Schools. All rights reserved.</div>
+      </footer>
+    </>
   );
 }

@@ -461,11 +461,22 @@ model Applicant {
   status           String   @default("pending")
   submittedAt      DateTime @default(now())
   reviewedAt       DateTime?
+  reviewedBy       String?
   examDate         DateTime?
   interviewDate    DateTime?
   decision         String?
   decisionNote     String?
-  admissionFeePaid Boolean  @default(false)
+  rejectionReason  String?
+  guardianName     String?
+  guardianPhone    String?
+  guardianEmail    String?
+  guardianRelationship String?
+  address          String?
+  nationality      String?
+  stateOfOrigin    String?
+  bloodGroup       String?
+  assignedClassId  String?
+  assignedArm      String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -476,6 +487,7 @@ model Applicant {
 
   @@index([schoolId])
   @@index([status])
+  @@index([applicationNumber])
 }
 
 model ApplicantDocument {

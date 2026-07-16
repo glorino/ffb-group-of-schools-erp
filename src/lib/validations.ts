@@ -54,10 +54,14 @@ export const AdmissionSchema = z.object({
   classAppliedFor: z.string().min(1, "Class is required"),
   previousSchool: z.string().optional(),
   schoolId: z.string().min(1, "School is required"),
-  guardianName: z.string().optional(),
-  guardianPhone: z.string().optional(),
+  guardianName: z.string().min(1, "Guardian name is required"),
+  guardianPhone: z.string().min(1, "Guardian phone is required"),
   guardianEmail: z.string().optional(),
-  guardianRelationship: z.string().optional(),
+  guardianRelationship: z.string().min(1, "Relationship is required"),
+  address: z.string().optional(),
+  nationality: z.string().optional(),
+  stateOfOrigin: z.string().optional(),
+  bloodGroup: z.string().optional(),
 });
 
 export const AttendanceSchema = z.object({

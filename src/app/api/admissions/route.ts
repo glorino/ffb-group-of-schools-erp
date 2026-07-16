@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { AdmissionSchema } from "@/lib/validations";
 
+const DEFAULT_SCHOOL_ID = "school_ffb";
+
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
@@ -82,11 +84,24 @@ export async function POST(request: NextRequest) {
         gender: validated.gender,
         classAppliedFor: validated.classAppliedFor,
         previousSchool: validated.previousSchool,
-        schoolId: validated.schoolId,
+        schoolId: validated.schoolId || DEFAULT_SCHOOL_ID,
+        guardianName: validated.guardianName,
+        guardianPhone: validated.guardianPhone,
+        guardianEmail: validated.guardianEmail,
+        guardianRelationship: validated.guardianRelationship,
+        address: validated.address,
+        nationality: validated.nationality,
+        stateOfOrigin: validated.stateOfOrigin,
+        bloodGroup: validated.bloodGroup,
       },
     });
 
-    return NextResponse.json(applicant, { status: 201 });
+    return NextResponse.json({
+      success: true,
+      applicationNumber,
+      applicant,
+      message: "Application submitted successfully",
+    }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.name === "ZodError") {
       return NextResponse.json({ error: "Validation failed", details: error.message }, { status: 400 });
