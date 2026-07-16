@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -36,6 +36,7 @@ import {
   Target,
   ClipboardList,
   School,
+  Shield,
 } from "lucide-react";
 
 interface NavItem {
@@ -46,13 +47,7 @@ interface NavItem {
   roles?: string[];
 }
 
-interface NavSection {
-  title: string;
-  items: NavItem[];
-  roles?: string[];
-}
-
-const navSections: NavSection[] = [
+const navSections: { title: string; items: NavItem[] }[] = [
   {
     title: "Main",
     items: [
@@ -64,66 +59,52 @@ const navSections: NavSection[] = [
   {
     title: "People",
     items: [
-      { label: "Students", href: "/dashboard/students", icon: Users, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Students", href: "/dashboard/students", icon: Users, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "ACADEMIC_ADMIN", "CLASS_TEACHER"] },
       { label: "Teachers", href: "/dashboard/teachers", icon: School, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
-      { label: "Admissions", href: "/dashboard/admissions", icon: UserPlus, badge: "New", roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Admissions", href: "/dashboard/admissions", icon: UserPlus, badge: "New", roles: ["SUPER_ADMIN", "ADMINISTRATOR", "ADMISSIONS_OFFICER"] },
     ],
-    roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
   },
   {
     title: "Academics",
     items: [
-      { label: "Classes", href: "/dashboard/classes", icon: BookOpen },
-      { label: "Attendance", href: "/dashboard/attendance", icon: ClipboardCheck },
-      { label: "Examinations", href: "/dashboard/exams", icon: ClipboardList },
-      { label: "Results", href: "/dashboard/results", icon: FileText },
-      { label: "Report Cards", href: "/dashboard/report-cards", icon: Trophy },
-      { label: "Timetable", href: "/dashboard/timetable", icon: Calendar },
-      { label: "Lesson Plans", href: "/dashboard/lesson-plans", icon: BookOpen, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "CLASS_TEACHER"] },
+      { label: "Classes", href: "/dashboard/classes", icon: BookOpen, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "ACADEMIC_ADMIN", "CLASS_TEACHER", "TEACHER"] },
+      { label: "Attendance", href: "/dashboard/attendance", icon: ClipboardCheck, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "CLASS_TEACHER", "TEACHER"] },
+      { label: "Examinations", href: "/dashboard/exams", icon: ClipboardList, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "EXAM_OFFICER", "TEACHER"] },
+      { label: "Results", href: "/dashboard/results", icon: FileText, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
+      { label: "Report Cards", href: "/dashboard/report-cards", icon: Trophy, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
+      { label: "Timetable", href: "/dashboard/timetable", icon: Calendar, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT"] },
+      { label: "Lesson Plans", href: "/dashboard/lesson-plans", icon: BookOpen, roles: ["TEACHER", "CLASS_TEACHER"] },
     ],
   },
   {
     title: "Finance",
     items: [
-      { label: "Fees & Invoices", href: "/dashboard/finance", icon: CreditCard },
-      { label: "Payments", href: "/dashboard/payments", icon: CreditCard },
-      { label: "Income", href: "/dashboard/income", icon: BarChart3 },
-      { label: "Expenses", href: "/dashboard/expenses", icon: BarChart3 },
-      { label: "Payroll", href: "/dashboard/payroll", icon: CreditCard },
+      { label: "Fees & Invoices", href: "/dashboard/finance", icon: CreditCard, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "BURSAR", "ACCOUNTANT"] },
+      { label: "Payments", href: "/dashboard/payments", icon: CreditCard, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "BURSAR", "ACCOUNTANT"] },
+      { label: "Income", href: "/dashboard/income", icon: BarChart3, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "BURSAR", "ACCOUNTANT"] },
+      { label: "Expenses", href: "/dashboard/expenses", icon: BarChart3, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "BURSAR", "ACCOUNTANT"] },
+      { label: "Payroll", href: "/dashboard/payroll", icon: CreditCard, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "BURSAR"] },
     ],
-    roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "BURSAR", "ACCOUNTANT"],
   },
   {
     title: "Operations",
     items: [
-      { label: "Hostel", href: "/dashboard/hostel", icon: Building },
-      { label: "Transport", href: "/dashboard/transport", icon: Bus },
-      { label: "Library", href: "/dashboard/library", icon: Library },
-      { label: "Clinic", href: "/dashboard/clinic", icon: Stethoscope },
-      { label: "Inventory", href: "/dashboard/inventory", icon: Package },
+      { label: "Hostel", href: "/dashboard/hostel", icon: Building, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "HOSTEL_MASTER", "HOSTEL_MISTRESS"] },
+      { label: "Transport", href: "/dashboard/transport", icon: Bus, roles: ["SUPER_ADMIN", "ADMINISTRATOR"] },
+      { label: "Library", href: "/dashboard/library", icon: Library, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "LIBRARIAN", "STUDENT", "TEACHER"] },
+      { label: "Clinic", href: "/dashboard/clinic", icon: Stethoscope, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "CLINIC_STAFF"] },
+      { label: "Inventory", href: "/dashboard/inventory", icon: Package, roles: ["SUPER_ADMIN", "ADMINISTRATOR"] },
     ],
-    roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
   },
   {
     title: "Intelligence",
     items: [
-      { label: "AI Insights", href: "/dashboard/ai", icon: Brain },
-      { label: "Analytics", href: "/dashboard/analytics", icon: Target },
-      { label: "Alumni", href: "/dashboard/alumni", icon: Trophy },
+      { label: "AI Insights", href: "/dashboard/ai", icon: Brain, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL"] },
+      { label: "Analytics", href: "/dashboard/analytics", icon: Target, roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Alumni", href: "/dashboard/alumni", icon: Trophy, roles: ["SUPER_ADMIN", "ADMINISTRATOR"] },
     ],
-    roles: ["SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
   },
 ];
-
-const ROLE_HOMES: Record<string, string> = {
-  STUDENT: "/dashboard/results",
-  PARENT: "/dashboard",
-  TEACHER: "/dashboard/classes",
-  CLASS_TEACHER: "/dashboard/classes",
-  BURSAR: "/dashboard/finance",
-  ACCOUNTANT: "/dashboard/finance",
-  LIBRARIAN: "/dashboard/library",
-};
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -132,83 +113,67 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const userRoles = useMemo(() => {
-    const roles = (session?.user as any)?.roles as { name: string; level: number }[] | undefined;
-    if (!roles) return [];
-    return roles.map((r) => r.name);
-  }, [session]);
+  const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+  const isSuperAdmin = userRoles.includes("SUPER_ADMIN") || userRoles.includes("ADMINISTRATOR");
 
-  const highestLevel = useMemo(() => {
-    const roles = (session?.user as any)?.roles as { name: string; level: number }[] | undefined;
-    if (!roles || roles.length === 0) return 0;
-    return Math.max(...roles.map((r) => r.level));
-  }, [session]);
-
-  const hasAccess = (itemRoles?: string[]) => {
-    if (!itemRoles || itemRoles.length === 0) return true;
-    return userRoles.some((r) => itemRoles.includes(r));
-  };
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="p-4 border-b border-white/10">
+      <div className="p-4 border-b border-white/[0.06]">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center flex-shrink-0">
-            <GraduationCap className="w-6 h-6 text-white" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--blue-2)] to-[var(--blue-1)] flex items-center justify-center flex-shrink-0 border border-white/10">
+            <svg viewBox="0 0 64 64" className="w-7 h-7" fill="none">
+              <path d="M32 4 L56 14 L56 32 C56 48 44 58 32 62 C20 58 8 48 8 32 L8 14 Z" fill="#0039a6" stroke="#ffd700" strokeWidth="2"/>
+              <path d="M20 36 L32 42 L44 36 L44 48 L32 54 L20 48 Z" fill="#ffd700" opacity="0.9"/>
+              <path d="M32 12 C34 16 36 18 36 22 C38 18 38 14 36 10 C34 8 32 6 32 6 C32 6 30 8 28 10 C26 14 26 18 28 22 C28 18 30 16 32 12Z" fill="#ffd700"/>
+              <text x="32" y="20" textAnchor="middle" fontFamily="serif" fontWeight="bold" fontSize="10" fill="#ffd700">FFB</text>
+            </svg>
           </div>
           {!collapsed && (
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="overflow-hidden"
-            >
-              <h2 className="text-white font-bold text-lg leading-tight">FFB ERP</h2>
-              <p className="text-white/40 text-xs">School Management</p>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="overflow-hidden">
+              <h2 className="text-white font-bold text-[15px] leading-tight">FFB Group</h2>
+              <p className="text-white/30 text-[10px] tracking-wider uppercase">School Portal</p>
             </motion.div>
           )}
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3">
+      <nav className="flex-1 overflow-y-auto py-3 px-2.5">
         {navSections.map((section, si) => {
-          if (!hasAccess(section.roles)) return null;
-
-          const visibleItems = section.items.filter((item) => hasAccess(item.roles));
+          const visibleItems = section.items.filter(item => {
+            if (isSuperAdmin) return true;
+            if (!item.roles) return true;
+            return item.roles.some(r => userRoles.includes(r));
+          });
           if (visibleItems.length === 0) return null;
-
           return (
-            <div key={si} className="mb-6">
+            <div key={si} className="mb-4">
               {!collapsed && (
-                <h3 className="text-white/30 text-xs font-semibold uppercase tracking-wider px-3 mb-2">
+                <h3 className="text-white/25 text-[10px] font-semibold uppercase tracking-[0.15em] px-3 mb-1.5">
                   {section.title}
                 </h3>
               )}
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {visibleItems.map((item) => {
                   const isActive = pathname === item.href;
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 ${
                         isActive
-                          ? "bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)]/30"
-                          : "text-white/60 hover:text-white hover:bg-white/5"
+                          ? "bg-white/[0.08] text-white shadow-lg shadow-black/20"
+                          : "text-white/45 hover:text-white/80 hover:bg-white/[0.04]"
                       } ${collapsed ? "justify-center" : ""}`}
                       title={collapsed ? item.label : undefined}
                     >
-                      <item.icon className="w-5 h-5 flex-shrink-0" />
-                      {!collapsed && (
-                        <span className="flex-1">{item.label}</span>
-                      )}
+                      <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${isActive ? "text-[var(--accent)]" : ""}`} />
+                      {!collapsed && <span className="flex-1">{item.label}</span>}
                       {!collapsed && item.badge && (
-                        <span className="px-2 py-0.5 rounded-full bg-[var(--accent)] text-[var(--blue-1)] text-xs font-bold">
+                        <span className="px-2 py-0.5 rounded-full bg-[var(--accent)]/15 text-[var(--accent)] text-[10px] font-bold">
                           {item.badge}
                         </span>
                       )}
@@ -221,20 +186,20 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Bottom Actions */}
-      <div className="p-3 border-t border-white/10 space-y-1">
+      {/* Bottom */}
+      <div className="p-2.5 border-t border-white/[0.06] space-y-0.5">
         <button
           onClick={toggleTheme}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 text-sm font-medium transition-all"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/45 hover:text-white/80 hover:bg-white/[0.04] text-[13px] font-medium transition-all"
         >
-          {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          {theme === "dark" ? <Sun className="w-[18px] h-[18px]" /> : <Moon className="w-[18px] h-[18px]" />}
           {!collapsed && <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>}
         </button>
         <button
           onClick={() => signOut({ callbackUrl: "/auth/login" })}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 text-sm font-medium transition-all"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.06] text-[13px] font-medium transition-all"
         >
-          <LogOut className="w-5 h-5" />
+          <LogOut className="w-[18px] h-[18px]" />
           {!collapsed && <span>Sign Out</span>}
         </button>
       </div>
@@ -243,60 +208,37 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile Toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 rounded-xl glass flex items-center justify-center text-white"
+        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 rounded-xl bg-white/[0.08] backdrop-blur-xl flex items-center justify-center text-white border border-white/10"
       >
         <Menu className="w-5 h-5" />
       </button>
 
-      {/* Mobile Overlay */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="lg:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-            onClick={() => setMobileOpen(false)}
-          />
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="lg:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+            <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="lg:hidden fixed left-0 top-0 bottom-0 w-[260px] z-50 bg-[var(--sidebar)]">
+              <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 text-white/40 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+              <SidebarContent />
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
 
-      {/* Mobile Sidebar */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.aside
-            initial={{ x: -280 }}
-            animate={{ x: 0 }}
-            exit={{ x: -280 }}
-            transition={{ type: "spring", damping: 25 }}
-            className="lg:hidden fixed left-0 top-0 bottom-0 w-[280px] z-50 bg-[var(--sidebar)]"
-          >
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="absolute top-4 right-4 text-white/60 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <SidebarContent />
-          </motion.aside>
-        )}
-      </AnimatePresence>
-
-      {/* Desktop Sidebar */}
-      <aside
-        className={`hidden lg:block fixed left-0 top-0 bottom-0 z-40 bg-[var(--sidebar)] transition-all duration-300 ${
-          collapsed ? "w-[72px]" : "w-[260px]"
-        }`}
-      >
+      <aside className={`hidden lg:block fixed left-0 top-0 bottom-0 z-40 bg-[var(--sidebar)] transition-all duration-300 ${
+        collapsed ? "w-[68px]" : "w-[250px]"
+      }`}>
         <SidebarContent />
-
-        {/* Collapse Toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-[var(--primary)] flex items-center justify-center text-white shadow-lg"
+          className="absolute -right-3 top-[72px] w-6 h-6 rounded-full bg-[var(--primary)] flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform"
         >
           {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
         </button>

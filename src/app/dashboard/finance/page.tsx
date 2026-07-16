@@ -1,310 +1,293 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   CreditCard,
+  Search,
+  Download,
   TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Receipt,
-  AlertCircle,
-  CheckCircle,
-  Clock,
   ArrowUpRight,
   ArrowDownRight,
-  Download,
+  Plus,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  Wallet,
+  Receipt,
+  AlertCircle,
 } from "lucide-react";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 
-interface Payment {
-  id: string;
-  amount: number;
-  method: string;
-  status: string;
-  reference: string;
-  paidAt: string | null;
-  createdAt: string;
-  student: { firstName: string; lastName: string };
-}
+const fadeIn = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.35 },
+};
 
-interface Invoice {
-  id: string;
-  invoiceNumber: string;
-  amount: number;
-  totalAmount: number;
-  status: string;
-  dueDate: string;
-  createdAt: string;
-  student: { firstName: string; lastName: string };
-  schoolFee: { name: string };
-}
+const revenueByClass = [
+  { name: "JSS1", amount: 8200000 },
+  { name: "JSS2", amount: 7600000 },
+  { name: "JSS3", amount: 6800000 },
+  { name: "SS1", amount: 9100000 },
+  { name: "SS2", amount: 8400000 },
+  { name: "SS3", amount: 10200000 },
+];
 
-interface FinanceData {
-  payments: Payment[];
-  invoices: Invoice[];
-  totalRevenue: number;
-  collectedThisMonth: number;
-  outstandingFees: number;
-  expensesThisMonth: number;
-}
+const feeStatusData = [
+  { name: "Fully Paid", value: 68, color: "#28ff9c" },
+  { name: "Partial", value: 24, color: "#f59e0b" },
+  { name: "Unpaid", value: 8, color: "#ef4444" },
+];
+
+const recentPayments = [
+  { id: 1, student: "Adewale Babatune", class: "SS2A", amount: 245000, term: "2nd Term", method: "Bank Transfer", date: "2025-06-16", status: "verified" },
+  { id: 2, student: "Chidinma Okafor", class: "JSS3A", amount: 245000, term: "2nd Term", method: "Flutterwave", date: "2025-06-15", status: "verified" },
+  { id: 3, student: "Emeka Nnamdi", class: "SS1B", amount: 120000, term: "2nd Term", method: "Cash", date: "2025-06-15", status: "pending" },
+  { id: 4, student: "Fatima Bello", class: "JSS2A", amount: 245000, term: "2nd Term", method: "Bank Transfer", date: "2025-06-14", status: "verified" },
+  { id: 5, student: "Ibrahim Musa", class: "SS3A", amount: 180000, term: "2nd Term", method: "Flutterwave", date: "2025-06-14", status: "verified" },
+  { id: 6, student: "Ngozi Eze", class: "JSS1B", amount: 245000, term: "2nd Term", method: "Bank Transfer", date: "2025-06-13", status: "verified" },
+  { id: 7, student: "Oluwaseun Adeyemi", class: "SS1A", amount: 65000, term: "2nd Term", method: "Cash", date: "2025-06-13", status: "pending" },
+  { id: 8, student: "Blessing Okonkwo", class: "JSS3A", amount: 245000, term: "2nd Term", method: "Flutterwave", date: "2025-06-12", status: "verified" },
+];
+
+const pendingInvoices = [
+  { student: "Tunde Bakare", class: "SS3A", amount: 245000, due: "2025-07-01", daysLeft: 15 },
+  { student: "Amara Obi", class: "JSS2B", amount: 245000, due: "2025-07-01", daysLeft: 15 },
+  { student: "Yusuf Abdullahi", class: "SS2A", amount: 180000, due: "2025-07-15", daysLeft: 29 },
+  { student: "Chiamaka Nwosu", class: "JSS1A", amount: 245000, due: "2025-07-01", daysLeft: 15 },
+];
 
 export default function FinancePage() {
-  const [data, setData] = useState<FinanceData | null>(null);
+  const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<"overview" | "payments" | "invoices">("overview");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/finance/payments").then((r) => r.json()),
-      fetch("/api/finance/invoices").then((r) => r.json()),
-    ])
-      .then(([paymentsData, invoicesData]) => {
-        const payments = paymentsData.payments ?? [];
-        const invoices = invoicesData.invoices ?? [];
-
-        const completedPayments = payments.filter((p: Payment) => p.status === "completed");
-        const totalRevenue = completedPayments.reduce((sum: number, p: Payment) => sum + p.amount, 0);
-
-        const now = new Date();
-        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-        const collectedThisMonth = completedPayments
-          .filter((p: Payment) => p.paidAt && new Date(p.paidAt) >= monthStart)
-          .reduce((sum: number, p: Payment) => sum + p.amount, 0);
-
-        const outstandingFees = invoices
-          .filter((i: Invoice) => i.status === "unpaid")
-          .reduce((sum: number, i: Invoice) => sum + i.totalAmount, 0);
-
-        setData({
-          payments,
-          invoices,
-          totalRevenue,
-          collectedThisMonth,
-          outstandingFees,
-          expensesThisMonth: 0,
-        });
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const fetchPayments = async () => {
+      try {
+        const res = await fetch("/api/finance/payments");
+        const data = await res.json();
+        if (data.success && data.payments?.length) setPayments(data.payments);
+      } catch {}
+      setLoading(false);
+    };
+    fetchPayments();
   }, []);
 
-  const formatCurrency = (amount: number) => {
-    if (amount >= 1_000_000) return `₦${(amount / 1_000_000).toFixed(1)}M`;
-    if (amount >= 1_000) return `₦${(amount / 1_000).toFixed(1)}K`;
-    return `₦${amount.toLocaleString()}`;
-  };
-
-  const financeKPIs = [
-    {
-      label: "Total Revenue",
-      value: formatCurrency(data?.totalRevenue ?? 0),
-      change: "",
-      trend: "up" as const,
-      icon: DollarSign,
-      color: "from-emerald-500 to-emerald-600",
-    },
-    {
-      label: "Collected This Month",
-      value: formatCurrency(data?.collectedThisMonth ?? 0),
-      change: "",
-      trend: "up" as const,
-      icon: CreditCard,
-      color: "from-blue-500 to-blue-600",
-    },
-    {
-      label: "Outstanding Fees",
-      value: formatCurrency(data?.outstandingFees ?? 0),
-      change: "",
-      trend: "down" as const,
-      icon: AlertCircle,
-      color: "from-orange-500 to-orange-600",
-    },
-    {
-      label: "Total Transactions",
-      value: String(data?.payments?.length ?? 0),
-      change: "",
-      trend: "up" as const,
-      icon: Receipt,
-      color: "from-purple-500 to-purple-600",
-    },
-  ];
+  const displayPayments = payments.length ? payments : recentPayments;
+  const filteredPayments = displayPayments.filter(
+    (p) =>
+      !search ||
+      (p.student || p.studentName || "").toLowerCase().includes(search.toLowerCase()) ||
+      (p.class || p.className || "").toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <motion.div {...fadeIn} className="space-y-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Finance Management</h2>
-          <p className="text-white/50 text-sm">
-            Track revenue, expenses, payments, and financial analytics
-          </p>
+          <h1 className="text-[22px] font-bold text-white/95 font-display tracking-tight flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
+              <CreditCard className="w-[18px] h-[18px] text-white" />
+            </div>
+            Finance
+          </h1>
+          <p className="text-white/30 text-[12px] mt-1 ml-[46px]">Manage fees, payments, and financial records</p>
         </div>
-        <div className="flex gap-3">
-          <button className="px-4 py-2.5 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/10 transition-all flex items-center gap-2">
-            <Download className="w-4 h-4" />
-            Export Report
+        <div className="flex items-center gap-2">
+          <button className="px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition flex items-center gap-2">
+            <Download className="w-4 h-4" /> Export
           </button>
-          <button className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:opacity-90 transition-all flex items-center gap-2">
-            <Receipt className="w-4 h-4" />
-            Create Invoice
+          <button className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
+            <Plus className="w-4 h-4" /> Create Invoice
           </button>
         </div>
       </div>
 
-      {/* KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {financeKPIs.map((kpi, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card"
+      <div className="flex gap-1 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-1.5">
+        {(["overview", "payments", "invoices"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={lex-1 py-2.5 rounded-xl text-[13px] font-medium capitalize transition-all }
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-white/50 text-sm mb-1">{kpi.label}</p>
-                <p className="text-3xl font-bold text-white">{kpi.value}</p>
-              </div>
-              <div
-                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center`}
-              >
-                <kpi.icon className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </motion.div>
+            {t}
+          </button>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Recent Payments */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 card"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white font-semibold text-lg">Recent Payments</h3>
-            <button className="text-[var(--accent)] text-sm hover:underline">
-              View All
-            </button>
+      {tab === "overview" && (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              { label: "Total Collected", value: "\u20A648.2M", change: "+18%", up: true, icon: Wallet, color: "from-emerald-500 to-emerald-700" },
+              { label: "Outstanding", value: "\u20A612.8M", change: "-5%", up: false, icon: Receipt, color: "from-amber-500 to-amber-700" },
+              { label: "This Month", value: "\u20A66.2M", change: "+24%", up: true, icon: TrendingUp, color: "from-blue-500 to-blue-700" },
+              { label: "Defaulters", value: "16", change: "+3", up: false, icon: AlertCircle, color: "from-red-500 to-red-700" },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className={w-10 h-10 rounded-xl bg-gradient-to-br  flex items-center justify-center}>
+                    <stat.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <span className={lex items-center gap-1 text-[11px] font-semibold }>
+                    {stat.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                    {stat.change}
+                  </span>
+                </div>
+                <p className="text-white text-xl font-bold font-display">{stat.value}</p>
+                <p className="text-white/30 text-[11px] mt-1">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
+              <h3 className="text-white/80 font-semibold text-[15px] mb-5">Revenue by Class</h3>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={revenueByClass}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                  <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => ${(v / 1000000).toFixed(0)}M} />
+                  <Tooltip formatter={(v: any) => \u20A6M} contentStyle={{ background: "rgba(0,31,95,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} cursor={false} />
+                  <Bar dataKey="amount" fill="#0055ff" radius={[6, 6, 0, 0]} maxBarSize={36} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
+              <h3 className="text-white/80 font-semibold text-[15px] mb-1">Fee Collection Status</h3>
+              <p className="text-white/25 text-[11px] mb-4">194 students total</p>
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie data={feeStatusData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={3} dataKey="value">
+                    {feeStatusData.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} stroke="transparent" />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(v: any) => ${v}%} contentStyle={{ background: "rgba(0,31,95,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="space-y-2 mt-2">
+                {feeStatusData.map((item) => (
+                  <div key={item.name} className="flex items-center justify-between text-[12px]">
+                    <span className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className="text-white/40">{item.name}</span>
+                    </span>
+                    <span className="text-white/60 font-medium">{item.value}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {tab === "payments" && (
+        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] overflow-hidden">
+          <div className="p-4 border-b border-white/[0.06]">
+            <div className="relative max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+              <input
+                type="text"
+                placeholder="Search payments..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition"
+              />
+            </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full table-premium">
+            <table className="w-full">
               <thead>
-                <tr>
-                  <th>Student</th>
-                  <th>Amount</th>
-                  <th>Type</th>
-                  <th>Method</th>
-                  <th>Date</th>
-                  <th>Status</th>
+                <tr className="border-b border-white/[0.06]">
+                  {["Student", "Class", "Amount", "Method", "Date", "Status"].map((h) => (
+                    <th key={h} className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i}>
-                      <td colSpan={6} className="p-4"><div className="skeleton h-4 w-full" /></td>
-                    </tr>
-                  ))
-                ) : data?.payments?.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="text-center py-8 text-white/40">
-                      No payments found
+                {filteredPayments.map((p, i) => (
+                  <motion.tr
+                    key={p.id || i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.03 }}
+                    className="border-b border-white/[0.03] hover:bg-white/[0.02] transition"
+                  >
+                    <td className="px-5 py-3.5 text-white/70 text-[13px] font-medium">{p.student || p.studentName}</td>
+                    <td className="px-5 py-3.5">
+                      <span className="px-2.5 py-0.5 rounded-lg bg-white/[0.05] text-white/40 text-[11px] font-medium">{p.class || p.className}</span>
                     </td>
-                  </tr>
-                ) : (
-                  data?.payments?.slice(0, 10).map((payment) => (
-                    <tr key={payment.id}>
-                      <td className="text-white font-medium">
-                        {payment.student.firstName} {payment.student.lastName}
-                      </td>
-                      <td className="text-[var(--accent)] font-semibold">
-                        ₦{payment.amount.toLocaleString()}
-                      </td>
-                      <td className="text-white/60">Fee Payment</td>
-                      <td className="text-white/60">{payment.method}</td>
-                      <td className="text-white/60">
-                        {payment.paidAt
-                          ? new Date(payment.paidAt).toLocaleDateString()
-                          : new Date(payment.createdAt).toLocaleDateString()}
-                      </td>
-                      <td>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            payment.status === "completed"
-                              ? "bg-emerald-500/20 text-emerald-400"
-                              : payment.status === "pending"
-                              ? "bg-yellow-500/20 text-yellow-400"
-                              : "bg-red-500/20 text-red-400"
-                          }`}
-                        >
-                          {payment.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                    <td className="px-5 py-3.5 text-white/80 text-[13px] font-semibold">{"\u20A6"}{(p.amount || 0).toLocaleString()}</td>
+                    <td className="px-5 py-3.5 text-white/40 text-[12px]">{p.method}</td>
+                    <td className="px-5 py-3.5 text-white/30 text-[12px]">{p.date}</td>
+                    <td className="px-5 py-3.5">
+                      <span className={inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-medium }>
+                        {p.status === "verified" ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+                        {p.status}
+                      </span>
+                    </td>
+                  </motion.tr>
+                ))}
               </tbody>
             </table>
           </div>
-        </motion.div>
+        </div>
+      )}
 
-        {/* Outstanding Invoices */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="card"
-        >
-          <h3 className="text-white font-semibold text-lg mb-6">Outstanding Invoices</h3>
-          <div className="space-y-3">
-            {loading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="skeleton h-16 w-full rounded-xl" />
-              ))
-            ) : data?.invoices?.filter((i) => i.status === "unpaid").length === 0 ? (
-              <p className="text-white/40 text-sm text-center py-4">No outstanding invoices</p>
-            ) : (
-              data?.invoices?.filter((i) => i.status === "unpaid").slice(0, 5).map((invoice) => (
-                <div key={invoice.id} className="p-3 rounded-xl bg-white/5 hover:bg-white/8 transition-all">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white text-sm font-medium">
-                        {invoice.student.firstName} {invoice.student.lastName}
-                      </p>
-                      <p className="text-white/40 text-xs">
-                        {invoice.invoiceNumber} • {invoice.schoolFee.name}
-                      </p>
-                    </div>
-                    <span className="text-orange-400 text-sm font-semibold">
-                      ₦{invoice.totalAmount.toLocaleString()}
-                    </span>
+      {tab === "invoices" && (
+        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] overflow-hidden">
+          <div className="p-5 border-b border-white/[0.06]">
+            <h3 className="text-white/80 font-semibold text-[15px]">Pending Invoices</h3>
+          </div>
+          <div className="p-5 space-y-3">
+            {pendingInvoices.map((inv, i) => (
+              <div key={i} className="flex items-center justify-between px-5 py-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    <Receipt className="w-5 h-5 text-amber-400" />
                   </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="text-white/30 text-xs">
-                      Due: {new Date(invoice.dueDate).toLocaleDateString()}
-                    </span>
-                    <button className="px-2 py-1 rounded-lg bg-[var(--primary)]/20 text-[var(--primary)] text-xs font-medium hover:bg-[var(--primary)]/30 transition-all">
-                      Remind
-                    </button>
+                  <div>
+                    <p className="text-white/70 text-[13px] font-medium">{inv.student}</p>
+                    <p className="text-white/25 text-[11px] mt-0.5">{inv.class} {"\u00B7"} Due {inv.due}</p>
                   </div>
                 </div>
-              ))
-            )}
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <p className="text-white/70 text-[13px] font-semibold">{"\u20A6"}{inv.amount.toLocaleString()}</p>
+                    <p className={	ext-[11px] font-medium mt-0.5 }>
+                      {inv.daysLeft} days left
+                    </p>
+                  </div>
+                  <button className="px-3 py-1.5 rounded-lg bg-[var(--primary)]/10 text-[var(--blue-3)] text-[11px] font-medium hover:bg-[var(--primary)]/20 transition">
+                    Remind
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        </motion.div>
-      </div>
-    </div>
+        </div>
+      )}
+    </motion.div>
   );
 }

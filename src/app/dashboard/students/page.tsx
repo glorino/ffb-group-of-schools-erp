@@ -1,280 +1,440 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
+  Users,
   Search,
   Filter,
-  Plus,
   Download,
-  Users,
+  UserPlus,
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+  Eye,
+  Edit3,
+  Trash2,
   GraduationCap,
-  UserCheck,
-  UserX,
+  Phone,
+  Mail,
+  X,
+  SortAsc,
+  SortDesc,
+  Grid3X3,
+  List,
 } from "lucide-react";
-import Link from "next/link";
-import { DataTable } from "@/components/ui/data-table";
+
+const fadeIn = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.35 },
+};
 
 interface Student {
   id: string;
-  admissionNumber: string;
   firstName: string;
   lastName: string;
-  gender: string;
+  email: string;
+  admissionNumber: string;
+  class?: { name: string };
+  guardianName?: string;
+  guardianPhone?: string;
   status: string;
-  class: { displayName: string } | null;
-  guardians: { firstName: string; lastName: string }[];
-}
-
-interface StudentsResponse {
-  students: Student[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
+  createdAt: string;
 }
 
 export default function StudentsPage() {
-  const [data, setData] = useState<StudentsResponse | null>(null);
+  const router = useRouter();
+  const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedClass, setSelectedClass] = useState("all");
+  const [classFilter, setClassFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
+  const [sortField, setSortField] = useState<"name" | "class" | "date">("name");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    const params = new URLSearchParams({
-      page: String(page),
-      limit: "10",
+    const fetchStudents = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({ page: String(page), limit: "10" });
+        if (search) params.set("search", search);
+        if (classFilter) params.set("classId", classFilter);
+        const res = await fetch(`/api/students?${params}`);
+        const data = await res.json();
+        if (data.success) {
+          setStudents(data.students || []);
+          setTotalPages(data.pagination?.totalPages || 1);
+        }
+      } catch {
+        setStudents([]);
+      }
+      setLoading(false);
+    };
+    fetchStudents();
+  }, [page, search, classFilter]);
+
+  const classes = [
+    { id: "cl_jss1a", name: "JSS1A" }, { id: "cl_jss1b", name: "JSS1B" },
+    { id: "cl_jss2a", name: "JSS2A" }, { id: "cl_jss2b", name: "JSS2B" },
+    { id: "cl_jss3a", name: "JSS3A" }, { id: "cl_ss1a", name: "SS1A" },
+    { id: "cl_ss1b", name: "SS1B" }, { id: "cl_ss2a", name: "SS2A" },
+    { id: "cl_ss3a", name: "SS3A" },
+  ];
+
+  const sortedStudents = useMemo(() => {
+    const sorted = [...students].sort((a, b) => {
+      if (sortField === "name") return sortDir === "asc"
+        ? `${a.lastName} ${a.firstName}`.localeCompare(`${b.lastName} ${b.firstName}`)
+        : `${b.lastName} ${b.firstName}`.localeCompare(`${a.lastName} ${a.firstName}`);
+      if (sortField === "class") return sortDir === "asc"
+        ? (a.class?.name || "").localeCompare(b.class?.name || "")
+        : (b.class?.name || "").localeCompare(a.class?.name || "");
+      return sortDir === "asc"
+        ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-    if (search) params.set("search", search);
-    if (selectedClass !== "all") params.set("classId", selectedClass);
+    return sorted;
+  }, [students, sortField, sortDir]);
 
-    fetch(`/api/students?${params}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setData({
-          students: data.students ?? [],
-          total: data.pagination?.total ?? 0,
-          page: data.pagination?.page ?? 1,
-          pageSize: data.pagination?.limit ?? 10,
-          totalPages: data.pagination?.pages ?? 1,
-        });
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [page, search, selectedClass]);
-
-  const stats = [
-    { label: "Total Students", value: data?.total ?? 0, icon: Users, color: "from-blue-500 to-blue-600" },
-    { label: "Active Students", value: data?.students?.filter((s) => s.status === "active").length ?? 0, icon: UserCheck, color: "from-emerald-500 to-emerald-600" },
-    { label: "Male Students", value: data?.students?.filter((s) => s.gender === "Male").length ?? 0, icon: GraduationCap, color: "from-purple-500 to-purple-600" },
-    { label: "Female Students", value: data?.students?.filter((s) => s.gender === "Female").length ?? 0, icon: GraduationCap, color: "from-pink-500 to-pink-600" },
-  ];
-
-  const columns = [
-    {
-      key: "name",
-      label: "Student",
-      render: (row: Student) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-xs font-bold">
-            {row.firstName[0]}{row.lastName[0]}
-          </div>
-          <span className="text-white font-medium">{row.firstName} {row.lastName}</span>
-        </div>
-      ),
-    },
-    { key: "admissionNumber", label: "Admission No." },
-    {
-      key: "class",
-      label: "Class",
-      render: (row: Student) => row.class?.displayName ?? "Unassigned",
-    },
-    { key: "gender", label: "Gender" },
-    {
-      key: "guardian",
-      label: "Guardian",
-      render: (row: Student) =>
-        row.guardians?.[0] ? `${row.guardians[0].firstName} ${row.guardians[0].lastName}` : "—",
-    },
-    {
-      key: "status",
-      label: "Status",
-      render: (row: Student) => (
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-            row.status === "active"
-              ? "bg-emerald-500/20 text-emerald-400"
-              : "bg-red-500/20 text-red-400"
-          }`}
-        >
-          {row.status}
-        </span>
-      ),
-    },
-    {
-      key: "actions",
-      label: "Actions",
-      className: "text-right",
-      render: (row: Student) => (
-        <div className="flex items-center justify-end gap-2">
-          <Link
-            href={`/dashboard/students/${row.id}`}
-            className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-all"
-          >
-            View
-          </Link>
-        </div>
-      ),
-    },
-  ];
+  const toggleSort = (field: typeof sortField) => {
+    if (sortField === field) setSortDir(sortDir === "asc" ? "desc" : "asc");
+    else { setSortField(field); setSortDir("asc"); }
+  };
 
   return (
-    <div className="space-y-6">
+    <motion.div {...fadeIn} className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Student Management</h2>
-          <p className="text-white/50 text-sm">
-            Manage all student records, profiles, and academic information
-          </p>
+          <h1 className="text-[22px] font-bold text-white/95 font-display tracking-tight flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+              <Users className="w-[18px] h-[18px] text-white" />
+            </div>
+            Students
+          </h1>
+          <p className="text-white/30 text-[12px] mt-1 ml-[46px]">Manage student records and profiles</p>
         </div>
-        <div className="flex gap-3">
-          <button className="px-4 py-2.5 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/10 transition-all flex items-center gap-2">
+        <div className="flex items-center gap-2">
+          <button className="px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition flex items-center gap-2">
             <Download className="w-4 h-4" />
             Export
           </button>
-          <Link
-            href="/dashboard/students/new"
-            className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:opacity-90 transition-all flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
+          <button className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
+            <UserPlus className="w-4 h-4" />
             Add Student
-          </Link>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card"
-          >
-            <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{Number(stat.value).toLocaleString()}</p>
-                <p className="text-white/40 text-xs">{stat.label}</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="card"
-      >
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
-            <input
-              type="text"
-              placeholder="Search by name, admission number..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-            />
-          </div>
-          <select
-            value={selectedClass}
-            onChange={(e) => {
-              setSelectedClass(e.target.value);
-              setPage(1);
-            }}
-            className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-          >
-            <option value="all">All Classes</option>
-          </select>
-          <button className="px-4 py-3 rounded-xl glass border border-white/20 text-white/60 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
-            <Filter className="w-4 h-4" />
-            More Filters
           </button>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Students Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="card overflow-hidden"
-      >
-        <div className="p-4">
-          <DataTable
-            columns={columns}
-            data={data?.students ?? []}
-            loading={loading}
-            searchable={false}
-            pagination={false}
-            emptyMessage="No students found"
+      {/* Filters Bar */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+          <input
+            type="text"
+            placeholder="Search by name, admission number, or email..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 focus:bg-white/[0.06] transition-all"
           />
         </div>
-        {/* Manual pagination synced to API */}
-        {data && data.totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-white/10">
-            <p className="text-white/40 text-sm">
-              Showing {(data.page - 1) * data.pageSize + 1}–
-              {Math.min(data.page * data.pageSize, data.total)} of {data.total}
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg bg-white/5 text-white/60 text-sm hover:bg-white/10 transition-all disabled:opacity-30"
-              >
-                Previous
-              </button>
-              {Array.from({ length: Math.min(data.totalPages, 5) }, (_, i) => {
-                const pageNum = i + 1;
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => setPage(pageNum)}
-                    className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
-                      page === pageNum
-                        ? "bg-[var(--primary)] text-white"
-                        : "bg-white/5 text-white/60 hover:bg-white/10"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-              <button
-                onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
-                disabled={page === data.totalPages}
-                className="px-3 py-1.5 rounded-lg bg-white/5 text-white/60 text-sm hover:bg-white/10 transition-all disabled:opacity-30"
-              >
-                Next
-              </button>
-            </div>
+        <select
+          value={classFilter}
+          onChange={(e) => { setClassFilter(e.target.value); setPage(1); }}
+          className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
+        >
+          <option value="">All Classes</option>
+          {classes.map((c) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
+        >
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="graduated">Graduated</option>
+        </select>
+        <div className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.08] rounded-xl p-1">
+          <button
+            onClick={() => setViewMode("table")}
+            className={`p-2 rounded-lg transition ${viewMode === "table" ? "bg-white/[0.08] text-white/80" : "text-white/30 hover:text-white/50"}`}
+          >
+            <List className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setViewMode("grid")}
+            className={`p-2 rounded-lg transition ${viewMode === "grid" ? "bg-white/[0.08] text-white/80" : "text-white/30 hover:text-white/50"}`}
+          >
+            <Grid3X3 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Table View */}
+      {viewMode === "table" && (
+        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-white/[0.06]">
+                  {[
+                    { key: "name" as const, label: "Student" },
+                    { key: "class" as const, label: "Class" },
+                    { key: "date" as const, label: "Admitted" },
+                  ].map((col) => (
+                    <th
+                      key={col.key}
+                      onClick={() => toggleSort(col.key)}
+                      className="px-5 py-3.5 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider cursor-pointer hover:text-white/50 transition select-none"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        {col.label}
+                        {sortField === col.key && (
+                          sortDir === "asc" ? <SortAsc className="w-3 h-3 text-[var(--accent)]" /> : <SortDesc className="w-3 h-3 text-[var(--accent)]" />
+                        )}
+                      </span>
+                    </th>
+                  ))}
+                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Guardian</th>
+                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-white/30 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="border-b border-white/[0.03]">
+                      <td colSpan={6} className="px-5 py-4">
+                        <div className="h-4 rounded-lg bg-white/[0.04] animate-pulse" />
+                      </td>
+                    </tr>
+                  ))
+                ) : sortedStudents.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-16 text-center">
+                      <Users className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                      <p className="text-white/30 text-sm">No students found</p>
+                      <p className="text-white/15 text-[11px] mt-1">Try adjusting your filters</p>
+                    </td>
+                  </tr>
+                ) : (
+                  sortedStudents.map((student, i) => {
+                    const initials = `${student.firstName?.[0] || ""}${student.lastName?.[0] || ""}`.toUpperCase();
+                    return (
+                      <motion.tr
+                        key={student.id}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.03 }}
+                        className="border-b border-white/[0.03] hover:bg-white/[0.03] transition cursor-pointer group"
+                        onClick={() => router.push(`/dashboard/students/${student.id}`)}
+                      >
+                        <td className="px-5 py-3.5">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-[11px] font-bold border border-white/10 flex-shrink-0">
+                              {initials}
+                            </div>
+                            <div>
+                              <p className="text-white/85 text-[13px] font-medium">{student.lastName} {student.firstName}</p>
+                              <p className="text-white/25 text-[11px]">{student.admissionNumber}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3.5">
+                          <span className="px-2.5 py-1 rounded-lg bg-white/[0.05] text-white/50 text-[12px] font-medium border border-white/[0.06]">
+                            {student.class?.name || "—"}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3.5 text-white/35 text-[12px]">
+                          {new Date(student.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                        </td>
+                        <td className="px-5 py-3.5">
+                          <div>
+                            <p className="text-white/50 text-[12px]">{student.guardianName || "—"}</p>
+                            <p className="text-white/25 text-[10px]">{student.guardianPhone || ""}</p>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3.5">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium ${
+                            student.status === "active"
+                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                              : student.status === "graduated"
+                              ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                              : "bg-white/[0.05] text-white/30 border border-white/[0.06]"
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              student.status === "active" ? "bg-emerald-400" :
+                              student.status === "graduated" ? "bg-blue-400" : "bg-white/30"
+                            }`} />
+                            {student.status}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3.5 text-right">
+                          <div className="relative">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === student.id ? null : student.id); }}
+                              className="p-1.5 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition opacity-0 group-hover:opacity-100"
+                            >
+                              <MoreHorizontal className="w-4 h-4" />
+                            </button>
+                            {openMenu === student.id && (
+                              <div className="absolute right-0 top-8 w-36 rounded-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl border border-white/[0.1] shadow-2xl z-10 overflow-hidden">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/students/${student.id}`); setOpenMenu(null); }}
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-white/50 hover:text-white/80 hover:bg-white/[0.06] text-[12px]"
+                                >
+                                  <Eye className="w-3.5 h-3.5" /> View Profile
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setOpenMenu(null); }}
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-white/50 hover:text-white/80 hover:bg-white/[0.06] text-[12px]"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" /> Edit
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setOpenMenu(null); }}
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.06] text-[12px]"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" /> Remove
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </motion.tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
-      </motion.div>
-    </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="px-5 py-3.5 border-t border-white/[0.05] flex items-center justify-between">
+              <p className="text-white/25 text-[11px]">Page {page} of {totalPages}</p>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setPage(Math.max(1, page - 1))}
+                  disabled={page === 1}
+                  className="p-1.5 rounded-lg bg-white/[0.04] text-white/30 hover:text-white/60 hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setPage(pageNum)}
+                      className={`w-8 h-8 rounded-lg text-[12px] font-medium transition ${
+                        page === pageNum
+                          ? "bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)]/20"
+                          : "bg-white/[0.04] text-white/30 hover:text-white/60 hover:bg-white/[0.08]"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() => setPage(Math.min(totalPages, page + 1))}
+                  disabled={page === totalPages}
+                  className="p-1.5 rounded-lg bg-white/[0.04] text-white/30 hover:text-white/60 hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Grid View */}
+      {viewMode === "grid" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {loading ? (
+            Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5 animate-pulse">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-white/[0.06]" />
+                  <div className="space-y-1.5 flex-1">
+                    <div className="h-3.5 rounded bg-white/[0.06] w-2/3" />
+                    <div className="h-2.5 rounded bg-white/[0.04] w-1/2" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="h-2.5 rounded bg-white/[0.04]" />
+                  <div className="h-2.5 rounded bg-white/[0.04] w-3/4" />
+                </div>
+              </div>
+            ))
+          ) : sortedStudents.map((student, i) => {
+            const initials = `${student.firstName?.[0] || ""}${student.lastName?.[0] || ""}`.toUpperCase();
+            return (
+              <motion.div
+                key={student.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.03 }}
+                onClick={() => router.push(`/dashboard/students/${student.id}`)}
+                className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5 hover:border-white/[0.12] hover:bg-white/[0.05] transition-all cursor-pointer group"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-[13px] font-bold border border-white/10">
+                    {initials}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-white/85 text-[14px] font-medium truncate">{student.lastName} {student.firstName}</p>
+                    <p className="text-white/25 text-[11px]">{student.admissionNumber}</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-[12px]">
+                    <GraduationCap className="w-3.5 h-3.5 text-white/25" />
+                    <span className="text-white/40">{student.class?.name || "Unassigned"}</span>
+                  </div>
+                  {student.guardianName && (
+                    <div className="flex items-center gap-2 text-[12px]">
+                      <Phone className="w-3.5 h-3.5 text-white/25" />
+                      <span className="text-white/40 truncate">{student.guardianName}</span>
+                    </div>
+                  )}
+                  {student.email && (
+                    <div className="flex items-center gap-2 text-[12px]">
+                      <Mail className="w-3.5 h-3.5 text-white/25" />
+                      <span className="text-white/40 truncate">{student.email}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="mt-4 pt-3 border-t border-white/[0.05] flex items-center justify-between">
+                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-medium ${
+                    student.status === "active"
+                      ? "bg-emerald-500/10 text-emerald-400"
+                      : "bg-white/[0.05] text-white/30"
+                  }`}>
+                    <span className={`w-1 h-1 rounded-full ${student.status === "active" ? "bg-emerald-400" : "bg-white/30"}`} />
+                    {student.status}
+                  </span>
+                  <span className="text-white/20 text-[10px]">
+                    {new Date(student.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}
+                  </span>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+    </motion.div>
   );
 }
