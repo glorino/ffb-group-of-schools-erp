@@ -12,7 +12,6 @@ import {
   Plus,
   CheckCircle2,
   Clock,
-  XCircle,
   Wallet,
   Receipt,
   AlertCircle,
@@ -95,6 +94,8 @@ export default function FinancePage() {
       (p.class || p.className || "").toLowerCase().includes(search.toLowerCase())
   );
 
+  const tabs = ["overview", "payments", "invoices"] as const;
+
   return (
     <motion.div {...fadeIn} className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -118,11 +119,11 @@ export default function FinancePage() {
       </div>
 
       <div className="flex gap-1 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-1.5">
-        {(["overview", "payments", "invoices"] as const).map((t) => (
+        {tabs.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={lex-1 py-2.5 rounded-xl text-[13px] font-medium capitalize transition-all }
+            className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium capitalize transition-all ${tab === t ? "bg-white/[0.08] text-white shadow-lg shadow-black/10" : "text-white/30 hover:text-white/60 hover:bg-white/[0.04]"}`}
           >
             {t}
           </button>
@@ -146,10 +147,10 @@ export default function FinancePage() {
                 className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <div className={w-10 h-10 rounded-xl bg-gradient-to-br  flex items-center justify-center}>
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
                     <stat.icon className="w-5 h-5 text-white" />
                   </div>
-                  <span className={lex items-center gap-1 text-[11px] font-semibold }>
+                  <span className={`flex items-center gap-1 text-[11px] font-semibold ${stat.up ? "text-emerald-400" : "text-red-400"}`}>
                     {stat.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                     {stat.change}
                   </span>
@@ -167,8 +168,8 @@ export default function FinancePage() {
                 <BarChart data={revenueByClass}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                   <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => ${(v / 1000000).toFixed(0)}M} />
-                  <Tooltip formatter={(v: any) => \u20A6M} contentStyle={{ background: "rgba(0,31,95,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} cursor={false} />
+                  <YAxis tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} />
+                  <Tooltip formatter={(v: any) => `\u20A6${(v / 1000000).toFixed(1)}M`} contentStyle={{ background: "rgba(0,31,95,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} cursor={false} />
                   <Bar dataKey="amount" fill="#0055ff" radius={[6, 6, 0, 0]} maxBarSize={36} />
                 </BarChart>
               </ResponsiveContainer>
@@ -183,7 +184,7 @@ export default function FinancePage() {
                       <Cell key={i} fill={entry.color} stroke="transparent" />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(v: any) => ${v}%} contentStyle={{ background: "rgba(0,31,95,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} />
+                  <Tooltip formatter={(v: any) => `${v}%`} contentStyle={{ background: "rgba(0,31,95,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff" }} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="space-y-2 mt-2">
@@ -242,7 +243,7 @@ export default function FinancePage() {
                     <td className="px-5 py-3.5 text-white/40 text-[12px]">{p.method}</td>
                     <td className="px-5 py-3.5 text-white/30 text-[12px]">{p.date}</td>
                     <td className="px-5 py-3.5">
-                      <span className={inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-medium }>
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-medium ${p.status === "verified" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
                         {p.status === "verified" ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
                         {p.status}
                       </span>
@@ -275,7 +276,7 @@ export default function FinancePage() {
                 <div className="flex items-center gap-4">
                   <div className="text-right">
                     <p className="text-white/70 text-[13px] font-semibold">{"\u20A6"}{inv.amount.toLocaleString()}</p>
-                    <p className={	ext-[11px] font-medium mt-0.5 }>
+                    <p className={`text-[11px] font-medium mt-0.5 ${inv.daysLeft <= 7 ? "text-red-400" : "text-amber-400"}`}>
                       {inv.daysLeft} days left
                     </p>
                   </div>

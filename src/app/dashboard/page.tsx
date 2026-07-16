@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -38,7 +39,7 @@ import { StatCard } from "@/components/ui/stat-card";
 const fadeIn = {
   initial: { opacity: 0, y: 16 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+  transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },
 };
 
 const stagger = {
@@ -105,6 +106,8 @@ const todaySchedule = [
 ];
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
+  const name = session?.user?.name?.split(" ")[0] || "Admin";
   const [stats, setStats] = useState({
     totalStudents: 20,
     totalTeachers: 8,
@@ -155,10 +158,10 @@ export default function DashboardPage() {
 
       {/* Stats Row */}
       <motion.div variants={fadeIn} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={Users} label="Total Students" value={stats.totalStudents} trend={12} color="from-blue-500 to-blue-700" />
-        <StatCard icon={GraduationCap} label="Active Teachers" value={stats.totalTeachers} trend={4} color="from-purple-500 to-purple-700" />
-        <StatCard icon={CreditCard} label="Total Revenue" value={`₦${(stats.totalRevenue / 1000000).toFixed(1)}M`} trend={18} color="from-emerald-500 to-emerald-700" />
-        <StatCard icon={BookOpen} label="Active Classes" value={stats.totalClasses} trend={0} color="from-amber-500 to-amber-700" />
+        <StatCard icon={Users} title="Total Students" value={stats.totalStudents} change="+12%" trend="up" color="from-blue-500 to-blue-700" />
+        <StatCard icon={GraduationCap} title="Active Teachers" value={stats.totalTeachers} change="+4%" trend="up" color="from-purple-500 to-purple-700" />
+        <StatCard icon={CreditCard} title="Total Revenue" value={`₦${(stats.totalRevenue / 1000000).toFixed(1)}M`} change="+18%" trend="up" color="from-emerald-500 to-emerald-700" />
+        <StatCard icon={BookOpen} title="Active Classes" value={stats.totalClasses} change="0%" trend="up" color="from-amber-500 to-amber-700" />
       </motion.div>
 
       {/* Charts Row 1 */}
