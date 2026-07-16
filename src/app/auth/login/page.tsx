@@ -3,8 +3,17 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, LogIn, AlertCircle, Loader2 } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
+
+const particles = Array.from({ length: 80 }, (_, i) => ({
+  id: i,
+  left: `${Math.random() * 100}%`,
+  duration: `${10 + Math.random() * 20}s`,
+  delay: `${Math.random() * 10}s`,
+  size: `${3 + Math.random() * 3}px`,
+}));
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,14 +27,8 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
+      const result = await signIn("credentials", { email, password, redirect: false });
       if (result?.error) {
         setError("Invalid email or password. Please try again.");
       } else {
@@ -38,138 +41,96 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 30% 30%, rgba(249,115,22,0.1) 0%, transparent 50%), radial-gradient(circle at 70% 70%, rgba(75,30,115,0.15) 0%, transparent 50%)" }} />
-      <div className="absolute top-20 left-20 w-72 h-72 rounded-full blur-[120px]" style={{ background: "rgba(249,115,22,0.08)" }} />
-      <div className="absolute bottom-20 right-20 w-72 h-72 rounded-full blur-[120px]" style={{ background: "rgba(75,30,115,0.1)" }} />
+    <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden" }}>
+      {particles.map((p) => (
+        <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
+      ))}
 
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-[440px] relative z-10"
-      >
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center border border-white/10" style={{ background: "linear-gradient(135deg, #4B1E73, #2E0F4F)" }}>
-            <svg viewBox="0 0 64 64" className="w-10 h-10" fill="none">
-              <path d="M32 4 L56 14 L56 32 C56 48 44 58 32 62 C20 58 8 48 8 32 L8 14 Z" fill="#4B1E73" stroke="#f97316" strokeWidth="2"/>
-              <text x="32" y="20" textAnchor="middle" fontFamily="Poppins" fontWeight="bold" fontSize="10" fill="#f97316">FFB</text>
-              <path d="M20 36 L32 42 L44 36 L44 48 L32 54 L20 48 Z" fill="#f97316" opacity="0.9"/>
-            </svg>
-          </div>
-          <h1 className="text-white font-bold text-xl">FFB Group of Schools</h1>
-          <p className="text-white/50 text-sm mt-1">School Management Portal</p>
-        </div>
+      <Link href="/" style={{ position: "absolute", top: "25px", left: "25px", color: "rgba(255,255,255,0.7)", textDecoration: "none", fontSize: "14px", fontWeight: 500, zIndex: 10, display: "flex", alignItems: "center", gap: "8px" }}>
+        <ArrowLeft style={{ width: "18px", height: "18px" }} /> Back to Home
+      </Link>
 
-        {/* Card */}
-        <div className="p-8 rounded-[30px]" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(25px)", border: "1px solid rgba(255,255,255,0.15)", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
-          <h2 className="text-white/90 font-semibold text-lg mb-1">Welcome back</h2>
-          <p className="text-white/50 text-sm mb-6">Sign in to access your dashboard</p>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "20px" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            width: "100%",
+            maxWidth: "450px",
+            background: "rgba(255,255,255,0.1)",
+            backdropFilter: "blur(25px)",
+            WebkitBackdropFilter: "blur(25px)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            borderRadius: "30px",
+            padding: "50px 40px",
+            boxShadow: "0 25px 60px rgba(0,0,0,0.3)",
+          }}
+        >
+          <h1 style={{ fontSize: "28px", fontWeight: 800, textAlign: "center", marginBottom: "8px" }}>Secure Login</h1>
+          <p style={{ textAlign: "center", color: "rgba(255,255,255,0.5)", fontSize: "14px", marginBottom: "35px" }}>Sign in to access your portal</p>
 
           {error && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="flex items-center gap-2.5 px-4 py-3 rounded-2xl mb-5"
-              style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)" }}
-            >
-              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
-              <p className="text-red-400 text-xs">{error}</p>
-            </motion.div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 16px", borderRadius: "12px", background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", marginBottom: "20px" }}>
+              <AlertCircle style={{ width: "16px", height: "16px", color: "#ef4444", flexShrink: 0 }} />
+              <p style={{ color: "#ef4444", fontSize: "13px" }}>{error}</p>
+            </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-white/50 text-xs font-semibold uppercase tracking-wider mb-2">Email Address</label>
+          <form onSubmit={handleLogin}>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              required
+              style={{
+                width: "100%", padding: "16px 20px", borderRadius: "16px", border: "none",
+                background: "rgba(255,255,255,0.12)", color: "#fff", fontSize: "15px",
+                outline: "none", marginBottom: "16px", fontFamily: "'Poppins', sans-serif",
+              }}
+            />
+
+            <div style={{ position: "relative", marginBottom: "10px" }}>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@ffb.edu.ng"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
                 required
-                className="input-glass"
+                style={{
+                  width: "100%", padding: "16px 50px 16px 20px", borderRadius: "16px", border: "none",
+                  background: "rgba(255,255,255,0.12)", color: "#fff", fontSize: "15px",
+                  outline: "none", fontFamily: "'Poppins', sans-serif",
+                }}
               />
-            </div>
-
-            <div>
-              <label className="block text-white/50 text-xs font-semibold uppercase tracking-wider mb-2">Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                  className="input-glass pr-12"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-white/30 hover:text-white/60 transition"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between pt-1">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 rounded-md accent-[#f97316]" />
-                <span className="text-white/40 text-xs">Remember me</span>
-              </label>
-              <button type="button" className="text-[#f97316] text-xs font-medium hover:underline transition">
-                Forgot password?
+              <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer" }}>
+                {showPassword ? <EyeOff style={{ width: "18px", height: "18px" }} /> : <Eye style={{ width: "18px", height: "18px" }} />}
               </button>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "13px", color: "rgba(255,255,255,0.5)" }}>
+                <input type="checkbox" style={{ accentColor: "#28ff9c" }} /> Remember Me
+              </label>
+              <Link href="/auth/forgot-password" style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", textDecoration: "none" }}>Forgot Password?</Link>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-4 flex items-center justify-center gap-2 text-sm disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+              style={{
+                width: "100%", padding: "16px", borderRadius: "16px", border: "none",
+                background: "#f97316", color: "#fff", fontSize: "16px", fontWeight: 700,
+                cursor: "pointer", fontFamily: "'Poppins', sans-serif",
+                opacity: loading ? 0.6 : 1, transition: "0.3s",
+              }}
             >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <LogIn className="w-4 h-4" /> Sign In
-                </>
-              )}
+              {loading ? <Loader2 style={{ width: "20px", height: "20px", animation: "spin 1s linear infinite" }} /> : "Login"}
             </button>
           </form>
-
-          {/* Demo credentials */}
-          <div className="mt-6 pt-5 border-t border-white/10">
-            <p className="text-white/30 text-xs text-center mb-3">Demo Credentials</p>
-            <div className="space-y-2">
-              {[
-                { role: "Administrator", email: "admin@ffb.edu.ng", pass: "admin123" },
-                { role: "Teacher", email: "teacher@ffb.edu.ng", pass: "teacher123" },
-                { role: "Student", email: "adebayo.johnson@student.ffb.edu.ng", pass: "student123" },
-              ].map((cred) => (
-                <button
-                  key={cred.role}
-                  type="button"
-                  onClick={() => { setEmail(cred.email); setPassword(cred.pass); }}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition text-left"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-                >
-                  <div>
-                    <p className="text-white/50 text-xs font-medium">{cred.role}</p>
-                    <p className="text-white/25 text-[10px]">{cred.email}</p>
-                  </div>
-                  <span className="text-white/20 text-[10px]">Click to fill</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <p className="text-center text-white/20 text-xs mt-6">
-          © 2025 FFB Group of Schools. All rights reserved.
-        </p>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }
