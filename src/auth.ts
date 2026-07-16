@@ -9,6 +9,7 @@ export const {
   signOut,
   auth,
 } = NextAuth({
+  trustHost: true,
   providers: [
     Credentials({
       name: "credentials",
@@ -90,8 +91,4 @@ export const {
     signIn: "/auth/login",
     error: "/auth/error",
   },
-  session: {
-    strategy: "jwt",
-  },
-  secret: process.env.NEXTAUTH_SECRET,
 });
