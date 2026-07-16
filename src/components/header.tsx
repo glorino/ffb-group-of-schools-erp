@@ -87,12 +87,12 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 h-16 bg-white/[0.03] backdrop-blur-2xl border-b border-white/[0.06]">
+      <header className="sticky top-0 z-30 h-16 bg-[var(--sidebar)]/80 backdrop-blur-2xl border-b border-white/[0.06]">
         <div className="h-full px-4 lg:px-6 flex items-center gap-4">
           <div className="flex-1 flex items-center gap-3">
             <button
               onClick={() => setSearchOpen(true)}
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 text-sm w-full max-w-md hover:bg-white/[0.08] hover:border-white/[0.12] transition-all"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 text-sm w-full max-w-sm hover:bg-white/[0.08] hover:border-white/[0.12] transition-all"
             >
               <Search className="w-4 h-4" />
               <span className="flex-1 text-left">Search anything...</span>

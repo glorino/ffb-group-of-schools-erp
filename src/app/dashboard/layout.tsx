@@ -43,9 +43,9 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-animated">
       <ParticleBackground />
       <Sidebar />
-      <div className="lg:ml-[260px] relative z-10">
+      <div className="lg:ml-[260px] min-h-screen flex flex-col">
         <Header />
-        <main className="p-6 page-enter">{children}</main>
+        <main className="flex-1 p-4 lg:p-6 overflow-x-hidden">{children}</main>
       </div>
     </div>
   );

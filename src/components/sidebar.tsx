@@ -123,14 +123,7 @@ export function Sidebar() {
       {/* Logo */}
       <div className="p-4 border-b border-white/[0.06]">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border border-white/10" style={{ background: "linear-gradient(135deg, #4B1E73, #2E0F4F)" }}>
-            <svg viewBox="0 0 64 64" className="w-7 h-7" fill="none">
-              <path d="M32 4 L56 14 L56 32 C56 48 44 58 32 62 C20 58 8 48 8 32 L8 14 Z" fill="#4B1E73" stroke="#f97316" strokeWidth="2"/>
-              <path d="M20 36 L32 42 L44 36 L44 48 L32 54 L20 48 Z" fill="#f97316" opacity="0.9"/>
-              <path d="M32 12 C34 16 36 18 36 22 C38 18 38 14 36 10 C34 8 32 6 32 6 C32 6 30 8 28 10 C26 14 26 18 28 22 C28 18 30 16 32 12Z" fill="#f97316"/>
-              <text x="32" y="20" textAnchor="middle" fontFamily="Poppins" fontWeight="bold" fontSize="10" fill="#f97316">FFB</text>
-            </svg>
-          </div>
+          <img src="/logo.svg" alt="FFB Logo" className="w-10 h-10 rounded-xl flex-shrink-0" />
           {!collapsed && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="overflow-hidden">
               <h2 className="text-white font-bold text-[15px] leading-tight">FFB Group</h2>
@@ -233,7 +226,7 @@ export function Sidebar() {
       </AnimatePresence>
 
       <aside className={`hidden lg:block fixed left-0 top-0 bottom-0 z-40 bg-[var(--sidebar)] transition-all duration-300 ${
-        collapsed ? "w-[68px]" : "w-[250px]"
+        collapsed ? "w-[68px]" : "w-[260px]"
       }`}>
         <SidebarContent />
         <button
