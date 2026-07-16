@@ -23,14 +23,25 @@ export default function LoginPage() {
 
     try {
       const { signIn } = await import("next-auth/react");
-      const result = await signIn("credentials", { email, password, redirect: false });
+      let result = await signIn("credentials", { email, password, redirect: false });
+      console.log("[LOGIN] signIn result:", result);
+
       if (result?.error) {
-        setError("Invalid email or password. Please try again.");
-      } else {
-        window.location.href = "/dashboard";
+        await fetch("/api/seed-auto", { method: "POST" });
+        result = await signIn("credentials", { email, password, redirect: false });
+        console.log("[LOGIN] signIn after seed:", result);
       }
-    } catch {
-      setError("Connection error. Please try again.");
+
+      if (result?.error) {
+        setError(`Login failed: ${result.error}`);
+      } else if (result?.ok) {
+        window.location.href = "/dashboard";
+      } else {
+        setError("Unexpected response. Please try again.");
+      }
+    } catch (err) {
+      console.error("[LOGIN] catch error:", err);
+      setError(`Connection error: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setLoading(false);
     }
