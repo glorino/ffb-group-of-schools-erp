@@ -1,19 +1,13 @@
 import type { Metadata } from "next";
-import { DM_Sans, Plus_Jakarta_Sans } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 import { Toaster } from "sonner";
 
-const dmSans = DM_Sans({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-dm-sans",
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
+  variable: "--font-poppins",
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
@@ -40,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${dmSans.variable} ${jakarta.variable} font-sans antialiased`}
+        className={`${poppins.variable} font-sans antialiased`}
       >
         <AuthProvider>
           <ThemeProvider>

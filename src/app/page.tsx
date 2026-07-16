@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -11,24 +11,24 @@ import {
   Users,
   Trophy,
   Star,
-  CheckCircle2,
   Phone,
   Mail,
   MapPin,
   ChevronRight,
-  Play,
   Award,
   Heart,
   Zap,
   Globe,
   Calendar,
   Sparkles,
+  Target,
+  ChevronDown,
 } from "lucide-react";
 
 const fadeIn = {
   initial: { opacity: 0, y: 24 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  transition: { duration: 0.5 },
 };
 
 const stats = [
@@ -38,115 +38,119 @@ const stats = [
   { value: "98%", label: "WAEC Pass Rate", icon: Trophy },
 ];
 
+const features = [
+  { icon: "🎯", title: "Mission", desc: "To provide quality education that empowers students to become responsible leaders and lifelong learners." },
+  { icon: "🌍", title: "Vision", desc: "To be a leading institution recognized for academic excellence and character development globally." },
+  { icon: "⭐", title: "Core Values", desc: "Integrity, Discipline, Excellence, Innovation and Respect for all members of the school community." },
+];
+
 const programs = [
-  { title: "Junior Secondary", desc: "Building strong academic foundations in a nurturing environment", icon: BookOpen, color: "from-blue-500 to-blue-700" },
-  { title: "Senior Secondary (Science)", desc: "Preparing future scientists and engineers", icon: Sparkles, color: "from-purple-500 to-purple-700" },
-  { title: "Senior Secondary (Arts)", desc: "Nurturing creative and critical minds", icon: Heart, color: "from-pink-500 to-pink-700" },
-  { title: "Senior Secondary (Commercial)", desc: "Developing future business leaders", icon: Globe, color: "from-emerald-500 to-emerald-700" },
+  { title: "Junior Secondary", desc: "Building strong academic foundations in a nurturing environment for young learners.", icon: BookOpen },
+  { title: "Senior Secondary (Science)", desc: "Preparing future scientists and engineers with hands-on lab experience.", icon: Sparkles },
+  { title: "Senior Secondary (Arts)", desc: "Nurturing creative and critical minds for humanities and social sciences.", icon: Heart },
+  { title: "Senior Secondary (Commercial)", desc: "Developing future business leaders with entrepreneurship skills.", icon: Globe },
+];
+
+const events = [
+  { title: "Interhouse Sports", desc: "Annual sports competition showcasing teamwork and athleticism.", date: "March 25, 2026", color: "from-emerald-500 to-emerald-700" },
+  { title: "Science Exhibition", desc: "Students present innovative science projects and research.", date: "April 10, 2026", color: "from-blue-500 to-blue-700" },
+  { title: "Graduation Ceremony", desc: "Celebrating graduating students and their achievements.", date: "July 18, 2026", color: "from-purple-500 to-purple-700" },
 ];
 
 const testimonials = [
-  { name: "Mrs. Adewale", role: "Parent", text: "FFB has transformed my children's academic performance. The teachers are dedicated and the environment is conducive for learning." },
-  { name: "Mr. Chukwuemeka", role: "Alumni (Class of 2018)", text: "My years at FFB shaped who I am today. The foundation I received in science and leadership opened doors for me at university." },
-  { name: "Mrs. Fatima Bello", role: "Parent", text: "The ERP system keeps me updated on my child's progress in real time. I can see attendance, grades, and fee status from my phone." },
+  { text: "FFB transformed my child's confidence and academic performance.", name: "Mrs Adewale", role: "Parent" },
+  { text: "The teachers are passionate and supportive. My son loves coming to school.", name: "Mr Johnson", role: "Parent" },
+  { text: "A wonderful environment for learning and character development.", name: "Mrs Bello", role: "Parent" },
 ];
 
-const gallery = [
-  { title: "Modern Classrooms", desc: "Smart boards and air-conditioned halls" },
-  { title: "Science Laboratories", desc: "Fully equipped physics, chemistry, and biology labs" },
-  { title: "Sports Complex", desc: "Football field, basketball court, and swimming pool" },
-  { title: "School Library", desc: "Over 10,000 volumes and digital research center" },
-];
-
-const whyFFB = [
-  { title: "25+ Years of Excellence", desc: "A proven track record of academic distinction since 1998", icon: Award },
-  { title: "WAEC/NECO Top Results", desc: "Consistently among the top-performing schools in the state", icon: Trophy },
-  { title: "Modern ERP System", desc: "Real-time tracking of academic and administrative activities", icon: Zap },
-  { title: "Safe & Secure Campus", desc: "24/7 security, CCTV surveillance, and health clinic", icon: Shield },
-  { title: "Experienced Faculty", desc: "Over 85 qualified and dedicated teaching professionals", icon: Users },
-  { title: "Holistic Development", desc: "Sports, clubs, and extracurricular activities for balanced growth", icon: Heart },
-];
+const quickLinks = ["Home", "About Us", "Programs", "Events", "Contact", "Apply for Admission"];
 
 export default function LandingPage() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-dark)]">
+    <div className="min-h-screen">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[var(--bg-dark)]/80 backdrop-blur-xl border-b border-white/[0.05]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--blue-2)] to-[var(--blue-1)] flex items-center justify-center border border-white/10">
-              <svg viewBox="0 0 64 64" className="w-6 h-6" fill="none">
-                <path d="M32 4 L56 14 L56 32 C56 48 44 58 32 62 C20 58 8 48 8 32 L8 14 Z" fill="#0039a6" stroke="#ffd700" strokeWidth="2"/>
-                <text x="32" y="20" textAnchor="middle" fontFamily="serif" fontWeight="bold" fontSize="10" fill="#ffd700">FFB</text>
-                <path d="M20 36 L32 42 L44 36 L44 48 L32 54 L20 48 Z" fill="#ffd700" opacity="0.9"/>
+      <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(25px)", borderBottom: "1px solid rgba(255,255,255,0.15)" }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#4B1E73] to-[#2E0F4F] flex items-center justify-center border border-white/10">
+              <svg viewBox="0 0 64 64" className="w-7 h-7" fill="none">
+                <path d="M32 4 L56 14 L56 32 C56 48 44 58 32 62 C20 58 8 48 8 32 L8 14 Z" fill="#4B1E73" stroke="#f97316" strokeWidth="2"/>
+                <text x="32" y="20" textAnchor="middle" fontFamily="Poppins" fontWeight="bold" fontSize="10" fill="#f97316">FFB</text>
+                <path d="M20 36 L32 42 L44 36 L44 48 L32 54 L20 48 Z" fill="#f97316" opacity="0.9"/>
               </svg>
             </div>
-            <span className="text-white font-bold text-lg">FFB Group of Schools</span>
+            <span className="text-white font-bold text-lg hidden sm:block">FFB Group of Schools</span>
           </Link>
-          <div className="hidden md:flex items-center gap-8 text-[13px] text-white/50">
-            <a href="#about" className="hover:text-white transition">About</a>
-            <a href="#programs" className="hover:text-white transition">Programs</a>
-            <a href="#why-ffb" className="hover:text-white transition">Why FFB</a>
-            <a href="#gallery" className="hover:text-white transition">Campus</a>
-            <a href="#contact" className="hover:text-white transition">Contact</a>
+
+          <div className="hidden md:flex items-center gap-8 text-sm text-white/80">
+            <a href="#about" className="hover:text-[#f97316] transition">About</a>
+            <a href="#programs" className="hover:text-[#f97316] transition">Programs</a>
+            <a href="#events" className="hover:text-[#f97316] transition">Events</a>
+            <a href="#contact" className="hover:text-[#f97316] transition">Contact</a>
+            <Link href="/portal" className="btn-primary text-sm">Admissions</Link>
+            <Link href="/auth/login" className="btn-secondary text-sm">Portal</Link>
           </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/auth/login"
-              className="px-4 py-2 rounded-xl text-white/60 text-[13px] font-medium hover:text-white transition"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/portal"
-              className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/25"
-            >
-              Apply Now
-            </Link>
-          </div>
+
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden flex flex-col gap-1.5"
+          >
+            <span className="w-6 h-0.5 bg-white" />
+            <span className="w-6 h-0.5 bg-white" />
+            <span className="w-6 h-0.5 bg-white" />
+          </button>
         </div>
+
+        {mobileMenuOpen && (
+          <div className="md:hidden px-4 pb-4 space-y-2">
+            <a href="#about" className="block py-2 text-white/80 hover:text-[#f97316]">About</a>
+            <a href="#programs" className="block py-2 text-white/80 hover:text-[#f97316]">Programs</a>
+            <a href="#events" className="block py-2 text-white/80 hover:text-[#f97316]">Events</a>
+            <a href="#contact" className="block py-2 text-white/80 hover:text-[#f97316]">Contact</a>
+            <Link href="/portal" className="btn-primary text-sm block text-center">Admissions</Link>
+            <Link href="/auth/login" className="btn-secondary text-sm block text-center">Portal</Link>
+          </div>
+        )}
       </nav>
 
-      {/* Hero */}
-      <section className="relative pt-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--blue-1)]/40 to-transparent" />
-        <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 30% 40%, rgba(0,85,255,0.15) 0%, transparent 50%), radial-gradient(circle at 70% 60%, rgba(40,255,156,0.08) 0%, transparent 50%)" }} />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 relative">
-          <motion.div {...fadeIn} className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--primary)]/10 border border-[var(--primary)]/20 text-[var(--accent)] text-[12px] font-semibold mb-6">
-              <Sparkles className="w-3.5 h-3.5" />
-              Admissions Open for 2025/2026 Academic Session
-            </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-[1.1] tracking-tight font-display">
-              Nurturing <span className="bg-gradient-to-r from-[var(--blue-3)] to-[var(--accent)] bg-clip-text text-transparent">Tomorrow&apos;s Leaders</span> Today
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center text-center overflow-hidden" style={{ paddingTop: "90px" }}>
+        <div className="absolute inset-0" style={{ backgroundImage: "url('/video-cover.jpg')", backgroundSize: "cover", backgroundPosition: "center" }} />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-20">
+          <motion.div {...fadeIn}>
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight mb-6">
+              Nurturing <span className="text-[#f97316]">Leaders</span><br />For The <span className="text-[#f97316]">Future</span>
             </h1>
-            <p className="text-white/40 text-lg md:text-xl mt-6 leading-relaxed max-w-xl">
-              FFB Group of Schools provides world-class education from Junior Secondary to Senior Secondary, empowering students with knowledge, skills, and values for a changing world.
+            <p className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto mb-8">
+              FFB Group of Schools provides a world-class learning environment where students develop academic excellence, leadership and innovation.
             </p>
-            <div className="flex flex-wrap items-center gap-3 mt-8">
-              <Link
-                href="/portal"
-                className="px-7 py-3.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition shadow-xl shadow-[var(--primary)]/25 flex items-center gap-2"
-              >
-                Start Application <ArrowRight className="w-4 h-4" />
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link href="/portal" className="btn-primary text-base px-8 py-4">
+                Apply For Admission
               </Link>
-              <a
-                href="#about"
-                className="px-7 py-3.5 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white/60 text-sm font-medium hover:bg-white/[0.08] hover:text-white transition flex items-center gap-2"
-              >
-                Learn More <ChevronRight className="w-4 h-4" />
-              </a>
+              <Link href="/auth/login" className="btn-secondary text-base px-8 py-4">
+                Portal Login
+              </Link>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="relative z-10 -mt-8">
+      {/* Stats Bar */}
+      <section className="relative z-10 -mt-16">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((s, i) => (
               <motion.div
                 key={i}
@@ -154,288 +158,270 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5 text-center"
+                className="text-center py-6 px-4 rounded-3xl"
+                style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(25px)", border: "1px solid rgba(255,255,255,0.2)" }}
               >
-                <div className="w-10 h-10 rounded-xl bg-[var(--primary)]/10 flex items-center justify-center mx-auto mb-3">
-                  <s.icon className="w-5 h-5 text-[var(--blue-3)]" />
+                <div className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center" style={{ background: "rgba(249,115,22,0.15)" }}>
+                  <s.icon className="w-6 h-6 text-[#f97316]" />
                 </div>
-                <p className="text-white text-2xl font-bold font-display">{s.value}</p>
-                <p className="text-white/30 text-[12px] mt-1">{s.label}</p>
+                <p className="text-white text-2xl font-extrabold">{s.value}</p>
+                <p className="text-white/60 text-sm mt-1">{s.label}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* About */}
-      <section id="about" className="py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+      {/* About Section */}
+      <section id="about" className="mt-16 mx-4 md:mx-auto max-w-7xl py-16 px-8 rounded-[40px]" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(25px)", border: "1px solid rgba(255,255,255,0.15)" }}>
+        <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-4">About FFB Group of Schools</h2>
+        <p className="text-white/80 text-center max-w-3xl mx-auto mb-12 text-base leading-relaxed">
+          FFB Group of Schools is committed to nurturing future leaders through academic excellence, innovation and strong character development. Our institution provides modern facilities, highly qualified teachers and a safe environment where students can grow intellectually, socially and morally.
+        </p>
+        <div className="grid md:grid-cols-3 gap-6">
+          {features.map((f, i) => (
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ delay: i * 0.15 }}
+              className="feature-card text-center"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-white font-display tracking-tight">
-                A Legacy of <span className="bg-gradient-to-r from-[var(--blue-3)] to-[var(--accent)] bg-clip-text text-transparent">Academic Excellence</span>
-              </h2>
-              <p className="text-white/35 text-base leading-relaxed mt-5">
-                Founded in 1998, FFB Group of Schools has grown from a small community school to one of the most respected educational institutions in the region. Our commitment to academic rigor, moral values, and holistic development has produced thousands of successful graduates.
-              </p>
-              <p className="text-white/35 text-base leading-relaxed mt-4">
-                With a student body of over 1,200 learners, 85+ qualified teachers, and state-of-the-art facilities, we provide an environment where every child can thrive academically, socially, and personally.
-              </p>
-              <div className="grid grid-cols-2 gap-3 mt-8">
-                {[
-                  { label: "WAEC/NECO Excellence", icon: Trophy },
-                  { label: "Modern ERP System", icon: Zap },
-                  { label: "Safe Environment", icon: Shield },
-                  { label: "Holistic Education", icon: Heart },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-2.5 text-white/50 text-[13px]">
-                    <div className="w-7 h-7 rounded-lg bg-[var(--primary)]/10 flex items-center justify-center">
-                      <item.icon className="w-3.5 h-3.5 text-[var(--blue-3)]" />
-                    </div>
-                    {item.label}
-                  </div>
-                ))}
-              </div>
+              <div className="text-5xl mb-4">{f.icon}</div>
+              <h3 className="text-xl font-bold mb-3">{f.title}</h3>
+              <p className="text-white/70 leading-relaxed">{f.desc}</p>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative"
-            >
-              <div className="aspect-[4/3] rounded-3xl bg-gradient-to-br from-[var(--blue-1)] to-[var(--blue-2)] border border-white/[0.08] overflow-hidden flex items-center justify-center">
-                <div className="text-center p-8">
-                  <div className="w-20 h-20 rounded-2xl bg-white/[0.06] flex items-center justify-center mx-auto mb-4">
-                    <svg viewBox="0 0 64 64" className="w-14 h-14" fill="none">
-                      <path d="M32 4 L56 14 L56 32 C56 48 44 58 32 62 C20 58 8 48 8 32 L8 14 Z" fill="#0039a6" stroke="#ffd700" strokeWidth="2"/>
-                      <text x="32" y="20" textAnchor="middle" fontFamily="serif" fontWeight="bold" fontSize="10" fill="#ffd700">FFB</text>
-                      <path d="M20 36 L32 42 L44 36 L44 48 L32 54 L20 48 Z" fill="#ffd700" opacity="0.9"/>
-                    </svg>
-                  </div>
-                  <p className="text-white/20 text-sm">FFB Group of Schools</p>
-                  <p className="text-white/10 text-[11px] mt-1">Est. 1998</p>
-                </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Founder Message */}
+      <section className="mt-12 mx-4 md:mx-auto max-w-7xl py-16 px-8 rounded-[40px]" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(25px)", border: "1px solid rgba(255,255,255,0.15)" }}>
+        <div className="flex flex-col md:flex-row items-center gap-10">
+          <div className="w-64 h-64 rounded-3xl bg-gradient-to-br from-[#4B1E73] to-[#2E0F4F] flex items-center justify-center border border-white/10 flex-shrink-0">
+            <div className="text-center">
+              <div className="w-20 h-20 rounded-2xl mx-auto mb-3 flex items-center justify-center" style={{ background: "rgba(249,115,22,0.15)" }}>
+                <svg viewBox="0 0 64 64" className="w-14 h-14" fill="none">
+                  <path d="M32 4 L56 14 L56 32 C56 48 44 58 32 62 C20 58 8 48 8 32 L8 14 Z" fill="#4B1E73" stroke="#f97316" strokeWidth="2"/>
+                  <text x="32" y="20" textAnchor="middle" fontFamily="Poppins" fontWeight="bold" fontSize="10" fill="#f97316">FFB</text>
+                  <path d="M20 36 L32 42 L44 36 L44 48 L32 54 L20 48 Z" fill="#f97316" opacity="0.9"/>
+                </svg>
               </div>
-              <div className="absolute -bottom-4 -left-4 w-28 h-28 rounded-2xl bg-[var(--accent)]/10 border border-[var(--accent)]/20" />
-              <div className="absolute -top-4 -right-4 w-20 h-20 rounded-2xl bg-[var(--blue-3)]/10 border border-[var(--blue-3)]/20" />
-            </motion.div>
+              <p className="text-white/30 text-sm">Est. 1998</p>
+            </div>
+          </div>
+          <div className="flex-1">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-5">Message From The Founder</h2>
+            <p className="text-white/70 text-base leading-relaxed mb-4">
+              Welcome to FFB Group of Schools. Our mission is to inspire young minds to achieve their highest potential academically and morally. We believe every child deserves access to quality education, modern learning resources and mentorship that prepares them for global success.
+            </p>
+            <p className="text-white/70 text-base leading-relaxed">
+              At FFB we focus not only on academic excellence but also on leadership development, discipline and innovation.
+            </p>
+            <h3 className="mt-6 text-[#f97316] font-semibold text-lg">— Founder, FFB Group of Schools</h3>
           </div>
         </div>
       </section>
 
       {/* Programs */}
-      <section id="programs" className="py-20 bg-white/[0.01]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-white font-display tracking-tight">Academic Programs</h2>
-            <p className="text-white/30 text-sm mt-3 max-w-lg mx-auto">Comprehensive programmes designed to develop well-rounded students ready for the challenges of the modern world</p>
-          </motion.div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {programs.map((p, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6 hover:border-white/[0.12] transition-all group"
-              >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${p.color} flex items-center justify-center mb-4 group-hover:scale-105 transition`}>
-                  <p.icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-white/90 font-semibold text-[15px]">{p.title}</h3>
-                <p className="text-white/30 text-[13px] mt-2 leading-relaxed">{p.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+      <section id="programs" className="mt-12 mx-4 md:mx-auto max-w-7xl py-16 px-8 rounded-[40px]" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(25px)", border: "1px solid rgba(255,255,255,0.15)" }}>
+        <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-4">Academic Programs</h2>
+        <p className="text-white/80 text-center max-w-2xl mx-auto mb-12">
+          Comprehensive programmes designed to develop well-rounded students ready for the challenges of the modern world.
+        </p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {programs.map((p, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="feature-card text-center"
+            >
+              <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: "rgba(249,115,22,0.15)" }}>
+                <p.icon className="w-7 h-7 text-[#f97316]" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">{p.title}</h3>
+              <p className="text-white/60 text-sm leading-relaxed">{p.desc}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      {/* Why FFB */}
-      <section id="why-ffb" className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-white font-display tracking-tight">Why Choose FFB?</h2>
-            <p className="text-white/30 text-sm mt-3 max-w-lg mx-auto">Discover what makes us one of the leading schools in the region</p>
-          </motion.div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {whyFFB.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6 hover:bg-white/[0.05] transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-[var(--primary)]/10 flex items-center justify-center mb-4">
-                  <item.icon className="w-5 h-5 text-[var(--blue-3)]" />
-                </div>
-                <h3 className="text-white/90 font-semibold text-[15px]">{item.title}</h3>
-                <p className="text-white/30 text-[13px] mt-2 leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Campus Gallery */}
-      <section id="gallery" className="py-20 bg-white/[0.01]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-white font-display tracking-tight">Our Campus</h2>
-            <p className="text-white/30 text-sm mt-3 max-w-lg mx-auto">State-of-the-art facilities designed for optimal learning and development</p>
-          </motion.div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {gallery.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="group"
-              >
-                <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-[var(--blue-1)] to-[var(--blue-2)] border border-white/[0.07] overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h4 className="text-white font-semibold text-[14px]">{item.title}</h4>
-                    <p className="text-white/40 text-[11px] mt-0.5">{item.desc}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+      {/* Events */}
+      <section id="events" className="mt-12 mx-4 md:mx-auto max-w-7xl py-16 px-8 rounded-[40px]" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(25px)", border: "1px solid rgba(255,255,255,0.15)" }}>
+        <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-4">Upcoming Events</h2>
+        <p className="text-white/80 text-center max-w-2xl mx-auto mb-12">
+          Stay updated with our academic calendar, competitions and school activities.
+        </p>
+        <div className="grid md:grid-cols-3 gap-6">
+          {events.map((e, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="feature-card"
+            >
+              <h3 className="text-xl font-bold mb-2">{e.title}</h3>
+              <p className="text-white/60 text-sm mb-3">{e.desc}</p>
+              <span className="text-[#f97316] font-semibold text-sm">{e.date}</span>
+            </motion.div>
+          ))}
         </div>
       </section>
 
       {/* Testimonials */}
-      <section className="py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-white font-display tracking-tight">What People Say</h2>
-          </motion.div>
-          <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/[0.07] p-8 md:p-12 text-center">
-            <div className="flex items-center justify-center gap-1 mb-6">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="w-5 h-5 text-amber-400 fill-amber-400" />
-              ))}
+      <section className="mt-12 mx-4 md:mx-auto max-w-7xl py-16 px-8 rounded-[40px]" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(25px)", border: "1px solid rgba(255,255,255,0.15)" }}>
+        <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-4">Testimonials</h2>
+        <p className="text-white/80 text-center max-w-2xl mx-auto mb-12">
+          What parents and students say about our learning environment.
+        </p>
+        <div className="text-center max-w-3xl mx-auto">
+          <div className="flex items-center justify-center gap-1 mb-6">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star key={i} className="w-5 h-5 text-[#f97316] fill-[#f97316]" />
+            ))}
+          </div>
+          {testimonials.map((t, i) => (
+            <div key={i} className={`${i === activeTestimonial ? "block" : "hidden"}`}>
+              <p className="text-white/85 text-xl md:text-2xl italic leading-relaxed mb-6">
+                &ldquo;{t.text}&rdquo;
+              </p>
+              <h4 className="text-[#f97316] font-semibold text-lg">{t.name}</h4>
+              <p className="text-white/50 text-sm">{t.role}</p>
             </div>
-            <p className="text-white/70 text-lg md:text-xl leading-relaxed italic max-w-2xl mx-auto">
-              &ldquo;{testimonials[activeTestimonial].text}&rdquo;
-            </p>
-            <div className="mt-8">
-              <p className="text-white/80 font-semibold text-[15px]">{testimonials[activeTestimonial].name}</p>
-              <p className="text-white/30 text-[12px]">{testimonials[activeTestimonial].role}</p>
-            </div>
-            <div className="flex items-center justify-center gap-2 mt-6">
-              {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveTestimonial(i)}
-                  className={`w-2 h-2 rounded-full transition-all ${i === activeTestimonial ? "bg-[var(--primary)] w-6" : "bg-white/15 hover:bg-white/25"}`}
-                />
-              ))}
-            </div>
+          ))}
+          <div className="flex items-center justify-center gap-3 mt-8">
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveTestimonial(i)}
+                className={`w-3 h-3 rounded-full transition-all ${i === activeTestimonial ? "bg-[#f97316] w-8" : "bg-white/20 hover:bg-white/30"}`}
+              />
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Admissions CTA */}
-      <section className="py-20 bg-gradient-to-b from-[var(--blue-1)]/30 to-transparent">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-3xl md:text-4xl font-bold text-white font-display tracking-tight">
-              Ready to Join the <span className="bg-gradient-to-r from-[var(--blue-3)] to-[var(--accent)] bg-clip-text text-transparent">FFB Family</span>?
-            </h2>
-            <p className="text-white/35 text-base mt-4 max-w-lg mx-auto">
-              Admissions for the 2025/2026 academic session are now open. Give your child the gift of excellence.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
-              <Link
-                href="/portal"
-                className="px-8 py-4 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition shadow-xl shadow-[var(--primary)]/25 flex items-center gap-2"
-              >
-                Apply for Admission <ArrowRight className="w-4 h-4" />
-              </Link>
-              <a
-                href="#contact"
-                className="px-8 py-4 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white/60 text-sm font-medium hover:bg-white/[0.08] transition"
-              >
-                Contact Us
-              </a>
-            </div>
-          </motion.div>
-        </div>
+      {/* Newsletter */}
+      <section className="mt-12 mx-4 md:mx-auto max-w-7xl py-16 px-8 rounded-[40px] text-center" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(25px)", border: "1px solid rgba(255,255,255,0.15)" }}>
+        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Subscribe To Our Newsletter</h2>
+        <p className="text-white/80 max-w-xl mx-auto mb-8">
+          Get updates, school news and event notifications directly to your inbox.
+        </p>
+        <form className="flex flex-wrap items-center justify-center gap-4">
+          <input
+            type="email"
+            placeholder="Enter your email"
+            className="input-glass max-w-sm"
+          />
+          <button type="button" className="btn-primary">Subscribe</button>
+        </form>
       </section>
 
       {/* Contact */}
-      <section id="contact" className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12">
-            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <h2 className="text-3xl font-bold text-white font-display tracking-tight">Get in Touch</h2>
-              <p className="text-white/30 text-sm mt-3">Have questions? We would love to hear from you.</p>
-              <div className="space-y-4 mt-8">
-                {[
-                  { icon: MapPin, label: "123 Education Avenue, GRA, Lagos State, Nigeria" },
-                  { icon: Phone, label: "+234 (0) 801 234 5678" },
-                  { icon: Mail, label: "info@ffb.edu.ng" },
-                  { icon: Calendar, label: "Mon - Fri: 7:30 AM - 4:00 PM" },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[var(--primary)]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <item.icon className="w-4 h-4 text-[var(--blue-3)]" />
-                    </div>
-                    <p className="text-white/50 text-[13px] leading-relaxed">{item.label}</p>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <form className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6 space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <input placeholder="First Name" className="px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition" />
-                  <input placeholder="Last Name" className="px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition" />
+      <section id="contact" className="mt-12 mx-4 md:mx-auto max-w-7xl py-16 px-8 rounded-[40px]" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(25px)", border: "1px solid rgba(255,255,255,0.15)" }}>
+        <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-4">Contact Us</h2>
+        <p className="text-white/80 text-center max-w-2xl mx-auto mb-12">
+          Have questions? We would love to hear from you.
+        </p>
+        <div className="grid md:grid-cols-2 gap-10">
+          <div className="space-y-6">
+            {[
+              { icon: MapPin, text: "123 Education Avenue, GRA, Lagos State, Nigeria" },
+              { icon: Phone, text: "+234 (0) 801 234 5678" },
+              { icon: Mail, text: "info@ffb.edu.ng" },
+              { icon: Calendar, text: "Mon - Fri: 7:30 AM - 4:00 PM" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(249,115,22,0.15)" }}>
+                  <item.icon className="w-5 h-5 text-[#f97316]" />
                 </div>
-                <input placeholder="Email Address" type="email" className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition" />
-                <input placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition" />
-                <textarea placeholder="Your Message" rows={4} className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition resize-none" />
-                <button type="button" className="w-full py-3.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20">
-                  Send Message
-                </button>
-              </form>
-            </motion.div>
+                <p className="text-white/70 text-sm leading-relaxed mt-2">{item.text}</p>
+              </div>
+            ))}
           </div>
+          <form className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <input placeholder="First Name" className="input-glass" />
+              <input placeholder="Last Name" className="input-glass" />
+            </div>
+            <input placeholder="Email Address" type="email" className="input-glass" />
+            <input placeholder="Phone Number" className="input-glass" />
+            <textarea placeholder="Your Message" rows={4} className="input-glass resize-none" />
+            <button type="button" className="btn-primary w-full py-4">Send Message</button>
+          </form>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.05] py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--blue-2)] to-[var(--blue-1)] flex items-center justify-center border border-white/10">
-                <svg viewBox="0 0 64 64" className="w-5 h-5" fill="none">
-                  <path d="M32 4 L56 14 L56 32 C56 48 44 58 32 62 C20 58 8 48 8 32 L8 14 Z" fill="#0039a6" stroke="#ffd700" strokeWidth="2"/>
-                  <text x="32" y="20" textAnchor="middle" fontFamily="serif" fontWeight="bold" fontSize="10" fill="#ffd700">FFB</text>
-                  <path d="M20 36 L32 42 L44 36 L44 48 L32 54 L20 48 Z" fill="#ffd700" opacity="0.9"/>
+      <footer className="mt-20 py-16 px-4" style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(25px)", borderTop: "1px solid rgba(255,255,255,0.15)" }}>
+        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-10 px-4">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4B1E73] to-[#2E0F4F] flex items-center justify-center border border-white/10">
+                <svg viewBox="0 0 64 64" className="w-8 h-8" fill="none">
+                  <path d="M32 4 L56 14 L56 32 C56 48 44 58 32 62 C20 58 8 48 8 32 L8 14 Z" fill="#4B1E73" stroke="#f97316" strokeWidth="2"/>
+                  <text x="32" y="20" textAnchor="middle" fontFamily="Poppins" fontWeight="bold" fontSize="10" fill="#f97316">FFB</text>
+                  <path d="M20 36 L32 42 L44 36 L44 48 L32 54 L20 48 Z" fill="#f97316" opacity="0.9"/>
                 </svg>
               </div>
-              <span className="text-white/50 text-[13px]">© 2025 FFB Group of Schools. All rights reserved.</span>
+              <span className="font-bold text-lg">FFB Group of Schools</span>
             </div>
-            <div className="flex items-center gap-6 text-[12px] text-white/25">
-              <a href="#" className="hover:text-white/50 transition">Privacy Policy</a>
-              <a href="#" className="hover:text-white/50 transition">Terms of Service</a>
-              <a href="#" className="hover:text-white/50 transition">Academic Calendar</a>
+            <p className="text-white/70 text-sm leading-relaxed mb-4">
+              Committed to academic excellence, innovation and leadership development. We nurture future leaders prepared for global success.
+            </p>
+            <div className="flex items-center gap-3">
+              {["facebook", "instagram", "twitter", "youtube"].map((social) => (
+                <a key={social} href="#" className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:-translate-y-1" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}>
+                  <span className="text-sm capitalize">{social[0]}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h4 className="text-[#f97316] font-semibold mb-4">Quick Links</h4>
+            <div className="space-y-2">
+              {quickLinks.map((link) => (
+                <a key={link} href="#" className="block text-white/70 text-sm hover:text-[#f97316] transition hover:pl-1">{link}</a>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h4 className="text-[#f97316] font-semibold mb-4">Contact</h4>
+            <p className="text-white/70 text-sm mb-2">123 Education Avenue, GRA</p>
+            <p className="text-white/70 text-sm mb-2">Lagos State, Nigeria</p>
+            <p className="text-white/70 text-sm mb-2">Phone: +234 (0) 801 234 5678</p>
+            <p className="text-white/70 text-sm mb-4">Email: info@ffb.edu.ng</p>
+            <div className="rounded-xl overflow-hidden" style={{ height: "150px" }}>
+              <iframe
+                src="https://www.google.com/maps?q=Lagos+Nigeria&output=embed"
+                className="w-full h-full border-0"
+              />
             </div>
           </div>
         </div>
+        <div className="text-center mt-10 pt-6 border-t border-white/15 text-white/50 text-sm">
+          © 2025 FFB Group of Schools. All rights reserved.
+        </div>
       </footer>
+
+      {/* Floating Contact Buttons */}
+      <div className="fab-container">
+        <a href="tel:+2348012345678" className="fab fab-call" title="Call Us">
+          <Phone className="w-5 h-5" />
+        </a>
+        <a href="https://wa.me/2348012345678" className="fab fab-whatsapp" title="WhatsApp" target="_blank">
+          <span className="text-lg font-bold">W</span>
+        </a>
+        <a href="mailto:info@ffb.edu.ng" className="fab fab-email" title="Email Us">
+          <Mail className="w-5 h-5" />
+        </a>
+      </div>
     </div>
   );
 }
