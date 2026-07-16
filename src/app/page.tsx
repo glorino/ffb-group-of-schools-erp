@@ -92,7 +92,7 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="hero">
         <video autoPlay muted loop playsInline poster="">
-          <source src="https://assets.mixkit.co/videos/preview/mixkit-people-in-a-classroom-4789-large.mp4" type="video/mp4" />
+          <source src="/school-hero.mp4" type="video/mp4" />
         </video>
         <div className="hero-overlay"></div>
         <div className="hero-content container">
