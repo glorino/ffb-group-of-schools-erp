@@ -15,9 +15,14 @@ export default function DashboardLayout({
   const { data: session, status } = useSession();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   useEffect(() => {
@@ -30,8 +35,8 @@ export default function DashboardLayout({
     return (
       <div className="min-h-screen bg-animated flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-3 border-white/20 border-t-[var(--accent)] rounded-full animate-spin" />
-          <p className="text-white/50 text-sm">Loading...</p>
+          <div className="w-10 h-10 border-2 border-white/20 border-t-[var(--accent)] rounded-full animate-spin" />
+          <p className="text-white/40 text-[12px]">Loading...</p>
         </div>
       </div>
     );
@@ -43,9 +48,9 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-animated">
       <ParticleBackground />
       <Sidebar />
-      <div className="lg:ml-[240px] min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col" style={{ marginLeft: isMobile ? 0 : 240 }}>
         <Header />
-        <main className="flex-1 p-4 lg:p-5 overflow-x-hidden">{children}</main>
+        <main className="flex-1 p-5 overflow-x-hidden">{children}</main>
       </div>
     </div>
   );
