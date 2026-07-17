@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 
@@ -52,39 +52,33 @@ export function StatCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.4 }}
-      className="card group"
+      transition={{ delay, duration: 0.3 }}
+      className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.07] p-3 group"
     >
       <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-white/50 text-sm mb-1">{title}</p>
-          <p className="text-3xl font-bold text-white">
+        <div className="flex-1 min-w-0">
+          <p className="text-white/40 text-[11px] font-medium">{title}</p>
+          <p className="text-[22px] font-bold text-white leading-tight mt-0.5">
             {isNumeric ? <CountUp target={value} /> : value}
           </p>
           {change && (
-            <div className="flex items-center gap-1 mt-2">
+            <div className="flex items-center gap-1 mt-1.5">
               {trend === "up" ? (
-                <TrendingUp className="w-4 h-4 text-emerald-400" />
+                <TrendingUp className="w-3 h-3 text-emerald-400" />
               ) : (
-                <TrendingDown className="w-4 h-4 text-red-400" />
+                <TrendingDown className="w-3 h-3 text-red-400" />
               )}
-              <span
-                className={`text-sm font-medium ${
-                  trend === "up" ? "text-emerald-400" : "text-red-400"
-                }`}
-              >
+              <span className={`text-[11px] font-medium ${trend === "up" ? "text-emerald-400" : "text-red-400"}`}>
                 {change}
               </span>
-              <span className="text-white/40 text-sm">vs last month</span>
+              <span className="text-white/25 text-[10px]">vs last month</span>
             </div>
           )}
         </div>
-        <div
-          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}
-        >
-          <Icon className="w-6 h-6 text-white" />
+        <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform flex-shrink-0`}>
+          <Icon className="w-4.5 h-4.5 text-white" />
         </div>
       </div>
     </motion.div>

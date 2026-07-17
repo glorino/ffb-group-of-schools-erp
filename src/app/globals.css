@@ -691,11 +691,11 @@ select optgroup {
 
 /* Card */
 .card, .bg-card {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
   backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 16px;
 }
 
 /* Badge */
@@ -795,10 +795,11 @@ select optgroup {
 
 /* Card */
 .card, .bg-card {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
   backdrop-filter: blur(25px);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 16px;
 }
 
 /* Badge */

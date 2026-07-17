@@ -214,7 +214,7 @@ export function Sidebar() {
         <SidebarContent />
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute -right-2.5 top-14 w-5 h-5 rounded-full bg-[var(--primary)] flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform"
+          className="absolute right-0 top-14 translate-x-1/2 w-5 h-5 rounded-full bg-[var(--primary)] flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform z-50"
         >
           {collapsed ? <ChevronRight className="w-2.5 h-2.5" /> : <ChevronLeft className="w-2.5 h-2.5" />}
         </button>
