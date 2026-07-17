@@ -196,7 +196,7 @@ export function Sidebar() {
         )}
       </AnimatePresence>
 
-      <aside className="hidden lg:block fixed left-0 top-0 bottom-0 w-[240px] z-40 bg-[var(--sidebar)] border-r border-white/[0.06]">
+      <aside className="hidden lg:block fixed left-0 top-0 bottom-0 w-[240px] z-20 bg-[var(--sidebar)] border-r border-white/[0.06]">
         <SidebarContent />
       </aside>
     </>

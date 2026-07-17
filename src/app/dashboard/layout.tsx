@@ -45,7 +45,7 @@ export default function DashboardLayout({
       <Sidebar />
       <div className="relative z-10 min-h-screen flex flex-col" style={{ marginLeft: "240px" }}>
         <Header />
-        <main className="flex-1 p-5 overflow-x-hidden">{children}</main>
+        <main className="flex-1 p-4 overflow-x-hidden">{children}</main>
       </div>
     </div>
   );
