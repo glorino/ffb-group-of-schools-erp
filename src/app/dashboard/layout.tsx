@@ -48,7 +48,7 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-animated">
       <ParticleBackground />
       <Sidebar />
-      <div className="min-h-screen flex flex-col" style={{ marginLeft: isMobile ? 0 : 240 }}>
+      <div className="min-h-screen flex flex-col" style={{ marginLeft: isMobile ? 0 : 260 }}>
         <Header />
         <main className="flex-1 p-5 overflow-x-hidden">{children}</main>
       </div>

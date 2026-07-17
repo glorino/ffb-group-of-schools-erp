@@ -105,7 +105,6 @@ export function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
-  const isSuperAdmin = userRoles.includes("SUPER_ADMIN") || userRoles.includes("ADMINISTRATOR");
   const roleLabel = userRoles[0]?.replace("_", " ") || "User";
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
@@ -121,7 +120,6 @@ export function Sidebar() {
       <nav className="flex-1 overflow-y-auto py-3 px-3">
         {navSections.map((section, si) => {
           const visibleItems = section.items.filter(item => {
-            if (isSuperAdmin) return true;
             if (!item.roles) return true;
             return item.roles.some(r => userRoles.includes(r));
           });
