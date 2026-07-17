@@ -147,17 +147,17 @@ export default function DashboardPage() {
   };
 
   return (
-    <motion.div variants={stagger} initial="initial" animate="animate" className="space-y-6">
+    <motion.div variants={stagger} initial="initial" animate="animate" className="space-y-4">
       {/* Greeting */}
       <motion.div variants={fadeIn}>
-        <h1 className="text-[26px] font-bold text-white/95 font-display tracking-tight">
+        <h1 className="text-[22px] font-bold text-white/95 font-display tracking-tight">
           Good Morning, <span className="bg-gradient-to-r from-[var(--blue-3)] to-[var(--accent)] bg-clip-text text-transparent">{name}</span>
         </h1>
-        <p className="text-white/35 text-sm mt-1">Here is what is happening at FFB Group of Schools today</p>
+        <p className="text-white/30 text-[12px] mt-0.5">Here is what is happening at FFB Group of Schools today</p>
       </motion.div>
 
       {/* Stats Row */}
-      <motion.div variants={fadeIn} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div variants={fadeIn} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard icon={Users} title="Total Students" value={stats.totalStudents} change="+12%" trend="up" color="from-blue-500 to-blue-700" />
         <StatCard icon={GraduationCap} title="Active Teachers" value={stats.totalTeachers} change="+4%" trend="up" color="from-purple-500 to-purple-700" />
         <StatCard icon={CreditCard} title="Total Revenue" value={`₦${(stats.totalRevenue / 1000000).toFixed(1)}M`} change="+18%" trend="up" color="from-emerald-500 to-emerald-700" />
@@ -165,13 +165,13 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Charts Row 1 */}
-      <motion.div variants={fadeIn} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <motion.div variants={fadeIn} className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {/* Class Performance */}
-        <div className="lg:col-span-2 bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <div className="flex items-center justify-between mb-5">
+        <div className="lg:col-span-2 bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.07] p-4">
+          <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="text-white/90 font-semibold text-[15px]">Class Performance</h3>
-              <p className="text-white/30 text-[11px] mt-0.5">Average scores vs target threshold</p>
+              <h3 className="text-white/90 font-semibold text-[13px]">Class Performance</h3>
+              <p className="text-white/25 text-[10px] mt-0.5">Average scores vs target threshold</p>
             </div>
             <div className="flex items-center gap-4 text-[11px]">
               <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[var(--blue-3)]" /> Average</span>
@@ -191,9 +191,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Attendance Today */}
-        <div className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <h3 className="text-white/90 font-semibold text-[15px] mb-1">Today&apos;s Attendance</h3>
-          <p className="text-white/30 text-[11px] mb-4">194 students expected</p>
+        <div className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.07] p-4">
+          <h3 className="text-white/90 font-semibold text-[13px] mb-1">Today&apos;s Attendance</h3>
+          <p className="text-white/25 text-[10px] mb-3">194 students expected</p>
           <ResponsiveContainer width="100%" height={180}>
             <PieChart>
               <Pie data={attendancePie} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={3} dataKey="value">
@@ -217,11 +217,11 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Revenue Trend */}
-      <motion.div variants={fadeIn} className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-        <div className="flex items-center justify-between mb-5">
+      <motion.div variants={fadeIn} className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.07] p-4">
+        <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-white/90 font-semibold text-[15px]">Revenue vs Expenses</h3>
-            <p className="text-white/30 text-[11px] mt-0.5">12-month financial overview</p>
+            <h3 className="text-white/90 font-semibold text-[13px]">Revenue vs Expenses</h3>
+            <p className="text-white/25 text-[10px] mt-0.5">12-month financial overview</p>
           </div>
           <div className="flex items-center gap-4 text-[11px]">
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[var(--blue-3)]" /> Revenue</span>
@@ -251,11 +251,11 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Bottom Row */}
-      <motion.div variants={fadeIn} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <motion.div variants={fadeIn} className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {/* Recent Activity */}
-        <div className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-white/90 font-semibold text-[15px]">Recent Activity</h3>
+        <div className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.07] p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-white/90 font-semibold text-[13px]">Recent Activity</h3>
             <button className="text-white/25 text-[11px] hover:text-white/50 transition">View all</button>
           </div>
           <div className="space-y-1">
@@ -274,9 +274,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Today's Schedule */}
-        <div className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-white/90 font-semibold text-[15px]">Today&apos;s Schedule</h3>
+        <div className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.07] p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-white/90 font-semibold text-[13px]">Today&apos;s Schedule</h3>
             <button className="text-white/25 text-[11px] hover:text-white/50 transition">Full timetable</button>
           </div>
           <div className="space-y-1.5">
@@ -305,11 +305,11 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Enrollment by Gender */}
-      <motion.div variants={fadeIn} className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-        <div className="flex items-center justify-between mb-5">
+      <motion.div variants={fadeIn} className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.07] p-4">
+        <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-white/90 font-semibold text-[15px]">Enrollment by Gender</h3>
-            <p className="text-white/30 text-[11px] mt-0.5">Male vs Female students per class</p>
+            <h3 className="text-white/90 font-semibold text-[13px]">Enrollment by Gender</h3>
+            <p className="text-white/25 text-[10px] mt-0.5">Male vs Female students per class</p>
           </div>
           <div className="flex items-center gap-4 text-[11px]">
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[var(--blue-3)]" /> Male</span>
