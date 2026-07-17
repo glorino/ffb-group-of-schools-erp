@@ -15,14 +15,9 @@ export default function DashboardLayout({
   const { data: session, status } = useSession();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const check = () => setIsMobile(window.innerWidth < 1024);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
   }, []);
 
   useEffect(() => {
@@ -45,10 +40,10 @@ export default function DashboardLayout({
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-animated">
+    <div className="min-h-screen bg-animated flex">
       <ParticleBackground />
       <Sidebar />
-      <div className="min-h-screen flex flex-col" style={{ marginLeft: isMobile ? 0 : 260 }}>
+      <div className="flex-1 min-h-screen flex flex-col min-w-0">
         <Header />
         <main className="flex-1 p-5 overflow-x-hidden">{children}</main>
       </div>
