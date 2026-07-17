@@ -40,10 +40,10 @@ export default function DashboardLayout({
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-animated flex">
+    <div className="min-h-screen bg-animated">
       <ParticleBackground />
       <Sidebar />
-      <div className="flex-1 min-h-screen flex flex-col min-w-0">
+      <div className="relative z-10 min-h-screen flex flex-col" style={{ marginLeft: "240px" }}>
         <Header />
         <main className="flex-1 p-5 overflow-x-hidden">{children}</main>
       </div>
