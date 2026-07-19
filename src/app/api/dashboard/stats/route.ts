@@ -9,8 +9,6 @@ export async function GET() {
   }
 
   const schoolId = (session.user as any).schoolId as string | undefined;
-  const where = schoolId ? { schoolId } : {};
-
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
@@ -24,8 +22,8 @@ export async function GET() {
     recentAdmissions,
     classes,
   ] = await Promise.all([
-    prisma.student.count({ where: { ...where, status: "active" } }),
-    prisma.teacher.count({ where: { ...where, status: "active" } }),
+    prisma.student.count({ where: { status: "active", ...(schoolId ? { schoolId } : {}) } }),
+    prisma.teacher.count({ where: { status: "active", ...(schoolId ? { schoolId } : {}) } }),
     prisma.attendanceRecord.groupBy({
       by: ["status"],
       where: {
@@ -35,17 +33,17 @@ export async function GET() {
       _count: true,
     }),
     prisma.payment.aggregate({
-      where: { ...where, status: "completed" },
+      where: { status: "completed", ...(schoolId ? { student: { schoolId } } : {}) },
       _sum: { amount: true },
     }),
     prisma.payment.findMany({
-      where: { ...where, status: "completed" },
+      where: { status: "completed", ...(schoolId ? { student: { schoolId } } : {}) },
       orderBy: { createdAt: "desc" },
       take: 5,
       include: { student: { select: { firstName: true, lastName: true } } },
     }),
     prisma.applicant.findMany({
-      where: { ...where },
+      where: schoolId ? { schoolId } : {},
       orderBy: { createdAt: "desc" },
       take: 5,
       select: {
@@ -58,7 +56,7 @@ export async function GET() {
       },
     }),
     prisma.schoolClass.findMany({
-      where: where,
+      where: schoolId ? { schoolId } : {},
       include: {
         _count: { select: { students: true } },
         classTeacher: { select: { name: true } },
@@ -73,9 +71,9 @@ export async function GET() {
     const end = new Date(d.getFullYear(), d.getMonth() + 1, 1);
     const result = await prisma.payment.aggregate({
       where: {
-        ...where,
         status: "completed",
         paidAt: { gte: start, lt: end },
+        ...(schoolId ? { student: { schoolId } } : {}),
       },
       _sum: { amount: true },
     });
@@ -130,7 +128,7 @@ export async function GET() {
     classPerformance,
     recentActivities,
     pendingAdmissions: await prisma.applicant.count({
-      where: { ...where, status: "pending" },
+      where: { status: "pending", ...(schoolId ? { schoolId } : {}) },
     }),
   });
 }

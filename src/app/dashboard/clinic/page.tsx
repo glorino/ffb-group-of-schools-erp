@@ -108,7 +108,7 @@ export default function ClinicPage() {
           </div>
           <div className="space-y-3">
             {patients.map((patient) => (
-              <div key={patient.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/8 transition-all">
+              <div key={patient.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                   patient.severity === "high" ? "bg-red-500/20 text-red-400" :
                   patient.severity === "medium" ? "bg-orange-500/20 text-orange-400" :

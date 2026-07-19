@@ -171,14 +171,14 @@ export default function ProfilePage() {
             <div className="card">
               <h3 className="text-white font-semibold text-lg mb-4">Security</h3>
               <div className="space-y-3">
-                <button className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/8 transition-all text-left">
+                <button className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all text-left">
                   <Key className="w-5 h-5 text-white/40" />
                   <div>
                     <p className="text-white text-sm font-medium">Change Password</p>
                     <p className="text-white/40 text-xs">Last changed 3 days ago</p>
                   </div>
                 </button>
-                <button className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/8 transition-all text-left">
+                <button className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all text-left">
                   <Shield className="w-5 h-5 text-white/40" />
                   <div>
                     <p className="text-white text-sm font-medium">Two-Factor Auth</p>
@@ -199,7 +199,7 @@ export default function ProfilePage() {
                   <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/5">
                     <span className="text-white text-sm">{notif.label}</span>
                     <div className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${notif.enabled ? "bg-[var(--accent)]" : "bg-white/20"}`}>
-                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${notif.enabled ? "left-5.5" : "left-0.5"}`} />
+                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${notif.enabled ? "left-[22px]" : "left-0.5"}`} />
                     </div>
                   </div>
                 ))}

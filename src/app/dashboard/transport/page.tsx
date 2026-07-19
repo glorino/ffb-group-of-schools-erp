@@ -108,7 +108,7 @@ export default function TransportPage() {
           </div>
           <div className="space-y-3">
             {vehicles.map((vehicle) => (
-              <div key={vehicle.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/8 transition-all">
+              <div key={vehicle.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                   vehicle.status === "active" ? "bg-emerald-500/20 text-emerald-400" : "bg-orange-500/20 text-orange-400"
                 }`}>

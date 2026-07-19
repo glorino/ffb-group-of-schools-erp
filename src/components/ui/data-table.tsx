@@ -102,7 +102,7 @@ export function DataTable<T extends Record<string, any>>({
       )}
 
       <div className="overflow-x-auto rounded-xl border border-white/10">
-        <table className="w-full table-premium">
+        <table className="w-full table-glass">
           <thead>
             <tr>
               {columns.map((col) => (

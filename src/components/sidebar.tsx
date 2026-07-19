@@ -20,81 +20,86 @@ const navSections: { title: string; items: NavItem[] }[] = [
     title: "Dashboard",
     items: [
       { label: "Overview", href: "/dashboard", emoji: "📊" },
-      { label: "Analytics", href: "/dashboard/analytics", emoji: "📈", roles: ["ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Analytics", href: "/dashboard/analytics", emoji: "📈", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "ACCOUNTANT", "AUDITOR"] },
     ],
   },
   {
     title: "User Management",
     items: [
-      { label: "Students", href: "/dashboard/students", emoji: "👨‍🎓", roles: ["ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
-      { label: "Teachers", href: "/dashboard/teachers", emoji: "👩‍🏫", roles: ["ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
-      { label: "Parents", href: "/dashboard/students", emoji: "👪", roles: ["ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Students", href: "/dashboard/students", emoji: "👨‍🎓", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "PARENT"] },
+      { label: "Teachers", href: "/dashboard/teachers", emoji: "👩‍🏫", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Parents", href: "/dashboard/students", emoji: "👪", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
     ],
   },
   {
     title: "Academics",
     items: [
-      { label: "Classes", href: "/dashboard/classes", emoji: "🏫", roles: ["ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"] },
-      { label: "Attendance", href: "/dashboard/attendance", emoji: "✅", roles: ["ADMINISTRATOR", "PRINCIPAL", "TEACHER"] },
-      { label: "Examinations", href: "/dashboard/exams", emoji: "📝", roles: ["ADMINISTRATOR", "PRINCIPAL", "TEACHER"] },
+      { label: "Classes", href: "/dashboard/classes", emoji: "🏫", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"] },
+      { label: "Attendance", href: "/dashboard/attendance", emoji: "✅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "PARENT"] },
+      { label: "Examinations", href: "/dashboard/exams", emoji: "📝", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER"] },
       { label: "My Exams", href: "/dashboard/exams", emoji: "📝", roles: ["STUDENT"] },
-      { label: "Timetable", href: "/dashboard/timetable", emoji: "📅", roles: ["ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT"] },
-      { label: "Lesson Plans", href: "/dashboard/lesson-plans", emoji: "📋", roles: ["TEACHER"] },
+      { label: "Timetable", href: "/dashboard/timetable", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
+      { label: "Lesson Plans", href: "/dashboard/lesson-plans", emoji: "📋", roles: ["TEACHER", "PRINCIPAL", "VICE_PRINCIPAL"] },
     ],
   },
   {
     title: "Results Engine",
     items: [
-      { label: "Results", href: "/dashboard/results", emoji: "📊", roles: ["ADMINISTRATOR", "PRINCIPAL", "TEACHER"] },
-      { label: "My Results", href: "/dashboard/results", emoji: "📊", roles: ["STUDENT"] },
-      { label: "Report Cards", href: "/dashboard/report-cards", emoji: "📄", roles: ["ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT"] },
+      { label: "Results", href: "/dashboard/results", emoji: "📊", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER"] },
+      { label: "My Results", href: "/dashboard/results", emoji: "📊", roles: ["STUDENT", "PARENT"] },
+      { label: "Report Cards", href: "/dashboard/report-cards", emoji: "📄", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
     ],
   },
   {
     title: "Admissions",
     items: [
-      { label: "Applications", href: "/dashboard/admissions", emoji: "📋", badge: "New", roles: ["ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Applications", href: "/dashboard/admissions", emoji: "📋", badge: "New", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
     ],
   },
   {
     title: "Finance & Fees",
     items: [
-      { label: "Fees & Invoices", href: "/dashboard/finance", emoji: "💰", roles: ["ADMINISTRATOR", "PRINCIPAL"] },
-      { label: "My Fees", href: "/dashboard/finance", emoji: "💰", roles: ["STUDENT"] },
-      { label: "Payments", href: "/dashboard/payments", emoji: "💳", roles: ["ADMINISTRATOR", "PRINCIPAL"] },
-      { label: "Income", href: "/dashboard/income", emoji: "📈", roles: ["ADMINISTRATOR"] },
-      { label: "Expenses", href: "/dashboard/expenses", emoji: "📉", roles: ["ADMINISTRATOR"] },
-      { label: "Payroll", href: "/dashboard/payroll", emoji: "💵", roles: ["ADMINISTRATOR", "PRINCIPAL"] },
+      { label: "Fees & Invoices", href: "/dashboard/finance", emoji: "💰", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT", "AUDITOR"] },
+      { label: "My Fees", href: "/dashboard/finance", emoji: "💰", roles: ["STUDENT", "PARENT"] },
+      { label: "Payments", href: "/dashboard/payments", emoji: "💳", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT"] },
+      { label: "Income", href: "/dashboard/income", emoji: "📈", roles: ["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"] },
+      { label: "Expenses", href: "/dashboard/expenses", emoji: "📉", roles: ["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"] },
+      { label: "Payroll", href: "/dashboard/payroll", emoji: "💵", roles: ["OWNER", "ADMINISTRATOR", "ACCOUNTANT"] },
     ],
   },
   {
     title: "Library",
     items: [
-      { label: "Library", href: "/dashboard/library", emoji: "📚", roles: ["ADMINISTRATOR", "TEACHER", "STUDENT"] },
+      { label: "Library", href: "/dashboard/library", emoji: "📚", roles: ["OWNER", "ADMINISTRATOR", "LIBRARIAN", "TEACHER", "STUDENT", "PARENT"] },
+    ],
+  },
+  {
+    title: "Hostel",
+    items: [
+      { label: "Hostel", href: "/dashboard/hostel", emoji: "🏠", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "PORTER"] },
     ],
   },
   {
     title: "Operations",
     items: [
-      { label: "Hostel", href: "/dashboard/hostel", emoji: "🏠", roles: ["ADMINISTRATOR", "PRINCIPAL"] },
-      { label: "Transport", href: "/dashboard/transport", emoji: "🚌", roles: ["ADMINISTRATOR"] },
-      { label: "Clinic", href: "/dashboard/clinic", emoji: "🏥", roles: ["ADMINISTRATOR"] },
-      { label: "Inventory", href: "/dashboard/inventory", emoji: "📦", roles: ["ADMINISTRATOR"] },
+      { label: "Transport", href: "/dashboard/transport", emoji: "🚌", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL"] },
+      { label: "Clinic", href: "/dashboard/clinic", emoji: "🏥", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER"] },
+      { label: "Inventory", href: "/dashboard/inventory", emoji: "📦", roles: ["OWNER", "ADMINISTRATOR"] },
     ],
   },
   {
     title: "AI & Intelligence",
     items: [
-      { label: "AI Insights", href: "/dashboard/ai", emoji: "🤖", roles: ["ADMINISTRATOR", "PRINCIPAL"] },
-      { label: "Alumni", href: "/dashboard/alumni", emoji: "🎓", roles: ["ADMINISTRATOR"] },
+      { label: "AI Insights", href: "/dashboard/ai", emoji: "🤖", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "AUDITOR"] },
+      { label: "Alumni", href: "/dashboard/alumni", emoji: "🎓", roles: ["OWNER", "ADMINISTRATOR", "ALUMNI"] },
     ],
   },
   {
     title: "Institution",
     items: [
-      { label: "Announcements", href: "/dashboard/announcements", emoji: "📢", roles: ["ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT"] },
-      { label: "Calendar", href: "/dashboard/calendar", emoji: "📅", roles: ["ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT"] },
-      { label: "Settings", href: "/dashboard/settings", emoji: "⚙️", roles: ["ADMINISTRATOR"] },
+      { label: "Announcements", href: "/dashboard/announcements", emoji: "📢", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI"] },
+      { label: "Calendar", href: "/dashboard/calendar", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
+      { label: "Settings", href: "/dashboard/settings", emoji: "⚙️", roles: ["OWNER", "ADMINISTRATOR"] },
     ],
   },
 ];

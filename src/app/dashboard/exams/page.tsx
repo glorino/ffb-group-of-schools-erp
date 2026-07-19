@@ -106,7 +106,7 @@ export default function ExamsPage() {
           </div>
           <div className="space-y-3">
             {exams.map((exam) => (
-              <div key={exam.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/8 transition-all">
+              <div key={exam.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                   exam.status === "active" ? "bg-emerald-500/20 text-emerald-400" :
                   exam.status === "completed" ? "bg-white/10 text-white/40" :
@@ -144,7 +144,7 @@ export default function ExamsPage() {
           <h3 className="text-white font-semibold text-lg mb-4">Question Bank</h3>
           <div className="space-y-3">
             {questionBank.map((subject, i) => (
-              <div key={i} className="p-3 rounded-xl bg-white/5 hover:bg-white/8 transition-all">
+              <div key={i} className="p-3 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-white text-sm font-medium">{subject.subject}</span>
                   <span className="text-white/40 text-xs">{subject.questions} Qs</span>

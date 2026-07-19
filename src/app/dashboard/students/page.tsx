@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import {
   Users,
   Search,
-  Filter,
   Download,
   UserPlus,
   ChevronLeft,
@@ -19,11 +18,10 @@ import {
   Phone,
   Mail,
   X,
-  SortAsc,
-  SortDesc,
   Grid3X3,
   List,
 } from "lucide-react";
+import { downloadCSV } from "@/lib/exports";
 
 const fadeIn = {
   initial: { opacity: 0, y: 12 },
@@ -65,27 +63,23 @@ export default function StudentsPage() {
         const params = new URLSearchParams({ page: String(page), limit: "10" });
         if (search) params.set("search", search);
         if (classFilter) params.set("classId", classFilter);
+        if (statusFilter) params.set("status", statusFilter);
         const res = await fetch(`/api/students?${params}`);
         const data = await res.json();
-        if (data.success) {
-          setStudents(data.students || []);
-          setTotalPages(data.pagination?.totalPages || 1);
-        }
+        setStudents(data.students || []);
+        setTotalPages(data.pagination?.pages || 1);
       } catch {
         setStudents([]);
       }
       setLoading(false);
     };
     fetchStudents();
-  }, [page, search, classFilter]);
+  }, [page, search, classFilter, statusFilter]);
 
-  const classes = [
-    { id: "cl_jss1a", name: "JSS1A" }, { id: "cl_jss1b", name: "JSS1B" },
-    { id: "cl_jss2a", name: "JSS2A" }, { id: "cl_jss2b", name: "JSS2B" },
-    { id: "cl_jss3a", name: "JSS3A" }, { id: "cl_ss1a", name: "SS1A" },
-    { id: "cl_ss1b", name: "SS1B" }, { id: "cl_ss2a", name: "SS2A" },
-    { id: "cl_ss3a", name: "SS3A" },
-  ];
+  const [classes, setClasses] = useState<{ id: string; name: string }[]>([]);
+  useEffect(() => {
+    fetch("/api/classes").then(r => r.json()).then(d => setClasses(d.classes || d || [])).catch(() => {});
+  }, []);
 
   const sortedStudents = useMemo(() => {
     const sorted = [...students].sort((a, b) => {
@@ -121,11 +115,24 @@ export default function StudentsPage() {
           <p className="text-white/30 text-[12px] mt-1 ml-[46px]">Manage student records and profiles</p>
         </div>
         <div className="flex items-center gap-2">
-          <button className="px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition flex items-center gap-2">
+          <button
+            onClick={() => downloadCSV(students.map(s => ({
+              Name: `${s.firstName} ${s.lastName}`,
+              "Admission No": s.admissionNumber,
+              Class: s.class?.name || "—",
+              Email: s.email || "—",
+              Status: s.status,
+              "Date Added": new Date(s.createdAt).toLocaleDateString(),
+            })), "students_list")}
+            className="px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition flex items-center gap-2"
+          >
             <Download className="w-4 h-4" />
             Export
           </button>
-          <button className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
+          <button
+            onClick={() => alert("Add Student form coming soon")}
+            className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2"
+          >
             <UserPlus className="w-4 h-4" />
             Add Student
           </button>
@@ -200,7 +207,7 @@ export default function StudentsPage() {
                       <span className="flex items-center gap-1.5">
                         {col.label}
                         {sortField === col.key && (
-                          sortDir === "asc" ? <SortAsc className="w-3 h-3 text-[var(--accent)]" /> : <SortDesc className="w-3 h-3 text-[var(--accent)]" />
+                          <span className="text-[var(--accent)]">{sortDir === "asc" ? "▲" : "▼"}</span>
                         )}
                       </span>
                     </th>

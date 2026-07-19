@@ -97,7 +97,7 @@ export default function AnnouncementsPage() {
         </div>
         <div className="space-y-4">
           {announcements.map((announcement) => (
-            <div key={announcement.id} className="p-4 rounded-xl bg-white/5 hover:bg-white/8 transition-all">
+            <div key={announcement.id} className="p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
                   {announcement.pinned && <Pin className="w-4 h-4 text-[var(--accent)]" />}

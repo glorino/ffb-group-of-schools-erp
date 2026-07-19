@@ -107,7 +107,7 @@ export default function AlumniPage() {
           </div>
           <div className="space-y-3">
             {alumni.map((person) => (
-              <div key={person.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/8 transition-all">
+              <div key={person.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white font-semibold text-sm">
                   {person.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                 </div>

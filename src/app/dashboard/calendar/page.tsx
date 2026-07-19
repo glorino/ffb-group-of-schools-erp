@@ -111,7 +111,7 @@ export default function CalendarPage() {
             <h3 className="text-white font-semibold text-lg mb-4">Upcoming Events</h3>
             <div className="space-y-3">
               {events.map((event) => (
-                <div key={event.id} className="p-3 rounded-xl bg-white/5 hover:bg-white/8 transition-all">
+                <div key={event.id} className="p-3 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all">
                   <div className="flex items-center gap-2 mb-2">
                     <span className={`px-2 py-1 rounded-lg text-xs font-medium ${event.color}`}>
                       {event.type}

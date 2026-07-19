@@ -75,8 +75,9 @@ export default function StudentDetailPage() {
     const fetchStudent = async () => {
       try {
         const res = await fetch(`/api/students/${params.id}`);
+        if (!res.ok) { setLoading(false); return; }
         const data = await res.json();
-        if (data.success) setStudent(data.student);
+        setStudent(data);
       } catch { }
       setLoading(false);
     };

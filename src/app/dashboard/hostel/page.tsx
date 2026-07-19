@@ -107,7 +107,7 @@ export default function HostelPage() {
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             {blocks.map((block) => (
-              <div key={block.id} className="p-4 rounded-xl bg-white/5 hover:bg-white/8 transition-all">
+              <div key={block.id} className="p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all">
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <h4 className="text-white font-medium">{block.name}</h4>

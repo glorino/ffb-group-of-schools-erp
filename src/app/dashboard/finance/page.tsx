@@ -79,7 +79,7 @@ export default function FinancePage() {
       try {
         const res = await fetch("/api/finance/payments");
         const data = await res.json();
-        if (data.success && data.payments?.length) setPayments(data.payments);
+        if (data.payments?.length) setPayments(data.payments);
       } catch {}
       setLoading(false);
     };
