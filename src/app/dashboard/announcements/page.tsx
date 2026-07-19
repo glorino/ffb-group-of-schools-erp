@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Megaphone,
   Plus,
@@ -13,23 +14,106 @@ import {
   Trash2,
   Pin,
   Calendar,
+  X,
+  Loader2,
+  Download,
 } from "lucide-react";
+import { downloadCSV } from "@/lib/exports";
+import { toast } from "sonner";
 
-const announcements = [
-  { id: 1, title: "Mid-Term Examination Schedule", content: "Mid-term examinations will begin on January 20th. All students are advised to prepare adequately.", author: "Principal", audience: "All Students", date: "Jan 15, 2025", priority: "high", views: 2847, pinned: true },
-  { id: 2, title: "Parent-Teacher Meeting", content: "Parents are invited for a meeting on January 22nd to discuss student progress.", author: "Vice Principal", audience: "Parents", date: "Jan 14, 2025", priority: "medium", views: 1200, pinned: false },
-  { id: 3, title: "School Sports Day", content: "Annual sports day will hold on January 25th. All houses should prepare.", author: "Sports Master", audience: "All Students", date: "Jan 13, 2025", priority: "low", views: 2100, pinned: false },
-  { id: 4, title: "Fee Payment Deadline", content: "All outstanding fees must be paid before January 31st to avoid examination malpractice.", author: "Bursar", audience: "Parents", date: "Jan 12, 2025", priority: "high", views: 1800, pinned: true },
-];
-
-const stats = [
-  { label: "Total Announcements", value: "48", icon: Megaphone, color: "from-blue-500 to-blue-600" },
-  { label: "Published", value: "42", icon: Eye, color: "from-emerald-500 to-emerald-600" },
-  { label: "Drafts", value: "6", icon: Edit, color: "from-orange-500 to-orange-600" },
-  { label: "Total Views", value: "15.2K", icon: Users, color: "from-purple-500 to-purple-600" },
-];
+interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  type: string;
+  priority: string;
+  published: boolean;
+  createdAt: string;
+  authorId?: string;
+}
 
 export default function AnnouncementsPage() {
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [stats, setStats] = useState({ total: 0, published: 0 });
+  const [form, setForm] = useState({
+    title: "",
+    content: "",
+    type: "general",
+    priority: "normal",
+  });
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, []);
+
+  const fetchAnnouncements = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/announcements");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch announcements");
+      setAnnouncements(data.announcements || []);
+      setStats(data.stats || { total: 0, published: 0 });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to load announcements");
+      setAnnouncements([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.title || !form.content) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, published: true }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create announcement");
+      toast.success("Announcement created successfully");
+      setShowModal(false);
+      setForm({ title: "", content: "", type: "general", priority: "normal" });
+      fetchAnnouncements();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create announcement");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleExport = () => {
+    downloadCSV(
+      announcements.map((a) => ({
+        Title: a.title,
+        Content: a.content,
+        Type: a.type,
+        Priority: a.priority,
+        Published: a.published ? "Yes" : "No",
+        "Created At": new Date(a.createdAt).toLocaleDateString(),
+      })),
+      "announcements"
+    );
+  };
+
+  const filteredAnnouncements = announcements.filter(
+    (a) =>
+      a.title.toLowerCase().includes(search.toLowerCase()) ||
+      a.content.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const draftCount = stats.total - stats.published;
+
   return (
     <div className="space-y-6">
       <motion.div
@@ -44,15 +128,32 @@ export default function AnnouncementsPage() {
               Create and manage school-wide announcements and notifications
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all">
-            <Plus className="w-4 h-4" />
-            New Announcement
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all"
+            >
+              <Download className="w-4 h-4" />
+              Export
+            </button>
+            <button
+              onClick={() => setShowModal(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              New Announcement
+            </button>
+          </div>
         </div>
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, i) => (
+        {[
+          { label: "Total Announcements", value: stats.total, icon: Megaphone, color: "from-blue-500 to-blue-600" },
+          { label: "Published", value: stats.published, icon: Eye, color: "from-emerald-500 to-emerald-600" },
+          { label: "Drafts", value: draftCount, icon: Edit, color: "from-orange-500 to-orange-600" },
+          { label: "Total Types", value: new Set(announcements.map((a) => a.type)).size, icon: Users, color: "from-purple-500 to-purple-600" },
+        ].map((stat, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
@@ -62,7 +163,7 @@ export default function AnnouncementsPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-sm mb-1">{stat.label}</p>
+                <p className="text-white/50 text-[13px] mb-1">{stat.label}</p>
                 <p className="text-3xl font-bold text-white">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
@@ -87,54 +188,174 @@ export default function AnnouncementsPage() {
               <input
                 type="text"
                 placeholder="Search announcements..."
-                className="pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
               />
             </div>
-            <button className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:bg-white/10">
+            <button
+              onClick={handleExport}
+              className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]"
+            >
               <Filter className="w-4 h-4" />
             </button>
           </div>
         </div>
-        <div className="space-y-4">
-          {announcements.map((announcement) => (
-            <div key={announcement.id} className="p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] transition-all">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  {announcement.pinned && <Pin className="w-4 h-4 text-[var(--accent)]" />}
-                  <h4 className="text-white font-medium">{announcement.title}</h4>
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
+          </div>
+        ) : filteredAnnouncements.length === 0 ? (
+          <div className="text-center py-20 text-white/40">
+            <Megaphone className="w-12 h-12 mx-auto mb-3 opacity-40" />
+            <p className="text-[13px]">No announcements found</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredAnnouncements.map((announcement) => (
+              <div key={announcement.id} className="p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    {!announcement.published && (
+                      <Pin className="w-4 h-4 text-white/30" />
+                    )}
+                    <h4 className="text-white font-medium text-[13px]">{announcement.title}</h4>
+                  </div>
+                  <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
+                    announcement.priority === "high" ? "bg-red-500/20 text-red-400" :
+                    announcement.priority === "medium" ? "bg-orange-500/20 text-orange-400" :
+                    "bg-white/10 text-white/40"
+                  }`}>
+                    {announcement.priority}
+                  </span>
                 </div>
-                <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                  announcement.priority === "high" ? "bg-red-500/20 text-red-400" :
-                  announcement.priority === "medium" ? "bg-orange-500/20 text-orange-400" :
-                  "bg-white/10 text-white/40"
-                }`}>
-                  {announcement.priority}
-                </span>
-              </div>
-              <p className="text-white/60 text-sm mb-3">{announcement.content}</p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 text-xs">
-                  <span className="text-white/40">By: {announcement.author}</span>
-                  <span className="text-white/40">To: {announcement.audience}</span>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3 text-white/30" />
-                    <span className="text-white/30">{announcement.date}</span>
+                <p className="text-white/60 text-[13px] mb-3 line-clamp-2">{announcement.content}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4 text-[12px]">
+                    <span className="text-white/40">Type: {announcement.type}</span>
+                    <span className={`px-1.5 py-0.5 rounded text-[11px] ${
+                      announcement.published ? "bg-emerald-500/20 text-emerald-400" : "bg-white/10 text-white/40"
+                    }`}>
+                      {announcement.published ? "Published" : "Draft"}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-white/30" />
+                      <span className="text-white/30">{new Date(announcement.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40">
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-white/30 text-xs">{announcement.views} views</span>
-                  <button className="p-1 rounded-lg hover:bg-white/10 text-white/40">
-                    <Edit className="w-4 h-4" />
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
+
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setShowModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">New Announcement</h3>
+                <button onClick={() => setShowModal(false)} className="text-white/40 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form onSubmit={handleCreate} className="space-y-4">
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    placeholder="e.g. Mid-Term Examination Schedule"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Content *</label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={form.content}
+                    onChange={(e) => setForm({ ...form, content: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
+                    placeholder="Write your announcement here..."
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Type</label>
+                    <select
+                      value={form.type}
+                      onChange={(e) => setForm({ ...form, type: e.target.value })}
+                      style={{ colorScheme: "dark" }}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    >
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="general">General</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="academic">Academic</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="event">Event</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="urgent">Urgent</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="administrative">Administrative</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Priority</label>
+                    <select
+                      value={form.priority}
+                      onChange={(e) => setForm({ ...form, priority: e.target.value })}
+                      style={{ colorScheme: "dark" }}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    >
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="low">Low</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="normal">Normal</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="medium">Medium</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="high">High</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="flex-1 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] hover:bg-white/[0.08] transition-all"
+                  >
+                    Cancel
                   </button>
-                  <button className="p-1 rounded-lg hover:bg-white/10 text-white/40">
-                    <Trash2 className="w-4 h-4" />
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="flex-1 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-medium hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                    Publish
                   </button>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

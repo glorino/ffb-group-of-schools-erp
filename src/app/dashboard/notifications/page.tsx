@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
@@ -12,50 +12,84 @@ import {
   Trash2,
   Filter,
   Inbox,
+  Loader2,
 } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { EmptyState } from "@/components/ui/empty-state";
+import { toast } from "sonner";
 
 interface Notification {
   id: string;
   title: string;
-  description: string;
+  message: string;
   type: "academic" | "finance" | "system" | "warning";
   read: boolean;
-  time: string;
-  date: string;
+  createdAt: string;
 }
 
 type FilterType = "all" | "unread" | "academic" | "finance" | "system";
 
-const iconMap = {
+const iconMap: Record<string, typeof GraduationCap> = {
   academic: GraduationCap,
   finance: CreditCard,
   system: Settings,
   warning: AlertTriangle,
 };
 
-const colorMap = {
+const colorMap: Record<string, string> = {
   academic: "text-blue-400 bg-blue-500/20",
   finance: "text-emerald-400 bg-emerald-500/20",
   system: "text-purple-400 bg-purple-500/20",
   warning: "text-orange-400 bg-orange-500/20",
 };
 
-const initialNotifications: Notification[] = [
-  { id: "1", title: "New admission application", description: "Chidi Okonkwo applied for JSS1. Please review the application and supporting documents.", type: "academic", read: false, time: "5 min ago", date: "Today" },
-  { id: "2", title: "Fee payment received", description: "Amina Mohammed (SS2A) paid ₦125,000 for second term fees.", type: "finance", read: false, time: "12 min ago", date: "Today" },
-  { id: "3", title: "System maintenance scheduled", description: "The system will undergo maintenance tonight from 2:00 AM to 4:00 AM.", type: "system", read: true, time: "1 hour ago", date: "Today" },
-  { id: "4", title: "Low attendance alert", description: "SS2B attendance dropped below 70% threshold. Immediate action required.", type: "warning", read: false, time: "2 hours ago", date: "Today" },
-  { id: "5", title: "Examination results published", description: "SS3 Mathematics results have been published and are now visible to parents.", type: "academic", read: true, time: "3 hours ago", date: "Today" },
-  { id: "6", title: "Salary payment processed", description: "Monthly salaries for January have been processed successfully.", type: "finance", read: true, time: "5 hours ago", date: "Today" },
-  { id: "7", title: "New teacher registration", description: "Mr. Emeka Obi has been registered in the system.", type: "academic", read: true, time: "1 day ago", date: "Yesterday" },
-  { id: "8", title: "Hostel allocation update", description: "Block A, Room 12 has been allocated to 3 new students.", type: "system", read: true, time: "1 day ago", date: "Yesterday" },
-];
+function timeAgo(dateStr: string): string {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay > 1) return `${diffDay} days ago`;
+  if (diffDay === 1) return "1 day ago";
+  if (diffHr > 1) return `${diffHr} hours ago`;
+  if (diffHr === 1) return "1 hour ago";
+  if (diffMin > 1) return `${diffMin} min ago`;
+  return "Just now";
+}
+
+function dateLabel(dateStr: string): string {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  return date.toLocaleDateString("en-NG", { weekday: "long", day: "numeric", month: "long" });
+}
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterType>("all");
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const res = await fetch("/api/notifications");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setNotifications(data.notifications ?? []);
+      setUnreadCount(data.unreadCount ?? 0);
+    } catch {
+      toast.error("Failed to load notifications");
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
 
   const filters: { label: string; value: FilterType }[] = [
     { label: "All", value: "all" },
@@ -71,16 +105,36 @@ export default function NotificationsPage() {
     return n.type === filter;
   });
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+  const markAsRead = async (id: string) => {
+    try {
+      const res = await fetch("/api/notifications", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, read: true }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch {
+      toast.error("Failed to mark as read");
+    }
   };
 
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  const markAllRead = async () => {
+    try {
+      const res = await fetch("/api/notifications", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) throw new Error("Failed");
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch {
+      toast.error("Failed to mark all as read");
+    }
   };
 
   const deleteNotification = (id: string) => {
@@ -89,7 +143,8 @@ export default function NotificationsPage() {
 
   const grouped = filteredNotifications.reduce(
     (acc, n) => {
-      (acc[n.date] = acc[n.date] || []).push(n);
+      const label = dateLabel(n.createdAt);
+      (acc[label] = acc[label] || []).push(n);
       return acc;
     },
     {} as Record<string, Notification[]>
@@ -127,7 +182,7 @@ export default function NotificationsPage() {
             className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
               filter === f.value
                 ? "bg-[var(--primary)] text-white"
-                : "bg-white/5 text-white/50 hover:text-white hover:bg-white/10"
+                : "bg-white/[0.04] text-white/50 hover:text-white hover:bg-white/[0.08]"
             }`}
           >
             {f.label}
@@ -140,7 +195,11 @@ export default function NotificationsPage() {
         ))}
       </div>
 
-      {filteredNotifications.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
+        </div>
+      ) : filteredNotifications.length === 0 ? (
         <EmptyState
           icon={Inbox}
           title="No notifications"
@@ -160,7 +219,7 @@ export default function NotificationsPage() {
               <div className="space-y-2">
                 <AnimatePresence>
                   {items.map((n) => {
-                    const Icon = iconMap[n.type];
+                    const Icon = iconMap[n.type] || Settings;
                     return (
                       <motion.div
                         key={n.id}
@@ -168,7 +227,7 @@ export default function NotificationsPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        className={`card flex items-start gap-4 py-4 ${
+                        className={`bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.08] flex items-start gap-4 py-4 px-4 ${
                           !n.read
                             ? "border-l-2 border-l-[var(--accent)]"
                             : ""
@@ -182,22 +241,22 @@ export default function NotificationsPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <p className="text-white font-medium text-sm">
+                              <p className="text-white font-medium text-[13px]">
                                 {n.title}
                               </p>
-                              <p className="text-white/40 text-sm mt-0.5">
-                                {n.description}
+                              <p className="text-white/60 text-[13px] mt-0.5">
+                                {n.message}
                               </p>
                             </div>
-                            <span className="text-white/30 text-xs whitespace-nowrap">
-                              {n.time}
+                            <span className="text-white/30 text-[12px] whitespace-nowrap">
+                              {timeAgo(n.createdAt)}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 mt-2">
                             {!n.read && (
                               <button
                                 onClick={() => markAsRead(n.id)}
-                                className="flex items-center gap-1 text-[var(--accent)] text-xs hover:underline"
+                                className="flex items-center gap-1 text-[var(--accent)] text-[12px] hover:underline"
                               >
                                 <Check className="w-3 h-3" />
                                 Mark as read
@@ -205,7 +264,7 @@ export default function NotificationsPage() {
                             )}
                             <button
                               onClick={() => deleteNotification(n.id)}
-                              className="flex items-center gap-1 text-white/30 text-xs hover:text-red-400 transition-colors"
+                              className="flex items-center gap-1 text-white/30 text-[12px] hover:text-red-400 transition-colors"
                             >
                               <Trash2 className="w-3 h-3" />
                               Delete

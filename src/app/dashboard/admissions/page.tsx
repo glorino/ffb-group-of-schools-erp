@@ -17,7 +17,10 @@ import {
   AlertCircle,
   UserCheck,
   MessageSquare,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
+import { downloadCSV } from "@/lib/exports";
 
 interface Applicant {
   id: string;
@@ -77,9 +80,12 @@ export default function AdmissionsPage() {
       if (search) params.set("search", search);
       if (statusFilter) params.set("status", statusFilter);
       const res = await fetch(`/api/admissions?${params}`);
+      if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       setApplicants(data.applicants ?? []);
-    } catch { }
+    } catch {
+      toast.error("Failed to load admissions data");
+    }
     setLoading(false);
   }, [search, statusFilter]);
 
@@ -115,9 +121,27 @@ export default function AdmissionsPage() {
         if (selectedApplicant?.id === applicantId) {
           setSelectedApplicant({ ...selectedApplicant, status: newStatus, decisionNote: actionNote || selectedApplicant.decisionNote });
         }
+        toast.success(`Application ${newStatus === "admitted" ? "admitted" : newStatus === "rejected" ? "rejected" : "updated"}`);
+      } else {
+        toast.error(data.error || "Failed to update status");
       }
-    } catch { }
+    } catch {
+      toast.error("Failed to update application status");
+    }
     setActionLoading(false);
+  };
+
+  const handleExport = () => {
+    const data = applicants.map((a) => ({
+      "Application No": a.applicationNumber,
+      Name: `${a.firstName} ${a.lastName}`,
+      "Class Applied": a.classAppliedFor,
+      Status: statusLabels[a.status] || a.status,
+      "Submitted": new Date(a.submittedAt).toLocaleDateString("en-NG"),
+      Email: a.email,
+      Phone: a.phone,
+    }));
+    downloadCSV(data, "admissions");
   };
 
   return (
@@ -128,15 +152,21 @@ export default function AdmissionsPage() {
           <h2 className="text-2xl font-bold text-white">Admissions Management</h2>
           <p className="text-white/50 text-sm">Review applications, approve or reject, and manage admission decisions</p>
         </div>
+        <button
+          onClick={handleExport}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-all"
+        >
+          Export CSV
+        </button>
       </div>
 
       {/* Pipeline */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.08] p-5">
         <h3 className="text-white font-semibold mb-4">Admission Pipeline</h3>
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           {workflowSteps.map((step, i) => (
             <div key={i} className="flex items-center gap-2">
-              <button onClick={() => setStatusFilter(statusFilter === step.step ? "" : step.step)} className={`flex-1 min-w-[100px] p-3 rounded-xl text-center transition-all ${statusFilter === step.step ? "bg-white/15 ring-2 ring-white/20" : "bg-white/5 hover:bg-white/10"}`}>
+              <button onClick={() => setStatusFilter(statusFilter === step.step ? "" : step.step)} className={`flex-1 min-w-[100px] p-3 rounded-xl text-center transition-all ${statusFilter === step.step ? "bg-white/[0.15] ring-2 ring-white/20" : "bg-white/[0.04] hover:bg-white/[0.08]"}`}>
                 <div className={`w-2.5 h-2.5 rounded-full ${step.color} mx-auto mb-1.5`} />
                 <p className="text-white font-bold text-lg">{step.count}</p>
                 <p className="text-white/40 text-[10px]">{step.label}</p>
@@ -153,25 +183,30 @@ export default function AdmissionsPage() {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
           <input type="text" placeholder="Search by name or application number..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition-all" />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer">
-          <option value="">All Status</option>
-          {Object.entries(statusLabels).map(([val, label]) => (<option key={val} value={val}>{label}</option>))}
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          style={{ colorScheme: "dark" }}
+          className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
+        >
+          <option value="" style={{ background: "#0f1b33", color: "#fff" }}>All Status</option>
+          {Object.entries(statusLabels).map(([val, label]) => (
+            <option key={val} value={val} style={{ background: "#0f1b33", color: "#fff" }}>{label}</option>
+          ))}
         </select>
       </div>
 
       {/* Applications List */}
       <div className="space-y-3">
         {loading ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5 animate-pulse">
-              <div className="flex items-center gap-4"><div className="w-12 h-12 rounded-xl bg-white/[0.06]" /><div className="space-y-2 flex-1"><div className="h-4 rounded bg-white/[0.06] w-1/3" /><div className="h-3 rounded bg-white/[0.04] w-1/4" /></div></div>
-            </div>
-          ))
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
+          </div>
         ) : applicants.length === 0 ? (
-          <div className="text-center py-16"><FileText className="w-10 h-10 text-white/10 mx-auto mb-3" /><p className="text-white/30 text-sm">No applications found</p></div>
+          <div className="text-center py-16"><FileText className="w-10 h-10 text-white/10 mx-auto mb-3" /><p className="text-white/30 text-[13px]">No applications found</p></div>
         ) : (
           applicants.map((a, i) => (
-            <motion.div key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5 hover:border-white/[0.12] transition-all">
+            <motion.div key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.08] p-5 hover:border-white/[0.12] transition-all">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-sm font-bold border border-white/10 flex-shrink-0">
@@ -192,7 +227,7 @@ export default function AdmissionsPage() {
                   <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusColors[a.status] || "bg-white/10 text-white/60"}`}>
                     {statusLabels[a.status] || a.status}
                   </span>
-                  <button onClick={() => setSelectedApplicant(a)} className="p-2 rounded-lg bg-white/5 text-white/40 hover:text-white hover:bg-white/10 transition">
+                  <button onClick={() => setSelectedApplicant(a)} className="p-2 rounded-lg bg-white/[0.04] text-white/40 hover:text-white hover:bg-white/[0.08] transition">
                     <Eye className="w-4 h-4" />
                   </button>
                   {a.status === "pending" && (
@@ -246,7 +281,7 @@ export default function AdmissionsPage() {
                   </div>
                 ))}
                 {selectedApplicant.decisionNote && (
-                  <div className="mt-3 p-3 rounded-xl bg-white/5 border border-white/10">
+                  <div className="mt-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                     <p className="text-white/30 text-[11px] uppercase mb-1">Decision Note</p>
                     <p className="text-white/70 text-[13px]">{selectedApplicant.decisionNote}</p>
                   </div>
@@ -274,7 +309,7 @@ export default function AdmissionsPage() {
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-md bg-[#0a1628] border border-white/10 rounded-3xl p-6">
               <h3 className="text-white font-bold text-lg mb-2">Review Application</h3>
               <p className="text-white/40 text-[13px] mb-4">Add a note for the applicant (optional)</p>
-              <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder="Enter notes, instructions or reason..." rows={4} className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />
+              <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder="Enter notes, instructions or reason..." rows={4} className="w-full p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />
               <div className="flex gap-2 mt-4">
                 <button onClick={() => handleStatusUpdate(showActionModal, "admitted")} disabled={actionLoading} className="flex-1 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 text-[13px] font-semibold hover:bg-emerald-500/25 transition flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4" /> {actionLoading ? "Processing..." : "Approve & Admit"}
@@ -283,7 +318,7 @@ export default function AdmissionsPage() {
                   <XCircle className="w-4 h-4" /> {actionLoading ? "Processing..." : "Reject"}
                 </button>
               </div>
-              <button onClick={() => handleStatusUpdate(showActionModal, "under_review")} disabled={actionLoading} className="w-full mt-2 py-2 rounded-xl bg-white/5 text-white/50 text-[12px] font-medium hover:bg-white/10 transition">
+              <button onClick={() => handleStatusUpdate(showActionModal, "under_review")} disabled={actionLoading} className="w-full mt-2 py-2 rounded-xl bg-white/[0.04] text-white/50 text-[12px] font-medium hover:bg-white/[0.08] transition">
                 Mark as Under Review
               </button>
             </motion.div>

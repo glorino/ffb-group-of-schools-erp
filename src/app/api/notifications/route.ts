@@ -1,92 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-import { NotificationSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
-    const unreadOnly = searchParams.get("unreadOnly") === "true";
+    const userId = session.user.id;
 
-    const skip = (page - 1) * limit;
-
-    const where: any = {
-      userId: session.user.id,
-    };
-
-    if (unreadOnly) {
-      where.read = false;
-    }
-
-    const [notifications, total, unreadCount] = await Promise.all([
-      prisma.notification.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.notification.count({ where }),
-      prisma.notification.count({
-        where: { userId: session.user.id, read: false },
-      }),
-    ]);
-
-    return NextResponse.json({
-      notifications,
-      unreadCount,
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit),
-      },
+    const notifications = await prisma.notification.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 50,
     });
+
+    const unreadCount = notifications.filter(n => !n.read).length;
+
+    return NextResponse.json({ notifications, unreadCount });
   } catch (error) {
     console.error("GET /api/notifications error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch notifications" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch notifications" }, { status: 500 });
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const validated = NotificationSchema.parse(body);
+    const { id, read } = body;
 
-    const notification = await prisma.notification.create({
-      data: {
-        userId: validated.userId,
-        title: validated.title,
-        message: validated.message,
-        type: validated.type,
-        module: validated.module,
-        link: validated.link,
-      },
-    });
-
-    return NextResponse.json(notification, { status: 201 });
-  } catch (error) {
-    if (error instanceof Error && error.name === "ZodError") {
-      return NextResponse.json({ error: "Validation failed", details: error.message }, { status: 400 });
+    if (id) {
+      await prisma.notification.update({ where: { id }, data: { read: read !== false } });
+    } else {
+      await prisma.notification.updateMany({ where: { userId: session.user.id }, data: { read: true } });
     }
-    console.error("POST /api/notifications error:", error);
-    return NextResponse.json(
-      { error: "Failed to create notification" },
-      { status: 500 }
-    );
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("PUT /api/notifications error:", error);
+    return NextResponse.json({ error: "Failed to update notifications" }, { status: 500 });
   }
 }

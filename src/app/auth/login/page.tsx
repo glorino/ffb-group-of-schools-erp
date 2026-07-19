@@ -24,12 +24,10 @@ export default function LoginPage() {
     try {
       const { signIn } = await import("next-auth/react");
       let result = await signIn("credentials", { email, password, redirect: false });
-      console.log("[LOGIN] signIn result:", result);
 
       if (result?.error) {
         await fetch("/api/seed-auto", { method: "POST" });
         result = await signIn("credentials", { email, password, redirect: false });
-        console.log("[LOGIN] signIn after seed:", result);
       }
 
       if (result?.error) {
@@ -40,7 +38,6 @@ export default function LoginPage() {
         setError("Unexpected response. Please try again.");
       }
     } catch (err) {
-      console.error("[LOGIN] catch error:", err);
       setError(`Connection error: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setLoading(false);

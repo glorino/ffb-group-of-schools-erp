@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen,
@@ -14,31 +15,135 @@ import {
   Eye,
   Edit,
   Trash2,
+  Loader2,
+  Download,
+  X,
 } from "lucide-react";
+import { toast } from "sonner";
+import { downloadCSV } from "@/lib/exports";
 
-const books = [
-  { id: 1, title: "Mathematics for Junior Secondary", author: "A.O. Adesoji", isbn: "978-0123456789", copies: 50, available: 42, category: "Textbook", status: "available" },
-  { id: 2, title: "English Grammar and Composition", author: "F.B. Oyebade", isbn: "978-0234567890", copies: 45, available: 38, category: "Textbook", status: "available" },
-  { id: 3, title: "Countdown to WAEC Mathematics", author: "J.O. Ajose", isbn: "978-0345678901", copies: 30, available: 25, category: "Exam Prep", status: "available" },
-  { id: 4, title: "African Novels Anthology", author: "Various", isbn: "978-0456789012", copies: 40, available: 35, category: "Literature", status: "available" },
-  { id: 5, title: "Physics Practical Manual", author: "E.O. Obioha", isbn: "978-0567890123", copies: 25, available: 20, category: "Practical", status: "available" },
-];
+interface LibraryBook {
+  id: string;
+  title: string;
+  author: string;
+  isbn: string;
+  copies: number;
+  available: number;
+  category: string;
+  status: string;
+}
 
-const borrowedBooks = [
-  { student: "Chidinma Okafor", book: "Mathematics for Junior Secondary", dueDate: "Jan 20, 2025", status: "active" },
-  { student: "Emeka Nwosu", book: "English Grammar and Composition", dueDate: "Jan 18, 2025", status: "overdue" },
-  { student: "Fatima Bello", book: "Countdown to WAEC Mathematics", dueDate: "Jan 25, 2025", status: "active" },
-  { student: "Oluwaseun Adeyemi", book: "African Novels Anthology", dueDate: "Jan 22, 2025", status: "active" },
-];
+interface Borrowing {
+  id: string;
+  student: { firstName: string; lastName: string };
+  book: { title: string };
+  dueDate: string;
+  status: string;
+}
 
-const stats = [
-  { label: "Total Books", value: "4,500", icon: BookOpen, color: "from-blue-500 to-blue-600" },
-  { label: "Borrowed", value: "1,200", icon: ArrowUpDown, color: "from-emerald-500 to-emerald-600" },
-  { label: "Available", value: "3,300", icon: CheckCircle, color: "from-purple-500 to-purple-600" },
-  { label: "Overdue", value: "45", icon: AlertCircle, color: "from-red-500 to-red-600" },
-];
+interface LibraryStats {
+  totalTitles: number;
+  totalBooks: number;
+  availableBooks: number;
+  borrowed: number;
+}
 
 export default function LibraryPage() {
+  const [books, setBooks] = useState<LibraryBook[]>([]);
+  const [borrowings, setBorrowings] = useState<Borrowing[]>([]);
+  const [stats, setStats] = useState<LibraryStats>({ totalTitles: 0, totalBooks: 0, availableBooks: 0, borrowed: 0 });
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({ title: "", author: "", isbn: "", category: "Textbook", copies: "", publisher: "" });
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/library");
+      const data = await res.json();
+      setBooks(data.books || []);
+      setBorrowings(data.borrowings || []);
+      setStats(data.stats || { totalTitles: 0, totalBooks: 0, availableBooks: 0, borrowed: 0 });
+    } catch {
+      toast.error("Failed to load library data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.title || !form.author || !form.copies) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/library", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: form.title,
+          author: form.author,
+          isbn: form.isbn,
+          category: form.category,
+          copies: parseInt(form.copies),
+          publisher: form.publisher,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      toast.success("Book added successfully");
+      setShowModal(false);
+      setForm({ title: "", author: "", isbn: "", category: "Textbook", copies: "", publisher: "" });
+      fetchData();
+    } catch {
+      toast.error("Failed to add book");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const filteredBooks = books.filter((b) =>
+    b.title.toLowerCase().includes(search.toLowerCase()) ||
+    b.author.toLowerCase().includes(search.toLowerCase()) ||
+    b.category.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const statCards = [
+    { label: "Total Titles", value: stats.totalTitles, icon: BookOpen, color: "from-blue-500 to-blue-600" },
+    { label: "Borrowed", value: stats.borrowed, icon: ArrowUpDown, color: "from-emerald-500 to-emerald-600" },
+    { label: "Available", value: stats.availableBooks, icon: CheckCircle, color: "from-purple-500 to-purple-600" },
+    { label: "Overdue", value: borrowings.filter((b) => b.status === "overdue").length, icon: AlertCircle, color: "from-red-500 to-red-600" },
+  ];
+
+  const handleExport = () => {
+    const data = books.map((b) => ({
+      Title: b.title,
+      Author: b.author,
+      ISBN: b.isbn,
+      Category: b.category,
+      Copies: b.copies,
+      Available: b.available,
+      Status: b.status,
+    }));
+    downloadCSV(data, "library_books");
+    toast.success("CSV downloaded");
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-[var(--primary)]" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <motion.div
@@ -49,19 +154,31 @@ export default function LibraryPage() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-white mb-1">Library Management</h1>
-            <p className="text-white/60">
+            <p className="text-white/60 text-[13px]">
               Manage books, borrowing, reservations, and penalties
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all">
-            <Plus className="w-4 h-4" />
-            Add Book
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all"
+            >
+              <Download className="w-4 h-4" />
+              Export
+            </button>
+            <button
+              onClick={() => setShowModal(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              Add Book
+            </button>
+          </div>
         </div>
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, i) => (
+        {statCards.map((stat, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
@@ -71,7 +188,7 @@ export default function LibraryPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-sm mb-1">{stat.label}</p>
+                <p className="text-white/50 text-[12px] mb-1">{stat.label}</p>
                 <p className="text-3xl font-bold text-white">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
@@ -97,10 +214,12 @@ export default function LibraryPage() {
                 <input
                   type="text"
                   placeholder="Search books..."
-                  className="pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
-              <button className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:bg-white/10">
+              <button className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]">
                 <Filter className="w-4 h-4" />
               </button>
             </div>
@@ -108,37 +227,42 @@ export default function LibraryPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Title</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Author</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Category</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Copies</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Available</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Actions</th>
+                <tr className="border-b border-white/[0.08]">
+                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Title</th>
+                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Author</th>
+                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Category</th>
+                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Copies</th>
+                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Available</th>
+                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {books.map((book) => (
-                  <tr key={book.id} className="border-b border-white/5 hover:bg-white/5 transition-all">
-                    <td className="py-3 text-white font-medium text-sm">{book.title}</td>
-                    <td className="py-3 text-white/70 text-sm">{book.author}</td>
+                {filteredBooks.map((book) => (
+                  <tr key={book.id} className="border-b border-white/5 hover:bg-white/[0.04] transition-all">
+                    <td className="py-3 text-white font-medium text-[13px]">{book.title}</td>
+                    <td className="py-3 text-white/70 text-[13px]">{book.author}</td>
                     <td className="py-3">
-                      <span className="px-2 py-1 rounded-lg bg-white/10 text-white/70 text-xs">{book.category}</span>
+                      <span className="px-2 py-1 rounded-lg bg-white/[0.08] text-white/70 text-[12px]">{book.category}</span>
                     </td>
-                    <td className="py-3 text-white/70 text-sm">{book.copies}</td>
-                    <td className="py-3 text-white/70 text-sm">{book.available}</td>
+                    <td className="py-3 text-white/70 text-[13px]">{book.copies}</td>
+                    <td className="py-3 text-white/70 text-[13px]">{book.available}</td>
                     <td className="py-3">
                       <div className="flex gap-1">
-                        <button className="p-1 rounded-lg hover:bg-white/10 text-white/40">
+                        <button className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40">
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button className="p-1 rounded-lg hover:bg-white/10 text-white/40">
+                        <button className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40">
                           <Edit className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
                   </tr>
                 ))}
+                {filteredBooks.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="text-center py-8 text-white/40 text-[13px]">No books found</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -153,23 +277,26 @@ export default function LibraryPage() {
           <div className="card">
             <h3 className="text-white font-semibold text-lg mb-4">Recent Borrowings</h3>
             <div className="space-y-3">
-              {borrowedBooks.map((borrow, i) => (
-                <div key={i} className="p-3 rounded-xl bg-white/5">
+              {borrowings.map((borrow) => (
+                <div key={borrow.id} className="p-3 rounded-xl bg-white/[0.04]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white text-sm font-medium">{borrow.student}</span>
-                    <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                    <span className="text-white text-[13px] font-medium">{borrow.student.firstName} {borrow.student.lastName}</span>
+                    <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
                       borrow.status === "active" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
                     }`}>
                       {borrow.status}
                     </span>
                   </div>
-                  <p className="text-white/40 text-xs">{borrow.book}</p>
+                  <p className="text-white/40 text-[12px]">{borrow.book.title}</p>
                   <div className="flex items-center gap-1 mt-1">
                     <Clock className="w-3 h-3 text-white/30" />
-                    <span className="text-white/30 text-xs">Due: {borrow.dueDate}</span>
+                    <span className="text-white/30 text-[12px]">Due: {new Date(borrow.dueDate).toLocaleDateString()}</span>
                   </div>
                 </div>
               ))}
+              {borrowings.length === 0 && (
+                <p className="text-center py-4 text-white/40 text-[13px]">No borrowings yet</p>
+              )}
             </div>
           </div>
 
@@ -178,16 +305,118 @@ export default function LibraryPage() {
             <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="w-4 h-4 text-red-400" />
-                <span className="text-red-400 text-sm font-medium">45 Overdue Books</span>
+                <span className="text-red-400 text-[13px] font-medium">{borrowings.filter((b) => b.status === "overdue").length} Overdue Books</span>
               </div>
-              <p className="text-white/40 text-xs">Total penalties: ₦22,500</p>
-              <button className="mt-3 w-full py-2 rounded-lg bg-red-500/20 text-red-400 text-sm hover:bg-red-500/30 transition-all">
+              <p className="text-white/40 text-[12px]">Total penalties: ₦{(borrowings.filter((b) => b.status === "overdue").length * 500).toLocaleString()}</p>
+              <button className="mt-3 w-full py-2 rounded-lg bg-red-500/20 text-red-400 text-[13px] hover:bg-red-500/30 transition-all">
                 View Details
               </button>
             </div>
           </div>
         </motion.div>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-lg font-semibold">Add Book</h2>
+              <button onClick={() => setShowModal(false)} className="text-white/40 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1">Title</label>
+                <input
+                  type="text"
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  placeholder="e.g. Mathematics for Junior Secondary"
+                />
+              </div>
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1">Author</label>
+                <input
+                  type="text"
+                  value={form.author}
+                  onChange={(e) => setForm({ ...form, author: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  placeholder="e.g. A.O. Adesoji"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1">ISBN</label>
+                  <input
+                    type="text"
+                    value={form.isbn}
+                    onChange={(e) => setForm({ ...form, isbn: e.target.value })}
+                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    placeholder="978-0123456789"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1">Copies</label>
+                  <input
+                    type="number"
+                    value={form.copies}
+                    onChange={(e) => setForm({ ...form, copies: e.target.value })}
+                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    placeholder="e.g. 50"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1">Category</label>
+                <select
+                  value={form.category}
+                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  style={{ colorScheme: "dark" }}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                >
+                  <option style={{ background: "#0f1b33", color: "#fff" }}>Textbook</option>
+                  <option style={{ background: "#0f1b33", color: "#fff" }}>Literature</option>
+                  <option style={{ background: "#0f1b33", color: "#fff" }}>Exam Prep</option>
+                  <option style={{ background: "#0f1b33", color: "#fff" }}>Reference</option>
+                  <option style={{ background: "#0f1b33", color: "#fff" }}>Practical</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1">Publisher</label>
+                <input
+                  type="text"
+                  value={form.publisher}
+                  onChange={(e) => setForm({ ...form, publisher: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  placeholder="e.g. Heinemann"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="flex-1 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] hover:bg-white/[0.08] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-medium hover:opacity-90 transition-all disabled:opacity-50"
+                >
+                  {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Add Book"}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

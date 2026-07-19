@@ -28,7 +28,9 @@ import {
   Users,
   School,
   Target,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
 
 const tabs = [
   { id: "overview", label: "Overview", icon: User },
@@ -55,7 +57,14 @@ interface Student {
   dateOfBirth?: string;
   gender?: string;
   address?: string;
+  bloodGroup?: string;
   class?: { name: string; id: string };
+  guardians?: { name: string; phone: string; email: string; relationship: string }[];
+  medicalRecords?: { bloodGroup: string; genotype: string; allergies: string; conditions: string }[];
+  documents?: { name: string; type: string; size: string; uploadedAt: string }[];
+  attendanceRecords: { date: string; status: string }[];
+  grades: { subject: { name: string }; score: number; grade: string; type: string }[];
+  invoices: { id: string; amount: number; status: string; schoolFee: { name: string; amount: number }; payments: { amount: number }[] }[];
   guardianName?: string;
   guardianPhone?: string;
   guardianEmail?: string;
@@ -75,10 +84,15 @@ export default function StudentDetailPage() {
     const fetchStudent = async () => {
       try {
         const res = await fetch(`/api/students/${params.id}`);
-        if (!res.ok) { setLoading(false); return; }
+        if (!res.ok) {
+          setLoading(false);
+          return;
+        }
         const data = await res.json();
         setStudent(data);
-      } catch { }
+      } catch {
+        toast.error("Failed to load student details");
+      }
       setLoading(false);
     };
     fetchStudent();
@@ -88,33 +102,68 @@ export default function StudentDetailPage() {
     ? `${student.firstName?.[0] || ""}${student.lastName?.[0] || ""}`.toUpperCase()
     : "";
 
-  const mockAttendance = [
-    { date: "2025-06-16", status: "present" },
-    { date: "2025-06-15", status: "present" },
-    { date: "2025-06-14", status: "late" },
-    { date: "2025-06-13", status: "present" },
-    { date: "2025-06-12", status: "present" },
-    { date: "2025-06-11", status: "absent" },
-    { date: "2025-06-10", status: "present" },
-    { date: "2025-06-09", status: "present" },
-    { date: "2025-06-08", status: "present" },
-    { date: "2025-06-07", status: "present" },
-  ];
+  const attendanceRecords = student?.attendanceRecords ?? [];
+  const grades = student?.grades ?? [];
+  const invoices = student?.invoices ?? [];
 
-  const mockGrades = [
-    { subject: "Mathematics", ca1: 28, ca2: 30, exam: 58, total: 86, grade: "A1" },
-    { subject: "English Language", ca1: 25, ca2: 27, exam: 52, total: 78, grade: "B2" },
-    { subject: "Physics", ca1: 22, ca2: 24, exam: 46, total: 70, grade: "B3" },
-    { subject: "Chemistry", ca1: 26, ca2: 28, exam: 54, total: 80, grade: "B2" },
-    { subject: "Biology", ca1: 24, ca2: 26, exam: 50, total: 76, grade: "B2" },
-    { subject: "Computer Studies", ca1: 29, ca2: 30, exam: 60, total: 89, grade: "A1" },
-  ];
+  const presentCount = attendanceRecords.filter((a) => a.status === "present").length;
+  const absentCount = attendanceRecords.filter((a) => a.status === "absent").length;
+  const lateCount = attendanceRecords.filter((a) => a.status === "late").length;
+  const totalAttendance = attendanceRecords.length || 1;
+  const attendanceRate = Math.round((presentCount / totalAttendance) * 100);
 
-  const mockFees = [
-    { term: "First Term 2024/25", amount: 245000, paid: 245000, status: "paid", date: "2024-09-15" },
-    { term: "Second Term 2024/25", amount: 245000, paid: 180000, status: "partial", date: "2025-01-10" },
-    { term: "Third Term 2024/25", amount: 245000, paid: 0, status: "unpaid", date: "" },
-  ];
+  const gradeSubjectMap = new Map<string, { ca1: number; ca2: number; exam: number; total: number; grade: string }>();
+  for (const g of grades) {
+    const name = g.subject?.name || "Unknown";
+    const existing = gradeSubjectMap.get(name);
+    if (g.type === "ca1" || g.type === "CA1") {
+      if (existing) existing.ca1 = g.score;
+      else gradeSubjectMap.set(name, { ca1: g.score, ca2: 0, exam: 0, total: 0, grade: g.grade });
+    } else if (g.type === "ca2" || g.type === "CA2") {
+      if (existing) existing.ca2 = g.score;
+      else gradeSubjectMap.set(name, { ca1: 0, ca2: g.score, exam: 0, total: 0, grade: g.grade });
+    } else if (g.type === "exam" || g.type === "EXAM") {
+      if (existing) existing.exam = g.score;
+      else gradeSubjectMap.set(name, { ca1: 0, ca2: 0, exam: g.score, total: 0, grade: g.grade });
+    } else {
+      if (existing) {
+        existing.total = g.score;
+        existing.grade = g.grade;
+      } else {
+        gradeSubjectMap.set(name, { ca1: 0, ca2: 0, exam: 0, total: g.score, grade: g.grade });
+      }
+    }
+  }
+  for (const [, v] of gradeSubjectMap) {
+    if (v.total === 0) v.total = v.ca1 + v.ca2 + v.exam;
+  }
+  const gradeRows = Array.from(gradeSubjectMap.entries()).map(([subject, v]) => ({
+    subject,
+    ...v,
+  }));
+
+  const overallAverage = gradeRows.length > 0
+    ? Math.round(gradeRows.reduce((s, g) => s + g.total, 0) / gradeRows.length)
+    : 0;
+
+  const totalFees = invoices.reduce((s, inv) => s + inv.schoolFee?.amount || inv.amount, 0);
+  const totalPaid = invoices.reduce((s, inv) => s + inv.payments.reduce((ps, p) => ps + p.amount, 0), 0);
+  const totalBalance = totalFees - totalPaid;
+
+  const feeRecords = invoices.map((inv) => {
+    const paid = inv.payments.reduce((s, p) => s + p.amount, 0);
+    const amount = inv.schoolFee?.amount || inv.amount;
+    let status: "paid" | "partial" | "unpaid" = "unpaid";
+    if (paid >= amount) status = "paid";
+    else if (paid > 0) status = "partial";
+    return {
+      term: inv.schoolFee?.name || "School Fee",
+      amount,
+      paid,
+      status,
+      date: inv.payments[0] ? new Date(inv.payments[0].amount).toISOString() : "",
+    };
+  });
 
   return (
     <motion.div {...fadeIn} className="space-y-6">
@@ -135,7 +184,7 @@ export default function StudentDetailPage() {
       ) : !student ? (
         <div className="text-center py-20">
           <User className="w-12 h-12 text-white/10 mx-auto mb-3" />
-          <p className="text-white/30">Student not found</p>
+          <p className="text-white/30 text-[13px]">Student not found</p>
         </div>
       ) : (
         <>
@@ -234,22 +283,47 @@ export default function StudentDetailPage() {
                 <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6">
                   <h3 className="text-white/80 font-semibold text-[15px] mb-4">Guardian / Parent</h3>
                   <div className="space-y-3">
-                    <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                      <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Name</p>
-                      <p className="text-white/70 text-[13px] mt-0.5">{student.guardianName || "—"}</p>
-                    </div>
-                    <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                      <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Phone</p>
-                      <p className="text-white/70 text-[13px] mt-0.5">{student.guardianPhone || "—"}</p>
-                    </div>
-                    <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                      <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Email</p>
-                      <p className="text-white/70 text-[13px] mt-0.5">{student.guardianEmail || "—"}</p>
-                    </div>
-                    <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                      <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Relationship</p>
-                      <p className="text-white/70 text-[13px] mt-0.5">{student.guardianRelation || "—"}</p>
-                    </div>
+                    {student.guardians && student.guardians.length > 0 ? (
+                      student.guardians.slice(0, 1).map((g, i) => (
+                        <div key={i} className="space-y-3">
+                          <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Name</p>
+                            <p className="text-white/70 text-[13px] mt-0.5">{g.name || "—"}</p>
+                          </div>
+                          <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Phone</p>
+                            <p className="text-white/70 text-[13px] mt-0.5">{g.phone || "—"}</p>
+                          </div>
+                          <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Email</p>
+                            <p className="text-white/70 text-[13px] mt-0.5">{g.email || "—"}</p>
+                          </div>
+                          <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Relationship</p>
+                            <p className="text-white/70 text-[13px] mt-0.5">{g.relationship || "—"}</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <>
+                        <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                          <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Name</p>
+                          <p className="text-white/70 text-[13px] mt-0.5">{student.guardianName || "—"}</p>
+                        </div>
+                        <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                          <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Phone</p>
+                          <p className="text-white/70 text-[13px] mt-0.5">{student.guardianPhone || "—"}</p>
+                        </div>
+                        <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                          <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Email</p>
+                          <p className="text-white/70 text-[13px] mt-0.5">{student.guardianEmail || "—"}</p>
+                        </div>
+                        <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                          <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Relationship</p>
+                          <p className="text-white/70 text-[13px] mt-0.5">{student.guardianRelation || "—"}</p>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -258,10 +332,10 @@ export default function StudentDetailPage() {
                   <h3 className="text-white/80 font-semibold text-[15px] mb-4">Academic Summary</h3>
                   <div className="space-y-3">
                     {[
-                      { label: "Attendance Rate", value: "92%", icon: ClipboardCheck, color: "text-emerald-400" },
-                      { label: "Average Score", value: "80%", icon: Target, color: "text-blue-400" },
-                      { label: "Class Position", value: "3rd / 42", icon: Award, color: "text-amber-400" },
-                      { label: "Fee Status", value: "₦65,000 balance", icon: CreditCard, color: "text-purple-400" },
+                      { label: "Attendance Rate", value: `${attendanceRate}%`, icon: ClipboardCheck, color: "text-emerald-400" },
+                      { label: "Average Score", value: `${overallAverage}%`, icon: Target, color: "text-blue-400" },
+                      { label: "Total Subjects", value: gradeRows.length.toString(), icon: Award, color: "text-amber-400" },
+                      { label: "Fee Balance", value: totalBalance > 0 ? `₦${totalBalance.toLocaleString()}` : "Cleared", icon: CreditCard, color: "text-purple-400" },
                     ].map((item, i) => (
                       <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
                         <div className={`w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center`}>
@@ -290,42 +364,52 @@ export default function StudentDetailPage() {
                   <Download className="w-3.5 h-3.5" /> Download Report Card
                 </button>
               </div>
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-white/[0.06]">
-                    <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Subject</th>
-                    <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">CA1 (20)</th>
-                    <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">CA2 (20)</th>
-                    <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Exam (60)</th>
-                    <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Total (100)</th>
-                    <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Grade</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mockGrades.map((g, i) => (
-                    <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition">
-                      <td className="px-5 py-3.5 text-white/70 text-[13px] font-medium">{g.subject}</td>
-                      <td className="px-5 py-3.5 text-center text-white/50 text-[13px]">{g.ca1}</td>
-                      <td className="px-5 py-3.5 text-center text-white/50 text-[13px]">{g.ca2}</td>
-                      <td className="px-5 py-3.5 text-center text-white/50 text-[13px]">{g.exam}</td>
-                      <td className="px-5 py-3.5 text-center text-white/80 text-[13px] font-semibold">{g.total}</td>
-                      <td className="px-5 py-3.5 text-center">
-                        <span className={`inline-flex px-2.5 py-0.5 rounded-lg text-[11px] font-bold ${
-                          g.grade.startsWith("A") ? "bg-emerald-500/15 text-emerald-400" :
-                          g.grade.startsWith("B") ? "bg-blue-500/15 text-blue-400" :
-                          "bg-amber-500/15 text-amber-400"
-                        }`}>
-                          {g.grade}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="px-5 py-4 border-t border-white/[0.06] flex items-center justify-between">
-                <p className="text-white/30 text-[12px]">Overall Average: <span className="text-white/70 font-semibold">80%</span></p>
-                <p className="text-white/30 text-[12px]">Class Position: <span className="text-white/70 font-semibold">3rd of 42</span></p>
-              </div>
+              {gradeRows.length === 0 ? (
+                <div className="text-center py-16">
+                  <BookOpen className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                  <p className="text-white/30 text-[13px]">No grades recorded yet</p>
+                </div>
+              ) : (
+                <>
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-white/[0.06]">
+                        <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Subject</th>
+                        <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">CA1 (20)</th>
+                        <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">CA2 (20)</th>
+                        <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Exam (60)</th>
+                        <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Total (100)</th>
+                        <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Grade</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {gradeRows.map((g, i) => (
+                        <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition">
+                          <td className="px-5 py-3.5 text-white/70 text-[13px] font-medium">{g.subject}</td>
+                          <td className="px-5 py-3.5 text-center text-white/50 text-[13px]">{g.ca1 || "—"}</td>
+                          <td className="px-5 py-3.5 text-center text-white/50 text-[13px]">{g.ca2 || "—"}</td>
+                          <td className="px-5 py-3.5 text-center text-white/50 text-[13px]">{g.exam || "—"}</td>
+                          <td className="px-5 py-3.5 text-center text-white/80 text-[13px] font-semibold">{g.total}</td>
+                          <td className="px-5 py-3.5 text-center">
+                            <span className={`inline-flex px-2.5 py-0.5 rounded-lg text-[11px] font-bold ${
+                              g.grade?.startsWith("A") ? "bg-emerald-500/15 text-emerald-400" :
+                              g.grade?.startsWith("B") ? "bg-blue-500/15 text-blue-400" :
+                              g.grade?.startsWith("C") ? "bg-amber-500/15 text-amber-400" :
+                              "bg-red-500/15 text-red-400"
+                            }`}>
+                              {g.grade || "—"}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="px-5 py-4 border-t border-white/[0.06] flex items-center justify-between">
+                    <p className="text-white/30 text-[12px]">Overall Average: <span className="text-white/70 font-semibold">{overallAverage}%</span></p>
+                    <p className="text-white/30 text-[12px]">Subjects: <span className="text-white/70 font-semibold">{gradeRows.length}</span></p>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -334,9 +418,9 @@ export default function StudentDetailPage() {
               <h3 className="text-white/80 font-semibold text-[15px] mb-5">Attendance Records</h3>
               <div className="flex items-center gap-6 mb-6">
                 {[
-                  { label: "Present", count: 156, color: "text-emerald-400" },
-                  { label: "Absent", count: 8, color: "text-red-400" },
-                  { label: "Late", count: 12, color: "text-amber-400" },
+                  { label: "Present", count: presentCount, color: "text-emerald-400" },
+                  { label: "Absent", count: absentCount, color: "text-red-400" },
+                  { label: "Late", count: lateCount, color: "text-amber-400" },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <span className={`text-2xl font-bold font-display ${item.color}`}>{item.count}</span>
@@ -344,28 +428,35 @@ export default function StudentDetailPage() {
                   </div>
                 ))}
               </div>
-              <div className="space-y-1.5">
-                {mockAttendance.map((a, i) => (
-                  <div key={i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                    <div className="flex items-center gap-3">
-                      <span className={`w-2 h-2 rounded-full ${
-                        a.status === "present" ? "bg-emerald-400" :
-                        a.status === "absent" ? "bg-red-400" : "bg-amber-400"
-                      }`} />
-                      <span className="text-white/50 text-[13px]">
-                        {new Date(a.date).toLocaleDateString("en-NG", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+              {attendanceRecords.length === 0 ? (
+                <div className="text-center py-12">
+                  <ClipboardCheck className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                  <p className="text-white/30 text-[13px]">No attendance records found</p>
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  {attendanceRecords.map((a, i) => (
+                    <div key={i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                      <div className="flex items-center gap-3">
+                        <span className={`w-2 h-2 rounded-full ${
+                          a.status === "present" ? "bg-emerald-400" :
+                          a.status === "absent" ? "bg-red-400" : "bg-amber-400"
+                        }`} />
+                        <span className="text-white/50 text-[13px]">
+                          {new Date(a.date).toLocaleDateString("en-NG", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+                        </span>
+                      </div>
+                      <span className={`px-2.5 py-0.5 rounded-lg text-[11px] font-medium capitalize ${
+                        a.status === "present" ? "bg-emerald-500/10 text-emerald-400" :
+                        a.status === "absent" ? "bg-red-500/10 text-red-400" :
+                        "bg-amber-500/10 text-amber-400"
+                      }`}>
+                        {a.status}
                       </span>
                     </div>
-                    <span className={`px-2.5 py-0.5 rounded-lg text-[11px] font-medium capitalize ${
-                      a.status === "present" ? "bg-emerald-500/10 text-emerald-400" :
-                      a.status === "absent" ? "bg-red-500/10 text-red-400" :
-                      "bg-amber-500/10 text-amber-400"
-                    }`}>
-                      {a.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -374,37 +465,46 @@ export default function StudentDetailPage() {
               <div className="p-5 border-b border-white/[0.06]">
                 <h3 className="text-white/80 font-semibold text-[15px]">Fee Records</h3>
               </div>
-              <div className="p-5 space-y-3">
-                {mockFees.map((f, i) => (
-                  <div key={i} className="flex items-center justify-between px-5 py-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition">
-                    <div>
-                      <p className="text-white/70 text-[13px] font-medium">{f.term}</p>
-                      <p className="text-white/25 text-[11px] mt-0.5">
-                        {f.date ? `Paid on ${new Date(f.date).toLocaleDateString("en-NG")}` : "Not yet paid"}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-white/70 text-[13px] font-semibold">
-                        ₦{f.paid.toLocaleString()} / ₦{f.amount.toLocaleString()}
-                      </p>
-                      <span className={`inline-flex items-center gap-1 text-[11px] font-medium mt-1 ${
-                        f.status === "paid" ? "text-emerald-400" :
-                        f.status === "partial" ? "text-amber-400" : "text-red-400"
-                      }`}>
-                        {f.status === "paid" ? <CheckCircle2 className="w-3 h-3" /> :
-                         f.status === "partial" ? <AlertCircle className="w-3 h-3" /> :
-                         <XCircle className="w-3 h-3" />}
-                        {f.status === "paid" ? "Fully Paid" : f.status === "partial" ? "Partially Paid" : "Unpaid"}
-                      </span>
-                    </div>
+              {feeRecords.length === 0 ? (
+                <div className="text-center py-16">
+                  <CreditCard className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                  <p className="text-white/30 text-[13px]">No fee records found</p>
+                </div>
+              ) : (
+                <>
+                  <div className="p-5 space-y-3">
+                    {feeRecords.map((f, i) => (
+                      <div key={i} className="flex items-center justify-between px-5 py-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition">
+                        <div>
+                          <p className="text-white/70 text-[13px] font-medium">{f.term}</p>
+                          <p className="text-white/25 text-[11px] mt-0.5">
+                            {f.status === "paid" ? "Fully paid" : f.status === "partial" ? "Partially paid" : "Not yet paid"}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-white/70 text-[13px] font-semibold">
+                            ₦{f.paid.toLocaleString()} / ₦{f.amount.toLocaleString()}
+                          </p>
+                          <span className={`inline-flex items-center gap-1 text-[11px] font-medium mt-1 ${
+                            f.status === "paid" ? "text-emerald-400" :
+                            f.status === "partial" ? "text-amber-400" : "text-red-400"
+                          }`}>
+                            {f.status === "paid" ? <CheckCircle2 className="w-3 h-3" /> :
+                             f.status === "partial" ? <AlertCircle className="w-3 h-3" /> :
+                             <XCircle className="w-3 h-3" />}
+                            {f.status === "paid" ? "Fully Paid" : f.status === "partial" ? "Partially Paid" : "Unpaid"}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <div className="px-5 py-4 border-t border-white/[0.06]">
-                <p className="text-white/30 text-[12px]">
-                  Total Fees: <span className="text-white/60 font-semibold">₦735,000</span> · Paid: <span className="text-emerald-400 font-semibold">₦425,000</span> · Balance: <span className="text-amber-400 font-semibold">₦310,000</span>
-                </p>
-              </div>
+                  <div className="px-5 py-4 border-t border-white/[0.06]">
+                    <p className="text-white/30 text-[12px]">
+                      Total Fees: <span className="text-white/60 font-semibold">₦{totalFees.toLocaleString()}</span> · Paid: <span className="text-emerald-400 font-semibold">₦{totalPaid.toLocaleString()}</span> · Balance: <span className="text-amber-400 font-semibold">₦{totalBalance.toLocaleString()}</span>
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -413,12 +513,12 @@ export default function StudentDetailPage() {
               <h3 className="text-white/80 font-semibold text-[15px] mb-5">Medical Records</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { label: "Blood Group", value: "O+" },
-                  { label: "Genotype", value: "AA" },
-                  { label: "Allergies", value: "Penicillin" },
-                  { label: "Medical Conditions", value: "None" },
-                  { label: "Emergency Contact", value: student?.guardianName || "—" },
-                  { label: "Emergency Phone", value: student?.guardianPhone || "—" },
+                  { label: "Blood Group", value: student.medicalRecords?.[0]?.bloodGroup || student.bloodGroup || "Not recorded" },
+                  { label: "Genotype", value: student.medicalRecords?.[0]?.genotype || "Not recorded" },
+                  { label: "Allergies", value: student.medicalRecords?.[0]?.allergies || "None" },
+                  { label: "Medical Conditions", value: student.medicalRecords?.[0]?.conditions || "None" },
+                  { label: "Emergency Contact", value: student.guardians?.[0]?.name || student.guardianName || "—" },
+                  { label: "Emergency Phone", value: student.guardians?.[0]?.phone || student.guardianPhone || "—" },
                 ].map((item, i) => (
                   <div key={i} className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
                     <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">{item.label}</p>
@@ -432,29 +532,31 @@ export default function StudentDetailPage() {
           {activeTab === "documents" && (
             <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6">
               <h3 className="text-white/80 font-semibold text-[15px] mb-5">Documents</h3>
-              <div className="space-y-2">
-                {[
-                  { name: "Birth Certificate", type: "PDF", size: "1.2 MB", uploaded: "2024-08-20" },
-                  { name: "Previous School Report", type: "PDF", size: "856 KB", uploaded: "2024-08-20" },
-                  { name: "Medical Certificate", type: "PDF", size: "432 KB", uploaded: "2024-09-01" },
-                  { name: "Passport Photograph", type: "JPG", size: "245 KB", uploaded: "2024-08-20" },
-                ].map((doc, i) => (
-                  <div key={i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                        <FileText className="w-4 h-4 text-blue-400" />
+              {!student.documents || student.documents.length === 0 ? (
+                <div className="text-center py-12">
+                  <FileText className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                  <p className="text-white/30 text-[13px]">No documents uploaded</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {student.documents.map((doc, i) => (
+                    <div key={i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                          <FileText className="w-4 h-4 text-blue-400" />
+                        </div>
+                        <div>
+                          <p className="text-white/70 text-[13px] font-medium">{doc.name}</p>
+                          <p className="text-white/25 text-[10px]">{doc.type} · {doc.size} · Uploaded {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString("en-NG") : "—"}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-white/70 text-[13px] font-medium">{doc.name}</p>
-                        <p className="text-white/25 text-[10px]">{doc.type} · {doc.size} · Uploaded {doc.uploaded}</p>
-                      </div>
+                      <button className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                        <Download className="w-4 h-4" />
+                      </button>
                     </div>
-                    <button className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
-                      <Download className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </>
