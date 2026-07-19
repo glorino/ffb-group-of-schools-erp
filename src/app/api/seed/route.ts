@@ -21,11 +21,18 @@ export async function POST(request: NextRequest) {
     });
 
     const roleData = [
+      { name: "OWNER", level: 100, description: "School Owner" },
       { name: "ADMINISTRATOR", level: 80, description: "School Administrator" },
-      { name: "TEACHER", level: 50, description: "Subject Teacher" },
-      { name: "STUDENT", level: 10, description: "Student" },
       { name: "PRINCIPAL", level: 75, description: "School Principal" },
       { name: "VICE_PRINCIPAL", level: 70, description: "Vice Principal" },
+      { name: "ACCOUNTANT", level: 65, description: "School Accountant" },
+      { name: "AUDITOR", level: 60, description: "Financial Auditor" },
+      { name: "TEACHER", level: 50, description: "Subject Teacher" },
+      { name: "LIBRARIAN", level: 45, description: "School Librarian" },
+      { name: "PORTER", level: 40, description: "Hostel Porter" },
+      { name: "PARENT", level: 20, description: "Student Parent/Guardian" },
+      { name: "ALUMNI", level: 15, description: "School Alumni" },
+      { name: "STUDENT", level: 10, description: "Student" },
     ];
     const roles: Record<string, string> = {};
     for (const r of roleData) {
@@ -33,51 +40,41 @@ export async function POST(request: NextRequest) {
       roles[r.name] = role.id;
     }
 
-    const adminHash = await bcrypt.hash("admin123", 10);
-    const teacherHash = await bcrypt.hash("teacher123", 10);
-    const studentHash = await bcrypt.hash("student123", 10);
+    const pw = async (p: string) => bcrypt.hash(p, 10);
 
-    let admin = await prisma.user.findUnique({ where: { email: "admin@ffb.edu.ng" } });
-    if (!admin) {
-      admin = await prisma.user.create({
-        data: { email: "admin@ffb.edu.ng", name: "Admin User", password: adminHash, phone: "+2348012345678", schoolId: school.id },
-      });
-    } else {
-      await prisma.user.update({ where: { id: admin.id }, data: { password: adminHash } });
-    }
-    await prisma.userRole.upsert({
-      where: { userId_roleId_schoolId: { userId: admin.id, roleId: roles.ADMINISTRATOR, schoolId: school.id } },
-      update: {},
-      create: { userId: admin.id, roleId: roles.ADMINISTRATOR, schoolId: school.id },
-    });
+    const accounts = [
+      { email: "owner@ffb.edu.ng", name: "Chief Okonkwo", password: await pw("owner123"), phone: "+2348000000001", role: "OWNER" },
+      { email: "admin@ffb.edu.ng", name: "Admin User", password: await pw("admin123"), phone: "+2348012345678", role: "ADMINISTRATOR" },
+      { email: "principal@ffb.edu.ng", name: "Dr. Aisha Bello", password: await pw("principal123"), phone: "+2348012345679", role: "PRINCIPAL" },
+      { email: "vp@ffb.edu.ng", name: "Mr. Chinedu Okafor", password: await pw("vp123"), phone: "+2348012345680", role: "VICE_PRINCIPAL" },
+      { email: "accountant@ffb.edu.ng", name: "Mrs. Funke Adeyemi", password: await pw("accountant123"), phone: "+2348012345681", role: "ACCOUNTANT" },
+      { email: "auditor@ffb.edu.ng", name: "Mr. Tunde Williams", password: await pw("auditor123"), phone: "+2348012345682", role: "AUDITOR" },
+      { email: "teacher@ffb.edu.ng", name: "Fatima Bello", password: await pw("teacher123"), phone: "+2348023456789", role: "TEACHER" },
+      { email: "librarian@ffb.edu.ng", name: "Grace Nwosu", password: await pw("librarian123"), phone: "+2348012345683", role: "LIBRARIAN" },
+      { email: "porter@ffb.edu.ng", name: "Ibrahim Musa", password: await pw("porter123"), phone: "+2348012345684", role: "PORTER" },
+      { email: "parent@ffb.edu.ng", name: "Mrs. Ngozi Johnson", password: await pw("parent123"), phone: "+2348012345685", role: "PARENT" },
+      { email: "alumni@ffb.edu.ng", name: "Emeka Obi", password: await pw("alumni123"), phone: "+2348012345686", role: "ALUMNI" },
+      { email: "adebayo.johnson@student.ffb.edu.ng", name: "Adebayo Johnson", password: await pw("student123"), phone: "+2348034567890", role: "STUDENT" },
+    ];
 
-    let teacher = await prisma.user.findUnique({ where: { email: "teacher@ffb.edu.ng" } });
-    if (!teacher) {
-      teacher = await prisma.user.create({
-        data: { email: "teacher@ffb.edu.ng", name: "Fatima Bello", password: teacherHash, phone: "+2348023456789", schoolId: school.id },
+    const createdUsers: string[] = [];
+    for (const a of accounts) {
+      const existing = await prisma.user.findUnique({ where: { email: a.email } });
+      let user;
+      if (!existing) {
+        user = await prisma.user.create({
+          data: { email: a.email, name: a.name, password: a.password, phone: a.phone, schoolId: school.id },
+        });
+      } else {
+        user = await prisma.user.update({ where: { id: existing.id }, data: { password: a.password } });
+      }
+      await prisma.userRole.upsert({
+        where: { userId_roleId_schoolId: { userId: user.id, roleId: roles[a.role], schoolId: school.id } },
+        update: {},
+        create: { userId: user.id, roleId: roles[a.role], schoolId: school.id },
       });
-    } else {
-      await prisma.user.update({ where: { id: teacher.id }, data: { password: teacherHash } });
+      createdUsers.push(a.email);
     }
-    await prisma.userRole.upsert({
-      where: { userId_roleId_schoolId: { userId: teacher.id, roleId: roles.TEACHER, schoolId: school.id } },
-      update: {},
-      create: { userId: teacher.id, roleId: roles.TEACHER, schoolId: school.id },
-    });
-
-    let studentUser = await prisma.user.findUnique({ where: { email: "adebayo.johnson@student.ffb.edu.ng" } });
-    if (!studentUser) {
-      studentUser = await prisma.user.create({
-        data: { email: "adebayo.johnson@student.ffb.edu.ng", name: "Adebayo Johnson", password: studentHash, phone: "+2348034567890", schoolId: school.id },
-      });
-    } else {
-      await prisma.user.update({ where: { id: studentUser.id }, data: { password: studentHash } });
-    }
-    await prisma.userRole.upsert({
-      where: { userId_roleId_schoolId: { userId: studentUser.id, roleId: roles.STUDENT, schoolId: school.id } },
-      update: {},
-      create: { userId: studentUser.id, roleId: roles.STUDENT, schoolId: school.id },
-    });
 
     const classData = [
       { name: "Nursery 1", displayName: "Nursery 1", section: "Nursery 1", capacity: 40, level: 1 },
@@ -105,8 +102,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Database seeded successfully",
-      users: ["admin@ffb.edu.ng", "teacher@ffb.edu.ng", "adebayo.johnson@student.ffb.edu.ng"],
+      message: "Database seeded successfully with all personas",
+      users: createdUsers,
     });
   } catch (error) {
     console.error("Seed error:", error);
