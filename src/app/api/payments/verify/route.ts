@@ -73,6 +73,27 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Send receipt email on successful payment
+    if (isSuccessful) {
+      try {
+        const paymentWithStudent = await prisma.payment.findUnique({
+          where: { id: payment.id },
+          include: { student: true },
+        });
+        if (paymentWithStudent?.student?.email) {
+          const { sendPaymentReceipt } = await import("@/lib/resend");
+          await sendPaymentReceipt(
+            `${paymentWithStudent.student.firstName} ${paymentWithStudent.student.lastName}`,
+            paymentWithStudent.student.email || "",
+            paymentWithStudent.amount,
+            paymentWithStudent.reference
+          );
+        }
+      } catch (emailError) {
+        console.error("Failed to send receipt email:", emailError);
+      }
+    }
+
     return NextResponse.json({
       success: isSuccessful,
       paymentId: updatedPayment.id,
