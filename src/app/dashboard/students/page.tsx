@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
   Search,
@@ -20,8 +20,10 @@ import {
   X,
   Grid3X3,
   List,
+  Loader2,
 } from "lucide-react";
 import { downloadCSV } from "@/lib/exports";
+import { toast } from "sonner";
 
 const fadeIn = {
   initial: { opacity: 0, y: 12 },
@@ -55,6 +57,12 @@ export default function StudentsPage() {
   const [sortField, setSortField] = useState<"name" | "class" | "date">("name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    firstName: "", lastName: "", email: "", phone: "", admissionNumber: "",
+    guardianName: "", guardianPhone: "", classId: "",
+  });
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -101,6 +109,32 @@ export default function StudentsPage() {
     else { setSortField(field); setSortDir("asc"); }
   };
 
+  const handleCreate = async () => {
+    if (!form.firstName || !form.lastName) { toast.error("Please fill required fields"); return; }
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: form.firstName, lastName: form.lastName, email: form.email || undefined,
+          admissionNumber: form.admissionNumber || undefined, classId: form.classId || undefined,
+          guardianName: form.guardianName || undefined, guardianPhone: form.guardianPhone || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create student");
+      setShowModal(false);
+      setForm({ firstName: "", lastName: "", email: "", phone: "", admissionNumber: "", guardianName: "", guardianPhone: "", classId: "" });
+      toast.success("Student added successfully");
+      setPage(1);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <motion.div {...fadeIn} className="space-y-5">
       {/* Header */}
@@ -130,7 +164,7 @@ export default function StudentsPage() {
             Export
           </button>
           <button
-            onClick={() => alert("Add Student form coming soon")}
+            onClick={() => setShowModal(true)}
             className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2"
           >
             <UserPlus className="w-4 h-4" />
@@ -442,6 +476,91 @@ export default function StudentsPage() {
           })}
         </div>
       )}
+
+      {/* Add Student Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setShowModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
+            >
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+                <h3 className="text-white font-semibold">Add New Student</h3>
+                <button onClick={() => setShowModal(false)} className="text-white/40 hover:text-white/70 transition">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="px-6 py-5 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">First Name *</label>
+                    <input type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Last Name *</label>
+                    <input type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Admission No.</label>
+                    <input type="text" value={form.admissionNumber} onChange={(e) => setForm({ ...form, admissionNumber: e.target.value })}
+                      placeholder="Auto-generated if empty" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Email</label>
+                    <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder="student@email.com" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-white/50 text-[12px] mb-1.5">Class</label>
+                  <select value={form.classId} onChange={(e) => setForm({ ...form, classId: e.target.value })}
+                    className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] outline-none focus:border-[var(--primary)]/50"
+                    style={{ colorScheme: "dark" }}>
+                    <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select Class</option>
+                    {classes.map(c => (
+                      <option key={c.id} value={c.id} style={{ background: "#0f1b33", color: "#fff" }}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Guardian Name</label>
+                    <input type="text" value={form.guardianName} onChange={(e) => setForm({ ...form, guardianName: e.target.value })}
+                      placeholder="Parent/Guardian name" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Guardian Phone</label>
+                    <input type="text" value={form.guardianPhone} onChange={(e) => setForm({ ...form, guardianPhone: e.target.value })}
+                      placeholder="+234..." className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/[0.06]">
+                <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.05] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition">Cancel</button>
+                <button onClick={handleCreate} disabled={submitting}
+                  className="px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center gap-2">
+                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Add Student
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

@@ -545,17 +545,75 @@ function AlumniDashboard() {
 }
 
 function ParentDashboard() {
+  const [children, setChildren] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/children")
+      .then(r => r.json())
+      .then(d => setChildren(d.children || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const child = children[0];
+  const attendance = child?.attendanceRecords || [];
+  const presentDays = attendance.filter((a: any) => a.status === "present").length;
+  const totalDays = attendance.length || 1;
+  const attendancePct = Math.round((presentDays / totalDays) * 100);
+
+  const grades = child?.grades || [];
+  const avgScore = grades.length ? Math.round(grades.reduce((s: number, g: any) => s + (g.score || 0), 0) / grades.length) : 0;
+
+  const invoices = child?.invoices || [];
+  const unpaidAmount = invoices.filter((i: any) => i.status !== "paid").reduce((s: number, i: any) => s + (i.amount || 0), 0);
+
+  if (loading) return <div className="text-white/40 text-sm py-8">Loading...</div>;
+  if (!child) return <div className="text-white/40 text-sm py-8">No children linked to this account. Contact admin.</div>;
+
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">My Child</p><p className="text-[18px] font-bold text-white mt-1">Adebayo Johnson</p><p className="text-white/30 text-[11px] mt-1">JSS3A</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Attendance</p><p className="text-[28px] font-bold text-white mt-1">95%</p><p className="text-emerald-400 text-[11px] mt-1">38 of 40 days</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Current Average</p><p className="text-[28px] font-bold text-white mt-1">82%</p><p className="text-emerald-400 text-[11px] mt-1">↑ +5% from last term</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-white mt-1">₦85,000</p><p className="text-amber-400 text-[11px] mt-1">Due by month end</p></DashboardCard>
+        <DashboardCard><p className="text-white/40 text-[12px] font-medium">My Child</p><p className="text-[18px] font-bold text-white mt-1">{child.firstName} {child.lastName}</p><p className="text-white/30 text-[11px] mt-1">{child.class?.name || "—"}</p></DashboardCard>
+        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Attendance</p><p className="text-[28px] font-bold text-white mt-1">{attendancePct}%</p><p className="text-emerald-400 text-[11px] mt-1">{presentDays} of {totalDays} days</p></DashboardCard>
+        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Current Average</p><p className="text-[28px] font-bold text-white mt-1">{avgScore}%</p></DashboardCard>
+        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-white mt-1">₦{unpaidAmount.toLocaleString()}</p>{unpaidAmount > 0 && <p className="text-amber-400 text-[11px] mt-1">Outstanding</p>}</DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-        <DashboardCard><CardTitle title="Recent Results" /><div className="space-y-2">{[{ subject: "Mathematics", score: 86, grade: "A1" }, { subject: "English", score: 78, grade: "B2" }, { subject: "Physics", score: 70, grade: "B3" }, { subject: "Chemistry", score: 80, grade: "B2" }].map((item, i) => (<div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]"><p className="text-white/70 text-[12px]">{item.subject}</p><div className="flex items-center gap-2"><p className="text-white/80 text-[12px] font-semibold">{item.score}%</p><span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[10px] font-bold">{item.grade}</span></div></div>))}</div></DashboardCard>
-        <DashboardCard><CardTitle title="Upcoming" /><div className="space-y-2.5"><div className="px-2.5 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20"><p className="text-amber-400 text-[11px] font-medium">📝 Math Exam</p><p className="text-white/50 text-[10px] mt-0.5">Tomorrow, 9:00 AM</p></div><div className="px-2.5 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20"><p className="text-emerald-400 text-[11px] font-medium">💰 Fee Payment</p><p className="text-white/50 text-[10px] mt-0.5">₦85,000 due by Friday</p></div></div></DashboardCard>
+        <DashboardCard>
+          <CardTitle title="Recent Results" />
+          <div className="space-y-2">
+            {grades.length === 0 ? (
+              <p className="text-white/30 text-[12px]">No results yet</p>
+            ) : grades.slice(0, 5).map((g: any, i: number) => (
+              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+                <p className="text-white/70 text-[12px]">{g.subject?.name || "—"}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-white/80 text-[12px] font-semibold">{g.score}%</p>
+                  {g.grade && <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[10px] font-bold">{g.grade}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </DashboardCard>
+        <DashboardCard>
+          <CardTitle title="Fee Status" />
+          <div className="space-y-2">
+            {invoices.length === 0 ? (
+              <p className="text-white/30 text-[12px]">No invoices</p>
+            ) : invoices.slice(0, 5).map((inv: any, i: number) => (
+              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+                <div>
+                  <p className="text-white/70 text-[12px]">{inv.schoolFee?.name || "Fee"}</p>
+                  <p className="text-white/40 text-[10px]">₦{(inv.amount || 0).toLocaleString()}</p>
+                </div>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${inv.status === "paid" ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-400"}`}>
+                  {inv.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        </DashboardCard>
       </div>
     </>
   );

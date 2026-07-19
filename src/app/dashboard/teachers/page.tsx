@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   GraduationCap,
   Users,
@@ -12,8 +12,11 @@ import {
   BookOpen,
   TrendingUp,
   MoreVertical,
+  X,
+  Loader2,
 } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
+import { toast } from "sonner";
 
 interface Teacher {
   id: string;
@@ -39,26 +42,71 @@ export default function TeachersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    firstName: "", lastName: "", email: "", phone: "", employeeId: "",
+    qualification: "", specialization: "", password: "teacher123",
+  });
 
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams({
-      page: String(page),
-      limit: "10",
-    });
+    const params = new URLSearchParams({ page: String(page), limit: "10" });
     if (search) params.set("search", search);
 
     fetch(`/api/teachers?${params}`)
       .then((res) => res.json())
       .then((d) => {
-        setData({
-          teachers: d.teachers ?? [],
-          total: d.pagination?.total ?? 0,
-        });
+        setData({ teachers: d.teachers ?? [], total: d.pagination?.total ?? 0 });
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [page, search]);
+
+  const handleCreate = async () => {
+    if (!form.firstName || !form.lastName || !form.employeeId) {
+      toast.error("Please fill required fields");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const teacherRes = await fetch("/api/teachers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: form.firstName, lastName: form.lastName, employeeId: form.employeeId,
+          email: form.email || undefined, phone: form.phone || undefined,
+          qualification: form.qualification || undefined, specialization: form.specialization || undefined,
+        }),
+      });
+      const teacherData = await teacherRes.json();
+      if (!teacherRes.ok) throw new Error(teacherData.error || "Failed to create teacher");
+
+      if (form.email) {
+        await fetch("/api/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: form.email, name: `${form.firstName} ${form.lastName}`,
+            password: form.password, phone: form.phone || undefined, role: "TEACHER",
+          }),
+        });
+      }
+
+      setShowModal(false);
+      setForm({ firstName: "", lastName: "", email: "", phone: "", employeeId: "", qualification: "", specialization: "", password: "teacher123" });
+      toast.success("Teacher created successfully");
+      setLoading(true);
+      fetch(`/api/teachers?page=${page}&limit=10${search ? `&search=${search}` : ""}`)
+        .then(r => r.json())
+        .then(d => setData({ teachers: d.teachers ?? [], total: d.pagination?.total ?? 0 }))
+        .finally(() => setLoading(false));
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const columns = [
     {
@@ -134,7 +182,10 @@ export default function TeachersPage() {
               Manage employee records, qualifications, and performance tracking
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all">
+          <button
+            onClick={() => setShowModal(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+          >
             <Plus className="w-4 h-4" />
             Add Teacher
           </button>
@@ -224,6 +275,93 @@ export default function TeachersPage() {
           </div>
         )}
       </motion.div>
+
+      {/* Add Teacher Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setShowModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
+            >
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+                <h3 className="text-white font-semibold">Add New Teacher</h3>
+                <button onClick={() => setShowModal(false)} className="text-white/40 hover:text-white/70 transition">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="px-6 py-5 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">First Name *</label>
+                    <input type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Last Name *</label>
+                    <input type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-white/50 text-[12px] mb-1.5">Employee ID *</label>
+                  <input type="text" value={form.employeeId} onChange={(e) => setForm({ ...form, employeeId: e.target.value })}
+                    placeholder="e.g. TCH001" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Email</label>
+                    <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder="teacher@ffb.edu.ng" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Phone</label>
+                    <input type="text" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      placeholder="+234..." className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Qualification</label>
+                    <input type="text" value={form.qualification} onChange={(e) => setForm({ ...form, qualification: e.target.value })}
+                      placeholder="e.g. B.Sc, PGDE" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Specialization</label>
+                    <input type="text" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })}
+                      placeholder="e.g. Mathematics" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                  </div>
+                </div>
+                {form.email && (
+                  <div>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Login Password</label>
+                    <input type="text" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] outline-none focus:border-[var(--primary)]/50" />
+                    <p className="text-white/25 text-[10px] mt-1">Login credentials will be created for this teacher</p>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/[0.06]">
+                <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.05] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition">Cancel</button>
+                <button onClick={handleCreate} disabled={submitting}
+                  className="px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center gap-2">
+                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Create Teacher
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
