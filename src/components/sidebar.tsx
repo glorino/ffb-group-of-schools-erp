@@ -99,7 +99,14 @@ const navSections: { title: string; items: NavItem[] }[] = [
     items: [
       { label: "Announcements", href: "/dashboard/announcements", emoji: "📢", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI"] },
       { label: "Calendar", href: "/dashboard/calendar", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
+      { label: "Notifications", href: "/dashboard/notifications", emoji: "🔔", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI", "ACCOUNTANT", "AUDITOR", "LIBRARIAN", "PORTER"] },
       { label: "Settings", href: "/dashboard/settings", emoji: "⚙️", roles: ["OWNER", "ADMINISTRATOR"] },
+    ],
+  },
+  {
+    title: "Account",
+    items: [
+      { label: "My Profile", href: "/dashboard/profile", emoji: "👤", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ACCOUNTANT", "AUDITOR", "LIBRARIAN", "PORTER", "ALUMNI"] },
     ],
   },
 ];

@@ -115,8 +115,10 @@ export async function GET() {
     .slice(0, 8);
 
   return NextResponse.json({
+    success: true,
     totalStudents,
     totalTeachers,
+    totalClasses: classes.length,
     attendance: {
       present: attendanceMap.present,
       absent: attendanceMap.absent,
