@@ -29,6 +29,8 @@ import {
   Cell,
 } from "recharts";
 
+import { downloadCSV } from "@/lib/exports";
+
 const fadeIn = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
@@ -88,10 +90,14 @@ export default function FinancePage() {
 
   const displayPayments = payments.length ? payments : recentPayments;
   const filteredPayments = displayPayments.filter(
-    (p) =>
-      !search ||
-      (p.student || p.studentName || "").toLowerCase().includes(search.toLowerCase()) ||
-      (p.class || p.className || "").toLowerCase().includes(search.toLowerCase())
+    (p) => {
+      if (!search) return true;
+      const s = search.toLowerCase();
+      const studentName = p.student ? `${p.student.firstName || ""} ${p.student.lastName || ""}` : (p.studentName || "");
+      const className = p.student?.class?.name || p.className || p.class || "";
+      const reference = p.reference || "";
+      return studentName.toLowerCase().includes(s) || className.toLowerCase().includes(s) || reference.toLowerCase().includes(s);
+    }
   );
 
   const tabs = ["overview", "payments", "invoices"] as const;
@@ -109,7 +115,17 @@ export default function FinancePage() {
           <p className="text-white/30 text-[12px] mt-1 ml-[46px]">Manage fees, payments, and financial records</p>
         </div>
         <div className="flex items-center gap-2">
-          <button className="px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition flex items-center gap-2">
+          <button
+            onClick={() => downloadCSV(payments.map((p: any) => ({
+              Student: `${p.student?.firstName || ""} ${p.student?.lastName || ""}`,
+              Amount: p.amount,
+              Method: p.method || "—",
+              Status: p.status,
+              Date: p.paidAt ? new Date(p.paidAt).toLocaleDateString() : "—",
+              Reference: p.reference || "—",
+            })), "finance_payments")}
+            className="px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition flex items-center gap-2"
+          >
             <Download className="w-4 h-4" /> Export
           </button>
           <button className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">

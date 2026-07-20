@@ -118,11 +118,11 @@ export function Sidebar() {
     <div className="flex flex-col h-full">
       <div className="px-4 pt-5 pb-4 text-center border-b border-white/[0.08]">
         <img src="/logo.svg" alt="FFB Logo" className="w-14 h-14 mx-auto mb-2 rounded-xl" />
-        <h2 className="text-white font-bold text-[14px] leading-tight">FFB Group of Schools</h2>
-        <p className="text-white/40 text-[10px] mt-0.5">{roleLabel}</p>
+        <h2 className="text-white font-bold text-[15px] leading-tight">FFB Group of Schools</h2>
+        <p className="text-white/40 text-[11px] mt-0.5">{roleLabel}</p>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-3 px-3">
+      <nav className="flex-1 overflow-y-auto py-3 px-3" style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,0.1) transparent" }}>
         {navSections.map((section, si) => {
           const visibleItems = section.items.filter(item => {
             if (!item.roles) return true;
@@ -131,26 +131,26 @@ export function Sidebar() {
           if (visibleItems.length === 0) return null;
           return (
             <div key={si} className="mb-3">
-              <h3 className="text-white/25 text-[9px] font-semibold uppercase tracking-[0.15em] px-2 mb-1.5">
+              <h3 className="text-white/30 text-[10px] font-semibold uppercase tracking-[0.15em] px-2 mb-1.5">
                 {section.title}
               </h3>
               <div className="space-y-0.5">
                 {visibleItems.map((item) => {
-                  const isActive = pathname === item.href;
+                  const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
                   return (
                     <Link
                       key={item.href + item.label}
                       href={item.href}
-                      className={`flex items-center gap-2.5 px-2.5 py-[8px] rounded-lg text-[12px] font-medium transition-all duration-150 ${
+                      className={`flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg text-[13px] font-medium transition-all duration-150 ${
                         isActive
                           ? "bg-white/[0.1] text-white"
                           : "text-white/50 hover:text-white/80 hover:bg-white/[0.04]"
                       }`}
                     >
-                      <span className="text-[13px]">{item.emoji}</span>
+                      <span className="text-[14px]">{item.emoji}</span>
                       <span className="flex-1 truncate">{item.label}</span>
                       {item.badge && (
-                        <span className="px-1.5 py-px rounded-full bg-[var(--accent)]/15 text-[var(--accent)] text-[9px] font-bold">
+                        <span className="px-1.5 py-px rounded-full bg-[var(--accent)]/15 text-[var(--accent)] text-[10px] font-bold">
                           {item.badge}
                         </span>
                       )}
@@ -166,7 +166,7 @@ export function Sidebar() {
       <div className="p-3 border-t border-white/[0.08]">
         <button
           onClick={() => signOut({ callbackUrl: "/auth/login" })}
-          className="w-full flex items-center gap-2.5 px-2.5 py-[8px] rounded-lg text-white/50 hover:text-red-400 hover:bg-red-500/[0.06] text-[12px] font-medium transition-all"
+          className="w-full flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg text-white/50 hover:text-red-400 hover:bg-red-500/[0.06] text-[13px] font-medium transition-all"
         >
           <span>🚪</span>
           <span>Logout</span>

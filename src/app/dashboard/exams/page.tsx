@@ -17,6 +17,7 @@ import {
   Settings,
   X,
   Loader2,
+  Download,
 } from "lucide-react";
 import { downloadCSV } from "@/lib/exports";
 import { toast } from "sonner";
@@ -149,8 +150,8 @@ export default function ExamsPage() {
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all"
             >
-              <Settings className="w-4 h-4" />
-              CBT Settings
+              <Download className="w-4 h-4" />
+              Export
             </button>
             <button
               onClick={() => setShowModal(true)}
