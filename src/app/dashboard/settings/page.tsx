@@ -122,7 +122,7 @@ export default function SettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 shadow-lg shadow-[var(--primary)]/25"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {saving ? "Saving..." : "Save Changes"}
@@ -247,10 +247,62 @@ export default function SettingsPage() {
 
           {/* Academic Year */}
           {activeSection === 1 && (
-            <div className="text-center py-16">
-              <Calendar className="w-12 h-12 text-white/20 mx-auto mb-4" />
-              <p className="text-white/50 text-[13px]">Academic year settings coming soon</p>
-            </div>
+            <>
+              <h3 className="text-white font-semibold text-lg mb-6">Academic Year</h3>
+              <div className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Academic Session</label>
+                    <input type="text" value={currentSession} onChange={(e) => setCurrentSession(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Current Term</label>
+                    <select value={currentTerm} onChange={(e) => setCurrentTerm(e.target.value)} style={{ colorScheme: "dark" }} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]">
+                      <option style={{ background: "#0f1b33", color: "#fff" }}>First Term</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }}>Second Term</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }}>Third Term</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">First Term Start</label>
+                    <input type="date" defaultValue="2025-09-08" style={{ colorScheme: "dark" }} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">First Term End</label>
+                    <input type="date" defaultValue="2025-12-12" style={{ colorScheme: "dark" }} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Second Term Start</label>
+                    <input type="date" defaultValue="2026-01-06" style={{ colorScheme: "dark" }} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Second Term End</label>
+                    <input type="date" defaultValue="2026-03-27" style={{ colorScheme: "dark" }} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Third Term Start</label>
+                    <input type="date" defaultValue="2026-04-13" style={{ colorScheme: "dark" }} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Third Term End</label>
+                    <input type="date" defaultValue="2026-07-17" style={{ colorScheme: "dark" }} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-white/60 text-[13px] mb-2 block">Mid-Term Break</label>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <input type="date" defaultValue="2025-10-27" style={{ colorScheme: "dark" }} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                    <input type="date" defaultValue="2025-10-31" style={{ colorScheme: "dark" }} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                </div>
+              </div>
+            </>
           )}
 
           {/* Grading System */}
@@ -305,26 +357,122 @@ export default function SettingsPage() {
 
           {/* Notifications */}
           {activeSection === 3 && (
-            <div className="text-center py-16">
-              <Bell className="w-12 h-12 text-white/20 mx-auto mb-4" />
-              <p className="text-white/50 text-[13px]">Notification settings coming soon</p>
-            </div>
+            <>
+              <h3 className="text-white font-semibold text-lg mb-6">Notification Settings</h3>
+              <div className="space-y-4">
+                {[
+                  { label: "Email Notifications", desc: "Receive email alerts for important updates", defaultOn: true },
+                  { label: "SMS Notifications", desc: "Send SMS alerts to parents and students", defaultOn: true },
+                  { label: "Push Notifications", desc: "Browser push notifications for real-time alerts", defaultOn: false },
+                  { label: "Payment Alerts", desc: "Get notified when payments are received", defaultOn: true },
+                  { label: "Exam Reminders", desc: "Automated reminders before examination dates", defaultOn: true },
+                  { label: "Attendance Alerts", desc: "Notify parents of student absences", defaultOn: true },
+                  { label: "Report Card Alerts", desc: "Notify when report cards are ready", defaultOn: false },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] transition">
+                    <div>
+                      <p className="text-white text-[13px] font-medium">{item.label}</p>
+                      <p className="text-white/40 text-[11px] mt-0.5">{item.desc}</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" defaultChecked={item.defaultOn} className="sr-only peer" />
+                      <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/40 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent)] peer-checked:after:bg-white"></div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
 
           {/* User Roles */}
           {activeSection === 4 && (
-            <div className="text-center py-16">
-              <Users className="w-12 h-12 text-white/20 mx-auto mb-4" />
-              <p className="text-white/50 text-[13px]">User role settings coming soon</p>
-            </div>
+            <>
+              <h3 className="text-white font-semibold text-lg mb-6">User Roles & Permissions</h3>
+              <div className="space-y-3">
+                {[
+                  { role: "Owner", desc: "Full access to all modules and settings", color: "from-red-500 to-red-600", perms: ["All Access"] },
+                  { role: "Admin", desc: "Manage staff, students, academics, and finance", color: "from-blue-500 to-blue-600", perms: ["Students", "Teachers", "Finance", "Settings"] },
+                  { role: "Principal", desc: "Academic oversight and staff management", color: "from-purple-500 to-purple-600", perms: ["Academics", "Teachers", "Reports"] },
+                  { role: "Vice Principal", desc: "Student discipline and academic support", color: "from-emerald-500 to-emerald-600", perms: ["Students", "Attendance", "Discipline"] },
+                  { role: "Teacher", desc: "Class management, grades, and lesson plans", color: "from-amber-500 to-amber-600", perms: ["My Classes", "Grades", "Lesson Plans"] },
+                  { role: "Accountant", desc: "Finance, payments, and invoicing", color: "from-teal-500 to-teal-600", perms: ["Finance", "Payments", "Reports"] },
+                  { role: "Parent", desc: "View child progress and communications", color: "from-pink-500 to-pink-600", perms: ["Child Progress", "Messages", "Fees"] },
+                  { role: "Student", desc: "View grades, timetable, and assignments", color: "from-cyan-500 to-cyan-600", perms: ["Grades", "Timetable", "Assignments"] },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] transition">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center text-white text-[11px] font-bold`}>
+                        {item.role.slice(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-white text-[13px] font-medium">{item.role}</p>
+                        <p className="text-white/40 text-[11px] mt-0.5">{item.desc}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {item.perms.map((p, j) => (
+                        <span key={j} className="px-2 py-0.5 rounded-md bg-white/[0.06] text-white/40 text-[10px] font-medium">{p}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
 
           {/* Security */}
           {activeSection === 5 && (
-            <div className="text-center py-16">
-              <Shield className="w-12 h-12 text-white/20 mx-auto mb-4" />
-              <p className="text-white/50 text-[13px]">Security settings coming soon</p>
-            </div>
+            <>
+              <h3 className="text-white font-semibold text-lg mb-6">Security Settings</h3>
+              <div className="space-y-4">
+                <div className="p-4 rounded-xl bg-white/[0.04]">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <p className="text-white text-[13px] font-medium">Two-Factor Authentication</p>
+                      <p className="text-white/40 text-[11px] mt-0.5">Add an extra layer of security to admin accounts</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" className="sr-only peer" />
+                      <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/40 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent)] peer-checked:after:bg-white"></div>
+                    </label>
+                  </div>
+                </div>
+                <div className="p-4 rounded-xl bg-white/[0.04]">
+                  <p className="text-white text-[13px] font-medium mb-3">Password Policy</p>
+                  <div className="space-y-3">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-white/60 text-[11px] mb-1 block">Minimum Length</label>
+                        <input type="number" defaultValue={8} min={6} className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      </div>
+                      <div>
+                        <label className="text-white/60 text-[11px] mb-1 block">Password Expiry (days)</label>
+                        <input type="number" defaultValue={90} min={30} className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      </div>
+                    </div>
+                    {["Require uppercase letter", "Require lowercase letter", "Require number", "Require special character"].map((rule, i) => (
+                      <label key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/[0.04] cursor-pointer">
+                        <input type="checkbox" defaultChecked={i < 2} className="w-4 h-4 rounded bg-white/[0.04] border-white/[0.1] text-[var(--primary)] focus:ring-[var(--primary)]" />
+                        <span className="text-white/60 text-[12px]">{rule}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="p-4 rounded-xl bg-white/[0.04]">
+                  <p className="text-white text-[13px] font-medium mb-3">Session Management</p>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/60 text-[12px]">Max login attempts before lockout</span>
+                      <input type="number" defaultValue={5} min={3} className="w-20 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] text-right focus:outline-none focus:border-[var(--primary)]" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/60 text-[12px]">Session timeout (minutes)</span>
+                      <input type="number" defaultValue={60} min={15} className="w-20 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] text-right focus:outline-none focus:border-[var(--primary)]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </motion.div>
       </div>

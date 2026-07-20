@@ -234,7 +234,7 @@ export default function AlumniPage() {
                 />
               </div>
               <button
-                onClick={() => toast("Filter coming soon")}
+                onClick={() => toast.info("Filter options coming soon")}
                 className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]"
               >
                 <Filter className="w-4 h-4" />
@@ -277,7 +277,7 @@ export default function AlumniPage() {
                       )}
                     </div>
                     <button
-                      onClick={() => toast("Messaging coming soon")}
+                      onClick={() => toast.info("Messaging feature coming soon")}
                       className="p-2 rounded-lg hover:bg-white/[0.08] text-white/40 flex-shrink-0"
                     >
                       <MessageCircle className="w-4 h-4" />
