@@ -162,14 +162,14 @@ export default function LibraryPage() {
           <div className="flex gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
             >
               <Plus className="w-4 h-4" />
               Add Book
@@ -256,7 +256,7 @@ export default function LibraryPage() {
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => toast("Edit book coming soon")}
+                          onClick={() => toast.info("Edit book coming soon")}
                           className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
                         >
                           <Edit className="w-4 h-4" />
@@ -316,7 +316,7 @@ export default function LibraryPage() {
               </div>
               <p className="text-white/40 text-[12px]">Total penalties: ₦{(borrowings.filter((b) => b.status === "overdue").length * 500).toLocaleString()}</p>
               <button
-                onClick={() => toast("Penalty details coming soon")}
+                onClick={() => toast.info("Penalty details coming soon")}
                 className="mt-3 w-full py-2 rounded-lg bg-red-500/20 text-red-400 text-[13px] hover:bg-red-500/30 transition-all"
               >
                 View Details
@@ -411,14 +411,14 @@ export default function LibraryPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] hover:bg-white/[0.08] transition-all"
+                  className="flex-1 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-medium hover:opacity-90 transition-all disabled:opacity-50"
+                  className="flex-1 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[var(--primary)]/25"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Add Book"}
                 </button>

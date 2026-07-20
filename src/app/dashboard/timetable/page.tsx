@@ -144,7 +144,7 @@ export default function TimetablePage() {
             <button
               onClick={() => setShowModal(true)}
               disabled={!selectedClass}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 disabled:opacity-50 shadow-lg shadow-[var(--primary)]/25"
             >
               <Plus className="w-4 h-4" />
               Add Slot
@@ -362,14 +362,14 @@ export default function TimetablePage() {
               <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/[0.06]">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl bg-white/[0.05] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition"
+                  className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCreate}
                   disabled={submitting || !form.teacherId}
-                  className="px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center gap-2"
+                  className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-[var(--primary)]/25"
                 >
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   Add Slot

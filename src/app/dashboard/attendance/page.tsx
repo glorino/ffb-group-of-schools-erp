@@ -62,21 +62,24 @@ export default function AttendancePage() {
         <div className="flex gap-3">
           <button
             onClick={() => toast.info("QR Scanner coming soon")}
-            className="px-4 py-2.5 rounded-xl bg-white/[0.06] backdrop-blur-xl border border-white/20 text-white text-sm font-medium hover:bg-white/10 transition-all flex items-center gap-2"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
           >
             <QrCode className="w-4 h-4" />
             QR Scanner
           </button>
           <button
-            onClick={() => downloadCSV(records.map(r => ({
-              Student: `${r.student?.firstName} ${r.student?.lastName}`,
-              "Admission No": r.student?.admissionNumber,
-              Class: r.class?.name || r.class?.displayName,
-              Status: r.status,
-              Date: new Date(r.date).toLocaleDateString(),
-              Notes: r.notes || "",
-            })), "attendance_report")}
-            className="px-4 py-2.5 rounded-xl bg-white/[0.06] backdrop-blur-xl border border-white/20 text-white text-sm font-medium hover:bg-white/10 transition-all flex items-center gap-2"
+            onClick={() => {
+              downloadCSV(records.map(r => ({
+                Student: `${r.student?.firstName} ${r.student?.lastName}`,
+                "Admission No": r.student?.admissionNumber,
+                Class: r.class?.name || r.class?.displayName,
+                Status: r.status,
+                Date: new Date(r.date).toLocaleDateString(),
+                Notes: r.notes || "",
+              })), "attendance_report");
+              toast.success("Exported successfully");
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
           >
             <Download className="w-4 h-4" />
             Export
@@ -266,7 +269,7 @@ export default function AttendancePage() {
           </div>
           <button
             onClick={() => toast.success("Notifications sent to parents of absent students")}
-            className="px-4 py-2 rounded-xl bg-[var(--primary)]/20 text-[var(--primary)] text-sm font-medium hover:bg-[var(--primary)]/30 transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
           >
             Notify Parents
           </button>

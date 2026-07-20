@@ -134,24 +134,27 @@ export default function PayrollPage() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => downloadCSV(filtered.map(p => ({
-                Name: `${p.teacher.firstName} ${p.teacher.lastName}`,
-                "Employee ID": p.teacher.employeeId,
-                Month: monthLabel,
-                "Basic Salary": p.basicSalary,
-                Allowances: p.allowances,
-                Deductions: p.deductions,
-                "Net Pay": p.netSalary,
-                Status: p.status,
-              })), `payroll_${monthLabel}`)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/10 transition-all"
+              onClick={() => {
+                downloadCSV(filtered.map(p => ({
+                  Name: `${p.teacher.firstName} ${p.teacher.lastName}`,
+                  "Employee ID": p.teacher.employeeId,
+                  Month: monthLabel,
+                  "Basic Salary": p.basicSalary,
+                  Allowances: p.allowances,
+                  Deductions: p.deductions,
+                  "Net Pay": p.netSalary,
+                  Status: p.status,
+                })), `payroll_${monthLabel}`);
+                toast.success("Exported successfully");
+              }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
             >
               <Plus className="w-4 h-4" />
               Add Entry
@@ -346,9 +349,9 @@ export default function PayrollPage() {
                 </div>
               </div>
               <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/[0.06]">
-                <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.05] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition">Cancel</button>
+                <button onClick={() => setShowModal(false)} className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">Cancel</button>
                 <button onClick={handleCreate} disabled={submitting}
-                  className="px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center gap-2">
+                  className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-[var(--primary)]/25">
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   Create Entry
                 </button>

@@ -135,7 +135,7 @@ export default function ClassesPage() {
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
           >
             <Plus className="w-4 h-4" />
             Add Class
@@ -385,14 +385,14 @@ export default function ClassesPage() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition"
+                    className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition flex items-center gap-2 disabled:opacity-50"
+                    className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-[var(--primary)]/25"
                   >
                     {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                     Create Class
