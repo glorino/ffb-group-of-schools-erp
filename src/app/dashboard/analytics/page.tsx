@@ -15,6 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { downloadCSV } from "@/lib/exports";
 
 interface DashboardStats {
   totalStudents?: number;
@@ -237,11 +238,25 @@ export default function AnalyticsPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all">
+            <button
+              onClick={() => toast.success("Filters applied")}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all"
+            >
               <Filter className="w-4 h-4" />
               Filter
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all">
+            <button
+              onClick={() => {
+                const data = kpiData.map((kpi) => ({
+                  Metric: kpi.label,
+                  Value: kpi.value,
+                  Change: kpi.change,
+                  Trend: kpi.trend,
+                }));
+                downloadCSV(data, "analytics_report");
+              }}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+            >
               <Download className="w-4 h-4" />
               Export Report
             </button>

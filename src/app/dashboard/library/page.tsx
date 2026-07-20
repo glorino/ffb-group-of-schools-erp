@@ -57,6 +57,7 @@ export default function LibraryPage() {
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ title: "", author: "", isbn: "", category: "Textbook", copies: "", publisher: "" });
+  const [viewBook, setViewBook] = useState<LibraryBook | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -248,10 +249,16 @@ export default function LibraryPage() {
                     <td className="py-3 text-white/70 text-[13px]">{book.available}</td>
                     <td className="py-3">
                       <div className="flex gap-1">
-                        <button className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40">
+                        <button
+                          onClick={() => setViewBook(book)}
+                          className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                        >
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40">
+                        <button
+                          onClick={() => toast("Edit book coming soon")}
+                          className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                        >
                           <Edit className="w-4 h-4" />
                         </button>
                       </div>
@@ -308,7 +315,10 @@ export default function LibraryPage() {
                 <span className="text-red-400 text-[13px] font-medium">{borrowings.filter((b) => b.status === "overdue").length} Overdue Books</span>
               </div>
               <p className="text-white/40 text-[12px]">Total penalties: ₦{(borrowings.filter((b) => b.status === "overdue").length * 500).toLocaleString()}</p>
-              <button className="mt-3 w-full py-2 rounded-lg bg-red-500/20 text-red-400 text-[13px] hover:bg-red-500/30 transition-all">
+              <button
+                onClick={() => toast("Penalty details coming soon")}
+                className="mt-3 w-full py-2 rounded-lg bg-red-500/20 text-red-400 text-[13px] hover:bg-red-500/30 transition-all"
+              >
                 View Details
               </button>
             </div>
@@ -414,6 +424,51 @@ export default function LibraryPage() {
                 </button>
               </div>
             </form>
+          </motion.div>
+        </div>
+      )}
+
+      {viewBook && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-lg rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-lg font-semibold">{viewBook.title}</h2>
+              <button onClick={() => setViewBook(null)} className="text-white/40 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 rounded-xl bg-white/[0.04]">
+                  <p className="text-white/40 text-[12px] mb-1">Author</p>
+                  <p className="text-white text-[13px] font-medium">{viewBook.author}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.04]">
+                  <p className="text-white/40 text-[12px] mb-1">ISBN</p>
+                  <p className="text-white text-[13px] font-medium">{viewBook.isbn}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.04]">
+                  <p className="text-white/40 text-[12px] mb-1">Category</p>
+                  <p className="text-white text-[13px] font-medium">{viewBook.category}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.04]">
+                  <p className="text-white/40 text-[12px] mb-1">Copies</p>
+                  <p className="text-white text-[13px] font-medium">{viewBook.copies}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.04]">
+                  <p className="text-white/40 text-[12px] mb-1">Available</p>
+                  <p className="text-white text-[13px] font-medium">{viewBook.available}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.04]">
+                  <p className="text-white/40 text-[12px] mb-1">Status</p>
+                  <p className={`text-[13px] font-medium ${viewBook.status === "available" ? "text-emerald-400" : "text-red-400"}`}>{viewBook.status}</p>
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       )}

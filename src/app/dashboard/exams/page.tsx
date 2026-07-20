@@ -279,7 +279,10 @@ export default function ExamsPage() {
               </div>
             ))}
           </div>
-          <button className="w-full mt-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] hover:bg-white/[0.08] transition-all">
+          <button
+            onClick={() => toast("Full subject list coming soon")}
+            className="w-full mt-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] hover:bg-white/[0.08] transition-all"
+          >
             View All Subjects
           </button>
         </motion.div>

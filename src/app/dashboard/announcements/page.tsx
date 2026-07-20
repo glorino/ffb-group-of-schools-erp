@@ -244,10 +244,16 @@ export default function AnnouncementsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40">
+                    <button
+                      onClick={() => toast("Edit announcement coming soon")}
+                      className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                    >
                       <Edit className="w-4 h-4" />
                     </button>
-                    <button className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40">
+                    <button
+                      onClick={() => toast("Delete announcement coming soon")}
+                      className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                    >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>

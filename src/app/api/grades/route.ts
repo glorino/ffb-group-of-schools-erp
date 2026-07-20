@@ -42,3 +42,50 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Failed to fetch grades" }, { status: 500 });
   }
 }
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await request.json();
+    const { studentId, subjectId, type, score, maxScore, grade, term, session: sessionName, comments } = body;
+
+    if (!studentId || !subjectId || !type || score === undefined) {
+      return NextResponse.json({ error: "Missing required fields: studentId, subjectId, type, score" }, { status: 400 });
+    }
+
+    const computedGrade = grade || (score >= 75 ? "A" : score >= 65 ? "B" : score >= 50 ? "C" : score >= 40 ? "D" : "F");
+
+    const existing = await prisma.grade.findFirst({
+      where: { studentId, subjectId, type, term: term || null, session: sessionName || null },
+    });
+
+    let result;
+    if (existing) {
+      result = await prisma.grade.update({
+        where: { id: existing.id },
+        data: { score: parseFloat(score), maxScore: maxScore ? parseFloat(maxScore) : 100, grade: computedGrade, comments: comments || undefined },
+      });
+    } else {
+      result = await prisma.grade.create({
+        data: {
+          studentId,
+          subjectId,
+          type,
+          score: parseFloat(score),
+          maxScore: maxScore ? parseFloat(maxScore) : 100,
+          grade: computedGrade,
+          term: term || undefined,
+          session: sessionName || undefined,
+          comments: comments || undefined,
+        },
+      });
+    }
+
+    return NextResponse.json({ success: true, grade: result }, { status: 201 });
+  } catch (error: any) {
+    console.error("POST /api/grades error:", error);
+    return NextResponse.json({ error: error.message || "Failed to save grade" }, { status: 500 });
+  }
+}

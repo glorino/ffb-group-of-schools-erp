@@ -59,6 +59,7 @@ export default function InventoryPage() {
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", category: "Stationery", quantity: "", unit: "pieces", unitPrice: "", location: "" });
+  const [viewItem, setViewItem] = useState<InventoryItem | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -170,7 +171,10 @@ export default function InventoryPage() {
               <Download className="w-4 h-4" />
               Export
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all">
+            <button
+              onClick={() => toast("Barcode scanner coming soon")}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all"
+            >
               <Barcode className="w-4 h-4" />
               Scan
             </button>
@@ -262,10 +266,16 @@ export default function InventoryPage() {
                     </td>
                     <td className="py-3">
                       <div className="flex gap-1">
-                        <button className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40">
+                        <button
+                          onClick={() => setViewItem(item)}
+                          className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                        >
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40">
+                        <button
+                          onClick={() => toast("Edit item coming soon")}
+                          className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                        >
                           <Edit className="w-4 h-4" />
                         </button>
                       </div>
@@ -439,6 +449,64 @@ export default function InventoryPage() {
                 </button>
               </div>
             </form>
+          </motion.div>
+        </div>
+      )}
+
+      {viewItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-lg rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-lg font-semibold">{viewItem.name}</h2>
+              <button onClick={() => setViewItem(null)} className="text-white/40 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 rounded-xl bg-white/[0.04]">
+                  <p className="text-white/40 text-[12px] mb-1">Category</p>
+                  <p className="text-white text-[13px] font-medium">{viewItem.category}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.04]">
+                  <p className="text-white/40 text-[12px] mb-1">Quantity</p>
+                  <p className="text-white text-[13px] font-medium">{viewItem.quantity} {viewItem.unit}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.04]">
+                  <p className="text-white/40 text-[12px] mb-1">Unit Price</p>
+                  <p className="text-white text-[13px] font-medium">₦{viewItem.unitPrice.toLocaleString()}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/[0.04]">
+                  <p className="text-white/40 text-[12px] mb-1">Location</p>
+                  <p className="text-white text-[13px] font-medium">{viewItem.location}</p>
+                </div>
+              </div>
+              {viewItem.purchases && viewItem.purchases.length > 0 && (
+                <div>
+                  <h4 className="text-white/60 text-[13px] font-medium mb-3">Recent Purchases</h4>
+                  <div className="space-y-2 max-h-[200px] overflow-y-auto">
+                    {viewItem.purchases.map((p) => (
+                      <div key={p.id} className="p-3 rounded-xl bg-white/[0.04]">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-white text-[13px]">{p.vendor}</span>
+                          <span className={`px-2 py-1 rounded-lg text-[12px] ${
+                            p.status === "delivered" ? "bg-emerald-500/20 text-emerald-400" : "bg-orange-500/20 text-orange-400"
+                          }`}>{p.status}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[12px]">
+                          <span className="text-white/30">{new Date(p.date).toLocaleDateString()}</span>
+                          <span className="text-white/60">₦{p.amount.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </motion.div>
         </div>
       )}

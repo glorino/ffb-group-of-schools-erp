@@ -233,7 +233,10 @@ export default function AlumniPage() {
                   className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
-              <button className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]">
+              <button
+                onClick={() => toast("Filter coming soon")}
+                className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]"
+              >
                 <Filter className="w-4 h-4" />
               </button>
             </div>
@@ -273,7 +276,10 @@ export default function AlumniPage() {
                         <p className="text-[var(--accent)] text-[12px] font-medium">₦{totalDonation.toLocaleString()}</p>
                       )}
                     </div>
-                    <button className="p-2 rounded-lg hover:bg-white/[0.08] text-white/40 flex-shrink-0">
+                    <button
+                      onClick={() => toast("Messaging coming soon")}
+                      className="p-2 rounded-lg hover:bg-white/[0.08] text-white/40 flex-shrink-0"
+                    >
                       <MessageCircle className="w-4 h-4" />
                     </button>
                   </div>

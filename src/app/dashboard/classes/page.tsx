@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   GraduationCap,
   Users,
@@ -11,7 +11,12 @@ import {
   MoreVertical,
   Building,
   UserCheck,
+  X,
+  Loader2,
+  Eye,
+  Pencil,
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface ClassItem {
   id: string;
@@ -32,6 +37,16 @@ export default function ClassesPage() {
   const [data, setData] = useState<ClassesResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [form, setForm] = useState({
+    name: "",
+    displayName: "",
+    level: "primary",
+    capacity: "40",
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -45,8 +60,57 @@ export default function ClassesPage() {
       .finally(() => setLoading(false));
   }, [search]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const totalStudents = data?.classes?.reduce((sum, c) => sum + c._count.students, 0) ?? 0;
   const avgClassSize = data?.classes?.length ? Math.round(totalStudents / data.classes.length) : 0;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim()) {
+      toast.error("Class name is required");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const levelMap: Record<string, number> = { nursery: 1, primary: 2, junior: 3, secondary: 4 };
+      const res = await fetch("/api/classes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          displayName: form.displayName || form.name,
+          level: levelMap[form.level] || 2,
+          capacity: parseInt(form.capacity) || 40,
+        }),
+      });
+      const cls = await res.json();
+      if (!res.ok) throw new Error(cls.error || "Failed to create class");
+      toast.success("Class created successfully");
+      setShowModal(false);
+      setForm({ name: "", displayName: "", level: "primary", capacity: "40" });
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      fetch(`/api/classes?${params}`)
+        .then((res) => res.json())
+        .then((d) => setData(d))
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create class");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const kpis = [
     { label: "Total Classes", value: String(data?.total ?? 0), icon: Building, color: "from-blue-500 to-blue-600" },
@@ -69,7 +133,10 @@ export default function ClassesPage() {
               Manage classes, streams, arms, and teacher assignments across all levels
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all">
+          <button
+            onClick={() => setShowModal(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+          >
             <Plus className="w-4 h-4" />
             Add Class
           </button>
@@ -167,9 +234,43 @@ export default function ClassesPage() {
                           </div>
                         </td>
                         <td className="py-3">
-                          <button className="p-1 rounded-lg hover:bg-white/10 text-white/40">
-                            <MoreVertical className="w-4 h-4" />
-                          </button>
+                          <div className="relative" ref={dropdownOpen === cls.id ? dropdownRef : undefined}>
+                            <button
+                              onClick={() => setDropdownOpen(dropdownOpen === cls.id ? null : cls.id)}
+                              className="p-1 rounded-lg hover:bg-white/10 text-white/40"
+                            >
+                              <MoreVertical className="w-4 h-4" />
+                            </button>
+                            <AnimatePresence>
+                              {dropdownOpen === cls.id && (
+                                <motion.div
+                                  initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                                  exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                                  className="absolute right-0 top-full mt-1 w-36 bg-[#0a0f1e] border border-white/[0.08] rounded-xl shadow-xl z-20 overflow-hidden"
+                                >
+                                  <button
+                                    onClick={() => {
+                                      setDropdownOpen(null);
+                                      toast.info(`Viewing class: ${cls.displayName}`);
+                                    }}
+                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-white/70 hover:bg-white/[0.06] transition"
+                                  >
+                                    <Eye className="w-3.5 h-3.5" /> View
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setDropdownOpen(null);
+                                      toast.info(`Editing class: ${cls.displayName}`);
+                                    }}
+                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-white/70 hover:bg-white/[0.06] transition"
+                                  >
+                                    <Pencil className="w-3.5 h-3.5" /> Edit
+                                  </button>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -210,6 +311,98 @@ export default function ClassesPage() {
           </div>
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          >
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">Add Class</h3>
+                <button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-white/10 text-white/40">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    placeholder="e.g. JSS1"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Display Name</label>
+                  <input
+                    type="text"
+                    value={form.displayName}
+                    onChange={(e) => setForm({ ...form, displayName: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    placeholder="e.g. Junior Secondary 1A"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Level</label>
+                    <select
+                      value={form.level}
+                      onChange={(e) => setForm({ ...form, level: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ colorScheme: "dark" }}
+                    >
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="nursery">Nursery</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="primary">Primary</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="junior">Junior</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="secondary">Secondary</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Capacity</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={form.capacity}
+                      onChange={(e) => setForm({ ...form, capacity: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                    Create Class
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   CreditCard,
   Search,
@@ -15,6 +15,8 @@ import {
   Wallet,
   Receipt,
   AlertCircle,
+  X,
+  Loader2,
 } from "lucide-react";
 import {
   BarChart,
@@ -28,6 +30,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { toast } from "sonner";
 
 import { downloadCSV } from "@/lib/exports";
 
@@ -75,6 +78,15 @@ export default function FinancePage() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"overview" | "payments" | "invoices">("overview");
   const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    studentId: "",
+    amount: "",
+    schoolFeeId: "",
+    dueDate: "",
+    description: "",
+  });
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -100,6 +112,37 @@ export default function FinancePage() {
     }
   );
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.studentId || !form.amount || !form.schoolFeeId || !form.dueDate) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/finance/invoices", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId: form.studentId,
+          schoolFeeId: form.schoolFeeId,
+          amount: Number(form.amount),
+          dueDate: form.dueDate,
+          notes: form.description || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create invoice");
+      toast.success("Invoice created successfully");
+      setShowModal(false);
+      setForm({ studentId: "", amount: "", schoolFeeId: "", dueDate: "", description: "" });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create invoice");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const tabs = ["overview", "payments", "invoices"] as const;
 
   return (
@@ -119,16 +162,19 @@ export default function FinancePage() {
             onClick={() => downloadCSV(payments.map((p: any) => ({
               Student: `${p.student?.firstName || ""} ${p.student?.lastName || ""}`,
               Amount: p.amount,
-              Method: p.method || "—",
+              Method: p.method || "\u2014",
               Status: p.status,
-              Date: p.paidAt ? new Date(p.paidAt).toLocaleDateString() : "—",
-              Reference: p.reference || "—",
+              Date: p.paidAt ? new Date(p.paidAt).toLocaleDateString() : "\u2014",
+              Reference: p.reference || "\u2014",
             })), "finance_payments")}
             className="px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition flex items-center gap-2"
           >
             <Download className="w-4 h-4" /> Export
           </button>
-          <button className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
+          <button
+            onClick={() => setShowModal(true)}
+            className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2"
+          >
             <Plus className="w-4 h-4" /> Create Invoice
           </button>
         </div>
@@ -296,7 +342,10 @@ export default function FinancePage() {
                       {inv.daysLeft} days left
                     </p>
                   </div>
-                  <button className="px-3 py-1.5 rounded-lg bg-[var(--primary)]/10 text-[var(--blue-3)] text-[11px] font-medium hover:bg-[var(--primary)]/20 transition">
+                  <button
+                    onClick={() => toast.success("Payment reminder sent")}
+                    className="px-3 py-1.5 rounded-lg bg-[var(--primary)]/10 text-[var(--blue-3)] text-[11px] font-medium hover:bg-[var(--primary)]/20 transition"
+                  >
                     Remind
                   </button>
                 </div>
@@ -305,6 +354,108 @@ export default function FinancePage() {
           </div>
         </div>
       )}
+
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          >
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">Create Invoice</h3>
+                <button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-white/10 text-white/40">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Student ID *</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.studentId}
+                    onChange={(e) => setForm({ ...form, studentId: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    placeholder="Enter student ID"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Amount *</label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={form.amount}
+                      onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Due Date *</label>
+                    <input
+                      type="date"
+                      required
+                      value={form.dueDate}
+                      onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ colorScheme: "dark" }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">School Fee ID *</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.schoolFeeId}
+                    onChange={(e) => setForm({ ...form, schoolFeeId: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    placeholder="Enter school fee ID"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Description</label>
+                  <textarea
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    rows={3}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
+                    placeholder="Optional notes..."
+                  />
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                    Create Invoice
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

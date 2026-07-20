@@ -36,7 +36,7 @@ const settingSections = [
   { title: "Security", icon: Shield, description: "Password policies and 2FA settings" },
 ];
 
-const gradingConfig = [
+const defaultGradingConfig = [
   { grade: "A", min: 70, max: 100, points: 5, color: "text-emerald-400" },
   { grade: "B", min: 60, max: 69, points: 4, color: "text-blue-400" },
   { grade: "C", min: 50, max: 59, points: 3, color: "text-yellow-400" },
@@ -47,6 +47,7 @@ const gradingConfig = [
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [activeSection, setActiveSection] = useState(0);
   const [schoolName, setSchoolName] = useState("FFB Group of Schools");
   const [motto, setMotto] = useState("Excellence in Education");
   const [address, setAddress] = useState("123 Education Road, Lagos, Nigeria");
@@ -54,6 +55,7 @@ export default function SettingsPage() {
   const [email, setEmail] = useState("admin@ffbschools.edu.ng");
   const [currentSession, setCurrentSession] = useState("2024/2025");
   const [currentTerm, setCurrentTerm] = useState("First Term");
+  const [gradingConfig, setGradingConfig] = useState(defaultGradingConfig);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -87,6 +89,12 @@ export default function SettingsPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const updateGradingRow = (index: number, field: string, value: string) => {
+    const updated = [...gradingConfig];
+    updated[index] = { ...updated[index], [field]: field === "grade" ? value : Number(value) };
+    setGradingConfig(updated);
   };
 
   if (loading) {
@@ -134,13 +142,14 @@ export default function SettingsPage() {
             {settingSections.map((section, i) => (
               <button
                 key={i}
+                onClick={() => setActiveSection(i)}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
-                  i === 0 ? "bg-[var(--primary)]/20 border border-[var(--primary)]/30" : "hover:bg-white/[0.04]"
+                  i === activeSection ? "bg-[var(--primary)]/20 border border-[var(--primary)]/30" : "hover:bg-white/[0.04]"
                 }`}
               >
-                <section.icon className={`w-5 h-5 ${i === 0 ? "text-[var(--accent)]" : "text-white/40"}`} />
+                <section.icon className={`w-5 h-5 ${i === activeSection ? "text-[var(--accent)]" : "text-white/40"}`} />
                 <div>
-                  <p className={`text-[13px] font-medium ${i === 0 ? "text-white" : "text-white/70"}`}>{section.title}</p>
+                  <p className={`text-[13px] font-medium ${i === activeSection ? "text-white" : "text-white/70"}`}>{section.title}</p>
                   <p className="text-white/40 text-[12px]">{section.description}</p>
                 </div>
               </button>
@@ -154,108 +163,169 @@ export default function SettingsPage() {
           transition={{ delay: 0.5 }}
           className="lg:col-span-2 card"
         >
-          <h3 className="text-white font-semibold text-lg mb-6">School Profile</h3>
-          <div className="space-y-4">
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-white/60 text-[13px] mb-2 block">School Name</label>
-                <input
-                  type="text"
-                  value={schoolName}
-                  onChange={(e) => setSchoolName(e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
+          {/* School Profile */}
+          {activeSection === 0 && (
+            <>
+              <h3 className="text-white font-semibold text-lg mb-6">School Profile</h3>
+              <div className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">School Name</label>
+                    <input
+                      type="text"
+                      value={schoolName}
+                      onChange={(e) => setSchoolName(e.target.value)}
+                      className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Motto</label>
+                    <input
+                      type="text"
+                      value={motto}
+                      onChange={(e) => setMotto(e.target.value)}
+                      className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-white/60 text-[13px] mb-2 block">Address</label>
+                  <input
+                    type="text"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Phone</label>
+                    <input
+                      type="text"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Email</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    />
+                  </div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Current Session</label>
+                    <input
+                      type="text"
+                      value={currentSession}
+                      onChange={(e) => setCurrentSession(e.target.value)}
+                      className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-white/60 text-[13px] mb-2 block">Current Term</label>
+                    <select
+                      value={currentTerm}
+                      onChange={(e) => setCurrentTerm(e.target.value)}
+                      style={{ colorScheme: "dark" }}
+                      className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    >
+                      <option style={{ background: "#0f1b33", color: "#fff" }}>First Term</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }}>Second Term</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }}>Third Term</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className="text-white/60 text-[13px] mb-2 block">Motto</label>
-                <input
-                  type="text"
-                  value={motto}
-                  onChange={(e) => setMotto(e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="text-white/60 text-[13px] mb-2 block">Address</label>
-              <input
-                type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
-              />
-            </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-white/60 text-[13px] mb-2 block">Phone</label>
-                <input
-                  type="text"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
-              </div>
-              <div>
-                <label className="text-white/60 text-[13px] mb-2 block">Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
-              </div>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-white/60 text-[13px] mb-2 block">Current Session</label>
-                <input
-                  type="text"
-                  value={currentSession}
-                  onChange={(e) => setCurrentSession(e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
-              </div>
-              <div>
-                <label className="text-white/60 text-[13px] mb-2 block">Current Term</label>
-                <select
-                  value={currentTerm}
-                  onChange={(e) => setCurrentTerm(e.target.value)}
-                  style={{ colorScheme: "dark" }}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                >
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>First Term</option>
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Second Term</option>
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Third Term</option>
-                </select>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
 
-          <div className="mt-6 pt-6 border-t border-white/[0.08]">
-            <h4 className="text-white font-medium mb-4">Grading Scale</h4>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-white/[0.08]">
-                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Grade</th>
-                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Min %</th>
-                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Max %</th>
-                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Points</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {gradingConfig.map((grade, i) => (
-                    <tr key={i} className="border-b border-white/5">
-                      <td className={`py-2 font-bold ${grade.color}`}>{grade.grade}</td>
-                      <td className="py-2 text-white/70 text-[13px]">{grade.min}</td>
-                      <td className="py-2 text-white/70 text-[13px]">{grade.max}</td>
-                      <td className="py-2 text-white/70 text-[13px]">{grade.points}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {/* Academic Year */}
+          {activeSection === 1 && (
+            <div className="text-center py-16">
+              <Calendar className="w-12 h-12 text-white/20 mx-auto mb-4" />
+              <p className="text-white/50 text-[13px]">Academic year settings coming soon</p>
             </div>
-          </div>
+          )}
+
+          {/* Grading System */}
+          {activeSection === 2 && (
+            <>
+              <h3 className="text-white font-semibold text-lg mb-6">Grading System</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-white/[0.08]">
+                      <th className="text-left text-white/50 text-[13px] font-medium pb-3">Grade</th>
+                      <th className="text-left text-white/50 text-[13px] font-medium pb-3">Min %</th>
+                      <th className="text-left text-white/50 text-[13px] font-medium pb-3">Max %</th>
+                      <th className="text-left text-white/50 text-[13px] font-medium pb-3">Points</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {gradingConfig.map((grade, i) => (
+                      <tr key={i} className="border-b border-white/5">
+                        <td className={`py-2 font-bold ${grade.color}`}>{grade.grade}</td>
+                        <td className="py-2">
+                          <input
+                            type="number"
+                            value={grade.min}
+                            onChange={(e) => updateGradingRow(i, "min", e.target.value)}
+                            className="w-20 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                          />
+                        </td>
+                        <td className="py-2">
+                          <input
+                            type="number"
+                            value={grade.max}
+                            onChange={(e) => updateGradingRow(i, "max", e.target.value)}
+                            className="w-20 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                          />
+                        </td>
+                        <td className="py-2">
+                          <input
+                            type="number"
+                            value={grade.points}
+                            onChange={(e) => updateGradingRow(i, "points", e.target.value)}
+                            className="w-20 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+
+          {/* Notifications */}
+          {activeSection === 3 && (
+            <div className="text-center py-16">
+              <Bell className="w-12 h-12 text-white/20 mx-auto mb-4" />
+              <p className="text-white/50 text-[13px]">Notification settings coming soon</p>
+            </div>
+          )}
+
+          {/* User Roles */}
+          {activeSection === 4 && (
+            <div className="text-center py-16">
+              <Users className="w-12 h-12 text-white/20 mx-auto mb-4" />
+              <p className="text-white/50 text-[13px]">User role settings coming soon</p>
+            </div>
+          )}
+
+          {/* Security */}
+          {activeSection === 5 && (
+            <div className="text-center py-16">
+              <Shield className="w-12 h-12 text-white/20 mx-auto mb-4" />
+              <p className="text-white/50 text-[13px]">Security settings coming soon</p>
+            </div>
+          )}
         </motion.div>
       </div>
     </div>

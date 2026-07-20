@@ -168,7 +168,10 @@ export default function TransportPage() {
               <Download className="w-4 h-4" />
               Export
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all">
+            <button
+              onClick={() => toast("GPS tracking coming soon")}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all"
+            >
               <Navigation className="w-4 h-4" />
               GPS Tracking
             </button>

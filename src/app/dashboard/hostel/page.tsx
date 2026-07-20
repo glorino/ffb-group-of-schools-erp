@@ -54,6 +54,9 @@ export default function HostelPage() {
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", type: "Boys", capacity: "" });
+  const [viewBlock, setViewBlock] = useState<Hostel | null>(null);
+  const [editBlock, setEditBlock] = useState<Hostel | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", type: "Boys", capacity: "" });
 
   useEffect(() => {
     fetchData();
@@ -159,7 +162,10 @@ export default function HostelPage() {
               <Download className="w-4 h-4" />
               Export
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all">
+            <button
+              onClick={() => toast("QR Scanner coming soon")}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all"
+            >
               <QrCode className="w-4 h-4" />
               QR Attendance
             </button>
@@ -242,11 +248,20 @@ export default function HostelPage() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button className="flex-1 py-1.5 rounded-lg bg-white/[0.04] text-white/60 text-[12px] hover:bg-white/[0.08] transition-all">
+                    <button
+                      onClick={() => setViewBlock(block)}
+                      className="flex-1 py-1.5 rounded-lg bg-white/[0.04] text-white/60 text-[12px] hover:bg-white/[0.08] transition-all"
+                    >
                       <Eye className="w-3 h-3 inline mr-1" />
                       View
                     </button>
-                    <button className="flex-1 py-1.5 rounded-lg bg-white/[0.04] text-white/60 text-[12px] hover:bg-white/[0.08] transition-all">
+                    <button
+                      onClick={() => {
+                        setEditBlock(block);
+                        setEditForm({ name: block.name, type: block.type, capacity: String(block.capacity) });
+                      }}
+                      className="flex-1 py-1.5 rounded-lg bg-white/[0.04] text-white/60 text-[12px] hover:bg-white/[0.08] transition-all"
+                    >
                       <Edit className="w-3 h-3 inline mr-1" />
                       Edit
                     </button>
@@ -377,6 +392,111 @@ export default function HostelPage() {
                 </button>
               </div>
             </form>
+          </motion.div>
+        </div>
+      )}
+
+      {viewBlock && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-lg rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-lg font-semibold">{viewBlock.name} — Rooms</h2>
+              <button onClick={() => setViewBlock(null)} className="text-white/40 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+              {viewBlock.rooms.length === 0 && (
+                <p className="text-white/40 text-[13px] text-center py-4">No rooms in this block</p>
+              )}
+              {viewBlock.rooms.map((room) => (
+                <div key={room.id} className="p-3 rounded-xl bg-white/[0.04]">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-white text-[13px] font-medium">Room {room.number}</span>
+                    <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
+                      room.status === "full" ? "bg-red-500/20 text-red-400" : "bg-emerald-500/20 text-emerald-400"
+                    }`}>
+                      {room.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-[12px]">
+                    <span className="text-white/40">Beds: {room.beds.length}/{room.capacity}</span>
+                    <span className="text-white/30">{room.capacity - room.beds.length} available</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {editBlock && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-lg font-semibold">Edit {editBlock.name}</h2>
+              <button onClick={() => setEditBlock(null)} className="text-white/40 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1">Block Name</label>
+                <input
+                  type="text"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                />
+              </div>
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1">Type</label>
+                <select
+                  value={editForm.type}
+                  onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
+                  style={{ colorScheme: "dark" }}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                >
+                  <option style={{ background: "#0f1b33", color: "#fff" }}>Boys</option>
+                  <option style={{ background: "#0f1b33", color: "#fff" }}>Girls</option>
+                  <option style={{ background: "#0f1b33", color: "#fff" }}>Staff</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1">Capacity</label>
+                <input
+                  type="number"
+                  value={editForm.capacity}
+                  onChange={(e) => setEditForm({ ...editForm, capacity: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setEditBlock(null)}
+                  className="flex-1 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] hover:bg-white/[0.08] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    toast("Edit coming soon");
+                    setEditBlock(null);
+                  }}
+                  className="flex-1 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-medium hover:opacity-90 transition-all"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
           </motion.div>
         </div>
       )}

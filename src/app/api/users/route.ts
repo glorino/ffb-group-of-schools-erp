@@ -85,3 +85,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to create user" }, { status: 500 });
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await request.json();
+    const { id, name, email, phone, password } = body;
+
+    if (!id) return NextResponse.json({ error: "Missing user id" }, { status: 400 });
+
+    const updateData: any = {};
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (phone) updateData.phone = phone;
+    if (password) updateData.password = await bcrypt.hash(password, 10);
+
+    const user = await prisma.user.update({ where: { id }, data: updateData });
+
+    return NextResponse.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
+  } catch (error) {
+    console.error("PUT /api/users error:", error);
+    return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
+  }
+}
