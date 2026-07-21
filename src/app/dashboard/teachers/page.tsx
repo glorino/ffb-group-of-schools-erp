@@ -14,9 +14,11 @@ import {
   MoreVertical,
   X,
   Loader2,
+  Download,
 } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { toast } from "sonner";
+import { downloadCSV } from "@/lib/exports";
 
 interface Teacher {
   id: string;
@@ -106,6 +108,24 @@ export default function TeachersPage() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleExport = () => {
+    if (!data?.teachers?.length) {
+      toast.info("No data to export");
+      return;
+    }
+    downloadCSV(data.teachers.map(t => ({
+      Name: `${t.firstName} ${t.lastName}`,
+      EmployeeID: t.employeeId,
+      Email: t.email || "",
+      Phone: t.phone || "",
+      Qualification: t.qualification || "",
+      Specialization: t.specialization || "",
+      Subjects: t.teacherSubjects?.map(ts => ts.subject.name).join(", ") || "",
+      Status: t.status,
+    })), "teachers_directory");
+    toast.success("Exported successfully");
   };
 
   const columns = [
@@ -241,6 +261,10 @@ export default function TeachersPage() {
                 className="pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[var(--primary)]"
               />
             </div>
+            <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200">
+              <Download className="w-4 h-4" />
+              Export
+            </button>
           </div>
         </div>
         <DataTable

@@ -168,7 +168,7 @@ export async function PUT(
               `,
             }),
           });
-          console.log(`Admission email sent to ${existing.email}`);
+          console.error(`Admission email sent to ${existing.email}`);
         }
       } catch (emailError) {
         console.error("Failed to send admission email:", emailError);

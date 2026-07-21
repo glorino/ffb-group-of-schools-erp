@@ -150,7 +150,7 @@ export function Header() {
                       ))}
                     </div>
                     <div className="p-2 border-t border-white/[0.06]">
-                      <button className="w-full py-1.5 rounded-lg bg-white/[0.04] text-white/30 text-[11px] font-medium hover:bg-white/[0.07] transition">
+                      <button onClick={() => { router.push("/dashboard/notifications"); setNotificationsOpen(false); }} className="w-full py-1.5 rounded-lg bg-white/[0.04] text-white/30 text-[11px] font-medium hover:bg-white/[0.07] transition">
                         View all notifications
                       </button>
                     </div>

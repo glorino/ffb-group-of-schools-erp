@@ -78,7 +78,7 @@ export function StatCard({
           )}
         </div>
         <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform flex-shrink-0`}>
-          <Icon className="w-4.5 h-4.5 text-white" />
+          <Icon className="w-[18px] h-[18px] text-white" />
         </div>
       </div>
     </motion.div>

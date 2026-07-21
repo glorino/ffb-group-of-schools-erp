@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { AdmissionSchema } from "@/lib/validations";
-
-const DEFAULT_SCHOOL_ID = "school_ffb";
+import { getDefaultSchoolId } from "@/lib/school";
 
 export async function GET(request: NextRequest) {
   try {
@@ -84,7 +83,7 @@ export async function POST(request: NextRequest) {
         gender: validated.gender,
         classAppliedFor: validated.classAppliedFor,
         previousSchool: validated.previousSchool,
-        schoolId: validated.schoolId || DEFAULT_SCHOOL_ID,
+        schoolId: validated.schoolId || await getDefaultSchoolId(),
         guardianName: validated.guardianName,
         guardianPhone: validated.guardianPhone,
         guardianEmail: validated.guardianEmail,

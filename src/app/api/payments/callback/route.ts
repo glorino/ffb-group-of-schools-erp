@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
 import { sendPaymentReceipt } from "@/lib/resend";
 
 export async function GET(request: NextRequest) {
@@ -13,14 +12,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Missing transaction_id or tx_ref" }, { status: 400 });
     }
 
-    // Verify with Flutterwave
     const secret = process.env.FLUTTERWAVE_SECRET_KEY;
     if (!secret) {
       return NextResponse.json({ error: "Payment gateway not configured" }, { status: 500 });
     }
 
-    const verifyUrl = transactionId
-      ? `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${txRef || ""}`
+    const verifyUrl = txRef
+      ? `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${txRef}`
       : `https://api.flutterwave.com/v3/transactions/verify?id=${transactionId}`;
 
     const response = await fetch(verifyUrl, {
