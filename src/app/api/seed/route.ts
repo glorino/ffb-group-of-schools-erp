@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 export async function POST(request: NextRequest) {
   try {
     const { secret } = await request.json();
-    if (secret !== "ffb-seed-2025") {
+    if (secret !== (process.env.SEED_SECRET || "ffb-seed-2025")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
