@@ -49,3 +49,48 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to create announcement" }, { status: 500 });
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await request.json();
+    const { id, title, content, type, priority, published } = body;
+
+    if (!id) return NextResponse.json({ error: "Missing announcement ID" }, { status: 400 });
+
+    const announcement = await prisma.announcement.update({
+      where: { id },
+      data: {
+        ...(title && { title }),
+        ...(content && { content }),
+        ...(type && { type }),
+        ...(priority && { priority }),
+        ...(published !== undefined && { published }),
+      },
+    });
+
+    return NextResponse.json({ success: true, announcement });
+  } catch (error) {
+    console.error("PUT /api/announcements error:", error);
+    return NextResponse.json({ error: "Failed to update announcement" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (!id) return NextResponse.json({ error: "Missing ID" }, { status: 400 });
+
+    await prisma.announcement.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("DELETE /api/announcements error:", error);
+    return NextResponse.json({ error: "Failed to delete announcement" }, { status: 500 });
+  }
+}

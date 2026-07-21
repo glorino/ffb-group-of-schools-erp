@@ -487,9 +487,19 @@ export default function HostelPage() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
-                    toast.info("Edit coming soon");
-                    setEditBlock(null);
+                  onClick={async () => {
+                    if (!editBlock) return;
+                    try {
+                      const res = await fetch("/api/hostel", {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ id: editBlock.id, ...editForm, capacity: Number(editForm.capacity) }),
+                      });
+                      if (!res.ok) throw new Error("Failed");
+                      toast.success("Hostel updated");
+                      setEditBlock(null);
+                      fetchData();
+                    } catch { toast.error("Failed to update"); }
                   }}
                   className="flex-1 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
                 >

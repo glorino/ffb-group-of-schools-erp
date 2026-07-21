@@ -62,3 +62,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to create inventory item" }, { status: 500 });
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await request.json();
+    const { id, name, category, quantity, unit, unitPrice, location, status } = body;
+
+    if (!id) return NextResponse.json({ error: "Missing item ID" }, { status: 400 });
+
+    const item = await prisma.inventoryItem.update({
+      where: { id },
+      data: {
+        ...(name && { name }),
+        ...(category && { category }),
+        ...(quantity !== undefined && { quantity: parseInt(quantity) }),
+        ...(unit && { unit }),
+        ...(unitPrice !== undefined && { unitPrice: parseFloat(unitPrice) }),
+        ...(location !== undefined && { location }),
+        ...(status && { status }),
+      },
+    });
+
+    return NextResponse.json({ success: true, item });
+  } catch (error) {
+    console.error("PUT /api/inventory error:", error);
+    return NextResponse.json({ error: "Failed to update inventory item" }, { status: 500 });
+  }
+}

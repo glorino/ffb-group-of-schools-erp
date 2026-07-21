@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen,
   Users,
@@ -58,6 +58,8 @@ export default function LibraryPage() {
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ title: "", author: "", isbn: "", category: "Textbook", copies: "", publisher: "" });
   const [viewBook, setViewBook] = useState<LibraryBook | null>(null);
+  const [editBook, setEditBook] = useState<LibraryBook | null>(null);
+  const [editForm, setEditForm] = useState({ title: "", author: "", isbn: "", category: "", copies: "", available: "", location: "" });
 
   useEffect(() => {
     fetchData();
@@ -256,7 +258,14 @@ export default function LibraryPage() {
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => toast.info("Edit book coming soon")}
+                          onClick={() => {
+                            setEditBook(book);
+                            setEditForm({
+                              title: book.title || "", author: book.author || "", isbn: book.isbn || "",
+                              category: book.category || "", copies: String(book.copies ?? ""),
+                              available: String(book.available ?? ""), location: "",
+                            });
+                          }}
                           className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
                         >
                           <Edit className="w-4 h-4" />
@@ -472,6 +481,74 @@ export default function LibraryPage() {
           </motion.div>
         </div>
       )}
+
+      {/* Edit Book Modal */}
+      <AnimatePresence>
+        {editBook && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditBook(null)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-xl bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">Edit Book</h3>
+                <button onClick={() => setEditBook(null)} className="p-1 rounded-lg hover:bg-white/10 text-white/40"><X className="w-5 h-5" /></button>
+              </div>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const res = await fetch("/api/library", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: editBook.id, ...editForm, copies: Number(editForm.copies), available: Number(editForm.available) }),
+                  });
+                  if (!res.ok) throw new Error("Failed");
+                  toast.success("Book updated");
+                  setEditBook(null);
+                  fetch("/api/library").then(r => r.json()).then(d => setBooks(d.books || []));
+                } catch { toast.error("Failed to update"); }
+              }} className="space-y-4">
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Title *</label>
+                  <input type="text" required value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Author</label>
+                    <input type="text" value={editForm.author} onChange={(e) => setEditForm({ ...editForm, author: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">ISBN</label>
+                    <input type="text" value={editForm.isbn} onChange={(e) => setEditForm({ ...editForm, isbn: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Category</label>
+                    <input type="text" value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Copies</label>
+                    <input type="number" min="0" value={editForm.copies} onChange={(e) => setEditForm({ ...editForm, copies: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Available</label>
+                    <input type="number" min="0" value={editForm.available} onChange={(e) => setEditForm({ ...editForm, available: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button type="button" onClick={() => setEditBook(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">Cancel</button>
+                  <button type="submit" className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all shadow-lg shadow-[var(--primary)]/25">Save Changes</button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

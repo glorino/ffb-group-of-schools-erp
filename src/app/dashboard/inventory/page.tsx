@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Package,
   Warehouse,
@@ -60,6 +60,8 @@ export default function InventoryPage() {
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", category: "Stationery", quantity: "", unit: "pieces", unitPrice: "", location: "" });
   const [viewItem, setViewItem] = useState<InventoryItem | null>(null);
+  const [editItem, setEditItem] = useState<any>(null);
+  const [editForm, setEditForm] = useState({ name: "", category: "", quantity: "", unit: "", unitPrice: "", location: "", status: "" });
 
   useEffect(() => {
     fetchData();
@@ -273,7 +275,15 @@ export default function InventoryPage() {
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => toast.info("Edit item coming soon")}
+                          onClick={() => {
+                            setEditItem(item);
+                            setEditForm({
+                              name: item.name || "", category: item.category || "",
+                              quantity: String(item.quantity ?? ""),
+                              unit: item.unit || "", unitPrice: String(item.unitPrice ?? ""),
+                              location: item.location || "", status: item.status || "in_stock",
+                            });
+                          }}
                           className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
                         >
                           <Edit className="w-4 h-4" />
@@ -510,6 +520,85 @@ export default function InventoryPage() {
           </motion.div>
         </div>
       )}
+      {/* Edit Inventory Modal */}
+      <AnimatePresence>
+        {editItem && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditItem(null)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-xl bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">Edit Inventory Item</h3>
+                <button onClick={() => setEditItem(null)} className="p-1 rounded-lg hover:bg-white/10 text-white/40"><X className="w-5 h-5" /></button>
+              </div>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const res = await fetch("/api/inventory", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: editItem.id, ...editForm, quantity: Number(editForm.quantity), unitPrice: Number(editForm.unitPrice) }),
+                  });
+                  if (!res.ok) throw new Error("Failed");
+                  toast.success("Item updated");
+                  setEditItem(null);
+                  fetch("/api/inventory").then(r => r.json()).then(d => setItems(d.items || []));
+                } catch { toast.error("Failed to update"); }
+              }} className="space-y-4">
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Name *</label>
+                  <input type="text" required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Category</label>
+                    <input type="text" value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Quantity *</label>
+                    <input type="number" min="0" required value={editForm.quantity} onChange={(e) => setEditForm({ ...editForm, quantity: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Unit Price</label>
+                    <input type="number" min="0" value={editForm.unitPrice} onChange={(e) => setEditForm({ ...editForm, unitPrice: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Unit</label>
+                    <input type="text" value={editForm.unit} onChange={(e) => setEditForm({ ...editForm, unit: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Location</label>
+                    <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Status</label>
+                    <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ colorScheme: "dark" }}>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="in_stock">In Stock</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="low_stock">Low Stock</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="out_of_stock">Out of Stock</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button type="button" onClick={() => setEditItem(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">Cancel</button>
+                  <button type="submit" className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all shadow-lg shadow-[var(--primary)]/25">Save Changes</button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

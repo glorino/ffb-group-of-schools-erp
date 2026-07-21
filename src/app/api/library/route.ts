@@ -72,3 +72,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to create book" }, { status: 500 });
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await request.json();
+    const { id, title, author, isbn, category, copies, available, location } = body;
+
+    if (!id) return NextResponse.json({ error: "Missing book ID" }, { status: 400 });
+
+    const book = await prisma.libraryBook.update({
+      where: { id },
+      data: {
+        ...(title && { title }),
+        ...(author && { author }),
+        ...(isbn !== undefined && { isbn }),
+        ...(category && { category }),
+        ...(copies !== undefined && { copies: parseInt(copies) }),
+        ...(available !== undefined && { available: parseInt(available) }),
+        ...(location !== undefined && { location }),
+      },
+    });
+
+    return NextResponse.json({ success: true, book });
+  } catch (error) {
+    console.error("PUT /api/library error:", error);
+    return NextResponse.json({ error: "Failed to update book" }, { status: 500 });
+  }
+}

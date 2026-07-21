@@ -39,6 +39,8 @@ export default function AnnouncementsPage() {
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [stats, setStats] = useState({ total: 0, published: 0 });
+  const [editAnnouncement, setEditAnnouncement] = useState<Announcement | null>(null);
+  const [editForm, setEditForm] = useState({ title: "", content: "", type: "general", priority: "normal" });
   const [form, setForm] = useState({
     title: "",
     content: "",
@@ -250,13 +252,24 @@ export default function AnnouncementsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => toast.info("Edit announcement feature coming soon")}
+                      onClick={() => {
+                        setEditAnnouncement(announcement);
+                        setEditForm({ title: announcement.title, content: announcement.content || "", type: announcement.type || "general", priority: announcement.priority || "normal" });
+                      }}
                       className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => toast.info("Delete announcement feature coming soon")}
+                      onClick={async () => {
+                        if (!confirm("Delete this announcement?")) return;
+                        try {
+                          const res = await fetch(`/api/announcements?id=${announcement.id}`, { method: "DELETE" });
+                          if (!res.ok) throw new Error("Failed");
+                          setAnnouncements(prev => prev.filter(a => a.id !== announcement.id));
+                          toast.success("Announcement deleted");
+                        } catch { toast.error("Failed to delete"); }
+                      }}
                       className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -361,6 +374,75 @@ export default function AnnouncementsPage() {
                     {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                     Publish
                   </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit Announcement Modal */}
+      <AnimatePresence>
+        {editAnnouncement && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditAnnouncement(null)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-xl bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">Edit Announcement</h3>
+                <button onClick={() => setEditAnnouncement(null)} className="p-1 rounded-lg hover:bg-white/10 text-white/40"><X className="w-5 h-5" /></button>
+              </div>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const res = await fetch("/api/announcements", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: editAnnouncement.id, ...editForm }),
+                  });
+                  if (!res.ok) throw new Error("Failed");
+                  setAnnouncements(prev => prev.map(a => a.id === editAnnouncement.id ? { ...a, ...editForm } : a));
+                  toast.success("Announcement updated");
+                  setEditAnnouncement(null);
+                } catch { toast.error("Failed to update"); }
+              }} className="space-y-4">
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Title *</label>
+                  <input type="text" required value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Content *</label>
+                  <textarea required rows={4} value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Type</label>
+                    <select value={editForm.type} onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ colorScheme: "dark" }}>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="general">General</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="academic">Academic</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="event">Event</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="urgent">Urgent</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Priority</label>
+                    <select value={editForm.priority} onChange={(e) => setEditForm({ ...editForm, priority: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ colorScheme: "dark" }}>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="low">Low</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="normal">Normal</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="high">High</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button type="button" onClick={() => setEditAnnouncement(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">Cancel</button>
+                  <button type="submit" className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all shadow-lg shadow-[var(--primary)]/25">Save Changes</button>
                 </div>
               </form>
             </motion.div>

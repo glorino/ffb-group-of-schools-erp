@@ -52,3 +52,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to create hostel" }, { status: 500 });
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await request.json();
+    const { id, name, type, capacity, address, status } = body;
+
+    if (!id) return NextResponse.json({ error: "Missing hostel ID" }, { status: 400 });
+
+    const hostel = await prisma.hostel.update({
+      where: { id },
+      data: {
+        ...(name && { name }),
+        ...(type && { type }),
+        ...(capacity !== undefined && { capacity: parseInt(capacity) }),
+        ...(address !== undefined && { address }),
+        ...(status && { status }),
+      },
+    });
+
+    return NextResponse.json({ success: true, hostel });
+  } catch (error) {
+    console.error("PUT /api/hostel error:", error);
+    return NextResponse.json({ error: "Failed to update hostel" }, { status: 500 });
+  }
+}
