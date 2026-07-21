@@ -14,6 +14,21 @@ import {
   ArrowDownRight,
   Loader2,
 } from "lucide-react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
 
@@ -77,6 +92,39 @@ export default function AnalyticsPage() {
   const [classPerformance, setClassPerformance] = useState<ClassPerf[]>([]);
   const [subjectPerformance, setSubjectPerformance] = useState<SubjectPerf[]>([]);
   const [monthlyRevenue, setMonthlyRevenue] = useState<MonthlyRevenue[]>([]);
+
+  const genderData = [
+    { name: "Male", value: 320 },
+    { name: "Female", value: 280 },
+  ];
+
+  const paymentTrendData = [
+    { month: "Sep", collection: 4.2 },
+    { month: "Oct", collection: 3.8 },
+    { month: "Nov", collection: 5.1 },
+    { month: "Dec", collection: 4.7 },
+    { month: "Jan", collection: 6.3 },
+    { month: "Feb", collection: 5.9 },
+    { month: "Mar", collection: 7.1 },
+    { month: "Apr", collection: 6.8 },
+  ];
+
+  const classBarData = [
+    { class: "JSS1", avg: 72 },
+    { class: "JSS2", avg: 68 },
+    { class: "JSS3", avg: 75 },
+    { class: "SS1", avg: 61 },
+    { class: "SS2", avg: 70 },
+    { class: "SS3", avg: 78 },
+  ];
+
+  const attendanceData = [
+    { name: "Present", value: 85 },
+    { name: "Absent", value: 15 },
+  ];
+
+  const PIE_COLORS = ["#6366f1", "#22d3ee"];
+  const ATTENDANCE_COLORS = ["#22c55e", "#ef4444"];
 
   const fetchData = async () => {
     setLoading(true);
@@ -371,6 +419,142 @@ export default function AnalyticsPage() {
           ))}
         </div>
       </motion.div>
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="card bg-white/[0.03] backdrop-blur-xl border border-white/[0.08]"
+        >
+          <h3 className="text-white font-semibold text-lg mb-6">Gender Distribution</h3>
+          <ResponsiveContainer width="100%" height={280}>
+            <PieChart>
+              <Pie
+                data={genderData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                paddingAngle={4}
+                dataKey="value"
+                label={({ name, percent }: any) => `${name || ""} ${((percent || 0) * 100).toFixed(0)}%`}
+              >
+                {genderData.map((_entry, index) => (
+                  <Cell key={`cell-${index}`} fill={PIE_COLORS[index]} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  background: "rgba(15,23,42,0.9)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "12px",
+                  color: "#fff",
+                }}
+              />
+              <Legend wrapperStyle={{ color: "rgba(255,255,255,0.6)" }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="card bg-white/[0.03] backdrop-blur-xl border border-white/[0.08]"
+        >
+          <h3 className="text-white font-semibold text-lg mb-6">Attendance Overview</h3>
+          <ResponsiveContainer width="100%" height={280}>
+            <PieChart>
+              <Pie
+                data={attendanceData}
+                cx="50%"
+                cy="50%"
+                innerRadius={70}
+                outerRadius={100}
+                paddingAngle={4}
+                dataKey="value"
+                label={({ name, value }) => `${name} ${value}%`}
+              >
+                {attendanceData.map((_entry, index) => (
+                  <Cell key={`cell-${index}`} fill={ATTENDANCE_COLORS[index]} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  background: "rgba(15,23,42,0.9)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "12px",
+                  color: "#fff",
+                }}
+              />
+              <Legend wrapperStyle={{ color: "rgba(255,255,255,0.6)" }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </motion.div>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          className="card bg-white/[0.03] backdrop-blur-xl border border-white/[0.08]"
+        >
+          <h3 className="text-white font-semibold text-lg mb-6">Payment Trend</h3>
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={paymentTrendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="month" stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
+              <YAxis stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
+              <Tooltip
+                contentStyle={{
+                  background: "rgba(15,23,42,0.9)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "12px",
+                  color: "#fff",
+                }}
+              />
+              <Legend wrapperStyle={{ color: "rgba(255,255,255,0.6)" }} />
+              <Line
+                type="monotone"
+                dataKey="collection"
+                stroke="#a78bfa"
+                strokeWidth={3}
+                dot={{ fill: "#a78bfa", strokeWidth: 2 }}
+                activeDot={{ r: 6 }}
+                name="Collection (₦M)"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
+          className="card bg-white/[0.03] backdrop-blur-xl border border-white/[0.08]"
+        >
+          <h3 className="text-white font-semibold text-lg mb-6">Class Performance</h3>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={classBarData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="class" stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
+              <YAxis stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
+              <Tooltip
+                contentStyle={{
+                  background: "rgba(15,23,42,0.9)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "12px",
+                  color: "#fff",
+                }}
+              />
+              <Legend wrapperStyle={{ color: "rgba(255,255,255,0.6)" }} />
+              <Bar dataKey="avg" fill="#34d399" radius={[6, 6, 0, 0]} name="Avg Score %" />
+            </BarChart>
+          </ResponsiveContainer>
+        </motion.div>
+      </div>
     </div>
   );
 }

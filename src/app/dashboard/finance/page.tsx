@@ -77,7 +77,12 @@ export default function FinancePage() {
   const [showStudentDropdown, setShowStudentDropdown] = useState(false);
   const [selectedStudentName, setSelectedStudentName] = useState("");
   const [selectedFeeName, setSelectedFeeName] = useState("");
-  const [form, setForm] = useState({ studentId: "", amount: "", schoolFeeId: "", dueDate: "", description: "" });
+  const [form, setForm] = useState({ studentId: "", amount: "", schoolFeeId: "", dueDate: "", description: "", paymentType: "full" });
+  const [filterYear, setFilterYear] = useState("");
+  const [filterTerm, setFilterTerm] = useState("");
+  const [filterSession, setFilterSession] = useState("");
+  const [academicYears, setAcademicYears] = useState<any[]>([]);
+  const [terms, setTerms] = useState<any[]>([]);
 
   useEffect(() => {
     Promise.all([
@@ -91,6 +96,13 @@ export default function FinancePage() {
       setStudents(studData.students || []);
       setFees(feeData.fees || []);
     }).finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/calendar").then(r => r.json()).then(d => {
+      setAcademicYears(d.academicYears || []);
+      setTerms(d.terms || []);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -108,6 +120,7 @@ export default function FinancePage() {
   );
 
   const filteredPayments = payments.filter(p => {
+    if (filterSession && p.paidAt && !new Date(p.paidAt).getFullYear().toString().includes(filterSession)) return false;
     if (!search) return true;
     const s = search.toLowerCase();
     const name = p.student ? `${p.student.firstName} ${p.student.lastName}` : (p.studentName || "");
@@ -116,6 +129,7 @@ export default function FinancePage() {
   });
 
   const filteredInvoices = invoices.filter(inv => {
+    if (filterSession && inv.dueDate && !new Date(inv.dueDate).getFullYear().toString().includes(filterSession)) return false;
     if (!search) return true;
     const s = search.toLowerCase();
     const name = inv.student ? `${inv.student.firstName} ${inv.student.lastName}` : "";
@@ -144,13 +158,14 @@ export default function FinancePage() {
           amount: Number(form.amount),
           dueDate: form.dueDate,
           notes: form.description || undefined,
+          paymentType: form.paymentType,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create invoice");
       toast.success("Invoice created successfully");
       setShowModal(false);
-      setForm({ studentId: "", amount: "", schoolFeeId: "", dueDate: "", description: "" });
+      setForm({ studentId: "", amount: "", schoolFeeId: "", dueDate: "", description: "", paymentType: "full" });
       setSelectedStudentName("");
       setSelectedFeeName("");
       const invData = await fetch("/api/finance/invoices").then(r => r.json());
@@ -192,6 +207,20 @@ export default function FinancePage() {
           <p className="text-white/30 text-[12px] mt-1 ml-[46px]">Manage fees, payments, and financial records</p>
         </div>
         <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <select value={filterSession} onChange={(e) => setFilterSession(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/70 text-[12px] focus:outline-none focus:border-[var(--primary)]"
+              style={{ colorScheme: "dark" }}>
+              <option style={{ background: "#0f1b33", color: "#fff" }} value="">All Sessions</option>
+              {academicYears.map((y: any) => <option key={y.id} style={{ background: "#0f1b33", color: "#fff" }} value={y.name}>{y.name}</option>)}
+            </select>
+            <select value={filterTerm} onChange={(e) => setFilterTerm(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/70 text-[12px] focus:outline-none focus:border-[var(--primary)]"
+              style={{ colorScheme: "dark" }}>
+              <option style={{ background: "#0f1b33", color: "#fff" }} value="">All Terms</option>
+              {terms.map((t: any) => <option key={t.id} style={{ background: "#0f1b33", color: "#fff" }} value={t.name}>{t.name}</option>)}
+            </select>
+          </div>
           <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200">
             <Download className="w-4 h-4" /> Export
           </button>
@@ -437,6 +466,7 @@ export default function FinancePage() {
                   )}
                 </div>
 
+                {form.paymentType === "full" ? (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-white/60 text-xs font-medium mb-1.5">Amount *</label>
@@ -447,6 +477,18 @@ export default function FinancePage() {
                     <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }} />
                   </div>
                 </div>
+                ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white/60 text-xs font-medium mb-1.5">Instalment Amount *</label>
+                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]" placeholder="Enter instalment amount" />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-xs font-medium mb-1.5">Due Date *</label>
+                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }} />
+                  </div>
+                </div>
+                )}
 
                 <div>
                   <label className="block text-white/60 text-xs font-medium mb-1.5">School Fee *</label>
@@ -456,6 +498,20 @@ export default function FinancePage() {
                       <option key={f.id} value={f.id} style={{ background: "#0f1b33", color: "#fff" }}>{f.name} — {"\u20A6"}{f.amount.toLocaleString()}</option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Payment Type</label>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setForm({ ...form, paymentType: "full" })}
+                      className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium transition-all ${form.paymentType === "full" ? "bg-[var(--primary)] text-white" : "bg-white/[0.04] border border-white/[0.08] text-white/50"}`}>
+                      Full Payment
+                    </button>
+                    <button type="button" onClick={() => setForm({ ...form, paymentType: "instalment" })}
+                      className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium transition-all ${form.paymentType === "instalment" ? "bg-[var(--primary)] text-white" : "bg-white/[0.04] border border-white/[0.08] text-white/50"}`}>
+                      Instalment
+                    </button>
+                  </div>
                 </div>
 
                 <div>

@@ -50,13 +50,14 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
+    const { status, reason } = body;
 
     const existing = await prisma.applicant.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Application not found" }, { status: 404 });
     }
 
-    const newStatus = body.status ?? existing.status;
+    const newStatus = status ?? existing.status;
 
     let assignedClassId = existing.assignedClassId;
     let assignedArm = existing.assignedArm;
@@ -107,7 +108,7 @@ export async function PUT(
         status: newStatus,
         decision: body.decision ?? existing.decision,
         decisionNote: body.decisionNote ?? existing.decisionNote,
-        rejectionReason: body.rejectionReason ?? existing.rejectionReason,
+        rejectionReason: reason ?? body.rejectionReason ?? existing.rejectionReason,
         examDate: body.examDate ? new Date(body.examDate) : existing.examDate,
         interviewDate: body.interviewDate ? new Date(body.interviewDate) : existing.interviewDate,
         reviewedAt: newStatus !== "pending" ? new Date() : existing.reviewedAt,
@@ -175,7 +176,7 @@ export async function PUT(
       }
     }
 
-    if (newStatus === "rejected" && existing.email) {
+    if (newStatus === "rejected" && (existing.email || existing.guardianEmail)) {
       try {
         const RESEND_API_KEY = process.env.RESEND_API_KEY;
         if (RESEND_API_KEY) {
@@ -187,7 +188,7 @@ export async function PUT(
             },
             body: JSON.stringify({
               from: "FFB Schools <admissions@glopresc.com>",
-              to: [existing.email],
+              to: [existing.email || existing.guardianEmail],
               subject: `Application Update - FFB Group of Schools (${existing.applicationNumber})`,
               html: `
                 <div style="font-family: 'Poppins', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a1628; color: #fff; border-radius: 16px; overflow: hidden;">
@@ -201,7 +202,7 @@ export async function PUT(
                     <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 15px;">
                       Thank you for your interest in FFB Group of Schools. After careful review, we regret to inform you that we are unable to offer admission at this time for application <strong>${existing.applicationNumber}</strong>.
                     </p>
-                    ${body.rejectionReason ? `<p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 15px;"><strong>Reason:</strong> ${body.rejectionReason}</p>` : ""}
+                    ${reason ? `<p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 15px;"><strong>Reason:</strong> ${reason}</p>` : ""}
                     <p style="color: rgba(255,255,255,0.5); line-height: 1.7; margin-top: 20px;">
                       We encourage you to apply again in the future. For any queries, contact us at <a href="mailto:info@glopresc.com" style="color: #3b82f6;">info@glopresc.com</a>.
                     </p>

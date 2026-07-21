@@ -41,15 +41,24 @@ export default function AnnouncementsPage() {
   const [stats, setStats] = useState({ total: 0, published: 0 });
   const [editAnnouncement, setEditAnnouncement] = useState<Announcement | null>(null);
   const [editForm, setEditForm] = useState({ title: "", content: "", type: "general", priority: "normal" });
+  const [classes, setClasses] = useState<any[]>([]);
   const [form, setForm] = useState({
     title: "",
     content: "",
     type: "general",
     priority: "normal",
+    audience: "all",
+    audienceClassId: "",
+    audienceStudentId: "",
+    audienceParentId: "",
   });
 
   useEffect(() => {
     fetchAnnouncements();
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/classes").then(r => r.json()).then(d => setClasses(d.classes || [])).catch(() => {});
   }, []);
 
   const fetchAnnouncements = async () => {
@@ -85,7 +94,7 @@ export default function AnnouncementsPage() {
       if (!res.ok) throw new Error(data.error || "Failed to create announcement");
       toast.success("Announcement created successfully");
       setShowModal(false);
-      setForm({ title: "", content: "", type: "general", priority: "normal" });
+      setForm({ title: "", content: "", type: "general", priority: "normal", audience: "all", audienceClassId: "", audienceStudentId: "", audienceParentId: "" });
       fetchAnnouncements();
     } catch (err: any) {
       toast.error(err.message || "Failed to create announcement");
@@ -358,6 +367,30 @@ export default function AnnouncementsPage() {
                     </select>
                   </div>
                 </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Audience</label>
+                  <select value={form.audience} onChange={(e) => setForm({ ...form, audience: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    style={{ colorScheme: "dark" }}>
+                    <option style={{ background: "#0f1b33", color: "#fff" }} value="all">Everyone</option>
+                    <option style={{ background: "#0f1b33", color: "#fff" }} value="teachers">All Teachers</option>
+                    <option style={{ background: "#0f1b33", color: "#fff" }} value="parents">All Parents</option>
+                    <option style={{ background: "#0f1b33", color: "#fff" }} value="class">Specific Class</option>
+                    <option style={{ background: "#0f1b33", color: "#fff" }} value="student">Specific Student</option>
+                    <option style={{ background: "#0f1b33", color: "#fff" }} value="parent">Specific Parent</option>
+                  </select>
+                </div>
+                {form.audience === "class" && (
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Select Class</label>
+                    <select value={form.audienceClassId} onChange={(e) => setForm({ ...form, audienceClassId: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ colorScheme: "dark" }}>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="">Select class...</option>
+                      {classes.map((c: any) => <option key={c.id} style={{ background: "#0f1b33", color: "#fff" }} value={c.id}>{c.displayName || c.name}</option>)}
+                    </select>
+                  </div>
+                )}
                 <div className="flex gap-3 pt-2">
                   <button
                     type="button"

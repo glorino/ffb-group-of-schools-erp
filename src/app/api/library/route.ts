@@ -27,12 +27,29 @@ export async function GET(request: NextRequest) {
       orderBy: { dueDate: "asc" },
     });
 
+    // Check for overdue books and calculate penalties
+    const now = new Date();
+    const updatedBorrowings = borrowings.map(b => {
+      const dueDate = new Date(b.dueDate);
+      if (b.status === "borrowed" && now > dueDate) {
+        const daysOverdue = Math.floor((now.getTime() - dueDate.getTime()) / 86400000);
+        const penaltyPerDay = 100; // ₦100 per day
+        return {
+          ...b,
+          isOverdue: true,
+          daysOverdue,
+          penalty: daysOverdue * penaltyPerDay,
+        };
+      }
+      return { ...b, isOverdue: false, daysOverdue: 0, penalty: 0 };
+    });
+
     const totalBooks = books.reduce((sum, b) => sum + b.copies, 0);
     const availableBooks = books.reduce((sum, b) => sum + b.available, 0);
 
     return NextResponse.json({
       books,
-      borrowings,
+      borrowings: updatedBorrowings,
       stats: { totalTitles: books.length, totalBooks, availableBooks, borrowed: borrowings.length },
     });
   } catch (error) {
@@ -79,26 +96,33 @@ export async function PUT(request: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { id, title, author, isbn, category, copies, available, location } = body;
+    const { id, action } = body;
 
-    if (!id) return NextResponse.json({ error: "Missing book ID" }, { status: 400 });
+    if (action === "return") {
+      const borrowing = await prisma.libraryBorrowing.findUnique({ where: { id } });
+      if (!borrowing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const book = await prisma.libraryBook.update({
-      where: { id },
-      data: {
-        ...(title && { title }),
-        ...(author && { author }),
-        ...(isbn !== undefined && { isbn }),
-        ...(category && { category }),
-        ...(copies !== undefined && { copies: parseInt(copies) }),
-        ...(available !== undefined && { available: parseInt(available) }),
-        ...(location !== undefined && { location }),
-      },
-    });
+      const now = new Date();
+      const dueDate = new Date(borrowing.dueDate);
+      const daysOverdue = Math.max(0, Math.floor((now.getTime() - dueDate.getTime()) / 86400000));
+      const penalty = daysOverdue * 100; // ₦100 per day
 
-    return NextResponse.json({ success: true, book });
+      await prisma.libraryBorrowing.update({
+        where: { id },
+        data: { status: "returned", returnDate: now, penalty },
+      });
+
+      // Update available copies
+      await prisma.libraryBook.update({
+        where: { id: borrowing.bookId },
+        data: { available: { increment: 1 } },
+      });
+
+      return NextResponse.json({ success: true, penalty, daysOverdue });
+    }
+
+    return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (error) {
-    console.error("PUT /api/library error:", error);
-    return NextResponse.json({ error: "Failed to update book" }, { status: 500 });
+    return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }

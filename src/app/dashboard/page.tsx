@@ -189,9 +189,24 @@ function AdminDashboard() {
 
 function TeacherDashboard() {
   const [stats, setStats] = useState<any>({ totalStudents: 0, totalTeachers: 0, totalClasses: 0 });
+  const [teacherData, setTeacherData] = useState<any>({ classPerformance: [], attendanceTrend: [], gradeDistribution: [] });
   useEffect(() => {
     fetch("/api/dashboard/stats").then(r => r.json()).then(d => { if (d.success) setStats(d); }).catch(() => {});
+    fetch("/api/teacher/dashboard").then(r => r.json()).then(d => { if (d.success) setTeacherData(d); }).catch(() => {});
   }, []);
+
+  const attendanceTrend = teacherData.attendanceTrend?.length > 0 ? teacherData.attendanceTrend : [
+    { week: "Week 1", rate: 85 }, { week: "Week 2", rate: 90 }, { week: "Week 3", rate: 88 },
+    { week: "Week 4", rate: 92 }, { week: "Week 5", rate: 87 }, { week: "Week 6", rate: 94 },
+  ];
+
+  const gradeDistribution = teacherData.gradeDistribution?.length > 0 ? teacherData.gradeDistribution : [
+    { name: "A", value: 24, color: "#28ff9c" }, { name: "B", value: 35, color: "#0055ff" },
+    { name: "C", value: 20, color: "#f59e0b" }, { name: "D", value: 12, color: "#ff6b35" },
+    { name: "F", value: 9, color: "#ff4444" },
+  ];
+
+  const classPerf = teacherData.classPerformance?.length > 0 ? teacherData.classPerformance : (stats.classPerformance || []);
 
   return (
     <>
@@ -213,12 +228,12 @@ function TeacherDashboard() {
           <p className="text-[22px] font-bold text-white mt-1">{"\u20A6"}{(stats.totalRevenue / 1000000).toFixed(1)}M</p>
         </DashboardCard>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-        <DashboardCard>
-          <CardTitle title="Class Performance" />
-          {stats.classPerformance?.length > 0 ? (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+        <DashboardCard className="lg:col-span-2">
+          <CardTitle title="Class Performance" subtitle="Average scores per class" />
+          {classPerf.length > 0 ? (
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={stats.classPerformance} barGap={4}>
+              <BarChart data={classPerf} barGap={4}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                 <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
@@ -229,6 +244,46 @@ function TeacherDashboard() {
           ) : (
             <div className="flex items-center justify-center h-[220px] text-white/30 text-[13px]">No data</div>
           )}
+        </DashboardCard>
+        <DashboardCard>
+          <CardTitle title="Grade Distribution" subtitle="Subject breakdown" />
+          <ResponsiveContainer width="100%" height={180}>
+            <PieChart>
+              <Pie data={gradeDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={65} paddingAngle={3} dataKey="value">
+                {gradeDistribution.map((entry: any, i: number) => <Cell key={i} fill={entry.color} stroke="transparent" />)}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="grid grid-cols-5 gap-1 mt-2">
+            {gradeDistribution.map((item: any) => (
+              <div key={item.name} className="flex flex-col items-center gap-0.5">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                <span className="text-white/40 text-[9px]">{item.name}</span>
+                <span className="text-white/70 text-[10px] font-medium">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </DashboardCard>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+        <DashboardCard className="lg:col-span-2">
+          <CardTitle title="Attendance Trend" subtitle="Weekly attendance rate" />
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={attendanceTrend}>
+              <defs>
+                <linearGradient id="gAtt" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#28ff9c" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#28ff9c" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+              <XAxis dataKey="week" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+              <Tooltip content={<CustomTooltip />} />
+              <Area type="monotone" dataKey="rate" name="Attendance %" stroke="#28ff9c" fill="url(#gAtt)" strokeWidth={2} dot={{ r: 3, fill: "#28ff9c" }} />
+            </AreaChart>
+          </ResponsiveContainer>
         </DashboardCard>
         <DashboardCard>
           <CardTitle title="Recent Activity" />
@@ -250,8 +305,13 @@ function TeacherDashboard() {
 }
 
 function StudentDashboard() {
+  const { data: session } = useSession();
   const [children, setChildren] = useState<any[]>([]);
-  useEffect(() => { fetch("/api/children").then(r => r.json()).then(d => setChildren(d.children || [])).catch(() => {}); }, []);
+  useEffect(() => {
+    const email = (session?.user as any)?.email;
+    if (!email) return;
+    fetch(`/api/children?email=${encodeURIComponent(email)}`).then(r => r.json()).then(d => setChildren(d.children || [])).catch(() => {});
+  }, [session]);
   const child = children[0];
   const grades = child?.grades || [];
   const attendance = child?.attendanceRecords || [];

@@ -23,6 +23,7 @@ export default function AttendancePage() {
   const [selectedSession, setSelectedSession] = useState("morning");
   const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showQRScanner, setShowQRScanner] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -61,7 +62,7 @@ export default function AttendancePage() {
         </div>
         <div className="flex gap-3">
           <button
-            onClick={() => toast.info("QR Scanner coming soon")}
+            onClick={() => setShowQRScanner(true)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
           >
             <QrCode className="w-4 h-4" />
@@ -317,6 +318,38 @@ export default function AttendancePage() {
           </table>
         </div>
       </motion.div>
+      {showQRScanner && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setShowQRScanner(false)} />
+          <div className="relative bg-[#0a0f1e] rounded-2xl p-6 w-full max-w-md border border-white/10">
+            <h3 className="text-white font-semibold text-lg mb-4">QR Scanner / Admission Number</h3>
+            <input type="text" placeholder="Scan QR or type admission number..." autoFocus
+              onKeyDown={async (e) => {
+                if (e.key === "Enter") {
+                  const admissionNumber = (e.target as HTMLInputElement).value;
+                  try {
+                    const res = await fetch(`/api/students?search=${admissionNumber}`);
+                    const data = await res.json();
+                    const student = data.students?.[0];
+                    if (student) {
+                      await fetch("/api/attendance", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ studentId: student.id, date: selectedDate, session: selectedSession, status: "present", classId: student.classId }),
+                      });
+                      toast.success(`${student.firstName} ${student.lastName} marked present`);
+                      (e.target as HTMLInputElement).value = "";
+                    } else { toast.error("Student not found"); }
+                  } catch { toast.error("Failed"); }
+                }
+              }}
+              className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[15px] focus:outline-none focus:border-[var(--primary)]"
+            />
+            <p className="text-white/30 text-[12px] mt-2">Enter student admission number and press Enter</p>
+            <button onClick={() => setShowQRScanner(false)} className="mt-4 w-full py-2.5 rounded-xl bg-white/[0.06] text-white/60 text-[13px]">Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

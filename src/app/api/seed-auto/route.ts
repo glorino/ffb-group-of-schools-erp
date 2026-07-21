@@ -460,16 +460,154 @@ export async function POST() {
       }
     }
 
+    // Extra teacher accounts
+    const extraTeachers = [
+      { email: "oluchi.okafor@ffb.edu.ng", name: "Mrs. Oluchi Okafor", phone: "+2348090001001", employeeId: "TCH002", qualification: "B.Ed, Mathematics", specialization: "Mathematics" },
+      { email: "adedayo.akindele@ffb.edu.ng", name: "Mr. Adebayo Akindele", phone: "+2348090001002", employeeId: "TCH003", qualification: "B.Sc, Physics", specialization: "Physics" },
+      { email: "blessing.efe@ffb.edu.ng", name: "Mrs. Blessing Efe", phone: "+2348090001003", employeeId: "TCH004", qualification: "M.A, English", specialization: "English Language" },
+      { email: "ibrahim.suleiman@ffb.edu.ng", name: "Mr. Ibrahim Suleiman", phone: "+2348090001004", employeeId: "TCH005", qualification: "B.Sc, Biology", specialization: "Biology" },
+    ];
+    const teacherIds: string[] = [userIds.TEACHER];
+    for (const t of extraTeachers) {
+      const tUser = await prisma.user.upsert({
+        where: { email: t.email },
+        update: {},
+        create: { email: t.email, name: t.name, password: await pw("teacher123"), phone: t.phone, schoolId: school.id },
+      });
+      await prisma.userRole.upsert({
+        where: { userId_roleId_schoolId: { userId: tUser.id, roleId: roles.TEACHER, schoolId: school.id } },
+        update: {},
+        create: { userId: tUser.id, roleId: roles.TEACHER, schoolId: school.id },
+      });
+      teacherIds.push(tUser.id);
+      // Create teacher record
+      const existingTeacher = await prisma.teacher.findFirst({ where: { userId: tUser.id } });
+      if (!existingTeacher) {
+        await prisma.teacher.create({
+          data: { userId: tUser.id, schoolId: school.id, employeeId: t.employeeId, firstName: t.name.split(" ")[0], lastName: t.name.split(" ").slice(1).join(" "), email: t.email, phone: t.phone, qualification: t.qualification, specialization: t.specialization, status: "active" },
+        });
+      }
+    }
+
+    // Extra parent accounts
+    const parent2User = await prisma.user.upsert({
+      where: { email: "chidi.nwosu@ffb.edu.ng" }, update: {},
+      create: { email: "chidi.nwosu@ffb.edu.ng", name: "Mr. Chidi Nwosu", password: await pw("parent123"), phone: "+2348090002001", schoolId: school.id },
+    });
+    await prisma.userRole.upsert({
+      where: { userId_roleId_schoolId: { userId: parent2User.id, roleId: roles.PARENT, schoolId: school.id } },
+      update: {}, create: { userId: parent2User.id, roleId: roles.PARENT, schoolId: school.id },
+    });
+
+    const parent3User = await prisma.user.upsert({
+      where: { email: "fatima.bello.parent@ffb.edu.ng" }, update: {},
+      create: { email: "fatima.bello.parent@ffb.edu.ng", name: "Hajia Fatima Bello", password: await pw("parent123"), phone: "+2348090002002", schoolId: school.id },
+    });
+    await prisma.userRole.upsert({
+      where: { userId_roleId_schoolId: { userId: parent3User.id, roleId: roles.PARENT, schoolId: school.id } },
+      update: {}, create: { userId: parent3User.id, roleId: roles.PARENT, schoolId: school.id },
+    });
+
+    // Link parent2 (Chidi Nwosu) to student "Chidinma Okafor" (students[1])
+    if (students.length > 1) {
+      const existingGuardian2 = await prisma.guardian.findFirst({ where: { studentId: students[1].id, email: "chidi.nwosu@ffb.edu.ng" } });
+      if (!existingGuardian2) {
+        await prisma.guardian.create({
+          data: { studentId: students[1].id, firstName: "Chidi", lastName: "Nwosu", email: "chidi.nwosu@ffb.edu.ng", phone: "+2348090002001", relationship: "Father", isPrimary: true },
+        });
+      }
+    }
+
+    // Link parent3 (Fatima Bello) to 2 students: students[2] and students[3]
+    for (let i = 2; i <= 3; i++) {
+      if (students[i]) {
+        const existingGuardian3 = await prisma.guardian.findFirst({ where: { studentId: students[i].id, email: "fatima.bello.parent@ffb.edu.ng" } });
+        if (!existingGuardian3) {
+          await prisma.guardian.create({
+            data: { studentId: students[i].id, firstName: "Fatima", lastName: "Bello", email: "fatima.bello.parent@ffb.edu.ng", phone: "+2348090002002", relationship: "Mother", isPrimary: i === 2 },
+          });
+        }
+      }
+    }
+
+    // 17. Exams
+    const examData = [
+      { name: "First Term Examination", type: "term", startDate: new Date("2025-12-01"), endDate: new Date("2025-12-15"), termId: term.id, academicYearId: academicYear.id, schoolId: school.id },
+      { name: "Mid-Term Test", type: "ca", startDate: new Date("2025-10-20"), endDate: new Date("2025-10-24"), termId: term.id, academicYearId: academicYear.id, schoolId: school.id },
+      { name: "Assignment 1", type: "ca", startDate: new Date("2025-10-01"), endDate: new Date("2025-10-08"), termId: term.id, academicYearId: academicYear.id, schoolId: school.id },
+    ];
+    const examIds: string[] = [];
+    for (const e of examData) {
+      const existing = await prisma.exam.findFirst({ where: { name: e.name, termId: e.termId } });
+      if (!existing) {
+        const exam = await prisma.exam.create({ data: e });
+        examIds.push(exam.id);
+      } else {
+        examIds.push(existing.id);
+      }
+    }
+
+    // 18. Grades for all students across all subjects
+    const studentIds = students.map(s => s.id);
+    const subjectCodes = Object.keys(subjects);
+    for (const sid of studentIds) {
+      for (const sc of subjectCodes) {
+        const ca1 = Math.floor(Math.random() * 15) + 10;
+        const ca2 = Math.floor(Math.random() * 15) + 10;
+        const examScore = Math.floor(Math.random() * 30) + 20;
+        const total = ca1 + ca2 + examScore;
+        const gradeLetter = total >= 75 ? "A1" : total >= 70 ? "B2" : total >= 65 ? "B3" : total >= 60 ? "C4" : total >= 55 ? "C5" : total >= 50 ? "C6" : total >= 45 ? "D7" : "E8";
+
+        for (const [type, score] of [["ca1", ca1], ["ca2", ca2], ["exam", examScore]] as const) {
+          try {
+            await prisma.grade.upsert({
+              where: { studentId_subjectId_type_term_session: { studentId: sid, subjectId: subjects[sc], type, term: "First Term", session: "2025/2026" } },
+              update: {},
+              create: { studentId: sid, subjectId: subjects[sc], teacherId: teacherIds[0], score, grade: gradeLetter, type, term: "First Term", session: "2025/2026" },
+            });
+          } catch {}
+        }
+      }
+    }
+
+    // 19. Term Results
+    for (const sid of studentIds) {
+      const grades = await prisma.grade.findMany({ where: { studentId: sid, term: "First Term", session: "2025/2026" } });
+      const totalScore = grades.reduce((sum, g) => sum + g.score, 0);
+      const avg = grades.length > 0 ? totalScore / grades.length : 0;
+      try {
+        await prisma.termResult.upsert({
+          where: { studentId_termId: { studentId: sid, termId: term.id } },
+          update: {},
+          create: { studentId: sid, termId: term.id, totalScore, average: Math.round(avg * 100) / 100, position: 0, classSize: studentIds.length, promoted: true },
+        });
+      } catch {}
+    }
+
+    // 20. Attendance records for today
+    const todayStr = today.toISOString().split("T")[0];
+    for (let i = 0; i < Math.min(5, studentIds.length); i++) {
+      try {
+        await prisma.attendanceRecord.upsert({
+          where: { studentId_date_session: { studentId: studentIds[i], date: new Date(todayStr), session: "morning" } },
+          update: {},
+          create: { studentId: studentIds[i], classId: classes["JSS 1"], termId: term.id, date: new Date(todayStr), session: "morning", status: i < 3 ? "present" : "absent", recordedBy: userIds.TEACHER },
+        });
+      } catch {}
+    }
+
     return NextResponse.json({
       success: true,
       message: "Database seeded successfully with comprehensive data",
       counts: {
-        users: accounts.length,
+        users: accounts.length + extraTeachers.length + 2,
         classes: classDefs.length,
         subjects: subjectDefs.length,
         students: students.length,
         fees: fees.length,
         applicants: applicantDefs.length,
+        exams: examIds.length,
+        teachers: teacherIds.length,
       },
     });
   } catch (error: any) {

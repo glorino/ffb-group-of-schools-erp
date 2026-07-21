@@ -83,6 +83,24 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const currentTime = hour * 60 + minute;
+    const morningDeadline = 10 * 60; // 10:00 AM
+    const afternoonDeadline = 13 * 60; // 1:00 PM
+    const sessionType = body.session || "morning";
+
+    // Check time limits (unless it's a bulk update with unlock)
+    if (!body.unlocked) {
+      if (sessionType === "morning" && currentTime > morningDeadline) {
+        return NextResponse.json({ error: "Morning attendance window closed (before 10 AM). Request an unlock from admin.", code: "TIME_CLOSED" }, { status: 400 });
+      }
+      if (sessionType === "afternoon" && currentTime > afternoonDeadline) {
+        return NextResponse.json({ error: "Afternoon attendance window closed (before 1 PM). Request an unlock from admin.", code: "TIME_CLOSED" }, { status: 400 });
+      }
+    }
+
     if (body.records && Array.isArray(body.records)) {
       const validated = AttendanceBulkSchema.parse(body);
 
@@ -114,6 +132,35 @@ export async function POST(request: NextRequest) {
           })
         )
       );
+
+      // Auto-email parents of absent students
+      try {
+        const absentStudents = validated.records?.filter((r: any) => r.status === "absent") || [];
+        for (const record of absentStudents) {
+          const studentId = record.studentId;
+          if (!studentId) continue;
+          const guardians = await prisma.guardian.findMany({
+            where: { studentId, email: { not: null } },
+          });
+          for (const g of guardians) {
+            if (!g.email) continue;
+            try {
+              const studentInfo = await prisma.student.findUnique({ where: { id: studentId }, select: { firstName: true, lastName: true } });
+              const studentName = studentInfo ? `${studentInfo.firstName} ${studentInfo.lastName}` : "Your child";
+              await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "https://ffb-erp.vercel.app"}/api/emails/send`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  type: "welcome",
+                  to: g.email,
+                  name: `${g.firstName} ${g.lastName}`,
+                  role: `Attendance Alert: ${studentName} was marked absent on ${new Date().toLocaleDateString()}`,
+                }),
+              });
+            } catch {}
+          }
+        }
+      } catch {}
 
       return NextResponse.json({ message: "Attendance recorded", count: results.length });
     }
@@ -151,6 +198,35 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    // Auto-email parents of absent students
+    try {
+      const absentStudents = record.status === "absent" ? [record] : [];
+      for (const r of absentStudents) {
+        const studentId = r.studentId;
+        if (!studentId) continue;
+        const guardians = await prisma.guardian.findMany({
+          where: { studentId, email: { not: null } },
+        });
+        for (const g of guardians) {
+          if (!g.email) continue;
+          try {
+            const studentInfo = await prisma.student.findUnique({ where: { id: studentId }, select: { firstName: true, lastName: true } });
+            const studentName = studentInfo ? `${studentInfo.firstName} ${studentInfo.lastName}` : "Your child";
+            await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "https://ffb-erp.vercel.app"}/api/emails/send`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                type: "welcome",
+                to: g.email,
+                name: `${g.firstName} ${g.lastName}`,
+                role: `Attendance Alert: ${studentName} was marked absent on ${new Date().toLocaleDateString()}`,
+              }),
+            });
+          } catch {}
+        }
+      }
+    } catch {}
 
     return NextResponse.json(record, { status: 201 });
   } catch (error) {

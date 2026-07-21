@@ -14,6 +14,7 @@ import {
   Loader2,
   X,
   ChevronDown,
+  Pencil,
 } from "lucide-react";
 import { downloadCSV } from "@/lib/exports";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ interface GradeRecord {
   maxScore: number;
   grade: string;
   type: string;
+  published?: boolean;
   subject?: { id: string; name: string };
   student?: { id: string; firstName: string; lastName: string; admissionNumber: string };
 }
@@ -67,6 +69,9 @@ export default function ResultsPage() {
   const [stats, setStats] = useState({ totalGrades: 0, subjects: 0 });
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [editingGrade, setEditingGrade] = useState<GradeRecord | null>(null);
+  const [editForm, setEditForm] = useState({ score: "", maxScore: "" });
+  const [publishing, setPublishing] = useState(false);
 
   const [students, setStudents] = useState<Student[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -130,6 +135,51 @@ export default function ResultsPage() {
       toast.error(err.message || "Failed to load results");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openEditModal = (grade: GradeRecord) => {
+    setEditingGrade(grade);
+    setEditForm({ score: String(grade.score), maxScore: String(grade.maxScore) });
+  };
+
+  const handleEditSave = async () => {
+    if (!editingGrade) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/grades", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: editingGrade.id, score: Number(editForm.score), maxScore: Number(editForm.maxScore) || 100 }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update grade");
+      toast.success("Grade updated successfully");
+      setEditingGrade(null);
+      fetchGrades();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update grade");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handlePublishAll = async () => {
+    setPublishing(true);
+    try {
+      const res = await fetch("/api/grades", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publishAll: true }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to publish results");
+      toast.success("All results published successfully");
+      fetchGrades();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to publish results");
+    } finally {
+      setPublishing(false);
     }
   };
 
@@ -249,6 +299,14 @@ export default function ResultsPage() {
             <p className="text-white/60 text-sm">Grading, ranking, CA marks, and result analysis</p>
           </div>
           <div className="flex gap-3">
+            <button
+              onClick={handlePublishAll}
+              disabled={publishing}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition-all duration-200 disabled:opacity-50"
+            >
+              {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+              Publish Results
+            </button>
             <button
               onClick={handleExport}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-sm font-medium hover:bg-white/[0.1] transition-all duration-200"
@@ -423,15 +481,26 @@ export default function ResultsPage() {
               <div className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin">
                 {grades.slice(0, 8).map((g) => (
                   <div key={g.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.04] transition-colors">
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <p className="text-white text-xs font-medium">
                         {g.student ? `${g.student.firstName} ${g.student.lastName}` : "—"}
                       </p>
                       <p className="text-white/40 text-[10px]">{g.subject?.name} · {typeLabel[g.type] || g.type}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-white text-xs font-bold">{g.score}/{g.maxScore}</p>
-                      <p className={`text-[10px] font-bold ${scaleColors[g.grade] || "text-white/40"}`}>{g.grade}</p>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-0.5 rounded text-[9px] font-semibold ${g.published ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-400"}`}>
+                        {g.published ? "Published" : "Draft"}
+                      </span>
+                      <button
+                        onClick={() => openEditModal(g)}
+                        className="p-1.5 rounded-lg bg-white/[0.06] border border-white/[0.1] text-white/50 hover:text-white hover:bg-white/[0.1] transition-all"
+                      >
+                        <Pencil className="w-3 h-3" />
+                      </button>
+                      <div className="text-right">
+                        <p className="text-white text-xs font-bold">{g.score}/{g.maxScore}</p>
+                        <p className={`text-[10px] font-bold ${scaleColors[g.grade] || "text-white/40"}`}>{g.grade}</p>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -667,6 +736,83 @@ export default function ResultsPage() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {editingGrade && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          >
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditingGrade(null)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-sm bg-[#0a0f1e] border border-white/[0.1] rounded-2xl shadow-2xl overflow-hidden"
+            >
+              <div className="bg-gradient-to-r from-[var(--primary)]/30 to-[var(--accent)]/10 px-6 py-4 border-b border-white/[0.08]">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-white font-semibold text-lg">Edit Grade</h3>
+                    <p className="text-white/50 text-xs mt-0.5">
+                      {editingGrade.student?.firstName} {editingGrade.student?.lastName} — {editingGrade.subject?.name}
+                    </p>
+                  </div>
+                  <button onClick={() => setEditingGrade(null)} className="p-2 rounded-xl hover:bg-white/10 text-white/40 hover:text-white transition-colors">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-white/60 text-xs font-medium mb-1.5">Type</label>
+                  <p className="text-white text-sm font-medium">{typeLabel[editingGrade.type] || editingGrade.type}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white/60 text-xs font-medium mb-1.5">Score *</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={editForm.score}
+                      onChange={(e) => setEditForm({ ...editForm, score: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-xs font-medium mb-1.5">Max Score</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={editForm.maxScore}
+                      onChange={(e) => setEditForm({ ...editForm, maxScore: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3 pt-2 border-t border-white/[0.06]">
+                  <button
+                    onClick={() => setEditingGrade(null)}
+                    className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-sm font-medium hover:bg-white/[0.08] transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleEditSave}
+                    disabled={submitting}
+                    className="px-6 py-2.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-[var(--primary)]/25"
+                  >
+                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                    Save Changes
+                  </button>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}

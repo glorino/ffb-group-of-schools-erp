@@ -23,6 +23,8 @@ export default function ReportCardsPage() {
   const [generating, setGenerating] = useState(false);
   const [search, setSearch] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+  const [termId, setTermId] = useState("");
+  const [terms, setTerms] = useState<any[]>([]);
 
   useEffect(() => {
     fetch("/api/students?limit=100")
@@ -33,9 +35,20 @@ export default function ReportCardsPage() {
   }, []);
 
   useEffect(() => {
+    fetch("/api/calendar").then(r => r.json()).then(d => setTerms(d.terms || [])).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (terms.length > 0 && !termId) {
+      const current = terms.find((t: any) => t.isCurrent) || terms[0];
+      if (current) setTermId(current.id);
+    }
+  }, [terms, termId]);
+
+  useEffect(() => {
     if (!selectedStudent) { setReportData(null); return; }
     setGenerating(true);
-    fetch(`/api/reports/report-card?studentId=${selectedStudent}`)
+    fetch(`/api/reports/report-card?studentId=${selectedStudent}&termId=${termId || "current"}`)
       .then(r => r.json())
       .then(d => {
         if (d.student) {
@@ -94,7 +107,7 @@ export default function ReportCardsPage() {
       })
       .catch(() => setReportData(null))
       .finally(() => setGenerating(false));
-  }, [selectedStudent]);
+  }, [selectedStudent, termId]);
 
   const filteredStudents = students.filter(s =>
     !search || `${s.firstName} ${s.lastName}`.toLowerCase().includes(search.toLowerCase()) ||

@@ -23,6 +23,7 @@ interface ClassItem {
   name: string;
   displayName: string;
   section: string | null;
+  arm: string | null;
   capacity: number;
   _count: { students: number };
   classTeacher: { firstName: string; lastName: string } | null;
@@ -49,6 +50,7 @@ export default function ClassesPage() {
     displayName: "",
     level: "primary",
     capacity: "40",
+    arm: "",
   });
 
   useEffect(() => {
@@ -93,13 +95,14 @@ export default function ClassesPage() {
           displayName: form.displayName || form.name,
           level: levelMap[form.level] || 2,
           capacity: parseInt(form.capacity) || 40,
+          arm: form.arm || undefined,
         }),
       });
       const cls = await res.json();
       if (!res.ok) throw new Error(cls.error || "Failed to create class");
       toast.success("Class created successfully");
       setShowModal(false);
-      setForm({ name: "", displayName: "", level: "primary", capacity: "40" });
+      setForm({ name: "", displayName: "", level: "primary", capacity: "40", arm: "" });
       setLoading(true);
       const params = new URLSearchParams();
       if (search) params.set("search", search);
@@ -220,7 +223,7 @@ export default function ClassesPage() {
                     const usagePercent = Math.round((cls._count.students / cls.capacity) * 100);
                     return (
                       <tr key={cls.id} className="border-b border-white/5 hover:bg-white/5 transition-all">
-                        <td className="py-3 text-white font-medium">{cls.displayName}</td>
+                        <td className="py-3 text-white font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</td>
                         <td className="py-3 text-white/70">{cls.section || "—"}</td>
                         <td className="py-3 text-white/70 text-sm">
                           {cls.classTeacher ? `${cls.classTeacher.firstName} ${cls.classTeacher.lastName}` : "Unassigned"}
@@ -299,7 +302,7 @@ export default function ClassesPage() {
               return (
                 <div key={cls.id} className="p-3 rounded-xl bg-white/5">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white text-sm font-medium">{cls.displayName}</span>
+                    <span className="text-white text-sm font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</span>
                     <span className="text-white/40 text-sm">{pct}%</span>
                   </div>
                   <div className="w-full bg-white/10 rounded-full h-2">
@@ -358,6 +361,16 @@ export default function ClassesPage() {
                     onChange={(e) => setForm({ ...form, displayName: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. Junior Secondary 1A"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Arm</label>
+                  <input
+                    type="text"
+                    value={form.arm}
+                    onChange={(e) => setForm({ ...form, arm: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    placeholder="e.g. A, B, C"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -424,7 +437,7 @@ export default function ClassesPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                     <p className="text-white/40 text-[11px] mb-1">Class Name</p>
-                    <p className="text-white font-semibold text-[15px]">{viewClass.displayName}</p>
+                    <p className="text-white font-semibold text-[15px]">{viewClass.displayName}{viewClass.arm ? ` - Arm ${viewClass.arm}` : ""}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                     <p className="text-white/40 text-[11px] mb-1">Section</p>

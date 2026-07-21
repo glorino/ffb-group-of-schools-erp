@@ -64,7 +64,7 @@ export default function LessonPlansPage() {
   );
 
   const handleCreate = async () => {
-    if (!form.teacherId || !form.subject || !form.className || !form.topic || !form.content || !form.startDate || !form.endDate) {
+    if (!form.subject || !form.className || !form.topic || !form.content || !form.startDate || !form.endDate) {
       toast.error("Please fill all required fields");
       return;
     }

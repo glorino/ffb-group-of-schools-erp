@@ -53,6 +53,7 @@ export default function TimetablePage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [detailSlot, setDetailSlot] = useState<any>(null);
   const [form, setForm] = useState({
     dayOfWeek: "1",
     startTime: "8:00 AM",
@@ -223,7 +224,7 @@ export default function TimetablePage() {
                         key={`${day}-${time}`}
                         onClick={() => {
                           if (slot) {
-                            toast.info(`${slot.teacher.firstName} ${slot.teacher.lastName} — ${slot.class?.name || "Class"} (${slot.room || "No room"} | ${slot.type})`);
+                            setDetailSlot(slot);
                           } else {
                             setShowModal(true);
                             setForm({ ...form, dayOfWeek: String(dayIdx + 1), startTime: time, endTime: timeSlots[timeSlots.indexOf(time) + 1] || time });
@@ -381,6 +382,84 @@ export default function TimetablePage() {
                 >
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   Add Slot
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Detail Slot Modal */}
+      <AnimatePresence>
+        {detailSlot && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setDetailSlot(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
+            >
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+                <h3 className="text-white font-semibold">Slot Details</h3>
+                <button onClick={() => setDetailSlot(null)} className="text-white/40 hover:text-white/70 transition">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="px-6 py-5 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-white/40 text-[11px] uppercase tracking-wider mb-1">Teacher</p>
+                    <p className="text-white/90 text-sm font-medium">{detailSlot.teacher.firstName} {detailSlot.teacher.lastName}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/40 text-[11px] uppercase tracking-wider mb-1">Class</p>
+                    <p className="text-white/90 text-sm font-medium">{detailSlot.class?.displayName || detailSlot.class?.name || "N/A"}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/40 text-[11px] uppercase tracking-wider mb-1">Day</p>
+                    <p className="text-white/90 text-sm font-medium">{dayLabels[detailSlot.dayOfWeek - 1]}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/40 text-[11px] uppercase tracking-wider mb-1">Time</p>
+                    <p className="text-white/90 text-sm font-medium">{detailSlot.startTime} — {detailSlot.endTime}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/40 text-[11px] uppercase tracking-wider mb-1">Room</p>
+                    <p className="text-white/90 text-sm font-medium">{detailSlot.room || "No room assigned"}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/40 text-[11px] uppercase tracking-wider mb-1">Type</p>
+                    <span className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold ${
+                      detailSlot.type === "lesson" ? "bg-blue-500/15 text-blue-400" :
+                      detailSlot.type === "exam" ? "bg-red-500/15 text-red-400" :
+                      detailSlot.type === "lab" ? "bg-purple-500/15 text-purple-400" :
+                      "bg-white/[0.06] text-white/40"
+                    }`}>{detailSlot.type}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/[0.06]">
+                <button
+                  onClick={() => {
+                    setDetailSlot(null);
+                    handleDelete(detailSlot.id);
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[13px] font-medium hover:bg-red-500/20 transition-colors"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => setDetailSlot(null)}
+                  className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all"
+                >
+                  Close
                 </button>
               </div>
             </motion.div>

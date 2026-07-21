@@ -30,7 +30,7 @@ interface ActivityLog {
 }
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const [loading, setLoading] = useState(true);
   const [activityLoading, setActivityLoading] = useState(true);
   const [recentActivity, setRecentActivity] = useState<ActivityLog[]>([]);
@@ -44,6 +44,7 @@ export default function ProfilePage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [notifications, setNotifications] = useState({ email: true, sms: false, push: true });
 
   const userName = (session?.user as Record<string, unknown>)?.name as string || "User";
   const userEmail = (session?.user as Record<string, unknown>)?.email as string || "";
@@ -117,13 +118,14 @@ export default function ProfilePage() {
     setSaving(true);
     try {
       const res = await fetch("/api/users", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: userId, name, email, phone, address }),
       });
       if (res.ok) {
         toast.success("Profile updated successfully");
         setEditing(false);
+        await update({ name, email });
       } else {
         const data = await res.json();
         toast.error(data.error || "Failed to update profile");
@@ -147,7 +149,7 @@ export default function ProfilePage() {
     setChangingPassword(true);
     try {
       const res = await fetch("/api/users", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: userId, password: passwordData.newPassword }),
       });
@@ -218,12 +220,27 @@ export default function ProfilePage() {
                   {initials}
                 </div>
               )}
-              <button
-                onClick={() => toast.info("Photo upload coming soon")}
-                className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[var(--primary)] flex items-center justify-center text-white"
-              >
-                <Camera className="w-4 h-4" />
-              </button>
+              <label className="absolute bottom-0 right-0 w-9 h-9 rounded-xl bg-[var(--primary)] flex items-center justify-center cursor-pointer hover:brightness-110 transition-all shadow-lg">
+                <Camera className="w-4 h-4 text-white" />
+                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = async () => {
+                    try {
+                      const res = await fetch("/api/users", {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ id: userId, image: reader.result }),
+                      });
+                      if (!res.ok) throw new Error("Failed");
+                      toast.success("Profile photo updated");
+                      window.location.reload();
+                    } catch { toast.error("Failed to upload photo"); }
+                  };
+                  reader.readAsDataURL(file);
+                }} />
+              </label>
             </div>
             <h3 className="text-white text-xl font-bold">{userName}</h3>
             <p className="text-white/60 text-[13px]">Administrator</p>
@@ -375,15 +392,22 @@ export default function ProfilePage() {
               <h3 className="text-white font-semibold text-lg mb-4">Notifications</h3>
               <div className="space-y-3">
                 {[
-                  { label: "Email Notifications", enabled: true },
-                  { label: "SMS Notifications", enabled: false },
-                  { label: "Push Notifications", enabled: true },
-                ].map((notif, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
+                  { key: "email" as const, label: "Email Notifications" },
+                  { key: "sms" as const, label: "SMS Notifications" },
+                  { key: "push" as const, label: "Push Notifications" },
+                ].map((notif) => (
+                  <div key={notif.key} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
                     <span className="text-white text-[13px]">{notif.label}</span>
-                    <div className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${notif.enabled ? "bg-[var(--accent)]" : "bg-white/20"}`}>
-                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${notif.enabled ? "left-[22px]" : "left-0.5"}`} />
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNotifications(prev => ({ ...prev, [notif.key]: !prev[notif.key] }));
+                        toast.success(`${notif.label} ${notifications[notif.key] ? "disabled" : "enabled"}`);
+                      }}
+                      className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${notifications[notif.key] ? "bg-[var(--accent)]" : "bg-white/20"}`}
+                    >
+                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${notifications[notif.key] ? "left-[22px]" : "left-0.5"}`} />
+                    </button>
                   </div>
                 ))}
               </div>
