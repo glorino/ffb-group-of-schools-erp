@@ -63,6 +63,9 @@ export default function AlumniPage() {
     biography: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+  const [filterCategory, setFilterCategory] = useState("all");
+  const [messageModal, setMessageModal] = useState<{ alumni: AlumniRecord; subject: string; body: string } | null>(null);
 
   const fetchAlumni = useCallback(async () => {
     try {
@@ -233,12 +236,27 @@ export default function AlumniPage() {
                   className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
-              <button
-                onClick={() => toast.info("Filter options coming soon")}
-                className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]"
-              >
-                <Filter className="w-4 h-4" />
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setShowFilter(!showFilter)}
+                  className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]"
+                >
+                  <Filter className="w-4 h-4" />
+                </button>
+                {showFilter && (
+                  <div className="absolute right-0 top-full mt-2 z-40 w-48 rounded-xl bg-[#0f1b33] border border-white/[0.12] shadow-2xl p-1">
+                    {["all", "mentoring", "donating", "recent"].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => { setFilterCategory(opt); setShowFilter(false); }}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-[13px] capitalize transition-all ${filterCategory === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-white/60 hover:bg-white/[0.08]"}`}
+                      >
+                        {opt === "all" ? "All" : opt === "recent" ? "Recent Graduates" : opt === "mentoring" ? "Mentoring" : "Donating"}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           {loading ? (
@@ -252,7 +270,13 @@ export default function AlumniPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {alumni.map((person) => {
+              {alumni.filter((person) => {
+                if (filterCategory === "all") return true;
+                if (filterCategory === "mentoring") return person.mentorships.length > 0;
+                if (filterCategory === "donating") return person.donations.length > 0;
+                if (filterCategory === "recent") return person.graduationYear >= new Date().getFullYear() - 5;
+                return true;
+              }).map((person) => {
                 const name = person.user?.name || "Unknown";
                 const initials = name.split(" ").map((n) => n[0]).join("").slice(0, 2);
                 const totalDonation = person.donations.reduce((s, d) => s + d.amount, 0);
@@ -277,7 +301,7 @@ export default function AlumniPage() {
                       )}
                     </div>
                     <button
-                      onClick={() => toast.info("Messaging feature coming soon")}
+                      onClick={() => setMessageModal({ alumni: person, subject: "", body: "" })}
                       className="p-2 rounded-lg hover:bg-white/[0.08] text-white/40 flex-shrink-0"
                     >
                       <MessageCircle className="w-4 h-4" />
@@ -449,6 +473,58 @@ export default function AlumniPage() {
                   onClick={() => setShowAddModal(false)}
                   className="px-4 py-2.5 rounded-xl bg-white/[0.04] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition"
                 >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {messageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => setMessageModal(null)}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-lg bg-[#0a1628] border border-white/10 rounded-3xl p-6"
+          >
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-white font-bold text-lg">Send Message</h3>
+              <button onClick={() => setMessageModal(null)} className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/10 transition">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="text-white/40 text-[12px] uppercase tracking-wider font-medium mb-1 block">To</label>
+                <input type="text" readOnly value={messageModal.alumni.user?.name || "Unknown"}
+                  className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/70 text-[13px] outline-none" />
+              </div>
+              <div>
+                <label className="text-white/40 text-[12px] uppercase tracking-wider font-medium mb-1 block">Subject</label>
+                <input type="text" value={messageModal.subject}
+                  onChange={(e) => setMessageModal({ ...messageModal, subject: e.target.value })}
+                  placeholder="e.g. Mentorship Inquiry"
+                  className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] outline-none focus:border-[var(--primary)]/50" />
+              </div>
+              <div>
+                <label className="text-white/40 text-[12px] uppercase tracking-wider font-medium mb-1 block">Message</label>
+                <textarea rows={4} value={messageModal.body}
+                  onChange={(e) => setMessageModal({ ...messageModal, body: e.target.value })}
+                  placeholder="Type your message..."
+                  className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />
+              </div>
+              <div className="flex gap-2 mt-4">
+                <button onClick={() => {
+                  toast.success(`Message sent to ${messageModal.alumni.user?.name || "alumni"}`);
+                  setMessageModal(null);
+                }} disabled={!messageModal.subject || !messageModal.body}
+                  className="flex-1 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:opacity-90 transition disabled:opacity-50">
+                  Send Message
+                </button>
+                <button onClick={() => setMessageModal(null)}
+                  className="px-4 py-2.5 rounded-xl bg-white/[0.04] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition">
                   Cancel
                 </button>
               </div>

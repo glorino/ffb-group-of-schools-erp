@@ -42,6 +42,8 @@ export default function AnnouncementsPage() {
   const [editAnnouncement, setEditAnnouncement] = useState<Announcement | null>(null);
   const [editForm, setEditForm] = useState({ title: "", content: "", type: "general", priority: "normal" });
   const [classes, setClasses] = useState<any[]>([]);
+  const [showFilter, setShowFilter] = useState(false);
+  const [filterStatus, setFilterStatus] = useState("all");
   const [form, setForm] = useState({
     title: "",
     content: "",
@@ -124,8 +126,12 @@ export default function AnnouncementsPage() {
 
   const filteredAnnouncements = announcements.filter(
     (a) =>
-      a.title.toLowerCase().includes(search.toLowerCase()) ||
-      a.content.toLowerCase().includes(search.toLowerCase())
+      (a.title.toLowerCase().includes(search.toLowerCase()) ||
+      a.content.toLowerCase().includes(search.toLowerCase())) &&
+      (filterStatus === "all" ||
+        (filterStatus === "published" && a.published) ||
+        (filterStatus === "draft" && !a.published) ||
+        (filterStatus === "pinned" && !a.published))
   );
 
   const draftCount = stats.total - stats.published;
@@ -209,12 +215,27 @@ export default function AnnouncementsPage() {
                 className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
               />
             </div>
-            <button
-              onClick={() => toast.info("Filter options coming soon")}
-              className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]"
-            >
-              <Filter className="w-4 h-4" />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowFilter(!showFilter)}
+                className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]"
+              >
+                <Filter className="w-4 h-4" />
+              </button>
+              {showFilter && (
+                <div className="absolute right-0 top-full mt-2 z-40 w-44 rounded-xl bg-[#0f1b33] border border-white/[0.12] shadow-2xl p-1">
+                  {["all", "published", "draft", "pinned"].map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => { setFilterStatus(opt); setShowFilter(false); }}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-[13px] capitalize transition-all ${filterStatus === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-white/60 hover:bg-white/[0.08]"}`}
+                    >
+                      {opt === "all" ? "All" : opt}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         {loading ? (

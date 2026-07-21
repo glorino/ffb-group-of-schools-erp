@@ -45,6 +45,8 @@ export default function ProfilePage() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [notifications, setNotifications] = useState({ email: true, sms: false, push: true });
+  const [show2FAModal, setShow2FAModal] = useState(false);
+  const [twoFAEnabled, setTwoFAEnabled] = useState(false);
 
   const userName = (session?.user as Record<string, unknown>)?.name as string || "User";
   const userEmail = (session?.user as Record<string, unknown>)?.email as string || "";
@@ -376,7 +378,7 @@ export default function ProfilePage() {
                   </div>
                 </button>
                 <button
-                  onClick={() => toast.info("2FA coming soon")}
+                  onClick={() => setShow2FAModal(true)}
                   className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all text-left"
                 >
                   <Shield className="w-5 h-5 text-white/40" />
@@ -491,6 +493,45 @@ export default function ProfilePage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {show2FAModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShow2FAModal(false)}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md mx-4 p-6 rounded-2xl bg-[#0d1425] border border-white/[0.08] shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-semibold text-lg">Two-Factor Authentication</h3>
+              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.1] transition-all">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
+                <span className="text-white text-[13px]">Enable 2FA</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTwoFAEnabled(!twoFAEnabled);
+                    if (!twoFAEnabled) toast.success("2FA setup link will be sent to your email");
+                  }}
+                  className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${twoFAEnabled ? "bg-[var(--accent)]" : "bg-white/20"}`}
+                >
+                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${twoFAEnabled ? "left-[22px]" : "left-0.5"}`} />
+                </button>
+              </div>
+              {twoFAEnabled && (
+                <p className="text-white/50 text-[12px] text-center">2FA setup link will be sent to your email address</p>
+              )}
+              <div className="flex gap-3 pt-2">
+                <button onClick={() => setShow2FAModal(false)}
+                  className="flex-1 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">
+                  Close
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

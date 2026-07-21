@@ -62,6 +62,9 @@ export default function InventoryPage() {
   const [viewItem, setViewItem] = useState<InventoryItem | null>(null);
   const [editItem, setEditItem] = useState<any>(null);
   const [editForm, setEditForm] = useState({ name: "", category: "", quantity: "", unit: "", unitPrice: "", location: "", status: "" });
+  const [showBarcodeScan, setShowBarcodeScan] = useState(false);
+  const [barcodeInput, setBarcodeInput] = useState("");
+  const [barcodeResult, setBarcodeResult] = useState<InventoryItem | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -174,7 +177,7 @@ export default function InventoryPage() {
               Export
             </button>
             <button
-              onClick={() => toast.info("Barcode scanner coming soon")}
+              onClick={() => setShowBarcodeScan(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Barcode className="w-4 h-4" />
@@ -599,6 +602,44 @@ export default function InventoryPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {showBarcodeScan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-lg font-semibold">Barcode Scanner</h2>
+              <button onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }} className="text-white/40 hover:text-white"><X className="w-5 h-5" /></button>
+            </div>
+            <input
+              type="text"
+              autoFocus
+              value={barcodeInput}
+              onChange={(e) => setBarcodeInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && barcodeInput.trim()) {
+                  const found = items.find(i => i.name.toLowerCase().includes(barcodeInput.toLowerCase()) || i.id === barcodeInput.trim());
+                  setBarcodeResult(found || null);
+                  if (!found) toast.error("Item not found for barcode: " + barcodeInput);
+                }
+              }}
+              placeholder="Scan or type barcode..."
+              className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+            />
+            <p className="text-white/30 text-[12px] mt-2">Press Enter to search</p>
+            {barcodeResult && (
+              <div className="mt-4 p-4 rounded-xl bg-white/[0.04] space-y-2">
+                <p className="text-white font-medium text-[14px]">{barcodeResult.name}</p>
+                <p className="text-white/40 text-[13px]">Category: {barcodeResult.category}</p>
+                <p className="text-white/40 text-[13px]">Qty: {barcodeResult.quantity} {barcodeResult.unit}</p>
+                <p className="text-white/40 text-[13px]">₦{barcodeResult.unitPrice.toLocaleString()}</p>
+                <p className="text-white/40 text-[13px]">Location: {barcodeResult.location}</p>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

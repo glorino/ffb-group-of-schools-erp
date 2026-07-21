@@ -59,6 +59,7 @@ export default function TransportPage() {
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", plateNumber: "", type: "Bus", capacity: "", driverName: "", driverPhone: "" });
+  const [showGPS, setShowGPS] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -169,7 +170,7 @@ export default function TransportPage() {
               Export
             </button>
             <button
-              onClick={() => toast.info("GPS tracking coming soon")}
+              onClick={() => setShowGPS(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Navigation className="w-4 h-4" />
@@ -401,6 +402,43 @@ export default function TransportPage() {
                 </button>
               </div>
             </form>
+          </motion.div>
+        </div>
+      )}
+
+      {showGPS && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowGPS(false)}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-2xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-lg font-semibold">GPS Tracking</h2>
+              <button onClick={() => setShowGPS(false)} className="text-white/40 hover:text-white"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="aspect-video rounded-xl bg-white/[0.04] border border-white/[0.08] relative overflow-hidden mb-4">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <MapPin className="w-16 h-16 text-[var(--primary)]/20" />
+              </div>
+              {vehicles.filter(v => v.status === "active").map((v, i) => (
+                <div key={v.id} className="absolute" style={{ left: `${15 + (i * 18) % 70}%`, top: `${20 + (i * 23) % 55}%` }}>
+                  <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shadow-lg shadow-emerald-500/50" />
+                </div>
+              ))}
+            </div>
+            <div className="space-y-2">
+              {vehicles.filter(v => v.status === "active").map((v) => (
+                <div key={v.id} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                    <div>
+                      <p className="text-white text-[13px] font-medium">{v.name}</p>
+                      <p className="text-white/40 text-[12px]">{v.plateNumber}</p>
+                    </div>
+                  </div>
+                  <span className="text-white/40 text-[12px]">Last seen: 2 min ago</span>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
       )}

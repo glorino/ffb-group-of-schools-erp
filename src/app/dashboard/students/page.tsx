@@ -346,7 +346,7 @@ export default function StudentsPage() {
                               <MoreHorizontal className="w-4 h-4" />
                             </button>
                             {openMenu === student.id && (
-                              <div className="absolute right-0 top-8 w-36 rounded-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl border border-white/[0.1] shadow-2xl z-10 overflow-hidden">
+                              <div className="absolute right-0 top-8 w-36 rounded-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl border border-white/[0.1] shadow-2xl z-[60] overflow-hidden">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/students/${student.id}`); setOpenMenu(null); }}
                                   className="w-full flex items-center gap-2 px-3 py-2 text-white/50 hover:text-white/80 hover:bg-white/[0.06] text-[12px]"

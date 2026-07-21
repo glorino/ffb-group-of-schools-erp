@@ -60,6 +60,7 @@ export default function LibraryPage() {
   const [viewBook, setViewBook] = useState<LibraryBook | null>(null);
   const [editBook, setEditBook] = useState<LibraryBook | null>(null);
   const [editForm, setEditForm] = useState({ title: "", author: "", isbn: "", category: "", copies: "", available: "", location: "" });
+  const [showPenalties, setShowPenalties] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -325,7 +326,7 @@ export default function LibraryPage() {
               </div>
               <p className="text-white/40 text-[12px]">Total penalties: ₦{(borrowings.filter((b) => b.status === "overdue").length * 500).toLocaleString()}</p>
               <button
-                onClick={() => toast.info("Penalty details coming soon")}
+                onClick={() => setShowPenalties(true)}
                 className="mt-3 w-full py-2 rounded-lg bg-red-500/20 text-red-400 text-[13px] hover:bg-red-500/30 transition-all"
               >
                 View Details
@@ -549,6 +550,50 @@ export default function LibraryPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {showPenalties && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowPenalties(false)}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-2xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-lg font-semibold">Penalty Details</h2>
+              <button onClick={() => setShowPenalties(false)} className="text-white/40 hover:text-white"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/[0.08]">
+                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Student</th>
+                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Book</th>
+                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Due Date</th>
+                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Days Overdue</th>
+                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Penalty</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {borrowings.filter(b => b.status === "overdue").map((borrow) => {
+                    const daysOverdue = Math.max(0, Math.ceil((Date.now() - new Date(borrow.dueDate).getTime()) / 86400000));
+                    const penalty = daysOverdue * 100;
+                    return (
+                      <tr key={borrow.id} className="border-b border-white/5">
+                        <td className="py-3 text-white text-[13px]">{borrow.student.firstName} {borrow.student.lastName}</td>
+                        <td className="py-3 text-white/70 text-[13px]">{borrow.book.title}</td>
+                        <td className="py-3 text-white/70 text-[13px]">{new Date(borrow.dueDate).toLocaleDateString()}</td>
+                        <td className="py-3 text-red-400 text-[13px]">{daysOverdue}</td>
+                        <td className="py-3 text-red-400 font-medium text-[13px]">₦{penalty.toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {borrowings.filter(b => b.status === "overdue").length === 0 && (
+                <p className="text-center py-8 text-white/40 text-[13px]">No overdue books</p>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

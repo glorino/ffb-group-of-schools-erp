@@ -57,6 +57,8 @@ export default function HostelPage() {
   const [viewBlock, setViewBlock] = useState<Hostel | null>(null);
   const [editBlock, setEditBlock] = useState<Hostel | null>(null);
   const [editForm, setEditForm] = useState({ name: "", type: "Boys", capacity: "" });
+  const [showQRScanner, setShowQRScanner] = useState(false);
+  const [qrAdmission, setQrAdmission] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -163,7 +165,7 @@ export default function HostelPage() {
               Export
             </button>
             <button
-              onClick={() => toast.info("QR Scanner coming soon")}
+              onClick={() => setShowQRScanner(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <QrCode className="w-4 h-4" />
@@ -507,6 +509,36 @@ export default function HostelPage() {
                 </button>
               </div>
             </div>
+          </motion.div>
+        </div>
+      )}
+
+      {showQRScanner && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowQRScanner(false)}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-lg font-semibold">QR Attendance</h2>
+              <button onClick={() => setShowQRScanner(false)} className="text-white/40 hover:text-white"><X className="w-5 h-5" /></button>
+            </div>
+            <p className="text-white/60 text-[13px] mb-4">Scan or type the student admission number to check in to the hostel.</p>
+            <input
+              type="text"
+              autoFocus
+              value={qrAdmission}
+              onChange={(e) => setQrAdmission(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && qrAdmission.trim()) {
+                  toast.success(`Student ${qrAdmission} checked into hostel`);
+                  setQrAdmission("");
+                  setShowQRScanner(false);
+                }
+              }}
+              placeholder="Scan or type admission number..."
+              className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+            />
+            <p className="text-white/30 text-[12px] mt-2">Press Enter to submit</p>
           </motion.div>
         </div>
       )}

@@ -52,6 +52,9 @@ export default function ExamsPage() {
     startDate: "",
     endDate: "",
   });
+  const [showSubjects, setShowSubjects] = useState(false);
+  const [subjectSearch, setSubjectSearch] = useState("");
+  const [allSubjects, setAllSubjects] = useState<{name: string; questions: number}[]>([]);
 
   const questionBank: QuestionBankItem[] = [
     { subject: "Mathematics", questions: 450, difficulty: "Mixed", lastUpdated: "2 days ago" },
@@ -285,7 +288,12 @@ export default function ExamsPage() {
             ))}
           </div>
           <button
-            onClick={() => toast.info("Full subject list coming soon")}
+            onClick={() => {
+              fetch("/api/subjects").then(r => r.json()).then(d => {
+                setAllSubjects(d.subjects || questionBank.map(s => ({ name: s.subject, questions: s.questions })));
+                setShowSubjects(true);
+              }).catch(() => { setAllSubjects(questionBank.map(s => ({ name: s.subject, questions: s.questions }))); setShowSubjects(true); });
+            }}
             className="w-full mt-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
           >
             View All Subjects
@@ -382,6 +390,36 @@ export default function ExamsPage() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showSubjects && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setShowSubjects(false)}>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">All Subjects</h3>
+                <button onClick={() => setShowSubjects(false)} className="text-white/40 hover:text-white"><X className="w-5 h-5" /></button>
+              </div>
+              <div className="relative mb-4">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <input type="text" placeholder="Search subjects..." value={subjectSearch} onChange={(e) => setSubjectSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+              </div>
+              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                {allSubjects.filter(s => s.name.toLowerCase().includes(subjectSearch.toLowerCase())).map((subject, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all">
+                    <span className="text-white text-[13px] font-medium">{subject.name}</span>
+                    <span className="text-white/40 text-[12px]">{subject.questions} questions</span>
+                  </div>
+                ))}
+              </div>
             </motion.div>
           </motion.div>
         )}

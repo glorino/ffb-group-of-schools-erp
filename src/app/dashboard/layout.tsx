@@ -43,7 +43,7 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-animated">
       <ParticleBackground />
       <Sidebar />
-      <div className="relative z-10 min-h-screen flex flex-col" style={{ marginLeft: "240px" }}>
+      <div className="relative z-[5] min-h-screen flex flex-col" style={{ marginLeft: "240px" }}>
         <Header />
         <main className="flex-1 p-4 overflow-x-hidden">{children}</main>
       </div>
