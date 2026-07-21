@@ -312,7 +312,7 @@ export default function PayrollPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
+              className="w-full max-w-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
             >
               <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
                 <h3 className="text-white font-semibold">Add Payroll Entry</h3>

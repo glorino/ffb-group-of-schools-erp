@@ -17,6 +17,8 @@ import {
   Clock,
   FileText,
   CreditCard,
+  AlertTriangle,
+  GraduationCap,
 } from "lucide-react";
 
 const quickLinks = [
@@ -35,6 +37,18 @@ export function Header() {
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [notifList, setNotifList] = useState<{ id: string; title: string; message: string; type: string; read: boolean; createdAt: string }[]>([]);
+  const [notifUnread, setNotifUnread] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/notifications")
+      .then(r => r.json())
+      .then(d => {
+        setNotifList(d.notifications ?? []);
+        setNotifUnread(d.unreadCount ?? 0);
+      })
+      .catch(() => {});
+  }, []);
 
   const name = session?.user?.name || "Admin";
   const email = session?.user?.email || "admin@ffb.edu.ng";
@@ -70,16 +84,6 @@ export function Header() {
     .filter((p) => p !== "dashboard")
     .map((p) => p.charAt(0).toUpperCase() + p.slice(1).replace(/-/g, " "));
 
-  const notifications = [
-    { id: 1, title: "New Admission Request", desc: "Chidinma Okafor submitted an application", time: "5m ago", type: "admission", read: false },
-    { id: 2, title: "Fee Payment Received", desc: "₦245,000 from Adewale Family", time: "12m ago", type: "payment", read: false },
-    { id: 3, title: "Exam Results Ready", desc: "JSS3 First Term results pending approval", time: "1h ago", type: "exam", read: true },
-    { id: 4, title: "PTA Meeting Reminder", desc: "Scheduled for tomorrow at 2:00 PM", time: "2h ago", type: "event", read: true },
-    { id: 5, title: "Low Inventory Alert", desc: "Science lab supplies below threshold", time: "3h ago", type: "alert", read: true },
-  ];
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
   return (
     <>
       <header className="sticky top-0 z-30 h-12 bg-[var(--sidebar)]/80 backdrop-blur-2xl border-b border-white/[0.06]">
@@ -104,9 +108,9 @@ export function Header() {
                 className="w-8 h-8 rounded-lg flex items-center justify-center text-white/30 hover:text-white/60 hover:bg-white/[0.05] transition-all relative"
               >
                 <Bell className="w-4 h-4" />
-                {unreadCount > 0 && (
+                {notifUnread > 0 && (
                   <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-[var(--accent)] text-[var(--sidebar)] text-[8px] font-bold flex items-center justify-center">
-                    {unreadCount}
+                    {notifUnread}
                   </span>
                 )}
               </button>
@@ -120,29 +124,36 @@ export function Header() {
                   >
                     <div className="px-3 py-2.5 border-b border-white/[0.06] flex items-center justify-between">
                       <h3 className="text-white font-semibold text-[13px]">Notifications</h3>
-                      <span className="text-[9px] text-[var(--accent)] bg-[var(--accent)]/10 px-1.5 py-0.5 rounded-full font-medium">{unreadCount} new</span>
+                      <span className="text-[9px] text-[var(--accent)] bg-[var(--accent)]/10 px-1.5 py-0.5 rounded-full font-medium">{notifUnread} new</span>
                     </div>
                     <div className="max-h-[280px] overflow-y-auto">
-                      {notifications.map((n) => (
+                      {notifList.map((n) => (
                         <div key={n.id} className={`px-3 py-2.5 border-b border-white/[0.04] hover:bg-white/[0.04] transition cursor-pointer ${!n.read ? "bg-white/[0.02]" : ""}`}>
                           <div className="flex items-start gap-2.5">
                             <div className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                              n.type === "payment" ? "bg-emerald-500/15 text-emerald-400" :
-                              n.type === "admission" ? "bg-blue-500/15 text-blue-400" :
-                              n.type === "exam" ? "bg-amber-500/15 text-amber-400" :
-                              n.type === "event" ? "bg-purple-500/15 text-purple-400" :
-                              "bg-red-500/15 text-red-400"
+                              n.type === "finance" ? "bg-emerald-500/15 text-emerald-400" :
+                              n.type === "academic" ? "bg-blue-500/15 text-blue-400" :
+                              n.type === "system" ? "bg-amber-500/15 text-amber-400" :
+                              n.type === "warning" ? "bg-red-500/15 text-red-400" :
+                              "bg-purple-500/15 text-purple-400"
                             }`}>
-                              {n.type === "payment" ? <CreditCard className="w-3.5 h-3.5" /> :
-                               n.type === "admission" ? <FileText className="w-3.5 h-3.5" /> :
-                               n.type === "exam" ? <Sparkles className="w-3.5 h-3.5" /> :
-                               n.type === "event" ? <Clock className="w-3.5 h-3.5" /> :
+                              {n.type === "finance" ? <CreditCard className="w-3.5 h-3.5" /> :
+                               n.type === "academic" ? <GraduationCap className="w-3.5 h-3.5" /> :
+                               n.type === "system" ? <Settings className="w-3.5 h-3.5" /> :
+                               n.type === "warning" ? <AlertTriangle className="w-3.5 h-3.5" /> :
                                <Bell className="w-3.5 h-3.5" />}
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-white/85 text-[12px] font-medium leading-tight">{n.title}</p>
-                              <p className="text-white/30 text-[10px] mt-0.5 truncate">{n.desc}</p>
-                              <p className="text-white/15 text-[9px] mt-0.5">{n.time}</p>
+                              <p className="text-white/30 text-[10px] mt-0.5 truncate">{n.message}</p>
+                              <p className="text-white/15 text-[9px] mt-0.5">{n.createdAt ? (() => {
+                                const diff = Date.now() - new Date(n.createdAt).getTime();
+                                const mins = Math.floor(diff / 60000);
+                                if (mins < 60) return `${mins}m ago`;
+                                const hrs = Math.floor(mins / 60);
+                                if (hrs < 24) return `${hrs}h ago`;
+                                return `${Math.floor(hrs / 24)}d ago`;
+                              })() : ""}</p>
                             </div>
                             {!n.read && <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] mt-1.5 flex-shrink-0" />}
                           </div>

@@ -306,7 +306,7 @@ export default function AdmissionsPage() {
       <AnimatePresence>
         {showActionModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => { setShowActionModal(null); setActionNote(""); }}>
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-md bg-[#0a1628] border border-white/10 rounded-3xl p-6">
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-xl bg-[#0a1628] border border-white/10 rounded-3xl p-6">
               <h3 className="text-white font-bold text-lg mb-2">Review Application</h3>
               <p className="text-white/40 text-[13px] mb-4">Add a note for the applicant (optional)</p>
               <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder="Enter notes, instructions or reason..." rows={4} className="w-full p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />

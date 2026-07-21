@@ -16,9 +16,9 @@ const events = [
 ];
 
 const newsItems = [
-  { title: "Academic Excellence Award", desc: "Our students received national recognition for outstanding WAEC results.", full: "FFB Group of Schools has once again demonstrated academic excellence as our students received national recognition for their outstanding WAEC results. With a 98% pass rate and multiple distinctions across key subjects, our school has been ranked among the top performing institutions in the state.", gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)" },
-  { title: "New Science Laboratory", desc: "A state-of-the-art science laboratory was commissioned.", full: "A new state-of-the-art science laboratory has been commissioned at FFB Group of Schools. The laboratory features modern equipment for Physics, Chemistry, and Biology practical sessions. This facility will provide students with hands-on experience.", gradient: "linear-gradient(135deg, #164e63, #06b6d4)" },
-  { title: "Leadership Bootcamp", desc: "Students trained in leadership development and innovation.", full: "Over 150 students participated in the annual Leadership Bootcamp organized by FFB Group of Schools. The programme covered topics including public speaking, project management, entrepreneurship, and digital literacy.", gradient: "linear-gradient(135deg, #312e81, #6366f1)" },
+  { title: "Academic Excellence Award", desc: "Our students received national recognition for outstanding WAEC results.", full: "FFB Group of Schools has once again demonstrated academic excellence as our students received national recognition for their outstanding WAEC results. With a 98% pass rate and multiple distinctions across key subjects, our school has been ranked among the top performing institutions in the state.", gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)", image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop" },
+  { title: "New Science Laboratory", desc: "A state-of-the-art science laboratory was commissioned.", full: "A new state-of-the-art science laboratory has been commissioned at FFB Group of Schools. The laboratory features modern equipment for Physics, Chemistry, and Biology practical sessions. This facility will provide students with hands-on experience.", gradient: "linear-gradient(135deg, #164e63, #06b6d4)", image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=400&fit=crop" },
+  { title: "Leadership Bootcamp", desc: "Students trained in leadership development and innovation.", full: "Over 150 students participated in the annual Leadership Bootcamp organized by FFB Group of Schools. The programme covered topics including public speaking, project management, entrepreneurship, and digital literacy.", gradient: "linear-gradient(135deg, #312e81, #6366f1)", image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop" },
 ];
 
 function useCountdown(targetDate: string) {
@@ -201,7 +201,7 @@ export default function LandingPage() {
         <motion.div className="news-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
           {newsItems.map((n, i) => (
             <motion.div key={i} className="news-card" variants={item}>
-              <div style={{ width: "100%", height: "200px", background: n.gradient, borderRadius: "25px 25px 0 0" }}></div>
+              <img src={n.image} alt={n.title} className="w-full h-[200px] object-cover rounded-t-[25px]" />
               <div className="news-content">
                 <h3>{n.title}</h3>
                 <p>{n.desc}</p>
@@ -217,7 +217,7 @@ export default function LandingPage() {
         <div className="modal" style={{ display: "flex" }} onClick={() => setNewsModal(null)}>
           <motion.div className="modal-content" onClick={(e) => e.stopPropagation()} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
             <button className="modal-close" onClick={() => setNewsModal(null)}>&times;</button>
-            <div style={{ width: "100%", height: "200px", background: newsItems[newsModal].gradient, borderRadius: "16px", marginBottom: "20px" }}></div>
+            <img src={newsItems[newsModal].image} alt={newsItems[newsModal].title} className="w-full h-[200px] object-cover rounded-2xl mb-5" />
             <h2 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "15px" }}>{newsItems[newsModal].title}</h2>
             <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.8 }}>{newsItems[newsModal].full}</p>
           </motion.div>

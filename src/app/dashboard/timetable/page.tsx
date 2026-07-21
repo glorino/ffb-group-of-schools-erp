@@ -221,7 +221,15 @@ export default function TimetablePage() {
                     return (
                       <div
                         key={`${day}-${time}`}
-                        className={`p-2 rounded-xl min-h-[60px] flex items-center justify-center transition-all group relative ${
+                        onClick={() => {
+                          if (slot) {
+                            toast.info(`${slot.teacher.firstName} ${slot.teacher.lastName} — ${slot.class?.name || "Class"} (${slot.room || "No room"} | ${slot.type})`);
+                          } else {
+                            setShowModal(true);
+                            setForm({ ...form, dayOfWeek: String(dayIdx + 1), startTime: time, endTime: timeSlots[timeSlots.indexOf(time) + 1] || time });
+                          }
+                        }}
+                        className={`p-2 rounded-xl min-h-[60px] flex items-center justify-center transition-all group relative cursor-pointer ${
                           slot
                             ? "bg-[var(--primary)]/20 border border-[var(--primary)]/30 hover:bg-[var(--primary)]/30"
                             : "bg-white/5 border border-white/10 hover:bg-white/10"
@@ -268,7 +276,7 @@ export default function TimetablePage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
+              className="w-full max-w-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
             >
               <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
                 <h3 className="text-white font-semibold">Add Timetable Slot</h3>

@@ -432,6 +432,34 @@ export async function POST() {
       });
     }
 
+    // 16. Notifications (for admin user)
+    const adminUserId = userIds.ADMINISTRATOR;
+    const notifData = [
+      { title: "New Admission Request", message: "Chidinma Okafor submitted an application for JSS 1", type: "academic" },
+      { title: "Fee Payment Received", message: "₦250,000 tuition payment received from Adebayo Johnson", type: "finance" },
+      { title: "Exam Results Pending", message: "JSS 3 First Term examination results are pending approval", type: "system" },
+      { title: "PTA Meeting Scheduled", message: "Parent-Teacher Association meeting scheduled for next Friday at 2:00 PM", type: "academic" },
+      { title: "Low Inventory Alert", message: "Science laboratory supplies have fallen below minimum threshold", type: "warning" },
+      { title: "New Student Enrolled", message: "Emeka Nwachukwu has been enrolled into JSS 1", type: "academic" },
+      { title: "Payroll Processing", message: "Monthly payroll for November is ready for review", type: "finance" },
+    ];
+
+    for (const nd of notifData) {
+      try {
+        await prisma.notification.create({
+          data: {
+            userId: adminUserId,
+            title: nd.title,
+            message: nd.message,
+            type: nd.type,
+            read: false,
+          },
+        });
+      } catch {
+        // Skip if already exists
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: "Database seeded successfully with comprehensive data",

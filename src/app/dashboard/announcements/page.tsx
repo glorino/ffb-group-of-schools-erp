@@ -283,7 +283,7 @@ export default function AnnouncementsPage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+              className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-white font-semibold text-lg">New Announcement</h3>

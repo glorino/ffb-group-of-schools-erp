@@ -407,7 +407,7 @@ export default function ProfilePage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md mx-4 p-6 rounded-2xl bg-[#0d1425] border border-white/[0.08] shadow-2xl"
+              className="w-full max-w-xl mx-4 p-6 rounded-2xl bg-[#0d1425] border border-white/[0.08] shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-white font-semibold text-lg">Change Password</h3>

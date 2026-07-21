@@ -85,7 +85,7 @@ export default function TeachersPage() {
       if (!teacherRes.ok) throw new Error(teacherData.error || "Failed to create teacher");
 
       if (form.email) {
-        await fetch("/api/users", {
+        const userRes = await fetch("/api/users", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -93,6 +93,22 @@ export default function TeachersPage() {
             password: form.password, phone: form.phone || undefined, role: "TEACHER",
           }),
         });
+        const userData = await userRes.json();
+        if (userRes.ok) {
+          try {
+            await fetch("/api/emails/send", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                type: "welcome",
+                to: form.email,
+                name: `${form.firstName} ${form.lastName}`,
+                role: "Teacher",
+                password: form.password,
+              }),
+            });
+          } catch {}
+        }
       }
 
       setShowModal(false);
@@ -315,7 +331,7 @@ export default function TeachersPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
+              className="w-full max-w-2xl bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
             >
               <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
                 <h3 className="text-white font-semibold">Add New Teacher</h3>

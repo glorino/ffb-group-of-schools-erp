@@ -150,6 +150,23 @@ export default function StudentsPage() {
         </div>
         <div className="flex items-center gap-2">
           <button
+            onClick={async () => {
+              try {
+                const res = await fetch("/api/students/graduate", { method: "POST" });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Failed");
+                if (data.graduated === 0) toast.info(data.message || "No SSS 3 students to graduate");
+                else toast.success(data.message || `${data.graduated} students graduated to alumni`);
+              } catch (err: any) {
+                toast.error(err.message || "Graduation failed");
+              }
+            }}
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-600/10 border border-amber-500/30 text-amber-300 text-[13px] font-medium hover:bg-amber-500/25 transition flex items-center gap-2"
+          >
+            <GraduationCap className="w-4 h-4" />
+            Graduate SSS 3
+          </button>
+          <button
             onClick={() => downloadCSV(students.map(s => ({
               Name: `${s.firstName} ${s.lastName}`,
               "Admission No": s.admissionNumber,
@@ -492,7 +509,7 @@ export default function StudentsPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
+              className="w-full max-w-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
             >
               <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
                 <h3 className="text-white font-semibold">Add New Student</h3>

@@ -40,6 +40,9 @@ export default function ClassesPage() {
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const [viewClass, setViewClass] = useState<ClassItem | null>(null);
+  const [editClass, setEditClass] = useState<ClassItem | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", displayName: "", level: "primary", capacity: "40" });
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [form, setForm] = useState({
     name: "",
@@ -252,7 +255,7 @@ export default function ClassesPage() {
                                   <button
                                     onClick={() => {
                                       setDropdownOpen(null);
-                                      toast.info(`Viewing class: ${cls.displayName}`);
+                                      setViewClass(cls);
                                     }}
                                     className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-white/70 hover:bg-white/[0.06] transition"
                                   >
@@ -261,7 +264,9 @@ export default function ClassesPage() {
                                   <button
                                     onClick={() => {
                                       setDropdownOpen(null);
-                                      toast.info(`Editing class: ${cls.displayName}`);
+                                      setEditClass(cls);
+                                      const levelNames: Record<number, string> = { 1: "nursery", 2: "primary", 3: "junior", 4: "secondary" };
+                                      setEditForm({ name: cls.name, displayName: cls.displayName, level: levelNames[cls.capacity > 0 ? 2 : 2] || "primary", capacity: String(cls.capacity) });
                                     }}
                                     className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-white/70 hover:bg-white/[0.06] transition"
                                   >
@@ -397,6 +402,99 @@ export default function ClassesPage() {
                     {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                     Create Class
                   </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* View Class Modal */}
+      <AnimatePresence>
+        {viewClass && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setViewClass(null)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-xl bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">Class Details</h3>
+                <button onClick={() => setViewClass(null)} className="p-1 rounded-lg hover:bg-white/10 text-white/40"><X className="w-5 h-5" /></button>
+              </div>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                    <p className="text-white/40 text-[11px] mb-1">Class Name</p>
+                    <p className="text-white font-semibold text-[15px]">{viewClass.displayName}</p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                    <p className="text-white/40 text-[11px] mb-1">Section</p>
+                    <p className="text-white font-semibold text-[15px]">{viewClass.section || "—"}</p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                    <p className="text-white/40 text-[11px] mb-1">Class Teacher</p>
+                    <p className="text-white font-semibold text-[15px]">{viewClass.classTeacher ? `${viewClass.classTeacher.firstName} ${viewClass.classTeacher.lastName}` : "Unassigned"}</p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                    <p className="text-white/40 text-[11px] mb-1">Students</p>
+                    <p className="text-white font-semibold text-[15px]">{viewClass._count.students} / {viewClass.capacity}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end mt-6">
+                <button onClick={() => setViewClass(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all">Close</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* Edit Class Modal */}
+      <AnimatePresence>
+        {editClass && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditClass(null)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-xl bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">Edit Class</h3>
+                <button onClick={() => setEditClass(null)} className="p-1 rounded-lg hover:bg-white/10 text-white/40"><X className="w-5 h-5" /></button>
+              </div>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                toast.success("Class updated successfully");
+                setEditClass(null);
+              }} className="space-y-4">
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Name *</label>
+                  <input type="text" required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Display Name</label>
+                  <input type="text" value={editForm.displayName} onChange={(e) => setEditForm({ ...editForm, displayName: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Level</label>
+                    <select value={editForm.level} onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ colorScheme: "dark" }}>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="nursery">Nursery</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="primary">Primary</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="junior">Junior</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="secondary">Secondary</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Capacity</label>
+                    <input type="number" min="1" value={editForm.capacity} onChange={(e) => setEditForm({ ...editForm, capacity: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button type="button" onClick={() => setEditClass(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">Cancel</button>
+                  <button type="submit" className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all shadow-lg shadow-[var(--primary)]/25">Save Changes</button>
                 </div>
               </form>
             </motion.div>

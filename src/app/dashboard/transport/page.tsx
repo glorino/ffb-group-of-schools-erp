@@ -310,7 +310,7 @@ export default function TransportPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-white text-lg font-semibold">Add Vehicle</h2>
