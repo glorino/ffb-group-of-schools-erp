@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FileText,
@@ -40,6 +41,12 @@ interface QuestionBankItem {
 }
 
 export default function ExamsPage() {
+  const { data: session } = useSession();
+  const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+  const isStudent = userRoles.includes("STUDENT");
+  const isParent = userRoles.includes("PARENT");
+  const isReadOnly = isStudent || isParent;
+
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -161,13 +168,15 @@ export default function ExamsPage() {
               <Download className="w-4 h-4" />
               Export
             </button>
-            <button
-              onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
-            >
-              <Plus className="w-4 h-4" />
-              Create Exam
-            </button>
+            {!isReadOnly && (
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+              >
+                <Plus className="w-4 h-4" />
+                Create Exam
+              </button>
+            )}
           </div>
         </div>
       </motion.div>

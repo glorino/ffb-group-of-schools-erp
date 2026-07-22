@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Award,
@@ -61,6 +62,12 @@ interface Subject {
 }
 
 export default function ResultsPage() {
+  const { data: session } = useSession();
+  const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+  const isStudent = userRoles.includes("STUDENT");
+  const isParent = userRoles.includes("PARENT");
+  const isReadOnly = isStudent || isParent;
+
   const [grades, setGrades] = useState<GradeRecord[]>([]);
   const [results, setResults] = useState<SubjectResult[]>([]);
   const [scales, setScales] = useState<GradingScale[]>([]);
@@ -299,14 +306,16 @@ export default function ResultsPage() {
             <p className="text-white/60 text-sm">Grading, ranking, CA marks, and result analysis</p>
           </div>
           <div className="flex gap-3">
-            <button
-              onClick={handlePublishAll}
-              disabled={publishing}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition-all duration-200 disabled:opacity-50"
-            >
-              {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
-              Publish Results
-            </button>
+            {!isReadOnly && (
+              <button
+                onClick={handlePublishAll}
+                disabled={publishing}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition-all duration-200 disabled:opacity-50"
+              >
+                {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+                Publish Results
+              </button>
+            )}
             <button
               onClick={handleExport}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-sm font-medium hover:bg-white/[0.1] transition-all duration-200"
@@ -314,13 +323,15 @@ export default function ResultsPage() {
               <Download className="w-4 h-4" />
               Export
             </button>
-            <button
-              onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
-            >
-              <Plus className="w-4 h-4" />
-              Enter Results
-            </button>
+            {!isReadOnly && (
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+              >
+                <Plus className="w-4 h-4" />
+                Enter Results
+              </button>
+            )}
           </div>
         </div>
       </motion.div>
@@ -491,12 +502,14 @@ export default function ResultsPage() {
                       <span className={`px-2 py-0.5 rounded text-[9px] font-semibold ${g.published ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-400"}`}>
                         {g.published ? "Published" : "Draft"}
                       </span>
-                      <button
-                        onClick={() => openEditModal(g)}
-                        className="p-1.5 rounded-lg bg-white/[0.06] border border-white/[0.1] text-white/50 hover:text-white hover:bg-white/[0.1] transition-all"
-                      >
-                        <Pencil className="w-3 h-3" />
-                      </button>
+                      {!isReadOnly && (
+                        <button
+                          onClick={() => openEditModal(g)}
+                          className="p-1.5 rounded-lg bg-white/[0.06] border border-white/[0.1] text-white/50 hover:text-white hover:bg-white/[0.1] transition-all"
+                        >
+                          <Pencil className="w-3 h-3" />
+                        </button>
+                      )}
                       <div className="text-right">
                         <p className="text-white text-xs font-bold">{g.score}/{g.maxScore}</p>
                         <p className={`text-[10px] font-bold ${scaleColors[g.grade] || "text-white/40"}`}>{g.grade}</p>

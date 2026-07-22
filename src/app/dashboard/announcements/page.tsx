@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Megaphone,
@@ -33,6 +34,12 @@ interface Announcement {
 }
 
 export default function AnnouncementsPage() {
+  const { data: session } = useSession();
+  const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+  const isStudent = userRoles.includes("STUDENT");
+  const isParent = userRoles.includes("PARENT");
+  const isReadOnly = isStudent || isParent;
+
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");

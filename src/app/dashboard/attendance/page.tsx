@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -17,6 +18,12 @@ import { downloadCSV } from "@/lib/exports";
 import { toast } from "sonner";
 
 export default function AttendancePage() {
+  const { data: session } = useSession();
+  const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+  const isStudent = userRoles.includes("STUDENT");
+  const isParent = userRoles.includes("PARENT");
+  const isReadOnly = isStudent || isParent;
+
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -61,13 +68,15 @@ export default function AttendancePage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <button
-            onClick={() => setShowQRScanner(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
-          >
-            <QrCode className="w-4 h-4" />
-            QR Scanner
-          </button>
+          {!isReadOnly && (
+            <button
+              onClick={() => setShowQRScanner(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+            >
+              <QrCode className="w-4 h-4" />
+              QR Scanner
+            </button>
+          )}
           <button
             onClick={() => {
               downloadCSV(records.map(r => ({
@@ -268,12 +277,14 @@ export default function AttendancePage() {
             <AlertTriangle className="w-5 h-5 text-orange-400" />
             <h3 className="text-white font-semibold text-lg">Absent Students Today</h3>
           </div>
-          <button
-            onClick={() => toast.success("Notifications sent to parents of absent students")}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
-          >
-            Notify Parents
-          </button>
+          {!isReadOnly && (
+            <button
+              onClick={() => toast.success("Notifications sent to parents of absent students")}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+            >
+              Notify Parents
+            </button>
+          )}
         </div>
         <div className="overflow-x-auto">
           <table className="w-full table-glass">

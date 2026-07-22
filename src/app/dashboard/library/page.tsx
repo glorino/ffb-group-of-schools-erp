@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen,
@@ -49,6 +50,12 @@ interface LibraryStats {
 }
 
 export default function LibraryPage() {
+  const { data: session } = useSession();
+  const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+  const isStudent = userRoles.includes("STUDENT");
+  const isParent = userRoles.includes("PARENT");
+  const isReadOnly = isStudent || isParent;
+
   const [books, setBooks] = useState<LibraryBook[]>([]);
   const [borrowings, setBorrowings] = useState<Borrowing[]>([]);
   const [stats, setStats] = useState<LibraryStats>({ totalTitles: 0, totalBooks: 0, availableBooks: 0, borrowed: 0 });
@@ -170,13 +177,15 @@ export default function LibraryPage() {
               <Download className="w-4 h-4" />
               Export
             </button>
-            <button
-              onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
-            >
-              <Plus className="w-4 h-4" />
-              Add Book
-            </button>
+            {!isReadOnly && (
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+              >
+                <Plus className="w-4 h-4" />
+                Add Book
+              </button>
+            )}
           </div>
         </div>
       </motion.div>
@@ -258,19 +267,21 @@ export default function LibraryPage() {
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button
-                          onClick={() => {
-                            setEditBook(book);
-                            setEditForm({
-                              title: book.title || "", author: book.author || "", isbn: book.isbn || "",
-                              category: book.category || "", copies: String(book.copies ?? ""),
-                              available: String(book.available ?? ""), location: "",
-                            });
-                          }}
-                          className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
+                        {!isReadOnly && (
+                          <button
+                            onClick={() => {
+                              setEditBook(book);
+                              setEditForm({
+                                title: book.title || "", author: book.author || "", isbn: book.isbn || "",
+                                category: book.category || "", copies: String(book.copies ?? ""),
+                                available: String(book.available ?? ""), location: "",
+                              });
+                            }}
+                            className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import {
@@ -16,6 +17,12 @@ const fadeIn = {
 };
 
 export default function ReportCardsPage() {
+  const { data: session } = useSession();
+  const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+  const isStudent = userRoles.includes("STUDENT");
+  const isParent = userRoles.includes("PARENT");
+  const isReadOnly = isStudent || isParent;
+
   const [students, setStudents] = useState<any[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<string>("");
   const [reportData, setReportData] = useState<ReportCardProps | null>(null);
@@ -29,10 +36,18 @@ export default function ReportCardsPage() {
   useEffect(() => {
     fetch("/api/students?limit=100")
       .then(r => r.json())
-      .then(d => setStudents(d.students || []))
+      .then(d => {
+        const studentList = d.students || [];
+        setStudents(studentList);
+        if (isReadOnly) {
+          const userEmail = (session?.user as any)?.email || "";
+          const matched = studentList.find((s: any) => s.email === userEmail || s.user?.email === userEmail);
+          if (matched) setSelectedStudent(matched.id);
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [isReadOnly, session]);
 
   useEffect(() => {
     fetch("/api/calendar").then(r => r.json()).then(d => setTerms(d.terms || [])).catch(() => {});
@@ -144,49 +159,51 @@ export default function ReportCardsPage() {
       </div>
 
       <div className="grid lg:grid-cols-5 gap-5">
-        {/* Student List */}
-        <div className="lg:col-span-2 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <h3 className="text-white/90 font-semibold text-[14px] mb-3">Select Student</h3>
-          <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
-            <input
-              type="text"
-              placeholder="Search students..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[12px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50"
-            />
+        {/* Student List - hidden for students/parents (auto-selected) */}
+        {!isReadOnly && (
+          <div className="lg:col-span-2 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
+            <h3 className="text-white/90 font-semibold text-[14px] mb-3">Select Student</h3>
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+              <input
+                type="text"
+                placeholder="Search students..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[12px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50"
+              />
+            </div>
+            <div className="space-y-1 max-h-[400px] overflow-y-auto">
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-12 rounded-xl bg-white/[0.04] animate-pulse" />
+                ))
+              ) : filteredStudents.length === 0 ? (
+                <p className="text-white/30 text-[12px] text-center py-8">No students found</p>
+              ) : (
+                filteredStudents.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setSelectedStudent(s.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition ${
+                      selectedStudent === s.id
+                        ? "bg-[var(--primary)]/20 border border-[var(--primary)]/40"
+                        : "hover:bg-white/[0.04] border border-transparent"
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
+                      {s.firstName?.[0]}{s.lastName?.[0]}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white/80 text-[12px] font-medium truncate">{s.firstName} {s.lastName}</p>
+                      <p className="text-white/30 text-[10px]">{s.class?.displayName || s.class?.name || "—"} · {s.admissionNumber}</p>
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
           </div>
-          <div className="space-y-1 max-h-[400px] overflow-y-auto">
-            {loading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-12 rounded-xl bg-white/[0.04] animate-pulse" />
-              ))
-            ) : filteredStudents.length === 0 ? (
-              <p className="text-white/30 text-[12px] text-center py-8">No students found</p>
-            ) : (
-              filteredStudents.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setSelectedStudent(s.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition ${
-                    selectedStudent === s.id
-                      ? "bg-[var(--primary)]/20 border border-[var(--primary)]/40"
-                      : "hover:bg-white/[0.04] border border-transparent"
-                  }`}
-                >
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
-                    {s.firstName?.[0]}{s.lastName?.[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white/80 text-[12px] font-medium truncate">{s.firstName} {s.lastName}</p>
-                    <p className="text-white/30 text-[10px]">{s.class?.displayName || s.class?.name || "—"} · {s.admissionNumber}</p>
-                  </div>
-                </button>
-              ))
-            )}
-          </div>
-        </div>
+        )}
 
         {/* Preview Area */}
         <div className="lg:col-span-3 space-y-4">

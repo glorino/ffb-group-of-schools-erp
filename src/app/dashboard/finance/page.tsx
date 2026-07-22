@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CreditCard,
@@ -64,6 +65,12 @@ interface Student { id: string; firstName: string; lastName: string; admissionNu
 interface SchoolFee { id: string; name: string; type: string; amount: number }
 
 export default function FinancePage() {
+  const { data: session } = useSession();
+  const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+  const isStudent = userRoles.includes("STUDENT");
+  const isParent = userRoles.includes("PARENT");
+  const isReadOnly = isStudent || isParent;
+
   const [payments, setPayments] = useState<Payment[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
@@ -224,9 +231,11 @@ export default function FinancePage() {
           <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200">
             <Download className="w-4 h-4" /> Export
           </button>
-          <button onClick={() => setShowModal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25">
-            <Plus className="w-4 h-4" /> Create Invoice
-          </button>
+          {!isReadOnly && (
+            <button onClick={() => setShowModal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25">
+              <Plus className="w-4 h-4" /> Create Invoice
+            </button>
+          )}
         </div>
       </div>
 
@@ -313,9 +322,11 @@ export default function FinancePage() {
               <div className="mt-4 pt-4 border-t border-white/[0.06]">
                 <h4 className="text-white/60 text-xs font-medium mb-3">Quick Actions</h4>
                 <div className="space-y-2">
-                  <button onClick={() => setShowModal(true)} className="w-full flex items-center gap-2 p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/60 text-[12px] transition text-left">
-                    <Plus className="w-3.5 h-3.5" /> Create Invoice
-                  </button>
+                  {!isReadOnly && (
+                    <button onClick={() => setShowModal(true)} className="w-full flex items-center gap-2 p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/60 text-[12px] transition text-left">
+                      <Plus className="w-3.5 h-3.5" /> Create Invoice
+                    </button>
+                  )}
                   <button onClick={handleExport} className="w-full flex items-center gap-2 p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white/60 text-[12px] transition text-left">
                     <Download className="w-3.5 h-3.5" /> Export Payments
                   </button>
