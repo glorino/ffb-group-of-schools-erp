@@ -180,7 +180,7 @@ export function Header() {
                 </div>
                 <div className="hidden sm:block text-left">
                   <p className="text-white/85 text-[12px] font-medium leading-tight">{name}</p>
-                  <p className="text-white/25 text-[9px]">Administrator</p>
+                  <p className="text-white/25 text-[9px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</p>
                 </div>
                 <ChevronDown className={`w-3 h-3 text-white/25 transition-transform ${profileOpen ? "rotate-180" : ""}`} />
               </button>

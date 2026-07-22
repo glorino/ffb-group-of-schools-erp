@@ -1,11 +1,12 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
 import { ParticleBackground } from "@/components/particles";
+import { canAccessRoute, getDefaultRoute } from "@/lib/rbac";
 
 export default function DashboardLayout({
   children,
@@ -14,6 +15,7 @@ export default function DashboardLayout({
 }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -25,6 +27,15 @@ export default function DashboardLayout({
       router.push("/auth/login");
     }
   }, [status, router]);
+
+  useEffect(() => {
+    if (status === "authenticated" && session) {
+      const userRoles: string[] = (session.user as any)?.roles?.map((r: any) => r.name) || [];
+      if (!canAccessRoute(pathname, userRoles)) {
+        router.push(getDefaultRoute(userRoles));
+      }
+    }
+  }, [status, session, pathname, router]);
 
   if (!mounted || status === "loading") {
     return (
@@ -43,9 +54,9 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-animated">
       <ParticleBackground />
       <Sidebar />
-      <div className="relative z-[5] min-h-screen flex flex-col" style={{ marginLeft: "240px" }}>
+      <div className="min-h-screen flex flex-col pl-[240px]">
         <Header />
-        <main className="flex-1 p-4 overflow-x-hidden">{children}</main>
+        <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
   );
