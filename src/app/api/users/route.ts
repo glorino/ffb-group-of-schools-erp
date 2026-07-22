@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { requireAuth } from "@/lib/api-rbac";
 import bcrypt from "bcryptjs";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR"]);
+    if (authResult.error) return authResult.error;
 
     const { searchParams } = new URL(request.url);
     const role = searchParams.get("role") || "";
@@ -40,8 +40,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR"]);
+    if (authResult.error) return authResult.error;
+    const { session } = authResult;
 
     const body = await request.json();
     const { email, name, password, phone, role, schoolId } = body;
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const userSchoolId = schoolId || (session.user as any).schoolId;
+    const userSchoolId = schoolId || (session?.user as any)?.schoolId;
 
     const user = await prisma.user.create({
       data: {
@@ -88,8 +89,8 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth();
+    if (authResult.error) return authResult.error;
 
     const body = await request.json();
     const { id, name, email, phone, password, image } = body;

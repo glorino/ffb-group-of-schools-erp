@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { requireAuth } from "@/lib/api-rbac";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["TEACHER", "PRINCIPAL", "VICE_PRINCIPAL"]);
+    if (authResult.error) return authResult.error;
 
     const { searchParams } = new URL(request.url);
     const teacherId = searchParams.get("teacherId") || "";
@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["TEACHER", "PRINCIPAL", "VICE_PRINCIPAL"]);
+    if (authResult.error) return authResult.error;
 
     const body = await request.json();
     const { teacherId, subject, className, topic, objectives, content, resources, startDate, endDate } = body;
@@ -68,8 +68,8 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["TEACHER", "PRINCIPAL", "VICE_PRINCIPAL"]);
+    if (authResult.error) return authResult.error;
 
     const body = await request.json();
     const { id, status: newStatus, ...updates } = body;
@@ -95,8 +95,8 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["TEACHER", "PRINCIPAL", "VICE_PRINCIPAL"]);
+    if (authResult.error) return authResult.error;
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

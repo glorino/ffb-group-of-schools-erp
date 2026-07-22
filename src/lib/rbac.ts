@@ -4,13 +4,13 @@ const routeRoles: Record<string, string[]> = {
   "/dashboard/students": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
   "/dashboard/teachers": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
   "/dashboard/classes": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"],
-  "/dashboard/attendance": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "PARENT", "STUDENT"],
-  "/dashboard/exams": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT"],
-  "/dashboard/timetable": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
+  "/dashboard/attendance": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "PARENT", "STUDENT"],
+  "/dashboard/exams": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT"],
+  "/dashboard/timetable": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
   "/dashboard/lesson-plans": ["TEACHER", "PRINCIPAL", "VICE_PRINCIPAL"],
-  "/dashboard/results": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
-  "/dashboard/report-cards": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
-  "/dashboard/transcript": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
+  "/dashboard/results": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
+  "/dashboard/report-cards": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
+  "/dashboard/transcript": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
   "/dashboard/admissions": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
   "/dashboard/finance": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT", "AUDITOR", "STUDENT", "PARENT"],
   "/dashboard/payments": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT"],
@@ -18,14 +18,14 @@ const routeRoles: Record<string, string[]> = {
   "/dashboard/expenses": ["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"],
   "/dashboard/payroll": ["OWNER", "ADMINISTRATOR", "ACCOUNTANT"],
   "/dashboard/library": ["OWNER", "ADMINISTRATOR", "LIBRARIAN", "TEACHER", "STUDENT", "PARENT"],
-  "/dashboard/hostel": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "PORTER"],
-  "/dashboard/transport": ["OWNER", "ADMINISTRATOR", "PRINCIPAL"],
-  "/dashboard/clinic": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER"],
+  "/dashboard/hostel": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "PORTER"],
+  "/dashboard/transport": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
+  "/dashboard/clinic": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"],
   "/dashboard/inventory": ["OWNER", "ADMINISTRATOR"],
   "/dashboard/ai": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "AUDITOR"],
   "/dashboard/alumni": ["OWNER", "ADMINISTRATOR", "ALUMNI"],
   "/dashboard/announcements": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI"],
-  "/dashboard/calendar": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
+  "/dashboard/calendar": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
   "/dashboard/notifications": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI", "ACCOUNTANT", "AUDITOR", "LIBRARIAN", "PORTER"],
   "/dashboard/settings": ["OWNER", "ADMINISTRATOR"],
   "/dashboard/profile": [],
@@ -49,7 +49,7 @@ export function canAccessRoute(pathname: string, userRoles: string[]): boolean {
     }
   }
 
-  return true;
+  return false;
 }
 
 export function getDefaultRoute(userRoles: string[]): string {

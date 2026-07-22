@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR"]);
+    if (authResult.error) return authResult.error;
 
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category") || "";
@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR"]);
+    if (authResult.error) return authResult.error;
 
     const body = await request.json();
     const { name, category, quantity, unit, unitPrice, location } = body;
@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR"]);
+    if (authResult.error) return authResult.error;
 
     const body = await request.json();
     const { id, name, category, quantity, unit, unitPrice, location, status } = body;

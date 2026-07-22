@@ -26,7 +26,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
   {
     title: "User Management",
     items: [
-      { label: "Students", href: "/dashboard/students", emoji: "👨‍🎓", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "PARENT"] },
+      { label: "Students", href: "/dashboard/students", emoji: "👨‍🎓", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
       { label: "Teachers", href: "/dashboard/teachers", emoji: "👩‍🏫", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
       { label: "Parents", href: "/dashboard/students", emoji: "👪", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
     ],
@@ -35,19 +35,20 @@ const navSections: { title: string; items: NavItem[] }[] = [
     title: "Academics",
     items: [
       { label: "Classes", href: "/dashboard/classes", emoji: "🏫", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"] },
-      { label: "Attendance", href: "/dashboard/attendance", emoji: "✅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "PARENT"] },
-      { label: "Examinations", href: "/dashboard/exams", emoji: "📝", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER"] },
+      { label: "Attendance", href: "/dashboard/attendance", emoji: "✅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "PARENT"] },
+      { label: "My Attendance", href: "/dashboard/attendance", emoji: "✅", roles: ["STUDENT"] },
+      { label: "Examinations", href: "/dashboard/exams", emoji: "📝", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"] },
       { label: "My Exams", href: "/dashboard/exams", emoji: "📝", roles: ["STUDENT"] },
-      { label: "Timetable", href: "/dashboard/timetable", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
+      { label: "Timetable", href: "/dashboard/timetable", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
       { label: "Lesson Plans", href: "/dashboard/lesson-plans", emoji: "📋", roles: ["TEACHER", "PRINCIPAL", "VICE_PRINCIPAL"] },
     ],
   },
   {
     title: "Results Engine",
     items: [
-      { label: "Results", href: "/dashboard/results", emoji: "📊", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER"] },
+      { label: "Results", href: "/dashboard/results", emoji: "📊", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"] },
       { label: "My Results", href: "/dashboard/results", emoji: "📊", roles: ["STUDENT", "PARENT"] },
-      { label: "Report Cards", href: "/dashboard/report-cards", emoji: "📄", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
+      { label: "Report Cards", href: "/dashboard/report-cards", emoji: "📄", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
     ],
   },
   {
@@ -76,14 +77,14 @@ const navSections: { title: string; items: NavItem[] }[] = [
   {
     title: "Hostel",
     items: [
-      { label: "Hostel", href: "/dashboard/hostel", emoji: "🏠", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "PORTER"] },
+      { label: "Hostel", href: "/dashboard/hostel", emoji: "🏠", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "PORTER"] },
     ],
   },
   {
     title: "Operations",
     items: [
-      { label: "Transport", href: "/dashboard/transport", emoji: "🚌", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL"] },
-      { label: "Clinic", href: "/dashboard/clinic", emoji: "🏥", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER"] },
+      { label: "Transport", href: "/dashboard/transport", emoji: "🚌", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Clinic", href: "/dashboard/clinic", emoji: "🏥", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"] },
       { label: "Inventory", href: "/dashboard/inventory", emoji: "📦", roles: ["OWNER", "ADMINISTRATOR"] },
     ],
   },
@@ -98,7 +99,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
     title: "Institution",
     items: [
       { label: "Announcements", href: "/dashboard/announcements", emoji: "📢", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI"] },
-      { label: "Calendar", href: "/dashboard/calendar", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
+      { label: "Calendar", href: "/dashboard/calendar", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
       { label: "Notifications", href: "/dashboard/notifications", emoji: "🔔", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI", "ACCOUNTANT", "AUDITOR", "LIBRARIAN", "PORTER"] },
       { label: "Settings", href: "/dashboard/settings", emoji: "⚙️", roles: ["OWNER", "ADMINISTRATOR"] },
     ],

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"]);
+    if (authResult.error) return authResult.error;
 
     const incomes = await prisma.income.findMany({
       include: { category: true },
@@ -25,8 +25,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"]);
+    if (authResult.error) return authResult.error;
+    const { session } = authResult;
 
     const body = await request.json();
     const { title, amount, categoryId, date, reference, notes } = body;
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
         date: date ? new Date(date) : new Date(),
         reference: reference || undefined,
         notes: notes || undefined,
-        recordedBy: session.user.name || undefined,
+        recordedBy: session?.user?.name || undefined,
       },
     });
 
