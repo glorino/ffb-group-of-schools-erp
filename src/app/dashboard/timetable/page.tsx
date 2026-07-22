@@ -400,9 +400,11 @@ export default function TimetablePage() {
           const child = d.children?.[0];
           if (child?.classId) {
             setSelectedClass(child.classId);
+          } else {
+            setLoading(false);
           }
         })
-        .catch(() => {});
+        .catch(() => { setLoading(false); });
     } else {
       Promise.all([
         fetch("/api/classes").then(r => r.json()),

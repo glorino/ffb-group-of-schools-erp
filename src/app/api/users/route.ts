@@ -92,7 +92,7 @@ export async function PUT(request: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { id, name, email, phone, password } = body;
+    const { id, name, email, phone, password, image } = body;
 
     if (!id) return NextResponse.json({ error: "Missing user id" }, { status: 400 });
 
@@ -101,6 +101,7 @@ export async function PUT(request: NextRequest) {
     if (email) updateData.email = email;
     if (phone) updateData.phone = phone;
     if (password) updateData.password = await bcrypt.hash(password, 10);
+    if (image !== undefined) updateData.image = image;
 
     const user = await prisma.user.update({ where: { id }, data: updateData });
 

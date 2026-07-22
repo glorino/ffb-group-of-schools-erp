@@ -584,7 +584,44 @@ export async function POST() {
       } catch {}
     }
 
-    // 20. Attendance records for today
+    // 20. Timetable entries for all classes
+    const days = [1, 2, 3, 4, 5];
+    const times = [
+      { start: "8:00 AM", end: "9:00 AM" },
+      { start: "9:00 AM", end: "10:00 AM" },
+      { start: "10:00 AM", end: "11:00 AM" },
+      { start: "11:00 AM", end: "12:00 PM" },
+      { start: "1:00 PM", end: "2:00 PM" },
+      { start: "2:00 PM", end: "3:00 PM" },
+      { start: "3:00 PM", end: "4:00 PM" },
+    ];
+    const subjectNames = Object.keys(subjects);
+    let ttIdx = 0;
+    for (const className of Object.keys(classes)) {
+      for (const day of days) {
+        for (let ti = 0; ti < Math.min(times.length, 5); ti++) {
+          const tId = teacherIds[ttIdx % teacherIds.length];
+          const subName = subjectNames[ttIdx % subjectNames.length];
+          const subId = subjects[subName];
+          try {
+            await prisma.timetableEntry.create({
+              data: {
+                classId: classes[className],
+                teacherId: tId,
+                dayOfWeek: day,
+                startTime: times[ti].start,
+                endTime: times[ti].end,
+                room: `Room ${100 + ttIdx % 10}`,
+                type: "lesson",
+              },
+            });
+          } catch {}
+          ttIdx++;
+        }
+      }
+    }
+
+    // 21. Attendance records for today
     const todayStr = today.toISOString().split("T")[0];
     for (let i = 0; i < Math.min(5, studentIds.length); i++) {
       try {

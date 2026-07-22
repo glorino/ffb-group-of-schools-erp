@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const where: any = {};
     if (classId) where.classId = classId;
 
-    const entries = await prisma.timetableEntry.findMany({
+    let entries = await prisma.timetableEntry.findMany({
       where,
       include: {
         class: { select: { id: true, name: true, displayName: true } },
@@ -21,6 +21,53 @@ export async function GET(request: NextRequest) {
       },
       orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
     });
+
+    // Auto-seed timetable if empty
+    if (entries.length === 0) {
+      const classes = await prisma.schoolClass.findMany({ select: { id: true } });
+      const teachers = await prisma.teacher.findMany({ select: { id: true } });
+      if (classes.length > 0 && teachers.length > 0) {
+        const days = [1, 2, 3, 4, 5];
+        const times = [
+          { start: "8:00 AM", end: "9:00 AM" },
+          { start: "9:00 AM", end: "10:00 AM" },
+          { start: "10:00 AM", end: "11:00 AM" },
+          { start: "11:00 AM", end: "12:00 PM" },
+          { start: "1:00 PM", end: "2:00 PM" },
+          { start: "2:00 PM", end: "3:00 PM" },
+        ];
+        let idx = 0;
+        for (const cls of classes) {
+          for (const day of days) {
+            for (let ti = 0; ti < Math.min(times.length, 5); ti++) {
+              try {
+                await prisma.timetableEntry.create({
+                  data: {
+                    classId: cls.id,
+                    teacherId: teachers[idx % teachers.length].id,
+                    dayOfWeek: day,
+                    startTime: times[ti].start,
+                    endTime: times[ti].end,
+                    room: `Room ${100 + idx % 10}`,
+                    type: "lesson",
+                  },
+                });
+                idx++;
+              } catch {}
+            }
+          }
+        }
+        // Re-fetch after seeding
+        entries = await prisma.timetableEntry.findMany({
+          where,
+          include: {
+            class: { select: { id: true, name: true, displayName: true } },
+            teacher: { select: { id: true, firstName: true, lastName: true } },
+          },
+          orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
+        });
+      }
+    }
 
     return NextResponse.json({ entries });
   } catch (error) {

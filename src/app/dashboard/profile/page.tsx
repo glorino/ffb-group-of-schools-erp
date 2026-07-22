@@ -245,8 +245,7 @@ export default function ProfilePage() {
               </label>
             </div>
             <h3 className="text-white text-xl font-bold">{userName}</h3>
-            <p className="text-white/60 text-[13px]">Administrator</p>
-            <p className="text-white/40 text-[12px] mt-1">{userId}</p>
+            <p className="text-white/60 text-[13px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</p>
           </div>
 
           <div className="mt-6 pt-6 border-t border-white/[0.08] space-y-3">
@@ -268,7 +267,7 @@ export default function ProfilePage() {
             </div>
             <div className="flex items-center gap-3">
               <Briefcase className="w-4 h-4 text-white/40" />
-              <span className="text-white/70 text-[13px]">Administration</span>
+              <span className="text-white/70 text-[13px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</span>
             </div>
           </div>
         </motion.div>
