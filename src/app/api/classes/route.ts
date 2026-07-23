@@ -11,6 +11,14 @@ const CreateClassSchema = z.object({
   capacity: z.number().int().positive().default(40),
 });
 
+const UpdateClassSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1).optional(),
+  displayName: z.string().optional(),
+  level: z.number().int().optional(),
+  capacity: z.number().int().positive().optional(),
+});
+
 export async function GET(request: NextRequest) {
   try {
     const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"]);
@@ -84,5 +92,33 @@ export async function POST(request: NextRequest) {
       { error: "Failed to create class" },
       { status: 500 }
     );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
+    if (authResult.error) return authResult.error;
+
+    const body = await request.json();
+    const validated = UpdateClassSchema.parse(body);
+
+    const { id, ...updateData } = validated;
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+    }
+
+    const cls = await prisma.schoolClass.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return NextResponse.json(cls);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: "Validation failed", details: error.message }, { status: 400 });
+    }
+    console.error("PUT /api/classes error:", error);
+    return NextResponse.json({ error: "Failed to update class" }, { status: 500 });
   }
 }

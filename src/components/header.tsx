@@ -87,8 +87,8 @@ export function Header() {
   return (
     <>
       <header className="sticky top-0 z-30 h-12 bg-[var(--sidebar)]/80 backdrop-blur-2xl border-b border-white/[0.06]">
-        <div className="h-full px-4 flex items-center gap-3">
-          <div className="flex-1">
+        <div className="h-full pl-14 pr-4 flex items-center gap-3 lg:pl-4">
+          <div className="flex-1 min-w-0">
             <button
               onClick={() => setSearchOpen(true)}
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white/25 text-[12px] w-full max-w-xs hover:bg-white/[0.07] hover:border-white/[0.1] transition-all"

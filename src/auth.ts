@@ -66,12 +66,13 @@ export const {
             email: user.email,
             name: user.name,
             image: user.image,
+            mustChangePassword: (user as any).mustChangePassword || false,
             roles: user.roles.map((r) => ({
               name: r.role.name,
               level: r.role.level,
             })),
-            schoolId: user.schoolId,
-            schoolName: user.school?.name,
+            schoolId: user.schoolId || undefined,
+            schoolName: user.school?.name || undefined,
           };
         } catch (error) {
           console.error("[AUTH] Database error:", error);
@@ -81,12 +82,19 @@ export const {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = (user as any).id;
         token.roles = (user as any).roles;
         token.schoolId = (user as any).schoolId;
         token.schoolName = (user as any).schoolName;
+        token.image = (user as any).image;
+        token.mustChangePassword = (user as any).mustChangePassword;
+      }
+      if (trigger === "update" && session) {
+        if (session.user?.image) token.image = session.user.image;
+        if (session.user?.name) token.name = session.user.name;
+        if (session.user?.email) token.email = session.user.email;
       }
       return token;
     },
@@ -96,6 +104,8 @@ export const {
         (session.user as any).roles = token.roles;
         (session.user as any).schoolId = token.schoolId;
         (session.user as any).schoolName = token.schoolName;
+        if (token.image) session.user.image = token.image as string;
+        (session.user as any).mustChangePassword = token.mustChangePassword;
       }
       return session;
     },

@@ -91,9 +91,20 @@ export async function PUT(request: NextRequest) {
   try {
     const authResult = await requireAuth();
     if (authResult.error) return authResult.error;
+    const { session } = authResult;
 
     const body = await request.json();
-    const { id, name, email, phone, password, image } = body;
+    const { id, name, email, phone, password, image, changePassword, newPassword } = body;
+
+    // Force password change flow (no id required — uses session user)
+    if (changePassword && newPassword && session?.user?.id) {
+      const hashed = await bcrypt.hash(newPassword, 10);
+      const user = await prisma.user.update({
+        where: { id: session.user.id },
+        data: { password: hashed, mustChangePassword: false },
+      });
+      return NextResponse.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
+    }
 
     if (!id) return NextResponse.json({ error: "Missing user id" }, { status: 400 });
 

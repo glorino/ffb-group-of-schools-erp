@@ -125,9 +125,11 @@ export function Sidebar() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       <div className="px-4 pt-5 pb-4 text-center border-b border-white/[0.08]">
-        <img src="/logo.svg" alt="FFB Logo" className="w-14 h-14 mx-auto mb-2 rounded-xl" />
-        <h2 className="text-white font-bold text-[15px] leading-tight">FFB Group of Schools</h2>
-        <p className="text-white/40 text-[11px] mt-0.5">{roleLabel}</p>
+        <div className="flex justify-center mb-2">
+          <img src="/logo.svg" alt="FFB Logo" className="w-14 h-14 rounded-xl" />
+        </div>
+        <h2 className="text-white font-bold text-[15px] leading-tight text-center">FFB Group of Schools</h2>
+        <p className="text-white/40 text-[11px] mt-0.5 text-center">{roleLabel}</p>
       </div>
 
       <nav className="flex-1 overflow-y-auto py-3 px-3" style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,0.1) transparent" }}>
@@ -187,21 +189,21 @@ export function Sidebar() {
     <>
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-3 left-3 z-50 w-9 h-9 rounded-lg bg-white/[0.08] backdrop-blur-xl flex items-center justify-center text-white border border-white/10"
+        className="lg:hidden fixed top-2.5 left-3 z-[60] w-10 h-10 rounded-xl bg-white/[0.08] backdrop-blur-xl flex items-center justify-center text-white border border-white/10 shadow-lg"
       >
-        <Menu className="w-4 h-4" />
+        <Menu className="w-5 h-5" />
       </button>
 
       <AnimatePresence>
         {mobileOpen && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+              className="lg:hidden fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
             <motion.aside initial={{ x: -260 }} animate={{ x: 0 }} exit={{ x: -260 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="lg:hidden fixed left-0 top-0 bottom-0 w-[240px] z-50 bg-[var(--sidebar)]">
+              className="lg:hidden fixed left-0 top-0 bottom-0 w-[240px] z-[80] bg-[var(--sidebar)] shadow-2xl">
               <button onClick={() => setMobileOpen(false)} className="absolute top-3 right-3 text-white/40 hover:text-white z-10">
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
               <SidebarContent />
             </motion.aside>

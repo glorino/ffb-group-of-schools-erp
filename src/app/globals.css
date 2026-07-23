@@ -798,3 +798,20 @@ select optgroup {
 
 .input-glass::placeholder { color: rgba(255,255,255,0.4); }
 .input-glass:focus { border-color: #28ff9c; background: rgba(255,255,255,0.15); box-shadow: 0 0 0 3px rgba(40,255,156,0.1); }
+
+/* Dashboard responsive */
+@media (max-width: 1024px) {
+  .dashboard-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  .dashboard-main main {
+    padding: 20px 16px 32px 16px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-main main {
+    padding: 16px 12px 24px 12px !important;
+  }
+}

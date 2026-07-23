@@ -65,6 +65,9 @@ interface Student {
   attendanceRecords: { date: string; status: string }[];
   grades: { subject: { name: string }; score: number; grade: string; type: string }[];
   invoices: { id: string; amount: number; status: string; schoolFee: { name: string; amount: number }; payments: { amount: number }[] }[];
+  timeline?: { id: string; action: string; details?: string; createdAt: string }[];
+  disciplineRecords?: { id: string; type: string; title: string; details?: string; date: string; action?: string; reportedBy?: string }[];
+  hostels?: { id: string; hostel: { name: string }; room: { number: string }; bedNumber?: number; status: string; startDate: string; endDate?: string }[];
   guardianName?: string;
   guardianPhone?: string;
   guardianEmail?: string;
@@ -252,6 +255,7 @@ export default function StudentDetailPage() {
 
           {/* Tab Content */}
           {activeTab === "overview" && (
+            <div className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Personal Info */}
               <div className="lg:col-span-2 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6">
@@ -350,6 +354,110 @@ export default function StudentDetailPage() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6">
+              <h3 className="text-white/80 font-semibold text-[15px] mb-5">Recent Activity</h3>
+              {!student.timeline || student.timeline.length === 0 ? (
+                <div className="text-center py-8">
+                  <Clock className="w-8 h-8 text-white/10 mx-auto mb-2" />
+                  <p className="text-white/30 text-[13px]">No recent activity available</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {student.timeline.slice(0, 5).map((entry) => (
+                    <div key={entry.id} className="flex items-start gap-3 px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                      <Clock className="w-4 h-4 text-white/20 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white/70 text-[13px] font-medium">{entry.action}</p>
+                        {entry.details && <p className="text-white/40 text-[12px] mt-0.5">{entry.details}</p>}
+                      </div>
+                      <span className="text-white/25 text-[11px] flex-shrink-0">{new Date(entry.createdAt).toLocaleDateString("en-NG")}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Discipline Records */}
+              <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6">
+                <h3 className="text-white/80 font-semibold text-[15px] mb-5">Discipline Records</h3>
+                {!student.disciplineRecords || student.disciplineRecords.length === 0 ? (
+                  <div className="text-center py-8">
+                    <CheckCircle2 className="w-8 h-8 text-white/10 mx-auto mb-2" />
+                    <p className="text-white/30 text-[13px]">No discipline records available</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {student.disciplineRecords.map((record) => (
+                      <div key={record.id} className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-white/70 text-[13px] font-medium">{record.title}</p>
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
+                            record.type === "major" ? "bg-red-500/15 text-red-400" :
+                            record.type === "minor" ? "bg-amber-500/15 text-amber-400" :
+                            "bg-blue-500/15 text-blue-400"
+                          }`}>{record.type}</span>
+                        </div>
+                        {record.details && <p className="text-white/40 text-[12px] mt-0.5">{record.details}</p>}
+                        <div className="flex items-center gap-3 mt-2 text-[11px] text-white/25">
+                          <span>{new Date(record.date).toLocaleDateString("en-NG")}</span>
+                          {record.action && <span>Action: {record.action}</span>}
+                          {record.reportedBy && <span>Reported by: {record.reportedBy}</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Hostel Information */}
+              <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6">
+                <h3 className="text-white/80 font-semibold text-[15px] mb-5">Hostel Information</h3>
+                {!student.hostels || student.hostels.length === 0 ? (
+                  <div className="text-center py-8">
+                    <School className="w-8 h-8 text-white/10 mx-auto mb-2" />
+                    <p className="text-white/30 text-[13px]">No hostel allocation available</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {student.hostels.filter(h => h.status === "active").map((allocation) => (
+                      <div key={allocation.id} className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Hostel</p>
+                            <p className="text-white/70 text-[13px] mt-0.5">{allocation.hostel?.name || "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Room</p>
+                            <p className="text-white/70 text-[13px] mt-0.5">{allocation.room?.number || "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Bed Number</p>
+                            <p className="text-white/70 text-[13px] mt-0.5">{allocation.bedNumber || "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Since</p>
+                            <p className="text-white/70 text-[13px] mt-0.5">{new Date(allocation.startDate).toLocaleDateString("en-NG")}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Transport Information */}
+            <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6">
+              <h3 className="text-white/80 font-semibold text-[15px] mb-5">Transport Information</h3>
+              <div className="text-center py-8">
+                <MapPin className="w-8 h-8 text-white/10 mx-auto mb-2" />
+                <p className="text-white/30 text-[13px]">No transport information available</p>
+              </div>
+            </div>
             </div>
           )}
 

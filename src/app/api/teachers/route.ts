@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
+import { getDefaultSchoolId } from "@/lib/school";
 import { TeacherCreateSchema } from "@/lib/validations";
+import bcrypt from "bcryptjs";
 
 export async function GET(request: NextRequest) {
   try {
@@ -70,6 +72,8 @@ export async function POST(request: NextRequest) {
 
     const employeeId = `TCH/${new Date().getFullYear()}/${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
 
+    const schoolId = validated.schoolId || await getDefaultSchoolId();
+
     const teacher = await prisma.teacher.create({
       data: {
         employeeId,
@@ -82,7 +86,7 @@ export async function POST(request: NextRequest) {
         gender: validated.gender,
         qualification: validated.qualification,
         specialization: validated.specialization,
-        schoolId: validated.schoolId,
+        schoolId,
         teacherSubjects: validated.subjectIds?.length
           ? {
               create: validated.subjectIds.map((subjectId) => ({
@@ -95,6 +99,35 @@ export async function POST(request: NextRequest) {
         teacherSubjects: { include: { subject: true } },
       },
     });
+
+    // Create user account with default password demo123
+    if (validated.email) {
+      const hashedPassword = await bcrypt.hash("demo123", 10);
+      const user = await prisma.user.upsert({
+        where: { email: validated.email },
+        update: {},
+        create: {
+          email: validated.email,
+          name: `${validated.firstName} ${validated.lastName}`,
+          password: hashedPassword,
+          phone: validated.phone,
+          schoolId,
+          mustChangePassword: true,
+        },
+      });
+      await prisma.teacher.update({ where: { id: teacher.id }, data: { userId: user.id } });
+      const teacherRole = await prisma.role.findFirst({ where: { name: "TEACHER" } });
+      if (teacherRole) {
+        const existingUserRole = await prisma.userRole.findFirst({
+          where: { userId: user.id, roleId: teacherRole.id },
+        });
+        if (!existingUserRole) {
+          await prisma.userRole.create({
+            data: { userId: user.id, roleId: teacherRole.id },
+          });
+        }
+      }
+    }
 
     return NextResponse.json(teacher, { status: 201 });
   } catch (error) {

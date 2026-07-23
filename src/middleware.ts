@@ -17,6 +17,7 @@ const publicPaths = [
   "/api/seed-auto",
   "/api/admissions/track",
   "/api/payments/callback",
+  "/api/auth/error",
 ];
 
 export function middleware(request: NextRequest) {

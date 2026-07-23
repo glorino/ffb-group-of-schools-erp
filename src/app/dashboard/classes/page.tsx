@@ -25,8 +25,9 @@ interface ClassItem {
   section: string | null;
   arm: string | null;
   capacity: number;
+  level: number;
   _count: { students: number };
-  classTeacher: { firstName: string; lastName: string } | null;
+  classTeacher: { name: string } | null;
 }
 
 interface ClassesResponse {
@@ -226,7 +227,7 @@ export default function ClassesPage() {
                         <td className="py-3 text-white font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</td>
                         <td className="py-3 text-white/70">{cls.section || "—"}</td>
                         <td className="py-3 text-white/70 text-sm">
-                          {cls.classTeacher ? `${cls.classTeacher.firstName} ${cls.classTeacher.lastName}` : "Unassigned"}
+                          {cls.classTeacher ? cls.classTeacher.name : "Unassigned"}
                         </td>
                         <td className="py-3 text-white/70">{cls._count.students}/{cls.capacity}</td>
                         <td className="py-3">
@@ -269,7 +270,7 @@ export default function ClassesPage() {
                                       setDropdownOpen(null);
                                       setEditClass(cls);
                                       const levelNames: Record<number, string> = { 1: "nursery", 2: "primary", 3: "junior", 4: "secondary" };
-                                      setEditForm({ name: cls.name, displayName: cls.displayName, level: levelNames[cls.capacity > 0 ? 2 : 2] || "primary", capacity: String(cls.capacity) });
+                                      setEditForm({ name: cls.name, displayName: cls.displayName, level: levelNames[cls.level] || "primary", capacity: String(cls.capacity) });
                                     }}
                                     className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-white/70 hover:bg-white/[0.06] transition"
                                   >
@@ -445,7 +446,7 @@ export default function ClassesPage() {
                   </div>
                   <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                     <p className="text-white/40 text-[11px] mb-1">Class Teacher</p>
-                    <p className="text-white font-semibold text-[15px]">{viewClass.classTeacher ? `${viewClass.classTeacher.firstName} ${viewClass.classTeacher.lastName}` : "Unassigned"}</p>
+                    <p className="text-white font-semibold text-[15px]">{viewClass.classTeacher ? viewClass.classTeacher.name : "Unassigned"}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
                     <p className="text-white/40 text-[11px] mb-1">Students</p>
@@ -474,8 +475,33 @@ export default function ClassesPage() {
               </div>
               <form onSubmit={async (e) => {
                 e.preventDefault();
-                toast.success("Class updated successfully");
-                setEditClass(null);
+                try {
+                  const levelMap: Record<string, number> = { nursery: 1, primary: 2, junior: 3, secondary: 4 };
+                  const res = await fetch("/api/classes", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      id: editClass.id,
+                      name: editForm.name,
+                      displayName: editForm.displayName || editForm.name,
+                      level: levelMap[editForm.level] || 2,
+                      capacity: parseInt(editForm.capacity) || 40,
+                    }),
+                  });
+                  if (!res.ok) throw new Error("Failed");
+                  toast.success("Class updated successfully");
+                  setEditClass(null);
+                  setLoading(true);
+                  const params = new URLSearchParams();
+                  if (search) params.set("search", search);
+                  fetch(`/api/classes?${params}`)
+                    .then((res) => res.json())
+                    .then((d) => setData(d))
+                    .catch(console.error)
+                    .finally(() => setLoading(false));
+                } catch {
+                  toast.error("Failed to update class");
+                }
               }} className="space-y-4">
                 <div>
                   <label className="block text-white/60 text-[13px] mb-1.5">Name *</label>

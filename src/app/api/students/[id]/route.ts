@@ -46,6 +46,9 @@ export async function GET(
         },
         achievements: true,
         disciplineRecords: true,
+        hostels: {
+          include: { hostel: true, room: true },
+        },
         clinicVisits: {
           orderBy: { date: "desc" },
           take: 10,

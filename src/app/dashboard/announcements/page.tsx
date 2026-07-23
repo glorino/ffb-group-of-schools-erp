@@ -49,6 +49,10 @@ export default function AnnouncementsPage() {
   const [editAnnouncement, setEditAnnouncement] = useState<Announcement | null>(null);
   const [editForm, setEditForm] = useState({ title: "", content: "", type: "general", priority: "normal" });
   const [classes, setClasses] = useState<any[]>([]);
+  const [targetClasses, setTargetClasses] = useState<{id: string; name: string; displayName: string}[]>([]);
+  const [targetStudents, setTargetStudents] = useState<{id: string; firstName: string; lastName: string}[]>([]);
+  const [targetTeachers, setTargetTeachers] = useState<{id: string; firstName: string; lastName: string}[]>([]);
+  const [targetParents, setTargetParents] = useState<{id: string; name: string; email: string}[]>([]);
   const [showFilter, setShowFilter] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
   const [form, setForm] = useState({
@@ -60,6 +64,7 @@ export default function AnnouncementsPage() {
     audienceClassId: "",
     audienceStudentId: "",
     audienceParentId: "",
+    audienceTeacherId: "",
   });
 
   useEffect(() => {
@@ -69,6 +74,18 @@ export default function AnnouncementsPage() {
   useEffect(() => {
     fetch("/api/classes").then(r => r.json()).then(d => setClasses(d.classes || [])).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (form.audience === "class") {
+      fetch("/api/classes").then(r => r.json()).then(d => setTargetClasses(d.classes || d || [])).catch(() => {});
+    } else if (form.audience === "student") {
+      fetch("/api/students?limit=200").then(r => r.json()).then(d => setTargetStudents(d.students || [])).catch(() => {});
+    } else if (form.audience === "teacher") {
+      fetch("/api/teachers?limit=200").then(r => r.json()).then(d => setTargetTeachers(d.teachers || [])).catch(() => {});
+    } else if (form.audience === "parent") {
+      fetch("/api/children?allParents=true").then(r => r.json()).then(d => setTargetParents(d.parents || [])).catch(() => {});
+    }
+  }, [form.audience]);
 
   const fetchAnnouncements = async () => {
     setLoading(true);
@@ -103,7 +120,7 @@ export default function AnnouncementsPage() {
       if (!res.ok) throw new Error(data.error || "Failed to create announcement");
       toast.success("Announcement created successfully");
       setShowModal(false);
-      setForm({ title: "", content: "", type: "general", priority: "normal", audience: "all", audienceClassId: "", audienceStudentId: "", audienceParentId: "" });
+      setForm({ title: "", content: "", type: "general", priority: "normal", audience: "all", audienceClassId: "", audienceStudentId: "", audienceParentId: "", audienceTeacherId: "" });
       fetchAnnouncements();
     } catch (err: any) {
       toast.error(err.message || "Failed to create announcement");
@@ -402,6 +419,7 @@ export default function AnnouncementsPage() {
                     style={{ colorScheme: "dark" }}>
                     <option style={{ background: "#0f1b33", color: "#fff" }} value="all">Everyone</option>
                     <option style={{ background: "#0f1b33", color: "#fff" }} value="teachers">All Teachers</option>
+                    <option style={{ background: "#0f1b33", color: "#fff" }} value="teacher">Specific Teacher</option>
                     <option style={{ background: "#0f1b33", color: "#fff" }} value="parents">All Parents</option>
                     <option style={{ background: "#0f1b33", color: "#fff" }} value="class">Specific Class</option>
                     <option style={{ background: "#0f1b33", color: "#fff" }} value="student">Specific Student</option>
@@ -416,6 +434,39 @@ export default function AnnouncementsPage() {
                       style={{ colorScheme: "dark" }}>
                       <option style={{ background: "#0f1b33", color: "#fff" }} value="">Select class...</option>
                       {classes.map((c: any) => <option key={c.id} style={{ background: "#0f1b33", color: "#fff" }} value={c.id}>{c.displayName || c.name}</option>)}
+                    </select>
+                  </div>
+                )}
+                {form.audience === "student" && (
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Select Student</label>
+                    <select value={form.audienceStudentId} onChange={(e) => setForm({ ...form, audienceStudentId: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ colorScheme: "dark" }}>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="">Select student...</option>
+                      {targetStudents.map((s) => <option key={s.id} style={{ background: "#0f1b33", color: "#fff" }} value={s.id}>{s.firstName} {s.lastName}</option>)}
+                    </select>
+                  </div>
+                )}
+                {form.audience === "teacher" && (
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Select Teacher</label>
+                    <select value={form.audienceTeacherId} onChange={(e) => setForm({ ...form, audienceTeacherId: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ colorScheme: "dark" }}>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="">Select teacher...</option>
+                      {targetTeachers.map((t) => <option key={t.id} style={{ background: "#0f1b33", color: "#fff" }} value={t.id}>{t.firstName} {t.lastName}</option>)}
+                    </select>
+                  </div>
+                )}
+                {form.audience === "parent" && (
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Select Parent</label>
+                    <select value={form.audienceParentId} onChange={(e) => setForm({ ...form, audienceParentId: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ colorScheme: "dark" }}>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="">Select parent...</option>
+                      {targetParents.map((p) => <option key={p.id} style={{ background: "#0f1b33", color: "#fff" }} value={p.id}>{p.name || p.email}</option>)}
                     </select>
                   </div>
                 )}

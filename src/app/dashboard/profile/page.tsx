@@ -48,10 +48,10 @@ export default function ProfilePage() {
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [twoFAEnabled, setTwoFAEnabled] = useState(false);
 
-  const userName = (session?.user as Record<string, unknown>)?.name as string || "User";
-  const userEmail = (session?.user as Record<string, unknown>)?.email as string || "";
-  const userImage = (session?.user as Record<string, unknown>)?.image as string || "";
-  const userId = (session?.user as Record<string, unknown>)?.id as string || "FFB-001";
+  const userName = (session?.user as any)?.name as string || "User";
+  const userEmail = (session?.user as any)?.email as string || "";
+  const userImage = (session?.user as any)?.image as string || "";
+  const userId = (session?.user as any)?.id as string || "FFB-001";
 
   const initials = userName
     .split(" ")
@@ -230,14 +230,15 @@ export default function ProfilePage() {
                   const reader = new FileReader();
                   reader.onload = async () => {
                     try {
+                      const base64 = reader.result as string;
                       const res = await fetch("/api/users", {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ id: userId, image: reader.result }),
+                        body: JSON.stringify({ id: userId, image: base64 }),
                       });
                       if (!res.ok) throw new Error("Failed");
+                      await update({ user: { ...session?.user, image: base64 } } as any);
                       toast.success("Profile photo updated");
-                      window.location.reload();
                     } catch { toast.error("Failed to upload photo"); }
                   };
                   reader.readAsDataURL(file);
