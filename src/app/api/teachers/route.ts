@@ -100,9 +100,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Create user account with default password demo123
+    // Create user account with default password demo@123
     if (validated.email) {
-      const hashedPassword = await bcrypt.hash("demo123", 10);
+      const hashedPassword = await bcrypt.hash("demo@123", 10);
       const user = await prisma.user.upsert({
         where: { email: validated.email },
         update: {},

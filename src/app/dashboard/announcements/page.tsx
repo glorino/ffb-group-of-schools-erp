@@ -114,7 +114,14 @@ export default function AnnouncementsPage() {
       const res = await fetch("/api/announcements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, published: true }),
+        body: JSON.stringify({
+          ...form,
+          published: true,
+          targetUserId: form.audience === "student" ? form.audienceStudentId
+            : form.audience === "teacher" ? form.audienceTeacherId
+            : form.audience === "parent" ? form.audienceParentId
+            : undefined,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create announcement");

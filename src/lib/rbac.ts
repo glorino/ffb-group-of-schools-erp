@@ -2,6 +2,7 @@ const routeRoles: Record<string, string[]> = {
   "/dashboard": [],
   "/dashboard/analytics": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "ACCOUNTANT", "AUDITOR"],
   "/dashboard/students": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
+  "/dashboard/parents": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
   "/dashboard/teachers": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
   "/dashboard/classes": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"],
   "/dashboard/attendance": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "PARENT", "STUDENT"],

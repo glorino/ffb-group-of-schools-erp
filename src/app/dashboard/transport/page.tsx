@@ -297,11 +297,17 @@ export default function TransportPage() {
 
           <div className="card">
             <h3 className="text-white font-semibold text-lg mb-4">GPS Live Map</h3>
-            <div className="aspect-video rounded-xl bg-white/[0.04] border border-white/[0.08] flex flex-col items-center justify-center">
-              <MapPin className="w-12 h-12 text-white/20 mb-2" />
-              <p className="text-white/40 text-[13px]">Live GPS tracking</p>
-              <p className="text-white/30 text-[12px]">{stats.active} vehicles online</p>
+            <div className="aspect-video rounded-xl overflow-hidden border border-white/[0.08]">
+              <iframe
+                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBCJsRJI5wjJ9l64a1RQNPsUG_WpXtYQQo&q=Lagos,Nigeria&zoom=12"
+                width="100%"
+                height="100%"
+                style={{ border: 0, minHeight: "200px" }}
+                allowFullScreen
+                loading="lazy"
+              />
             </div>
+            <p className="text-white/40 text-[12px] mt-2">{stats.active} vehicles online</p>
           </div>
         </motion.div>
       </div>
@@ -415,15 +421,15 @@ export default function TransportPage() {
               <h2 className="text-white text-lg font-semibold">GPS Tracking</h2>
               <button onClick={() => setShowGPS(false)} className="text-white/40 hover:text-white"><X className="w-5 h-5" /></button>
             </div>
-            <div className="aspect-video rounded-xl bg-white/[0.04] border border-white/[0.08] relative overflow-hidden mb-4">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <MapPin className="w-16 h-16 text-[var(--primary)]/20" />
-              </div>
-              {vehicles.filter(v => v.status === "active").map((v, i) => (
-                <div key={v.id} className="absolute" style={{ left: `${15 + (i * 18) % 70}%`, top: `${20 + (i * 23) % 55}%` }}>
-                  <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shadow-lg shadow-emerald-500/50" />
-                </div>
-              ))}
+            <div className="aspect-video rounded-xl overflow-hidden border border-white/[0.08] mb-4">
+              <iframe
+                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBCJsRJI5wjJ9l64a1RQNPsUG_WpXtYQQo&q=Lagos,Nigeria&zoom=11"
+                width="100%"
+                height="100%"
+                style={{ border: 0, minHeight: "250px" }}
+                allowFullScreen
+                loading="lazy"
+              />
             </div>
             <div className="space-y-2">
               {vehicles.filter(v => v.status === "active").map((v) => (

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { title, content, type, priority, published, audience, audienceClassId, audienceStudentId, audienceParentId, audienceTeacherId } = body;
+    const { title, content, type, priority, published, audience, audienceClassId, audienceStudentId, audienceParentId, audienceTeacherId, targetUserId } = body;
 
     if (!title || !content) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
 
@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
         priority: priority || "normal",
         published: published !== false,
         authorId: session.user.id,
+        targetUserId: targetUserId || undefined,
         target: audience && audience !== "all" ? JSON.stringify({ audience, classId: audienceClassId, studentId: audienceStudentId, parentId: audienceParentId, teacherId: audienceTeacherId }) : undefined,
       },
     });

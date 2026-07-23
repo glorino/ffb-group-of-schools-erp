@@ -51,7 +51,7 @@ export async function POST() {
       { email: "vp@ffb.edu.ng", name: "Mr. Chinedu Okafor", password: await pw("vp123"), phone: "+2348012345680", role: "VICE_PRINCIPAL" },
       { email: "accountant@ffb.edu.ng", name: "Mrs. Funke Adeyemi", password: await pw("accountant123"), phone: "+2348012345681", role: "ACCOUNTANT" },
       { email: "auditor@ffb.edu.ng", name: "Mr. Tunde Williams", password: await pw("auditor123"), phone: "+2348012345682", role: "AUDITOR" },
-      { email: "teacher@ffb.edu.ng", name: "Fatima Bello", password: await pw("teacher123"), phone: "+2348023456789", role: "TEACHER" },
+      { email: "teacher@ffb.edu.ng", name: "Fatima Bello", password: await pw("demo@123"), phone: "+2348023456789", role: "TEACHER" },
       { email: "librarian@ffb.edu.ng", name: "Grace Nwosu", password: await pw("librarian123"), phone: "+2348012345683", role: "LIBRARIAN" },
       { email: "porter@ffb.edu.ng", name: "Ibrahim Musa", password: await pw("porter123"), phone: "+2348012345684", role: "PORTER" },
       { email: "parent@ffb.edu.ng", name: "Mrs. Ngozi Johnson", password: await pw("parent123"), phone: "+2348012345685", role: "PARENT" },
@@ -472,7 +472,7 @@ export async function POST() {
       const tUser = await prisma.user.upsert({
         where: { email: t.email },
         update: {},
-        create: { email: t.email, name: t.name, password: await pw("teacher123"), phone: t.phone, schoolId: school.id },
+        create: { email: t.email, name: t.name, password: await pw("demo@123"), phone: t.phone, schoolId: school.id },
       });
       await prisma.userRole.upsert({
         where: { userId_roleId_schoolId: { userId: tUser.id, roleId: roles.TEACHER, schoolId: school.id } },

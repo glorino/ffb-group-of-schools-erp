@@ -35,6 +35,13 @@ interface ClassesResponse {
   total: number;
 }
 
+const classOrder = ["Creche", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Primary 3", "Primary 4", "Primary 5", "Primary 6", "JSS 1", "JSS 2", "JSS 3", "SSS 1", "SSS 2", "SSS 3"];
+
+function getClassSortIndex(name: string): number {
+  const idx = classOrder.indexOf(name);
+  return idx === -1 ? classOrder.length : idx;
+}
+
 export default function ClassesPage() {
   const [data, setData] = useState<ClassesResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -76,8 +83,12 @@ export default function ClassesPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const totalStudents = data?.classes?.reduce((sum, c) => sum + c._count.students, 0) ?? 0;
-  const avgClassSize = data?.classes?.length ? Math.round(totalStudents / data.classes.length) : 0;
+  const sortedClasses = data?.classes
+    ? [...data.classes].sort((a, b) => getClassSortIndex(a.name) - getClassSortIndex(b.name))
+    : [];
+
+  const totalStudents = sortedClasses.reduce((sum, c) => sum + c._count.students, 0);
+  const avgClassSize = sortedClasses.length ? Math.round(totalStudents / sortedClasses.length) : 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,7 +134,7 @@ export default function ClassesPage() {
     { label: "Total Classes", value: String(data?.total ?? 0), icon: Building, color: "from-blue-500 to-blue-600" },
     { label: "Total Students", value: String(totalStudents), icon: Users, color: "from-emerald-500 to-emerald-600" },
     { label: "Avg. Class Size", value: String(avgClassSize), icon: GraduationCap, color: "from-purple-500 to-purple-600" },
-    { label: "Capacity Used", value: data?.classes?.length ? `${Math.round((totalStudents / (data.classes.reduce((s, c) => s + c.capacity, 0) || 1)) * 100)}%` : "0%", icon: UserCheck, color: "from-[var(--accent)] to-emerald-400" },
+    { label: "Capacity Used", value: sortedClasses.length ? `${Math.round((totalStudents / (sortedClasses.reduce((s, c) => s + c.capacity, 0) || 1)) * 100)}%` : "0%", icon: UserCheck, color: "from-[var(--accent)] to-emerald-400" },
   ];
 
   return (
@@ -213,14 +224,14 @@ export default function ClassesPage() {
                       <td colSpan={6} className="py-3"><div className="skeleton h-4 w-full" /></td>
                     </tr>
                   ))
-                ) : data?.classes?.length === 0 ? (
+                ) :                   data?.classes?.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center py-8 text-white/40">
                       No classes found
                     </td>
                   </tr>
                 ) : (
-                  data?.classes?.map((cls) => {
+                  sortedClasses.map((cls) => {
                     const usagePercent = Math.round((cls._count.students / cls.capacity) * 100);
                     return (
                       <tr key={cls.id} className="border-b border-white/5 hover:bg-white/5 transition-all">
@@ -298,7 +309,7 @@ export default function ClassesPage() {
         >
           <h3 className="text-white font-semibold text-lg mb-4">Capacity Overview</h3>
           <div className="space-y-3">
-            {data?.classes?.slice(0, 6).map((cls) => {
+            {sortedClasses.slice(0, 6).map((cls) => {
               const pct = Math.round((cls._count.students / cls.capacity) * 100);
               return (
                 <div key={cls.id} className="p-3 rounded-xl bg-white/5">

@@ -184,11 +184,23 @@ function AdminDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/admissions" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">Add Student</Link>
-        <Link href="/dashboard/classes" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Manage Classes</Link>
-        <Link href="/dashboard/payments" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">View Payments</Link>
-        <Link href="/dashboard/announcements" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Send Announcement</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
+        <Link href="/dashboard/admissions" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-white/40 text-[9px] sm:text-[10px]">New admissions</p></div>
+        </Link>
+        <Link href="/dashboard/classes" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-white/40 text-[9px] sm:text-[10px]">Organize classes</p></div>
+        </Link>
+        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-white/40 text-[9px] sm:text-[10px]">Fee records</p></div>
+        </Link>
+        <Link href="/dashboard/announcements" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-white/40 text-[9px] sm:text-[10px]">Broadcast to all</p></div>
+        </Link>
       </div>
     </>
   );
@@ -307,11 +319,23 @@ function TeacherDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/attendance" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">Take Attendance</Link>
-        <Link href="/dashboard/grades" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Enter Grades</Link>
-        <Link href="/dashboard/timetable" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">View Schedule</Link>
-        <Link href="/dashboard/lesson-plans" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Create Lesson Plan</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
+        <Link href="/dashboard/attendance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Take Attendance</p><p className="text-white/40 text-[9px] sm:text-[10px]">Mark today's roll</p></div>
+        </Link>
+        <Link href="/dashboard/grades" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📝</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Enter Grades</p><p className="text-white/40 text-[9px] sm:text-[10px]">Record student scores</p></div>
+        </Link>
+        <Link href="/dashboard/timetable" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📅</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Schedule</p><p className="text-white/40 text-[9px] sm:text-[10px]">Your class timetable</p></div>
+        </Link>
+        <Link href="/dashboard/lesson-plans" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Create Lesson Plan</p><p className="text-white/40 text-[9px] sm:text-[10px]">Plan your lessons</p></div>
+        </Link>
       </div>
     </>
   );
@@ -518,11 +542,23 @@ function VicePrincipalDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/discipline" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">View Discipline Records</Link>
-        <Link href="/dashboard/students" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Student Affairs</Link>
-        <Link href="/dashboard/teachers" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Teacher Supervision</Link>
-        <Link href="/dashboard/reports" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Generate Report</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
+        <Link href="/dashboard/discipline" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-blue-500/20 to-blue-500/5 border border-blue-500/20 text-white hover:from-blue-500/30 hover:to-blue-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Discipline Records</p><p className="text-white/40 text-[9px] sm:text-[10px]">Incident logs</p></div>
+        </Link>
+        <Link href="/dashboard/students" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👥</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Student Affairs</p><p className="text-white/40 text-[9px] sm:text-[10px]">Manage students</p></div>
+        </Link>
+        <Link href="/dashboard/teachers" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👩‍🏫</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Teacher Supervision</p><p className="text-white/40 text-[9px] sm:text-[10px]">Staff oversight</p></div>
+        </Link>
+        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Generate Report</p><p className="text-white/40 text-[9px] sm:text-[10px]">Analytics & insights</p></div>
+        </Link>
       </div>
     </>
   );
@@ -572,11 +608,23 @@ function PrincipalDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/admissions" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">Add Student</Link>
-        <Link href="/dashboard/classes" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Manage Classes</Link>
-        <Link href="/dashboard/payments" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">View Payments</Link>
-        <Link href="/dashboard/announcements" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Send Announcement</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
+        <Link href="/dashboard/admissions" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-white/40 text-[9px] sm:text-[10px]">New admissions</p></div>
+        </Link>
+        <Link href="/dashboard/classes" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-white/40 text-[9px] sm:text-[10px]">Organize classes</p></div>
+        </Link>
+        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-white/40 text-[9px] sm:text-[10px]">Fee records</p></div>
+        </Link>
+        <Link href="/dashboard/announcements" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-white/40 text-[9px] sm:text-[10px]">Broadcast to all</p></div>
+        </Link>
       </div>
     </>
   );
@@ -622,11 +670,23 @@ function OwnerDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/reports" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">View Reports</Link>
-        <Link href="/dashboard/staff" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Manage Staff</Link>
-        <Link href="/dashboard/finance" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Financial Summary</Link>
-        <Link href="/dashboard/settings" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">School Settings</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
+        <Link href="/dashboard/reports" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Reports</p><p className="text-white/40 text-[9px] sm:text-[10px]">School analytics</p></div>
+        </Link>
+        <Link href="/dashboard/staff" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👩‍🏫</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Staff</p><p className="text-white/40 text-[9px] sm:text-[10px]">Teacher & staff</p></div>
+        </Link>
+        <Link href="/dashboard/finance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Financial Summary</p><p className="text-white/40 text-[9px] sm:text-[10px]">Revenue & expenses</p></div>
+        </Link>
+        <Link href="/dashboard/settings" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">⚙️</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">School Settings</p><p className="text-white/40 text-[9px] sm:text-[10px]">Configure school</p></div>
+        </Link>
       </div>
     </>
   );
@@ -696,11 +756,23 @@ function AccountantDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/payments" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">Record Payment</Link>
-        <Link href="/dashboard/expenses" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">View Expenses</Link>
-        <Link href="/dashboard/reports" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Generate Report</Link>
-        <Link href="/dashboard/fees" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Manage Fees</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
+        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💳</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Record Payment</p><p className="text-white/40 text-[9px] sm:text-[10px]">Log a payment</p></div>
+        </Link>
+        <Link href="/dashboard/expenses" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🧾</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Expenses</p><p className="text-white/40 text-[9px] sm:text-[10px]">Expense records</p></div>
+        </Link>
+        <Link href="/dashboard/reports" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Generate Report</p><p className="text-white/40 text-[9px] sm:text-[10px]">Financial reports</p></div>
+        </Link>
+        <Link href="/dashboard/fees" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📑</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Fees</p><p className="text-white/40 text-[9px] sm:text-[10px]">Fee structures</p></div>
+        </Link>
       </div>
     </>
   );
@@ -763,11 +835,23 @@ function AuditorDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/reports" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">View Audit Reports</Link>
-        <Link href="/dashboard/transactions" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">View Transactions</Link>
-        <Link href="/dashboard/compliance" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Compliance Check</Link>
-        <Link href="/dashboard/exports" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Export Data</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
+        <Link href="/dashboard/reports" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Audit Reports</p><p className="text-white/40 text-[9px] sm:text-[10px]">Audit findings</p></div>
+        </Link>
+        <Link href="/dashboard/transactions" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔍</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Transactions</p><p className="text-white/40 text-[9px] sm:text-[10px]">All transactions</p></div>
+        </Link>
+        <Link href="/dashboard/compliance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Compliance Check</p><p className="text-white/40 text-[9px] sm:text-[10px]">Verify compliance</p></div>
+        </Link>
+        <Link href="/dashboard/exports" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📤</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Export Data</p><p className="text-white/40 text-[9px] sm:text-[10px]">Download reports</p></div>
+        </Link>
       </div>
     </>
   );
@@ -825,11 +909,23 @@ function LibrarianDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/library/add" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">Add Book</Link>
-        <Link href="/dashboard/library/issue" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Issue Book</Link>
-        <Link href="/dashboard/library/return" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Return Book</Link>
-        <Link href="/dashboard/library/catalog" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Search Catalog</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
+        <Link href="/dashboard/library/add" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📚</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Book</p><p className="text-white/40 text-[9px] sm:text-[10px]">New inventory</p></div>
+        </Link>
+        <Link href="/dashboard/library/issue" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📖</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Issue Book</p><p className="text-white/40 text-[9px] sm:text-[10px]">Lend to students</p></div>
+        </Link>
+        <Link href="/dashboard/library/return" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔄</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Return Book</p><p className="text-white/40 text-[9px] sm:text-[10px]">Process returns</p></div>
+        </Link>
+        <Link href="/dashboard/library/catalog" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔎</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Search Catalog</p><p className="text-white/40 text-[9px] sm:text-[10px]">Find books</p></div>
+        </Link>
       </div>
     </>
   );
@@ -903,11 +999,23 @@ function PorterDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/hostel/visitors" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">Log Visitor</Link>
-        <Link href="/dashboard/hostel/rooms" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Assign Room</Link>
-        <Link href="/dashboard/hostel/maintenance" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Report Maintenance</Link>
-        <Link href="/dashboard/hostel/checkin" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">View Check-in/out</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
+        <Link href="/dashboard/hostel/visitors" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🚶</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Log Visitor</p><p className="text-white/40 text-[9px] sm:text-[10px]">Visitor check-in</p></div>
+        </Link>
+        <Link href="/dashboard/hostel/rooms" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🛏️</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Assign Room</p><p className="text-white/40 text-[9px] sm:text-[10px]">Room allocation</p></div>
+        </Link>
+        <Link href="/dashboard/hostel/maintenance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔧</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Report Maintenance</p><p className="text-white/40 text-[9px] sm:text-[10px]">Request repairs</p></div>
+        </Link>
+        <Link href="/dashboard/hostel/checkin" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Check-in/out</p><p className="text-white/40 text-[9px] sm:text-[10px]">Movement logs</p></div>
+        </Link>
       </div>
     </>
   );
@@ -970,11 +1078,23 @@ function AlumniDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/alumni/events" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">View Events</Link>
-        <Link href="/dashboard/alumni/donations" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Make Donation</Link>
-        <Link href="/dashboard/alumni/mentorship" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Find Mentor</Link>
-        <Link href="/dashboard/alumni/profile" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Update Profile</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
+        <Link href="/dashboard/alumni/events" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🎉</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Events</p><p className="text-white/40 text-[9px] sm:text-[10px]">Alumni gatherings</p></div>
+        </Link>
+        <Link href="/dashboard/alumni/donations" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">❤️</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Make Donation</p><p className="text-white/40 text-[9px] sm:text-[10px]">Support your school</p></div>
+        </Link>
+        <Link href="/dashboard/alumni/mentorship" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🤝</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Find Mentor</p><p className="text-white/40 text-[9px] sm:text-[10px]">Mentorship program</p></div>
+        </Link>
+        <Link href="/dashboard/alumni/profile" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👤</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Update Profile</p><p className="text-white/40 text-[9px] sm:text-[10px]">Your information</p></div>
+        </Link>
       </div>
     </>
   );

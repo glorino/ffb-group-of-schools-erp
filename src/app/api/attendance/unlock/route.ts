@@ -13,19 +13,21 @@ export async function POST(req: NextRequest) {
 
   // Teacher requesting unlock
   if (action === "request") {
-    const now = new Date();
-    const hour = now.getHours();
-    const minute = now.getMinutes();
+    // Get current time in WAT (Africa/Lagos, UTC+1)
+    const lagosTimeStr = new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" });
+    const lagosDate = new Date(lagosTimeStr);
+    const hour = lagosDate.getHours();
+    const minute = lagosDate.getMinutes();
     const currentTime = hour * 60 + minute;
     const morningDeadline = 10 * 60; // 10:00 AM
     const afternoonDeadline = 13 * 60; // 1:00 PM
 
-    // Check if attendance is still within allowed time
-    if (attendSession === "morning" && currentTime <= morningDeadline) {
-      return NextResponse.json({ error: "Morning attendance is still open. Mark it directly." }, { status: 400 });
+    // Check if attendance marking deadline has passed
+    if (attendSession === "morning" && currentTime >= morningDeadline) {
+      return NextResponse.json({ error: "Attendance marking deadline has passed for this session" }, { status: 400 });
     }
-    if (attendSession === "afternoon" && currentTime <= afternoonDeadline) {
-      return NextResponse.json({ error: "Afternoon attendance is still open. Mark it directly." }, { status: 400 });
+    if (attendSession === "afternoon" && currentTime >= afternoonDeadline) {
+      return NextResponse.json({ error: "Attendance marking deadline has passed for this session" }, { status: 400 });
     }
 
     // Create unlock request

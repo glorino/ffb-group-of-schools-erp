@@ -28,7 +28,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
     items: [
       { label: "Students", href: "/dashboard/students", emoji: "👨‍🎓", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
       { label: "Teachers", href: "/dashboard/teachers", emoji: "👩‍🏫", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
-      { label: "Parents", href: "/dashboard/students", emoji: "👪", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Parents", href: "/dashboard/parents", emoji: "👪", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
     ],
   },
   {
