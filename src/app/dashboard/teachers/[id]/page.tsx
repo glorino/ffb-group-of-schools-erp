@@ -37,7 +37,7 @@ interface TeacherDetail {
   status: string;
   createdAt: string;
   teacherSubjects: { subject: { id: string; name: string } }[];
-  user: { id: string; email: string; image: string | null; lastLogin: string | null } | null;
+  user: { id: string; email: string; image: string | null; lastLoginAt: string | null } | null;
 }
 
 interface TimetableEntry {
@@ -294,7 +294,7 @@ export default function TeacherDetailPage() {
                 <div className="flex flex-col">
                   <span className="text-white/40 text-[12px] mb-1">Last Login</span>
                   <span className="text-white text-sm font-medium">
-                    {teacher.user.lastLogin ? new Date(teacher.user.lastLogin).toLocaleString() : "Never"}
+                    {teacher.user.lastLoginAt ? new Date(teacher.user.lastLoginAt).toLocaleString() : "Never"}
                   </span>
                 </div>
               </div>

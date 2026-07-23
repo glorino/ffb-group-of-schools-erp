@@ -16,7 +16,7 @@ export async function GET(
       where: { id },
       include: {
         teacherSubjects: { include: { subject: true } },
-        user: { select: { id: true, email: true, image: true, lastLogin: true } },
+        user: { select: { id: true, email: true, image: true, lastLoginAt: true } },
       },
     });
 
