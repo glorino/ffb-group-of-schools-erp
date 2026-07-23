@@ -42,8 +42,7 @@ interface TeacherDetail {
 
 interface TimetableEntry {
   id: string;
-  day: string;
-  period: number;
+  dayOfWeek: number;
   startTime: string;
   endTime: string;
   subject: string | null;
@@ -132,10 +131,10 @@ export default function TeacherDetailPage() {
 
   const initials = `${teacher.firstName[0]}${teacher.lastName[0]}`;
 
-  const dayOrder = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
-  const groupedTimetable = dayOrder.map((day) => ({
-    day,
-    entries: timetable.filter((t) => t.day === day),
+  const dayNames = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
+  const groupedTimetable = dayNames.map((name, idx) => ({
+    day: name,
+    entries: timetable.filter((t) => t.dayOfWeek === idx + 1),
   }));
 
   const tabs = [
@@ -330,7 +329,7 @@ export default function TeacherDetailPage() {
                         <p className="text-white text-[13px] font-medium">{e.subject || "General"}</p>
                         <p className="text-white/40 text-[12px]">{e.class.displayName || e.class.name}{e.room ? ` • ${e.room}` : ""}</p>
                       </div>
-                      <span className="px-2 py-1 rounded-lg text-[11px] bg-[var(--primary)]/20 text-[var(--primary)]">Period {e.period}</span>
+                      <span className="px-2 py-1 rounded-lg text-[11px] bg-[var(--primary)]/20 text-[var(--primary)]">{e.type}</span>
                     </div>
                   ))}
                 </div>
