@@ -9,13 +9,13 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
   delay: `${Math.random() * 10}s`, size: `${3 + Math.random() * 3}px`,
 }));
 
-const events = [
+const defaultEvents = [
   { title: "Interhouse Sports", desc: "Annual sports competition showcasing teamwork and athleticism across all houses.", date: "2026-03-25T09:00:00" },
   { title: "Science Exhibition", desc: "Students present innovative science projects and research findings.", date: "2026-04-10T10:00:00" },
   { title: "Graduation Ceremony", desc: "Celebrating graduating students and their achievements.", date: "2026-07-18T11:00:00" },
 ];
 
-const newsItems = [
+const defaultNewsItems = [
   { title: "Academic Excellence Award", desc: "Our students received national recognition for outstanding WAEC results.", full: "FFB Group of Schools has once again demonstrated academic excellence as our students received national recognition for their outstanding WAEC results. With a 98% pass rate and multiple distinctions across key subjects, our school has been ranked among the top performing institutions in the state.", gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)", image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop" },
   { title: "New Science Laboratory", desc: "A state-of-the-art science laboratory was commissioned.", full: "A new state-of-the-art science laboratory has been commissioned at FFB Group of Schools. The laboratory features modern equipment for Physics, Chemistry, and Biology practical sessions. This facility will provide students with hands-on experience.", gradient: "linear-gradient(135deg, #164e63, #06b6d4)", image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=400&fit=crop" },
   { title: "Leadership Bootcamp", desc: "Students trained in leadership development and innovation.", full: "Over 150 students participated in the annual Leadership Bootcamp organized by FFB Group of Schools. The programme covered topics including public speaking, project management, entrepreneurship, and digital literacy.", gradient: "linear-gradient(135deg, #312e81, #6366f1)", image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop" },
@@ -63,6 +63,8 @@ export default function LandingPage() {
   const [newsModal, setNewsModal] = useState<number | null>(null);
   const [subscribed, setSubscribed] = useState(false);
   const [email, setEmail] = useState("");
+  const [events, setEvents] = useState(defaultEvents);
+  const [newsItems, setNewsItems] = useState(defaultNewsItems);
 
   const testimonials = [
     { text: "FFB transformed my child's confidence and academic performance.", name: "Mrs Adewale" },
@@ -74,6 +76,39 @@ export default function LandingPage() {
     const interval = setInterval(() => setTestimonialIdx((prev) => (prev + 1) % testimonials.length), 4000);
     return () => clearInterval(interval);
   }, [testimonials.length]);
+
+  useEffect(() => {
+    fetch("/api/announcements")
+      .then((res) => res.json())
+      .then((data) => {
+        const items = data.announcements || [];
+        const fetchedEvents = items
+          .filter((a: any) => a.type === "event")
+          .map((a: any) => {
+            const target = typeof a.target === "string" ? JSON.parse(a.target) : (a.target || {});
+            return {
+              title: a.title,
+              desc: a.content,
+              date: target.eventDate ? `${target.eventDate}T09:00:00` : new Date(a.createdAt).toISOString(),
+            };
+          });
+        const fetchedNews = items
+          .filter((a: any) => a.type === "news")
+          .map((a: any) => {
+            const target = typeof a.target === "string" ? JSON.parse(a.target) : (a.target || {});
+            return {
+              title: a.title,
+              desc: a.content,
+              full: a.content,
+              gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)",
+              image: target.imageUrl || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop",
+            };
+          });
+        if (fetchedEvents.length > 0) setEvents(fetchedEvents);
+        if (fetchedNews.length > 0) setNewsItems(fetchedNews);
+      })
+      .catch(() => {});
+  }, []);
 
   const nextEvent = events.find((e) => new Date(e.date).getTime() > Date.now()) || events[events.length - 1];
 

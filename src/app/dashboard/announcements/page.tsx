@@ -81,10 +81,11 @@ function AnnouncementsPageInner() {
     imageUrl: "",
     category: "news" as "news" | "event",
     featured: false,
+    eventDate: "",
   });
   const [showNewsModal, setShowNewsModal] = useState(false);
   const [editNews, setEditNews] = useState<Announcement | null>(null);
-  const [editNewsForm, setEditNewsForm] = useState({ title: "", content: "", imageUrl: "", category: "news" as "news" | "event", featured: false });
+  const [editNewsForm, setEditNewsForm] = useState({ title: "", content: "", imageUrl: "", category: "news" as "news" | "event", featured: false, eventDate: "" });
 
   useEffect(() => {
     fetchAnnouncements();
@@ -193,13 +194,14 @@ function AnnouncementsPageInner() {
           published: true,
           imageUrl: newsForm.imageUrl || undefined,
           featured: newsForm.featured,
+          eventDate: newsForm.eventDate || undefined,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create");
       toast.success(`${newsForm.category === "news" ? "News" : "Event"} created successfully`);
       setShowNewsModal(false);
-      setNewsForm({ title: "", content: "", imageUrl: "", category: "news", featured: false });
+      setNewsForm({ title: "", content: "", imageUrl: "", category: "news", featured: false, eventDate: "" });
       fetchAnnouncements();
     } catch (err: any) {
       toast.error(err.message || "Failed to create");
@@ -223,11 +225,12 @@ function AnnouncementsPageInner() {
           type: editNewsForm.category,
           imageUrl: editNewsForm.imageUrl,
           featured: editNewsForm.featured,
+          eventDate: editNewsForm.eventDate,
         }),
       });
       if (!res.ok) throw new Error("Failed");
       const target = editNews.target || {};
-      setAnnouncements(prev => prev.map(a => a.id === editNews.id ? { ...a, title: editNewsForm.title, content: editNewsForm.content, type: editNewsForm.category, target: { ...target, imageUrl: editNewsForm.imageUrl, featured: editNewsForm.featured } } : a));
+      setAnnouncements(prev => prev.map(a => a.id === editNews.id ? { ...a, title: editNewsForm.title, content: editNewsForm.content, type: editNewsForm.category, target: { ...target, imageUrl: editNewsForm.imageUrl, featured: editNewsForm.featured, eventDate: editNewsForm.eventDate } } : a));
       toast.success("Updated successfully");
       setEditNews(null);
     } catch {
@@ -532,6 +535,7 @@ function AnnouncementsPageInner() {
                                 imageUrl: target.imageUrl || "",
                                 category: item.type as "news" | "event",
                                 featured: target.featured || false,
+                                eventDate: target.eventDate || "",
                               });
                             }}
                             className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
@@ -882,6 +886,18 @@ function AnnouncementsPageInner() {
                     </label>
                   </div>
                 </div>
+                {newsForm.category === "event" && (
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Event Date</label>
+                    <input
+                      type="date"
+                      value={newsForm.eventDate}
+                      onChange={(e) => setNewsForm({ ...newsForm, eventDate: e.target.value })}
+                      style={{ colorScheme: "dark" }}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    />
+                  </div>
+                )}
                 <div className="flex gap-3 pt-2">
                   <button
                     type="button"
@@ -995,6 +1011,18 @@ function AnnouncementsPageInner() {
                     </label>
                   </div>
                 </div>
+                {editNewsForm.category === "event" && (
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Event Date</label>
+                    <input
+                      type="date"
+                      value={editNewsForm.eventDate}
+                      onChange={(e) => setEditNewsForm({ ...editNewsForm, eventDate: e.target.value })}
+                      style={{ colorScheme: "dark" }}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    />
+                  </div>
+                )}
                 <div className="flex gap-3 pt-2">
                   <button
                     type="button"

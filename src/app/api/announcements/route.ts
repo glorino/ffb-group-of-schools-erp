@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { title, content, type, priority, published, audience, audienceClassId, audienceStudentId, audienceParentId, audienceTeacherId, targetUserId, imageUrl, featured } = body;
+    const { title, content, type, priority, published, audience, audienceClassId, audienceStudentId, audienceParentId, audienceTeacherId, targetUserId, imageUrl, featured, eventDate } = body;
 
     if (!title || !content) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
 
@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
     }
     if (imageUrl) targetData.imageUrl = imageUrl;
     if (featured !== undefined) targetData.featured = featured;
+    if (eventDate) targetData.eventDate = eventDate;
 
     const schoolId = await getDefaultSchoolId();
     const announcement = await prisma.announcement.create({
@@ -71,16 +72,17 @@ export async function PUT(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { id, title, content, type, priority, published, imageUrl, featured } = body;
+    const { id, title, content, type, priority, published, imageUrl, featured, eventDate } = body;
 
     if (!id) return NextResponse.json({ error: "Missing announcement ID" }, { status: 400 });
 
     const existing = await prisma.announcement.findUnique({ where: { id } });
     let target = existing?.target as Record<string, any> | undefined;
-    if (imageUrl !== undefined || featured !== undefined) {
+    if (imageUrl !== undefined || featured !== undefined || eventDate !== undefined) {
       target = { ...(target || {}) };
       if (imageUrl !== undefined) target.imageUrl = imageUrl;
       if (featured !== undefined) target.featured = featured;
+      if (eventDate !== undefined) target.eventDate = eventDate;
     }
 
     const announcement = await prisma.announcement.update({

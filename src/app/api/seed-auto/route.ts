@@ -660,6 +660,67 @@ export async function POST() {
       cleaned++;
     }
 
+    // 22. Seed News & Events (Announcements)
+    const newsItemsData = [
+      { title: "Academic Excellence Award", content: "Our students received national recognition for outstanding WAEC results.", imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop", type: "news", featured: true },
+      { title: "New Science Laboratory", content: "A state-of-the-art science laboratory was commissioned.", imageUrl: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=400&fit=crop", type: "news", featured: true },
+      { title: "Leadership Bootcamp", content: "Students trained in leadership development and innovation.", imageUrl: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop", type: "news", featured: true },
+    ];
+
+    const eventsData = [
+      { title: "Interhouse Sports", content: "Annual sports competition showcasing teamwork and athleticism across all houses.", date: "2026-03-25", type: "event", featured: false },
+      { title: "Science Exhibition", content: "Students present innovative science projects and research findings.", date: "2026-04-10", type: "event", featured: false },
+      { title: "Graduation Ceremony", content: "Celebrating graduating students and their achievements.", date: "2026-07-18", type: "event", featured: false },
+    ];
+
+    for (const item of newsItemsData) {
+      const existing = await prisma.announcement.findFirst({ where: { title: item.title, schoolId: school.id } });
+      const targetData = { imageUrl: item.imageUrl, featured: item.featured };
+      if (existing) {
+        await prisma.announcement.update({
+          where: { id: existing.id },
+          data: { content: item.content, type: item.type, target: JSON.stringify(targetData) },
+        });
+      } else {
+        await prisma.announcement.create({
+          data: {
+            schoolId: school.id,
+            title: item.title,
+            content: item.content,
+            type: item.type,
+            priority: "normal",
+            published: true,
+            authorId: adminUserId,
+            target: JSON.stringify(targetData),
+          },
+        });
+      }
+    }
+
+    for (const item of eventsData) {
+      const existing = await prisma.announcement.findFirst({ where: { title: item.title, schoolId: school.id } });
+      const targetData = { eventDate: item.date, featured: item.featured };
+      if (existing) {
+        await prisma.announcement.update({
+          where: { id: existing.id },
+          data: { content: item.content, type: item.type, target: JSON.stringify(targetData) },
+        });
+      } else {
+        await prisma.announcement.create({
+          data: {
+            schoolId: school.id,
+            title: item.title,
+            content: item.content,
+            type: item.type,
+            priority: "normal",
+            published: true,
+            authorId: adminUserId,
+            target: JSON.stringify(targetData),
+          },
+        });
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: "Database seeded successfully with comprehensive data",

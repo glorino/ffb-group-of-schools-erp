@@ -175,6 +175,15 @@ export function Sidebar() {
       </nav>
 
       <div className="p-3 border-t border-white/[0.08]">
+        <a
+          href="https://ffb-erp.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg text-white/50 hover:text-[var(--accent)] hover:bg-white/[0.04] text-[13px] font-medium transition-all"
+        >
+          <span>🌐</span>
+          <span>Visit School Website</span>
+        </a>
         <button
           onClick={() => signOut({ callbackUrl: "/auth/login" })}
           className="w-full flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg text-white/50 hover:text-red-400 hover:bg-red-500/[0.06] text-[13px] font-medium transition-all"
