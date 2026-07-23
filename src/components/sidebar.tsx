@@ -99,6 +99,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
     title: "Institution",
     items: [
       { label: "Announcements", href: "/dashboard/announcements", emoji: "📢", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI"] },
+      { label: "News & Events", href: "/dashboard/announcements?tab=news", emoji: "📰", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
       { label: "Calendar", href: "/dashboard/calendar", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
       { label: "Notifications", href: "/dashboard/notifications", emoji: "🔔", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI", "ACCOUNTANT", "AUDITOR", "LIBRARIAN", "PORTER"] },
       { label: "Settings", href: "/dashboard/settings", emoji: "⚙️", roles: ["OWNER", "ADMINISTRATOR"] },
@@ -146,7 +147,7 @@ export function Sidebar() {
               </h3>
               <div className="space-y-0.5">
                 {visibleItems.map((item) => {
-                  const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+                  const isActive = pathname === item.href || (item.href !== "/dashboard" && !item.href.includes("?") && pathname.startsWith(item.href)) || (item.href.includes("?") && pathname === item.href.split("?")[0]);
                   return (
                     <Link
                       key={item.href + item.label}

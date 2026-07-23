@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Megaphone,
@@ -18,6 +19,8 @@ import {
   X,
   Loader2,
   Download,
+  Newspaper,
+  Star,
 } from "lucide-react";
 import { downloadCSV } from "@/lib/exports";
 import { toast } from "sonner";
@@ -31,15 +34,21 @@ interface Announcement {
   published: boolean;
   createdAt: string;
   authorId?: string;
+  target?: any;
 }
 
-export default function AnnouncementsPage() {
+function AnnouncementsPageInner() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
   const isStudent = userRoles.includes("STUDENT");
   const isParent = userRoles.includes("PARENT");
   const isReadOnly = isStudent || isParent;
+  const canCreateNews = userRoles.some(r => ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"].includes(r));
 
+  const [activeTab, setActiveTab] = useState<"announcements" | "news">(
+    (searchParams?.get("tab") as "announcements" | "news") || "announcements"
+  );
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -66,6 +75,16 @@ export default function AnnouncementsPage() {
     audienceParentId: "",
     audienceTeacherId: "",
   });
+  const [newsForm, setNewsForm] = useState({
+    title: "",
+    content: "",
+    imageUrl: "",
+    category: "news" as "news" | "event",
+    featured: false,
+  });
+  const [showNewsModal, setShowNewsModal] = useState(false);
+  const [editNews, setEditNews] = useState<Announcement | null>(null);
+  const [editNewsForm, setEditNewsForm] = useState({ title: "", content: "", imageUrl: "", category: "news" as "news" | "event", featured: false });
 
   useEffect(() => {
     fetchAnnouncements();
@@ -155,6 +174,69 @@ export default function AnnouncementsPage() {
     toast.success("Announcements exported successfully");
   };
 
+  const handleCreateNews = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsForm.title || !newsForm.content) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: newsForm.title,
+          content: newsForm.content,
+          type: newsForm.category,
+          priority: "normal",
+          published: true,
+          imageUrl: newsForm.imageUrl || undefined,
+          featured: newsForm.featured,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create");
+      toast.success(`${newsForm.category === "news" ? "News" : "Event"} created successfully`);
+      setShowNewsModal(false);
+      setNewsForm({ title: "", content: "", imageUrl: "", category: "news", featured: false });
+      fetchAnnouncements();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleEditNews = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editNews) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/announcements", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editNews.id,
+          title: editNewsForm.title,
+          content: editNewsForm.content,
+          type: editNewsForm.category,
+          imageUrl: editNewsForm.imageUrl,
+          featured: editNewsForm.featured,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      const target = editNews.target || {};
+      setAnnouncements(prev => prev.map(a => a.id === editNews.id ? { ...a, title: editNewsForm.title, content: editNewsForm.content, type: editNewsForm.category, target: { ...target, imageUrl: editNewsForm.imageUrl, featured: editNewsForm.featured } } : a));
+      toast.success("Updated successfully");
+      setEditNews(null);
+    } catch {
+      toast.error("Failed to update");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const filteredAnnouncements = announcements.filter(
     (a) =>
       (a.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -167,6 +249,8 @@ export default function AnnouncementsPage() {
 
   const draftCount = stats.total - stats.published;
 
+  const newsItems = filteredAnnouncements.filter(a => a.type === "news" || a.type === "event");
+
   return (
     <div className="space-y-6">
       <motion.div
@@ -176,9 +260,9 @@ export default function AnnouncementsPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Announcements</h1>
+            <h1 className="text-2xl font-bold text-white mb-1">Announcements & News</h1>
             <p className="text-white/60">
-              Create and manage school-wide announcements and notifications
+              Create and manage school-wide announcements, news and events
             </p>
           </div>
           <div className="flex gap-2">
@@ -189,17 +273,48 @@ export default function AnnouncementsPage() {
               <Download className="w-4 h-4" />
               Export
             </button>
-            <button
-              onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
-            >
-              <Plus className="w-4 h-4" />
-              New Announcement
-            </button>
+            {!isReadOnly && (
+              <button
+                onClick={() => activeTab === "news" ? setShowNewsModal(true) : setShowModal(true)}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+              >
+                <Plus className="w-4 h-4" />
+                {activeTab === "news" ? "New News/Event" : "New Announcement"}
+              </button>
+            )}
           </div>
         </div>
       </motion.div>
 
+      {/* Tab Bar */}
+      <div className="flex gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/[0.08] w-fit">
+        <button
+          onClick={() => setActiveTab("announcements")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-medium transition-all ${
+            activeTab === "announcements"
+              ? "bg-[var(--primary)] text-white shadow-lg"
+              : "text-white/50 hover:text-white/80"
+          }`}
+        >
+          <Megaphone className="w-4 h-4" />
+          Announcements
+        </button>
+        {canCreateNews && (
+          <button
+            onClick={() => setActiveTab("news")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-medium transition-all ${
+              activeTab === "news"
+                ? "bg-[var(--primary)] text-white shadow-lg"
+                : "text-white/50 hover:text-white/80"
+            }`}
+          >
+            <Newspaper className="w-4 h-4" />
+            News & Events
+          </button>
+        )}
+      </div>
+
+      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Total Announcements", value: stats.total, icon: Megaphone, color: "from-blue-500 to-blue-600" },
@@ -227,121 +342,226 @@ export default function AnnouncementsPage() {
         ))}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="card"
-      >
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-white font-semibold text-lg">All Announcements</h3>
-          <div className="flex gap-2">
+      {/* Announcements Tab */}
+      {activeTab === "announcements" && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="card"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-white font-semibold text-lg">All Announcements</h3>
+            <div className="flex gap-2">
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <input
+                  type="text"
+                  placeholder="Search announcements..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                />
+              </div>
+              <div className="relative">
+                <button
+                  onClick={() => setShowFilter(!showFilter)}
+                  className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]"
+                >
+                  <Filter className="w-4 h-4" />
+                </button>
+                {showFilter && (
+                  <div className="absolute right-0 top-full mt-2 z-40 w-44 rounded-xl bg-[#0f1b33] border border-white/[0.12] shadow-2xl p-1">
+                    {["all", "published", "draft", "pinned"].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => { setFilterStatus(opt); setShowFilter(false); }}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-[13px] capitalize transition-all ${filterStatus === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-white/60 hover:bg-white/[0.08]"}`}
+                      >
+                        {opt === "all" ? "All" : opt}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
+            </div>
+          ) : filteredAnnouncements.length === 0 ? (
+            <div className="text-center py-20 text-white/40">
+              <Megaphone className="w-12 h-12 mx-auto mb-3 opacity-40" />
+              <p className="text-[13px]">No announcements found</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredAnnouncements.map((announcement) => (
+                <div key={announcement.id} className="p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      {!announcement.published && (
+                        <Pin className="w-4 h-4 text-white/30" />
+                      )}
+                      <h4 className="text-white font-medium text-[13px]">{announcement.title}</h4>
+                    </div>
+                    <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
+                      announcement.priority === "high" ? "bg-red-500/20 text-red-400" :
+                      announcement.priority === "medium" ? "bg-orange-500/20 text-orange-400" :
+                      "bg-white/10 text-white/40"
+                    }`}>
+                      {announcement.priority}
+                    </span>
+                  </div>
+                  <p className="text-white/60 text-[13px] mb-3 line-clamp-2">{announcement.content}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 text-[12px]">
+                      <span className="text-white/40">Type: {announcement.type}</span>
+                      <span className={`px-1.5 py-0.5 rounded text-[11px] ${
+                        announcement.published ? "bg-emerald-500/20 text-emerald-400" : "bg-white/10 text-white/40"
+                      }`}>
+                        {announcement.published ? "Published" : "Draft"}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-white/30" />
+                        <span className="text-white/30">{new Date(announcement.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setEditAnnouncement(announcement);
+                          setEditForm({ title: announcement.title, content: announcement.content || "", type: announcement.type || "general", priority: announcement.priority || "normal" });
+                        }}
+                        className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (!confirm("Delete this announcement?")) return;
+                          try {
+                            const res = await fetch(`/api/announcements?id=${announcement.id}`, { method: "DELETE" });
+                            if (!res.ok) throw new Error("Failed");
+                            setAnnouncements(prev => prev.filter(a => a.id !== announcement.id));
+                            toast.success("Announcement deleted");
+                          } catch { toast.error("Failed to delete"); }
+                        }}
+                        className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      )}
+
+      {/* News & Events Tab */}
+      {activeTab === "news" && canCreateNews && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="card"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-white font-semibold text-lg">News & Events</h3>
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
               <input
                 type="text"
-                placeholder="Search announcements..."
+                placeholder="Search news & events..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
               />
             </div>
-            <div className="relative">
-              <button
-                onClick={() => setShowFilter(!showFilter)}
-                className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]"
-              >
-                <Filter className="w-4 h-4" />
-              </button>
-              {showFilter && (
-                <div className="absolute right-0 top-full mt-2 z-40 w-44 rounded-xl bg-[#0f1b33] border border-white/[0.12] shadow-2xl p-1">
-                  {["all", "published", "draft", "pinned"].map((opt) => (
-                    <button
-                      key={opt}
-                      onClick={() => { setFilterStatus(opt); setShowFilter(false); }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-[13px] capitalize transition-all ${filterStatus === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-white/60 hover:bg-white/[0.08]"}`}
-                    >
-                      {opt === "all" ? "All" : opt}
-                    </button>
-                  ))}
-                </div>
-              )}
+          </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
             </div>
-          </div>
-        </div>
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
-          </div>
-        ) : filteredAnnouncements.length === 0 ? (
-          <div className="text-center py-20 text-white/40">
-            <Megaphone className="w-12 h-12 mx-auto mb-3 opacity-40" />
-            <p className="text-[13px]">No announcements found</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredAnnouncements.map((announcement) => (
-              <div key={announcement.id} className="p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    {!announcement.published && (
-                      <Pin className="w-4 h-4 text-white/30" />
+          ) : newsItems.length === 0 ? (
+            <div className="text-center py-20 text-white/40">
+              <Newspaper className="w-12 h-12 mx-auto mb-3 opacity-40" />
+              <p className="text-[13px]">No news or events yet. Click "New News/Event" to create one.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {newsItems.map((item) => {
+                const target = item.target || {};
+                return (
+                  <div key={item.id} className="rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all overflow-hidden">
+                    {target.imageUrl && (
+                      <img
+                        src={target.imageUrl}
+                        alt={item.title}
+                        className="w-full h-[160px] object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop"; }}
+                      />
                     )}
-                    <h4 className="text-white font-medium text-[13px]">{announcement.title}</h4>
-                  </div>
-                  <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                    announcement.priority === "high" ? "bg-red-500/20 text-red-400" :
-                    announcement.priority === "medium" ? "bg-orange-500/20 text-orange-400" :
-                    "bg-white/10 text-white/40"
-                  }`}>
-                    {announcement.priority}
-                  </span>
-                </div>
-                <p className="text-white/60 text-[13px] mb-3 line-clamp-2">{announcement.content}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4 text-[12px]">
-                    <span className="text-white/40">Type: {announcement.type}</span>
-                    <span className={`px-1.5 py-0.5 rounded text-[11px] ${
-                      announcement.published ? "bg-emerald-500/20 text-emerald-400" : "bg-white/10 text-white/40"
-                    }`}>
-                      {announcement.published ? "Published" : "Draft"}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-white/30" />
-                      <span className="text-white/30">{new Date(announcement.createdAt).toLocaleDateString()}</span>
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${
+                          item.type === "news" ? "bg-blue-500/20 text-blue-400" : "bg-emerald-500/20 text-emerald-400"
+                        }`}>
+                          {item.type === "news" ? "News" : "Event"}
+                        </span>
+                        {target.featured && (
+                          <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-yellow-500/20 text-yellow-400">
+                            <Star className="w-3 h-3" /> Featured
+                          </span>
+                        )}
+                      </div>
+                      <h4 className="text-white font-medium text-[13px] mb-1">{item.title}</h4>
+                      <p className="text-white/50 text-[12px] line-clamp-2 mb-3">{item.content}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-white/30 text-[11px]">{new Date(item.createdAt).toLocaleDateString()}</span>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => {
+                              setEditNews(item);
+                              setEditNewsForm({
+                                title: item.title,
+                                content: item.content,
+                                imageUrl: target.imageUrl || "",
+                                category: item.type as "news" | "event",
+                                featured: target.featured || false,
+                              });
+                            }}
+                            className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (!confirm("Delete this item?")) return;
+                              try {
+                                const res = await fetch(`/api/announcements?id=${item.id}`, { method: "DELETE" });
+                                if (!res.ok) throw new Error("Failed");
+                                setAnnouncements(prev => prev.filter(a => a.id !== item.id));
+                                toast.success("Deleted");
+                              } catch { toast.error("Failed to delete"); }
+                            }}
+                            className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => {
-                        setEditAnnouncement(announcement);
-                        setEditForm({ title: announcement.title, content: announcement.content || "", type: announcement.type || "general", priority: announcement.priority || "normal" });
-                      }}
-                      className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={async () => {
-                        if (!confirm("Delete this announcement?")) return;
-                        try {
-                          const res = await fetch(`/api/announcements?id=${announcement.id}`, { method: "DELETE" });
-                          if (!res.ok) throw new Error("Failed");
-                          setAnnouncements(prev => prev.filter(a => a.id !== announcement.id));
-                          toast.success("Announcement deleted");
-                        } catch { toast.error("Failed to delete"); }
-                      }}
-                      className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </motion.div>
+      )}
 
       <AnimatePresence>
         {showModal && (
@@ -568,6 +788,247 @@ export default function AnnouncementsPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* News & Events Creation Modal */}
+      <AnimatePresence>
+        {showNewsModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setShowNewsModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">New News / Event</h3>
+                <button onClick={() => setShowNewsModal(false)} className="text-white/40 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form onSubmit={handleCreateNews} className="space-y-4">
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newsForm.title}
+                    onChange={(e) => setNewsForm({ ...newsForm, title: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    placeholder="e.g. Academic Excellence Award"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Content *</label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={newsForm.content}
+                    onChange={(e) => setNewsForm({ ...newsForm, content: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
+                    placeholder="Write about this news or event..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Image URL</label>
+                  <input
+                    type="url"
+                    value={newsForm.imageUrl}
+                    onChange={(e) => setNewsForm({ ...newsForm, imageUrl: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    placeholder="https://images.unsplash.com/..."
+                  />
+                  {newsForm.imageUrl && (
+                    <div className="mt-2 relative">
+                      <img
+                        src={newsForm.imageUrl}
+                        alt="Preview"
+                        className="w-full h-[120px] object-cover rounded-xl"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Category *</label>
+                    <select
+                      value={newsForm.category}
+                      onChange={(e) => setNewsForm({ ...newsForm, category: e.target.value as "news" | "event" })}
+                      style={{ colorScheme: "dark" }}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    >
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="news">News</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="event">Event</option>
+                    </select>
+                  </div>
+                  <div className="flex items-end">
+                    <label className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] w-full">
+                      <input
+                        type="checkbox"
+                        checked={newsForm.featured}
+                        onChange={(e) => setNewsForm({ ...newsForm, featured: e.target.checked })}
+                        className="rounded"
+                      />
+                      <span className="text-white/60 text-[13px] flex items-center gap-1">
+                        <Star className="w-3.5 h-3.5" /> Featured
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowNewsModal(false)}
+                    className="flex-1 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="flex-1 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[var(--primary)]/25"
+                  >
+                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                    Publish
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit News Modal */}
+      <AnimatePresence>
+        {editNews && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setEditNews(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-semibold text-lg">Edit News / Event</h3>
+                <button onClick={() => setEditNews(null)} className="text-white/40 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form onSubmit={handleEditNews} className="space-y-4">
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editNewsForm.title}
+                    onChange={(e) => setEditNewsForm({ ...editNewsForm, title: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Content *</label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={editNewsForm.content}
+                    onChange={(e) => setEditNewsForm({ ...editNewsForm, content: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/60 text-[13px] mb-1.5">Image URL</label>
+                  <input
+                    type="url"
+                    value={editNewsForm.imageUrl}
+                    onChange={(e) => setEditNewsForm({ ...editNewsForm, imageUrl: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  />
+                  {editNewsForm.imageUrl && (
+                    <div className="mt-2">
+                      <img
+                        src={editNewsForm.imageUrl}
+                        alt="Preview"
+                        className="w-full h-[120px] object-cover rounded-xl"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-white/60 text-[13px] mb-1.5">Category</label>
+                    <select
+                      value={editNewsForm.category}
+                      onChange={(e) => setEditNewsForm({ ...editNewsForm, category: e.target.value as "news" | "event" })}
+                      style={{ colorScheme: "dark" }}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    >
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="news">News</option>
+                      <option style={{ background: "#0f1b33", color: "#fff" }} value="event">Event</option>
+                    </select>
+                  </div>
+                  <div className="flex items-end">
+                    <label className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] w-full">
+                      <input
+                        type="checkbox"
+                        checked={editNewsForm.featured}
+                        onChange={(e) => setEditNewsForm({ ...editNewsForm, featured: e.target.checked })}
+                        className="rounded"
+                      />
+                      <span className="text-white/60 text-[13px] flex items-center gap-1">
+                        <Star className="w-3.5 h-3.5" /> Featured
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditNews(null)}
+                    className="flex-1 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="flex-1 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[var(--primary)]/25"
+                  >
+                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+export default function AnnouncementsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
+      </div>
+    }>
+      <AnnouncementsPageInner />
+    </Suspense>
   );
 }

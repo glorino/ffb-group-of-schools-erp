@@ -128,12 +128,12 @@ export async function POST() {
       { name: "Primary 4", displayName: "Primary 4", level: 2 },
       { name: "Primary 5", displayName: "Primary 5", level: 2 },
       { name: "Primary 6", displayName: "Primary 6", level: 2 },
-      { name: "JSS 1", displayName: "Junior Secondary 1", level: 3 },
-      { name: "JSS 2", displayName: "Junior Secondary 2", level: 3 },
-      { name: "JSS 3", displayName: "Junior Secondary 3", level: 3 },
-      { name: "SSS 1", displayName: "Senior Secondary 1", level: 4 },
-      { name: "SSS 2", displayName: "Senior Secondary 2", level: 4 },
-      { name: "SSS 3", displayName: "Senior Secondary 3", level: 4 },
+      { name: "JSS 1", displayName: "JSS 1", level: 3 },
+      { name: "JSS 2", displayName: "JSS 2", level: 3 },
+      { name: "JSS 3", displayName: "JSS 3", level: 3 },
+      { name: "SSS 1", displayName: "SSS 1", level: 4 },
+      { name: "SSS 2", displayName: "SSS 2", level: 4 },
+      { name: "SSS 3", displayName: "SSS 3", level: 4 },
     ];
     const classes: Record<string, string> = {};
     for (const c of classDefs) {
@@ -633,6 +633,33 @@ export async function POST() {
       } catch {}
     }
 
+    // Auto-cleanup duplicate classes
+    const duplicateNames = ["Junior Secondary 1", "Junior Secondary 2", "Junior Secondary 3", "Senior Secondary 1", "Senior Secondary 2", "Senior Secondary 3"];
+    const nameMap: Record<string, string> = {
+      "Junior Secondary 1": "JSS 1", "Junior Secondary 2": "JSS 2", "Junior Secondary 3": "JSS 3",
+      "Senior Secondary 1": "SSS 1", "Senior Secondary 2": "SSS 2", "Senior Secondary 3": "SSS 3",
+    };
+    let cleaned = 0;
+    let studentsMoved = 0;
+    for (const fullName of duplicateNames) {
+      const abbreviated = nameMap[fullName];
+      const dupClass = await prisma.schoolClass.findFirst({ where: { schoolId: school.id, name: fullName, academicYearId: academicYear.id } });
+      if (!dupClass) continue;
+      const targetClass = classes[abbreviated] ? await prisma.schoolClass.findFirst({ where: { id: classes[abbreviated] } }) : null;
+      if (!targetClass) {
+        await prisma.schoolClass.update({ where: { id: dupClass.id }, data: { name: abbreviated, displayName: abbreviated } });
+        cleaned++;
+        continue;
+      }
+      const dups = await prisma.student.findMany({ where: { classId: dupClass.id } });
+      for (const s of dups) { await prisma.student.update({ where: { id: s.id }, data: { classId: targetClass.id } }); studentsMoved++; }
+      await prisma.classSubject.updateMany({ where: { classId: dupClass.id }, data: { classId: targetClass.id } });
+      await prisma.attendanceRecord.updateMany({ where: { classId: dupClass.id }, data: { classId: targetClass.id } });
+      await prisma.timetableEntry.updateMany({ where: { classId: dupClass.id }, data: { classId: targetClass.id } });
+      await prisma.schoolClass.delete({ where: { id: dupClass.id } });
+      cleaned++;
+    }
+
     return NextResponse.json({
       success: true,
       message: "Database seeded successfully with comprehensive data",
@@ -646,6 +673,7 @@ export async function POST() {
         exams: examIds.length,
         teachers: teacherIds.length,
       },
+      cleanup: { deleted: cleaned, moved: studentsMoved },
     });
   } catch (error: any) {
     console.error("Seed error:", error);

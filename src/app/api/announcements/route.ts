@@ -28,9 +28,20 @@ export async function POST(request: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { title, content, type, priority, published, audience, audienceClassId, audienceStudentId, audienceParentId, audienceTeacherId, targetUserId } = body;
+    const { title, content, type, priority, published, audience, audienceClassId, audienceStudentId, audienceParentId, audienceTeacherId, targetUserId, imageUrl, featured } = body;
 
     if (!title || !content) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+
+    const targetData: Record<string, any> = {};
+    if (audience && audience !== "all") {
+      targetData.audience = audience;
+      targetData.classId = audienceClassId;
+      targetData.studentId = audienceStudentId;
+      targetData.parentId = audienceParentId;
+      targetData.teacherId = audienceTeacherId;
+    }
+    if (imageUrl) targetData.imageUrl = imageUrl;
+    if (featured !== undefined) targetData.featured = featured;
 
     const schoolId = await getDefaultSchoolId();
     const announcement = await prisma.announcement.create({
@@ -43,7 +54,7 @@ export async function POST(request: NextRequest) {
         published: published !== false,
         authorId: session.user.id,
         targetUserId: targetUserId || undefined,
-        target: audience && audience !== "all" ? JSON.stringify({ audience, classId: audienceClassId, studentId: audienceStudentId, parentId: audienceParentId, teacherId: audienceTeacherId }) : undefined,
+        target: Object.keys(targetData).length > 0 ? JSON.stringify(targetData) : undefined,
       },
     });
 
@@ -60,9 +71,17 @@ export async function PUT(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { id, title, content, type, priority, published } = body;
+    const { id, title, content, type, priority, published, imageUrl, featured } = body;
 
     if (!id) return NextResponse.json({ error: "Missing announcement ID" }, { status: 400 });
+
+    const existing = await prisma.announcement.findUnique({ where: { id } });
+    let target = existing?.target as Record<string, any> | undefined;
+    if (imageUrl !== undefined || featured !== undefined) {
+      target = { ...(target || {}) };
+      if (imageUrl !== undefined) target.imageUrl = imageUrl;
+      if (featured !== undefined) target.featured = featured;
+    }
 
     const announcement = await prisma.announcement.update({
       where: { id },
@@ -72,6 +91,7 @@ export async function PUT(request: NextRequest) {
         ...(type && { type }),
         ...(priority && { priority }),
         ...(published !== undefined && { published }),
+        ...(target && { target: JSON.stringify(target) }),
       },
     });
 

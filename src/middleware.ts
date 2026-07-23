@@ -23,6 +23,11 @@ const publicPaths = [
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Redirect NextAuth's /api/auth/error to our /auth/error page
+  if (pathname === "/api/auth/error") {
+    return NextResponse.redirect(new URL("/auth/error" + request.nextUrl.search, request.url));
+  }
+
   // Allow public paths
   if (publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
     return NextResponse.next();

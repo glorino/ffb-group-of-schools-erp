@@ -116,7 +116,7 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="hero">
         <video autoPlay muted loop playsInline>
-          <source src="/school-hero.mp4" type="video/mp4" />
+          <source src="/video/school-hero.mp4" type="video/mp4" />
         </video>
         <div className="hero-overlay"></div>
         <div className="hero-content container">
@@ -157,7 +157,7 @@ export default function LandingPage() {
       {/* Founder */}
       <section className="glass-section">
         <div className="founder">
-          <motion.img src="/founder.jpg" alt="Founder" style={{ width: "260px", height: "300px", borderRadius: "20px", objectFit: "cover", border: "2px solid rgba(255,255,255,0.15)" }} initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} />
+          <motion.img src="/logo.svg" alt="Founder" style={{ width: "260px", height: "300px", borderRadius: "20px", objectFit: "cover", border: "2px solid rgba(255,255,255,0.15)", background: "rgba(0,31,95,0.5)", padding: "20px" }} initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} />
           <motion.div className="founder-text" initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <h2 className="section-title" style={{ textAlign: "left", fontSize: "32px" }}>Message From The Founder</h2>
             <p>Welcome to FFB Group of Schools. Our mission is to inspire young minds to achieve their highest potential academically and morally. We believe every child deserves access to quality education and mentorship that prepares them for global success.</p>
@@ -201,7 +201,7 @@ export default function LandingPage() {
         <motion.div className="news-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
           {newsItems.map((n, i) => (
             <motion.div key={i} className="news-card" variants={item}>
-              <img src={n.image} alt={n.title} className="w-full h-[200px] object-cover rounded-t-[25px]" />
+              <img src={n.image} alt={n.title} className="w-full h-[200px] object-cover rounded-t-[25px]" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop"; }} />
               <div className="news-content">
                 <h3>{n.title}</h3>
                 <p>{n.desc}</p>
@@ -217,7 +217,7 @@ export default function LandingPage() {
         <div className="modal" style={{ display: "flex" }} onClick={() => setNewsModal(null)}>
           <motion.div className="modal-content" onClick={(e) => e.stopPropagation()} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
             <button className="modal-close" onClick={() => setNewsModal(null)}>&times;</button>
-            <img src={newsItems[newsModal].image} alt={newsItems[newsModal].title} className="w-full h-[200px] object-cover rounded-2xl mb-5" />
+            <img src={newsItems[newsModal].image} alt={newsItems[newsModal].title} className="w-full h-[200px] object-cover rounded-2xl mb-5" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop"; }} />
             <h2 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "15px" }}>{newsItems[newsModal].title}</h2>
             <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.8 }}>{newsItems[newsModal].full}</p>
           </motion.div>

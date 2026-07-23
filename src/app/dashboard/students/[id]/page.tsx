@@ -455,13 +455,13 @@ export default function StudentDetailPage() {
             <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6">
               <h3 className="text-white/80 font-semibold text-[15px] mb-4">Quick Actions</h3>
               <div className="flex flex-wrap gap-3">
-                <button className="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[13px] font-medium hover:bg-blue-500/15 transition">
+                <button onClick={() => toast("Message feature coming soon")} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[13px] font-medium hover:bg-blue-500/15 transition">
                   <MessageSquare className="w-4 h-4" /> Send Message
                 </button>
-                <button className="flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[13px] font-medium hover:bg-emerald-500/15 transition">
+                <button onClick={() => router.push("/dashboard/report-cards")} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[13px] font-medium hover:bg-emerald-500/15 transition">
                   <FileText className="w-4 h-4" /> View Report Card
                 </button>
-                <button className="flex items-center gap-2 px-5 py-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[13px] font-medium hover:bg-purple-500/15 transition">
+                <button onClick={() => window.print()} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[13px] font-medium hover:bg-purple-500/15 transition">
                   <Printer className="w-4 h-4" /> Print Profile
                 </button>
               </div>
