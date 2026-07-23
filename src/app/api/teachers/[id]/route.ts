@@ -28,7 +28,7 @@ export async function GET(
     const timetable = await prisma.timetableEntry.findMany({
       where: { teacherId: id },
       include: { class: true },
-      orderBy: [{ day: "asc" }, { period: "asc" }],
+      orderBy: [{ period: "asc" }],
     });
 
     // Fetch classes this teacher is assigned to
