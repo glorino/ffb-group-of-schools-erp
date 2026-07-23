@@ -17,6 +17,7 @@ import {
   Download,
 } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
 
@@ -40,6 +41,7 @@ interface TeachersResponse {
 }
 
 export default function TeachersPage() {
+  const router = useRouter();
   const [data, setData] = useState<TeachersResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -149,7 +151,10 @@ export default function TeachersPage() {
       key: "name",
       label: "Teacher",
       render: (row: Teacher) => (
-        <div className="flex items-center gap-3">
+        <button
+          onClick={() => router.push(`/dashboard/teachers/${row.id}`)}
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity text-left"
+        >
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white font-semibold">
             {row.firstName[0]}{row.lastName[0]}
           </div>
@@ -157,7 +162,7 @@ export default function TeachersPage() {
             <p className="text-white text-sm font-medium">{row.firstName} {row.lastName}</p>
             <p className="text-white/40 text-xs">{row.employeeId}</p>
           </div>
-        </div>
+        </button>
       ),
     },
     {
