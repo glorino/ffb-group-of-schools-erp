@@ -38,8 +38,8 @@ export async function GET(
       : [];
 
     // Fetch attendance records this teacher has marked
-    const attendanceCount = await prisma.attendance.count({
-      where: { markedBy: id },
+    const attendanceCount = await prisma.attendanceRecord.count({
+      where: { recordedBy: id },
     });
 
     return NextResponse.json({

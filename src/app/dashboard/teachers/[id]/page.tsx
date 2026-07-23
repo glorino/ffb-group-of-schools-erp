@@ -329,7 +329,7 @@ export default function TeacherDetailPage() {
                         <p className="text-white text-[13px] font-medium">{e.subject || "General"}</p>
                         <p className="text-white/40 text-[12px]">{e.class.displayName || e.class.name}{e.room ? ` • ${e.room}` : ""}</p>
                       </div>
-                      <span className="px-2 py-1 rounded-lg text-[11px] bg-[var(--primary)]/20 text-[var(--primary)]">{e.type}</span>
+                      <span className="px-2 py-1 rounded-lg text-[11px] bg-[var(--primary)]/20 text-[var(--primary)]">Lesson</span>
                     </div>
                   ))}
                 </div>
