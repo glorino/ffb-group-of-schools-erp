@@ -34,7 +34,7 @@ export async function GET(
     // Fetch classes this teacher is assigned to
     const assignedClassIds = [...new Set(timetable.map((t) => t.classId).filter(Boolean))];
     const assignedClasses = assignedClassIds.length
-      ? await prisma.class.findMany({ where: { id: { in: assignedClassIds } } })
+      ? await prisma.schoolClass.findMany({ where: { id: { in: assignedClassIds } } })
       : [];
 
     // Fetch attendance records this teacher has marked
