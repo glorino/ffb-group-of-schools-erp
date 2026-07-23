@@ -56,7 +56,7 @@ export default function DashboardLayout({
       <Sidebar />
       <div className="min-h-screen flex flex-col" style={{ marginLeft: "240px", width: "calc(100% - 240px)" }}>
         <Header />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 px-10 py-7 pt-5 overflow-x-hidden">{children}</main>
       </div>
     </div>
   );
