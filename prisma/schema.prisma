@@ -909,6 +909,7 @@ model TimetableEntry {
   startTime String
   endTime   String
   room      String?
+  subject   String?
   type      String   @default("lesson")
   createdAt DateTime @default(now())
 

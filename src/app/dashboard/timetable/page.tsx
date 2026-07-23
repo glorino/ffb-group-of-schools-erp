@@ -28,6 +28,7 @@ interface TimetableEntry {
   startTime: string;
   endTime: string;
   room: string | null;
+  subject: string | null;
   type: string;
   class: { id: string; name: string; displayName: string | null };
   teacher: { id: string; firstName: string; lastName: string };
@@ -69,8 +70,9 @@ function ReadOnlyTimetable({ entries, loading }: { entries: TimetableEntry[]; lo
                     }`}>
                       {entry ? (
                         <div>
-                          <p className="text-white text-[11px] font-medium">{entry.teacher.firstName} {entry.teacher.lastName}</p>
-                          {entry.room && <p className="text-white/30 text-[9px]">{entry.room}</p>}
+                          <p className="text-[var(--accent)] text-[11px] font-bold leading-tight">{entry.subject || "Lesson"}</p>
+                          <p className="text-white/50 text-[9px] mt-0.5">{entry.teacher.firstName} {entry.teacher.lastName[0]}.</p>
+                          {entry.room && <p className="text-white/25 text-[8px]">{entry.room}</p>}
                         </div>
                       ) : (
                         <span className="text-white/10 text-[10px]">—</span>
@@ -105,6 +107,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
     endTime: "9:00 AM",
     teacherId: "",
     room: "",
+    subject: "",
     type: "lesson",
   });
 
@@ -300,6 +303,12 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                     {teachers.map(t => <option key={t.id} value={t.id} style={{ background: "#0f1b33", color: "#fff" }}>{t.firstName} {t.lastName}</option>)}
                   </select>
                 </div>
+                <div>
+                  <label className="text-white/50 text-[12px] mb-1 block">Subject</label>
+                  <input type="text" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })}
+                    placeholder="e.g. Mathematics"
+                    className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] placeholder-white/20 focus:outline-none focus:border-[var(--primary)]" />
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-white/50 text-[12px] mb-1 block">Room</label>
@@ -349,6 +358,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
               <div className="space-y-3">
                 <div className="flex justify-between"><span className="text-white/40 text-[13px]">Day</span><span className="text-white text-[13px] font-medium">{dayLabels[detailSlot.dayOfWeek - 1]}</span></div>
                 <div className="flex justify-between"><span className="text-white/40 text-[13px]">Time</span><span className="text-white text-[13px] font-medium">{detailSlot.startTime} — {detailSlot.endTime}</span></div>
+                <div className="flex justify-between"><span className="text-white/40 text-[13px]">Subject</span><span className="text-white text-[13px] font-medium">{detailSlot.subject || "—"}</span></div>
                 <div className="flex justify-between"><span className="text-white/40 text-[13px]">Teacher</span><span className="text-white text-[13px] font-medium">{detailSlot.teacher.firstName} {detailSlot.teacher.lastName}</span></div>
                 <div className="flex justify-between"><span className="text-white/40 text-[13px]">Class</span><span className="text-white text-[13px] font-medium">{detailSlot.class.displayName || detailSlot.class.name}</span></div>
                 <div className="flex justify-between"><span className="text-white/40 text-[13px]">Room</span><span className="text-white text-[13px] font-medium">{detailSlot.room || "—"}</span></div>

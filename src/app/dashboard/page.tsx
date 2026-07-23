@@ -417,11 +417,23 @@ function StudentDashboard() {
           </div>
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/timetable" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">View Timetable</Link>
-        <Link href="/dashboard/assignments" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Check Assignments</Link>
-        <Link href="/dashboard/results" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">View Results</Link>
-        <Link href="/dashboard/payments" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Pay Fees</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+        <Link href="/dashboard/timetable" className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-9 h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[16px] group-hover:scale-110 transition-transform">📅</span>
+          <div><p className="text-[13px] font-semibold">View Timetable</p><p className="text-white/40 text-[10px]">Your class schedule</p></div>
+        </Link>
+        <Link href="/dashboard/exams" className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-9 h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[16px] group-hover:scale-110 transition-transform">📝</span>
+          <div><p className="text-[13px] font-semibold">My Exams</p><p className="text-white/40 text-[10px]">View upcoming exams</p></div>
+        </Link>
+        <Link href="/dashboard/results" className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-9 h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[16px] group-hover:scale-110 transition-transform">📊</span>
+          <div><p className="text-[13px] font-semibold">View Results</p><p className="text-white/40 text-[10px]">Check your grades</p></div>
+        </Link>
+        <Link href="/dashboard/finance" className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-9 h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[16px] group-hover:scale-110 transition-transform">💰</span>
+          <div><p className="text-[13px] font-semibold">Pay Fees</p><p className="text-white/40 text-[10px]">View & pay fees</p></div>
+        </Link>
       </div>
     </>
   );
@@ -1081,11 +1093,23 @@ function ParentDashboard() {
           ) : <div className="flex items-center justify-center h-[200px] text-white/30 text-[13px]">No grade data yet</div>}
         </DashboardCard>
       </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        <Link href="/dashboard/payments" className="px-4 py-2.5 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] text-[12px] font-medium hover:bg-[var(--primary)]/25 transition">Pay Fees</Link>
-        <Link href="/dashboard/timetable" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">View Timetable</Link>
-        <Link href="/dashboard/messages" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">Contact Teacher</Link>
-        <Link href="/dashboard/calendar" className="px-4 py-2.5 rounded-lg bg-white/[0.05] text-white/70 text-[12px] font-medium hover:bg-white/[0.08] transition">View Calendar</Link>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+        <Link href="/dashboard/finance" className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+          <span className="w-9 h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[16px] group-hover:scale-110 transition-transform">💰</span>
+          <div><p className="text-[13px] font-semibold">Pay Fees</p><p className="text-white/40 text-[10px]">View & pay fees</p></div>
+        </Link>
+        <Link href="/dashboard/timetable" className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+          <span className="w-9 h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[16px] group-hover:scale-110 transition-transform">📅</span>
+          <div><p className="text-[13px] font-semibold">View Timetable</p><p className="text-white/40 text-[10px]">Child's schedule</p></div>
+        </Link>
+        <Link href="/dashboard/results" className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+          <span className="w-9 h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[16px] group-hover:scale-110 transition-transform">📊</span>
+          <div><p className="text-[13px] font-semibold">View Results</p><p className="text-white/40 text-[10px]">Check grades</p></div>
+        </Link>
+        <Link href="/dashboard/calendar" className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+          <span className="w-9 h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[16px] group-hover:scale-110 transition-transform">📆</span>
+          <div><p className="text-[13px] font-semibold">Calendar</p><p className="text-white/40 text-[10px]">School events</p></div>
+        </Link>
       </div>
     </>
   );

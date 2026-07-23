@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 
+const subjectPool = [
+  "Mathematics", "English Language", "Physics", "Chemistry",
+  "Biology", "Computer Science", "Literature", "History",
+  "Geography", "Economics", "Further Mathematics", "Agricultural Science",
+];
+
 export async function GET(request: NextRequest) {
   try {
     const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"]);
@@ -22,7 +28,6 @@ export async function GET(request: NextRequest) {
       orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
     });
 
-    // Auto-seed timetable if empty
     if (entries.length === 0) {
       const classes = await prisma.schoolClass.findMany({ select: { id: true } });
       const teachers = await prisma.teacher.findMany({ select: { id: true } });
@@ -49,6 +54,7 @@ export async function GET(request: NextRequest) {
                     startTime: times[ti].start,
                     endTime: times[ti].end,
                     room: `Room ${100 + idx % 10}`,
+                    subject: subjectPool[idx % subjectPool.length],
                     type: "lesson",
                   },
                 });
@@ -57,7 +63,6 @@ export async function GET(request: NextRequest) {
             }
           }
         }
-        // Re-fetch after seeding
         entries = await prisma.timetableEntry.findMany({
           where,
           include: {
@@ -66,6 +71,21 @@ export async function GET(request: NextRequest) {
           },
           orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
         });
+      }
+    }
+
+    const needsBackfill = entries.filter(e => !e.subject);
+    if (needsBackfill.length > 0) {
+      let bIdx = 0;
+      for (const e of needsBackfill) {
+        try {
+          await prisma.timetableEntry.update({
+            where: { id: e.id },
+            data: { subject: subjectPool[bIdx % subjectPool.length] },
+          });
+          e.subject = subjectPool[bIdx % subjectPool.length];
+          bIdx++;
+        } catch {}
       }
     }
 
@@ -82,7 +102,7 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { classId, teacherId, dayOfWeek, startTime, endTime, room, type } = body;
+    const { classId, teacherId, dayOfWeek, startTime, endTime, room, subject, type } = body;
 
     if (!classId || !teacherId || dayOfWeek === undefined || !startTime || !endTime) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -96,6 +116,7 @@ export async function POST(request: NextRequest) {
         startTime,
         endTime,
         room: room || undefined,
+        subject: subject || undefined,
         type: type || "lesson",
       },
       include: {
