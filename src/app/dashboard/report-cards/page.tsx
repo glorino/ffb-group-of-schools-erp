@@ -82,7 +82,7 @@ export default function ReportCardsPage() {
               academicYear: d.term?.academicYear || "2025/2026",
             },
             school: {
-              name: d.school?.name || "FFB Group of Schools",
+              name: d.school?.name || process.env.NEXT_PUBLIC_SCHOOL_NAME || "FFB Group of Schools",
               address: d.school?.address,
               logo: d.school?.logo,
             },

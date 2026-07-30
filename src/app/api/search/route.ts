@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { requireAuth } from "@/lib/api-rbac";
+import { formatCurrency } from "@/lib/school-config";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"]);
+    if (authResult.error) return authResult.error;
 
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q") || "";
@@ -138,7 +137,7 @@ export async function GET(request: NextRequest) {
           id: f.id,
           type: "fee" as const,
           title: f.name,
-          subtitle: `₦${f.amount.toLocaleString()}`,
+          subtitle: formatCurrency(f.amount),
           extra: f.type,
         }))
       );

@@ -108,7 +108,7 @@ export default function NewsPage() {
       </AnimatePresence>
 
       <footer className="footer">
-        <div className="footer-bottom">© 2025 FFB Group of Schools. All rights reserved.</div>
+        <div className="footer-bottom">© {new Date().getFullYear()} FFB Group of Schools. All rights reserved.</div>
       </footer>
     </>
   );

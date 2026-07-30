@@ -27,19 +27,13 @@ export async function GET(request: NextRequest) {
       orderBy: { dueDate: "asc" },
     });
 
-    // Check for overdue books and calculate penalties
     const now = new Date();
     const updatedBorrowings = borrowings.map(b => {
       const dueDate = new Date(b.dueDate);
       if (b.status === "borrowed" && now > dueDate) {
         const daysOverdue = Math.floor((now.getTime() - dueDate.getTime()) / 86400000);
         const penaltyPerDay = Number(process.env.LATE_PENALTY_PER_DAY) || 100;
-        return {
-          ...b,
-          isOverdue: true,
-          daysOverdue,
-          penalty: daysOverdue * penaltyPerDay,
-        };
+        return { ...b, isOverdue: true, daysOverdue, penalty: daysOverdue * penaltyPerDay };
       }
       return { ...b, isOverdue: false, daysOverdue: 0, penalty: 0 };
     });
@@ -60,7 +54,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "LIBRARIAN", "TEACHER", "STUDENT", "PARENT"]);
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "LIBRARIAN"]);
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
@@ -92,11 +86,11 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "LIBRARIAN", "TEACHER", "STUDENT", "PARENT"]);
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "LIBRARIAN"]);
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { id, action } = body;
+    const { id, action, title, author, isbn, category, copies, publisher, location } = body;
 
     if (action === "return") {
       const borrowing = await prisma.libraryBorrowing.findUnique({ where: { id } });
@@ -112,7 +106,6 @@ export async function PUT(request: NextRequest) {
         data: { status: "returned", returnDate: now, penalty },
       });
 
-      // Update available copies
       await prisma.libraryBook.update({
         where: { id: borrowing.bookId },
         data: { available: { increment: 1 } },
@@ -121,8 +114,79 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: true, penalty, daysOverdue });
     }
 
+    if (action === "issue") {
+      const { studentId, dueDate } = body;
+      if (!id || !studentId || !dueDate) {
+        return NextResponse.json({ error: "Missing bookId, studentId, or dueDate" }, { status: 400 });
+      }
+
+      const book = await prisma.libraryBook.findUnique({ where: { id } });
+      if (!book) return NextResponse.json({ error: "Book not found" }, { status: 404 });
+      if (book.available < 1) return NextResponse.json({ error: "No copies available" }, { status: 400 });
+
+      const borrowing = await prisma.libraryBorrowing.create({
+        data: {
+          bookId: id,
+          studentId,
+          dueDate: new Date(dueDate),
+          status: "borrowed",
+        },
+      });
+
+      await prisma.libraryBook.update({
+        where: { id },
+        data: { available: { decrement: 1 } },
+      });
+
+      return NextResponse.json({ success: true, borrowing }, { status: 201 });
+    }
+
+    if (action === "update") {
+      if (!id) return NextResponse.json({ error: "Book ID is required" }, { status: 400 });
+
+      const book = await prisma.libraryBook.update({
+        where: { id },
+        data: {
+          title: title || undefined,
+          author: author || undefined,
+          isbn: isbn || undefined,
+          category: category || undefined,
+          copies: copies ? parseInt(copies) : undefined,
+          publisher: publisher || undefined,
+          location: location || undefined,
+        },
+      });
+
+      return NextResponse.json({ success: true, book });
+    }
+
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (error) {
+    console.error("PUT /api/library error:", error);
     return NextResponse.json({ error: "Failed" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "LIBRARIAN"]);
+    if (authResult.error) return authResult.error;
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+    const borrowings = await prisma.libraryBorrowing.findMany({
+      where: { bookId: id, status: "borrowed" },
+    });
+    if (borrowings.length > 0) {
+      return NextResponse.json({ error: "Cannot delete book with active borrowings" }, { status: 400 });
+    }
+
+    await prisma.libraryBook.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("DELETE /api/library error:", error);
+    return NextResponse.json({ error: "Failed to delete book" }, { status: 500 });
   }
 }

@@ -41,6 +41,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
       { label: "My Exams", href: "/dashboard/exams", emoji: "📝", roles: ["STUDENT"] },
       { label: "Timetable", href: "/dashboard/timetable", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
       { label: "Lesson Plans", href: "/dashboard/lesson-plans", emoji: "📋", roles: ["TEACHER", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Discipline", href: "/dashboard/discipline", emoji: "⚖️", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
     ],
   },
   {

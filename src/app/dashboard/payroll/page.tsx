@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatCurrency } from "@/lib/school-config";
 import {
   Wallet,
   Plus,
@@ -116,7 +117,7 @@ export default function PayrollPage() {
     }
   };
 
-  const fmt = (n: number) => `₦${n.toLocaleString()}`;
+  const fmt = (n: number) => formatCurrency(n);
 
   const monthLabel = `${monthNames[parseInt(currentMonth) - 1]} ${currentYear}`;
 
@@ -331,18 +332,18 @@ export default function PayrollPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-white/50 text-[12px] mb-1.5">Basic Salary (₦) *</label>
+                  <label className="block text-white/50 text-[12px] mb-1.5">Basic Salary *</label>
                   <input type="number" value={form.basicSalary} onChange={(e) => setForm({ ...form, basicSalary: e.target.value })}
                     placeholder="e.g. 300000" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-white/50 text-[12px] mb-1.5">Allowances (₦)</label>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Allowances</label>
                     <input type="number" value={form.allowances} onChange={(e) => setForm({ ...form, allowances: e.target.value })}
                       placeholder="0" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
                   </div>
                   <div>
-                    <label className="block text-white/50 text-[12px] mb-1.5">Deductions (₦)</label>
+                    <label className="block text-white/50 text-[12px] mb-1.5">Deductions</label>
                     <input type="number" value={form.deductions} onChange={(e) => setForm({ ...form, deductions: e.target.value })}
                       placeholder="0" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
                   </div>

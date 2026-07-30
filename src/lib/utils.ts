@@ -5,12 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(amount);
-}
+export { formatCurrency } from "@/lib/school-config";
 
 export function formatDate(date: Date | string): string {
   return new Intl.DateTimeFormat("en-NG", {

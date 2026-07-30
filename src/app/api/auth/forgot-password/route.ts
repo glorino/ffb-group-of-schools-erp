@@ -12,17 +12,17 @@ export async function POST(req: NextRequest) {
 
     const user = await prisma.user.findUnique({ where: { email } });
 
-    // Always return success to prevent email enumeration
     if (!user) {
       return NextResponse.json({ success: true, message: "If an account exists with this email, a reset link has been sent." });
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    const resetExpiry = new Date(Date.now() + 60 * 60 * 1000);
 
-    // Store token in a simple way - using the existing user update
-    // Since User model may not have resetToken fields, we store in a JSON field or skip
-    // For now, just send the email with the token
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { resetToken, resetExpiry },
+    });
 
     try {
       const { sendPasswordResetEmail } = await import("@/lib/resend");

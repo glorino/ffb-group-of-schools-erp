@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatCurrency, formatCurrencyCompact } from "@/lib/school-config";
 import {
   CreditCard,
   Search,
@@ -197,7 +198,7 @@ export default function FinancePage() {
     toast.success("Payments exported successfully");
   };
 
-  const formatCurrency = (v: number) => v >= 1000000 ? `\u20A6${(v / 1000000).toFixed(1)}M` : `\u20A6${(v / 1000).toFixed(0)}K`;
+  const formatCompact = (v: number) => v >= 1000000 ? formatCurrencyCompact(v) : formatCurrency(v);
 
   const tabs = ["overview", "payments", "invoices"] as const;
 
@@ -293,7 +294,7 @@ export default function FinancePage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-white text-[13px] font-semibold">{"\u20A6"}{(p.amount || 0).toLocaleString()}</p>
+                        <p className="text-white text-[13px] font-semibold">{formatCurrency(p.amount || 0)}</p>
                         <span className={`text-[10px] font-medium ${p.status === "verified" ? "text-emerald-400" : "text-amber-400"}`}>{p.status}</span>
                       </div>
                     </div>
@@ -366,7 +367,7 @@ export default function FinancePage() {
                       <td className="px-5 py-3.5">
                         <span className="px-2.5 py-0.5 rounded-lg bg-white/[0.05] text-white/40 text-[11px] font-medium">{p.student?.class?.name || p.className || "—"}</span>
                       </td>
-                      <td className="px-5 py-3.5 text-white/80 text-[13px] font-semibold">{"\u20A6"}{(p.amount || 0).toLocaleString()}</td>
+                      <td className="px-5 py-3.5 text-white/80 text-[13px] font-semibold">{formatCurrency(p.amount || 0)}</td>
                       <td className="px-5 py-3.5 text-white/40 text-[12px]">{p.method || "—"}</td>
                       <td className="px-5 py-3.5 text-white/30 text-[12px]">{p.paidAt ? new Date(p.paidAt).toLocaleDateString() : (p.date || "—")}</td>
                       <td className="px-5 py-3.5">
@@ -414,7 +415,7 @@ export default function FinancePage() {
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <p className="text-white/70 text-[13px] font-semibold">{"\u20A6"}{(inv.totalAmount || inv.amount).toLocaleString()}</p>
+                        <p className="text-white/70 text-[13px] font-semibold">{formatCurrency(inv.totalAmount || inv.amount)}</p>
                         <p className={`text-[11px] font-medium mt-0.5 ${inv.status === "paid" ? "text-emerald-400" : daysLeft <= 7 ? "text-red-400" : "text-amber-400"}`}>
                           {inv.status === "paid" ? "Paid" : `${daysLeft} days left`}
                         </p>
@@ -506,7 +507,7 @@ export default function FinancePage() {
                   <select value={form.schoolFeeId} onChange={(e) => { setForm({ ...form, schoolFeeId: e.target.value }); const f = fees.find(fe => fe.id === e.target.value); setSelectedFeeName(f ? `${f.name} (${f.type})` : ""); }} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer" style={{ colorScheme: "dark" }}>
                     <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select fee type</option>
                     {fees.map(f => (
-                      <option key={f.id} value={f.id} style={{ background: "#0f1b33", color: "#fff" }}>{f.name} — {"\u20A6"}{f.amount.toLocaleString()}</option>
+                      <option key={f.id} value={f.id} style={{ background: "#0f1b33", color: "#fff" }}>{f.name} — {formatCurrency(f.amount)}</option>
                     ))}
                   </select>
                 </div>

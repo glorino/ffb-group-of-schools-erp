@@ -58,6 +58,7 @@ export default function StudentsPage() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     firstName: "", lastName: "", email: "", phone: "", admissionNumber: "",
@@ -113,20 +114,35 @@ export default function StudentsPage() {
     if (!form.firstName || !form.lastName) { toast.error("Please fill required fields"); return; }
     setSubmitting(true);
     try {
-      const res = await fetch("/api/students", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: form.firstName, lastName: form.lastName, email: form.email || undefined,
-          admissionNumber: form.admissionNumber || undefined, classId: form.classId || undefined,
-          guardianName: form.guardianName || undefined, guardianPhone: form.guardianPhone || undefined,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to create student");
+      if (editingStudent) {
+        const res = await fetch(`/api/students?id=${editingStudent.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName: form.firstName, lastName: form.lastName, email: form.email || undefined,
+            classId: form.classId || undefined,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to update student");
+        toast.success("Student updated successfully");
+      } else {
+        const res = await fetch("/api/students", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName: form.firstName, lastName: form.lastName, email: form.email || undefined,
+            admissionNumber: form.admissionNumber || undefined, classId: form.classId || undefined,
+            guardianName: form.guardianName || undefined, guardianPhone: form.guardianPhone || undefined,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to create student");
+        toast.success("Student added successfully");
+      }
       setShowModal(false);
+      setEditingStudent(null);
       setForm({ firstName: "", lastName: "", email: "", phone: "", admissionNumber: "", guardianName: "", guardianPhone: "", classId: "" });
-      toast.success("Student added successfully");
       setPage(1);
     } catch (err: any) {
       toast.error(err.message);
@@ -181,7 +197,7 @@ export default function StudentsPage() {
             Export
           </button>
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => { setEditingStudent(null); setForm({ firstName: "", lastName: "", email: "", phone: "", admissionNumber: "", guardianName: "", guardianPhone: "", classId: "" }); setShowModal(true); }}
             className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2"
           >
             <UserPlus className="w-4 h-4" />
@@ -354,13 +370,13 @@ export default function StudentsPage() {
                                   <Eye className="w-3.5 h-3.5" /> View Profile
                                 </button>
                                 <button
-                                  onClick={(e) => { e.stopPropagation(); setOpenMenu(null); }}
+                                  onClick={(e) => { e.stopPropagation(); setEditingStudent(student); setShowModal(true); setOpenMenu(null); }}
                                   className="w-full flex items-center gap-2 px-3 py-2 text-white/50 hover:text-white/80 hover:bg-white/[0.06] text-[12px]"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" /> Edit
                                 </button>
                                 <button
-                                  onClick={(e) => { e.stopPropagation(); setOpenMenu(null); }}
+                                  onClick={async (e) => { e.stopPropagation(); if (confirm(`Remove ${student.firstName} ${student.lastName}?`)) { await fetch(`/api/students?id=${student.id}`, { method: "DELETE" }); toast.success("Student removed"); fetchStudents(); } setOpenMenu(null); }}
                                   className="w-full flex items-center gap-2 px-3 py-2 text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.06] text-[12px]"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" /> Remove
@@ -512,8 +528,8 @@ export default function StudentsPage() {
               className="w-full max-w-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
             >
               <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
-                <h3 className="text-white font-semibold">Add New Student</h3>
-                <button onClick={() => setShowModal(false)} className="text-white/40 hover:text-white/70 transition">
+                <h3 className="text-white font-semibold">{editingStudent ? "Edit Student" : "Add New Student"}</h3>
+                <button onClick={() => { setShowModal(false); setEditingStudent(null); }} className="text-white/40 hover:text-white/70 transition">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -571,7 +587,7 @@ export default function StudentsPage() {
                 <button onClick={handleCreate} disabled={submitting}
                   className="px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center gap-2">
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Add Student
+                  {editingStudent ? "Update Student" : "Add Student"}
                 </button>
               </div>
             </motion.div>

@@ -161,7 +161,7 @@ export default function TrackPage() {
             {/* Rejected */}
             {result.status === "rejected" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} style={{ marginTop: "20px", padding: "20px", background: "rgba(239,68,68,0.06)", borderRadius: "16px", border: "1px solid rgba(239,68,68,0.2)", textAlign: "center" }}>
-                <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", lineHeight: 1.7 }}>If you have questions about this decision, please contact the admissions office at <strong style={{ color: "#fff" }}>info@glopresc.com</strong> or call <strong style={{ color: "#fff" }}>+234 905 998 0991</strong>.</p>
+                <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", lineHeight: 1.7 }}>If you have questions about this decision, please contact the admissions office at <strong style={{ color: "#fff" }}>info@ffb.edu.ng</strong> or call <strong style={{ color: "#fff" }}>+234 905 998 0991</strong>.</p>
               </motion.div>
             )}
           </motion.section>
@@ -169,7 +169,7 @@ export default function TrackPage() {
       </AnimatePresence>
 
       <footer className="footer">
-        <div className="footer-bottom">© 2025 FFB Group of Schools. All rights reserved.</div>
+        <div className="footer-bottom">© {new Date().getFullYear()} FFB Group of Schools. All rights reserved.</div>
       </footer>
     </>
   );

@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
-import { StudentCreateSchema } from "@/lib/validations";
+import { requireAuth } from "@/lib/api-rbac";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "PARENT"]);
+    if (authResult.error) return authResult.error;
 
     const { id } = await params;
 
@@ -64,10 +61,7 @@ export async function GET(
     return NextResponse.json(student);
   } catch (error) {
     console.error("GET /api/students/[id] error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch student" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch student" }, { status: 500 });
   }
 }
 
@@ -76,10 +70,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
+    if (authResult.error) return authResult.error;
 
     const { id } = await params;
     const body = await request.json();
@@ -113,13 +105,10 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json(student);
+    return NextResponse.json({ success: true, student });
   } catch (error) {
     console.error("PUT /api/students/[id] error:", error);
-    return NextResponse.json(
-      { error: "Failed to update student" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to update student" }, { status: 500 });
   }
 }
 
@@ -128,10 +117,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR"]);
+    if (authResult.error) return authResult.error;
 
     const { id } = await params;
 
@@ -142,12 +129,9 @@ export async function DELETE(
 
     await prisma.student.delete({ where: { id } });
 
-    return NextResponse.json({ message: "Student deleted successfully" });
+    return NextResponse.json({ success: true, message: "Student deleted successfully" });
   } catch (error) {
     console.error("DELETE /api/students/[id] error:", error);
-    return NextResponse.json(
-      { error: "Failed to delete student" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to delete student" }, { status: 500 });
   }
 }

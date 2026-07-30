@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { requireAuth } from "@/lib/api-rbac";
+import { formatCurrency } from "@/lib/school-config";
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requireAuth();
+    if (authResult.error) return authResult.error;
+    const session = authResult.session;
 
     const schoolId = (session.user as any).schoolId as string | undefined;
     const now = new Date();
@@ -101,7 +101,7 @@ export async function GET() {
     const recentActivities = [
       ...recentPayments.map((p) => ({
         title: "Payment received",
-        description: `${p.student.firstName} ${p.student.lastName} paid ₦${p.amount.toLocaleString()}`,
+        description: `${p.student.firstName} ${p.student.lastName} paid ${formatCurrency(p.amount)}`,
         time: p.paidAt?.toISOString() ?? p.createdAt.toISOString(),
         type: "payment" as const,
       })),

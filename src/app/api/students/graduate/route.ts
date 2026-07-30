@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { requireAuth } from "@/lib/api-rbac";
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   try {
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL"]);
+    if (authResult.error) return authResult.error;
+
     const currentYear = new Date().getFullYear();
 
     const sss3Students = await prisma.student.findMany({
@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
         await prisma.alumni.create({
           data: {
             userId: student.userId,
+            schoolId: student.schoolId,
             graduationYear: currentYear,
           },
         });
@@ -42,9 +43,7 @@ export async function POST(req: NextRequest) {
         });
 
         graduated++;
-      } catch {
-        // Skip on error
-      }
+      } catch {}
     }
 
     return NextResponse.json({

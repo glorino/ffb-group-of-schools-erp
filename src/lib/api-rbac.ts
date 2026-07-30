@@ -28,6 +28,12 @@ const apiRoleRoutes: Record<string, string[]> = {
   "/api/children": ["PARENT", "STUDENT"],
   "/api/reports": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
   "/api/subjects": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"],
+  "/api/discipline": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
+  "/api/reports": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
+  "/api/search": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"],
+  "/api/activity-log": ["OWNER", "ADMINISTRATOR", "PRINCIPAL"],
+  "/api/payments": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT", "STUDENT", "PARENT"],
+  "/api/calendar": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
 };
 
 export async function requireAuth(requiredRoles?: string[]) {

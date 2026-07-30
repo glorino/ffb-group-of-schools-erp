@@ -2,12 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 
-const subjectPool = [
-  "Mathematics", "English Language", "Physics", "Chemistry",
-  "Biology", "Computer Science", "Literature", "History",
-  "Geography", "Economics", "Further Mathematics", "Agricultural Science",
-];
-
 export async function GET(request: NextRequest) {
   try {
     const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"]);
@@ -19,7 +13,7 @@ export async function GET(request: NextRequest) {
     const where: any = {};
     if (classId) where.classId = classId;
 
-    let entries = await prisma.timetableEntry.findMany({
+    const entries = await prisma.timetableEntry.findMany({
       where,
       include: {
         class: { select: { id: true, name: true, displayName: true } },
@@ -27,67 +21,6 @@ export async function GET(request: NextRequest) {
       },
       orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
     });
-
-    if (entries.length === 0) {
-      const classes = await prisma.schoolClass.findMany({ select: { id: true } });
-      const teachers = await prisma.teacher.findMany({ select: { id: true } });
-      if (classes.length > 0 && teachers.length > 0) {
-        const days = [1, 2, 3, 4, 5];
-        const times = [
-          { start: "8:00 AM", end: "9:00 AM" },
-          { start: "9:00 AM", end: "10:00 AM" },
-          { start: "10:00 AM", end: "11:00 AM" },
-          { start: "11:00 AM", end: "12:00 PM" },
-          { start: "1:00 PM", end: "2:00 PM" },
-          { start: "2:00 PM", end: "3:00 PM" },
-        ];
-        let idx = 0;
-        for (const cls of classes) {
-          for (const day of days) {
-            for (let ti = 0; ti < Math.min(times.length, 5); ti++) {
-              try {
-                await prisma.timetableEntry.create({
-                  data: {
-                    classId: cls.id,
-                    teacherId: teachers[idx % teachers.length].id,
-                    dayOfWeek: day,
-                    startTime: times[ti].start,
-                    endTime: times[ti].end,
-                    room: `Room ${100 + idx % 10}`,
-                    subject: subjectPool[idx % subjectPool.length],
-                    type: "lesson",
-                  },
-                });
-                idx++;
-              } catch {}
-            }
-          }
-        }
-        entries = await prisma.timetableEntry.findMany({
-          where,
-          include: {
-            class: { select: { id: true, name: true, displayName: true } },
-            teacher: { select: { id: true, firstName: true, lastName: true } },
-          },
-          orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
-        });
-      }
-    }
-
-    const needsBackfill = entries.filter(e => !e.subject);
-    if (needsBackfill.length > 0) {
-      let bIdx = 0;
-      for (const e of needsBackfill) {
-        try {
-          await prisma.timetableEntry.update({
-            where: { id: e.id },
-            data: { subject: subjectPool[bIdx % subjectPool.length] },
-          });
-          e.subject = subjectPool[bIdx % subjectPool.length];
-          bIdx++;
-        } catch {}
-      }
-    }
 
     return NextResponse.json({ entries });
   } catch (error) {
@@ -98,7 +31,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"]);
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"]);
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
@@ -135,9 +68,44 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function PUT(request: NextRequest) {
+  try {
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"]);
+    if (authResult.error) return authResult.error;
+
+    const body = await request.json();
+    const { id, classId, teacherId, dayOfWeek, startTime, endTime, room, subject, type } = body;
+
+    if (!id) return NextResponse.json({ error: "Entry ID is required" }, { status: 400 });
+
+    const entry = await prisma.timetableEntry.update({
+      where: { id },
+      data: {
+        classId: classId || undefined,
+        teacherId: teacherId || undefined,
+        dayOfWeek: dayOfWeek !== undefined ? parseInt(dayOfWeek) : undefined,
+        startTime: startTime || undefined,
+        endTime: endTime || undefined,
+        room: room || undefined,
+        subject: subject || undefined,
+        type: type || undefined,
+      },
+      include: {
+        class: { select: { id: true, name: true, displayName: true } },
+        teacher: { select: { id: true, firstName: true, lastName: true } },
+      },
+    });
+
+    return NextResponse.json({ success: true, entry });
+  } catch (error) {
+    console.error("PUT /api/timetable error:", error);
+    return NextResponse.json({ error: "Failed to update timetable entry" }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"]);
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"]);
     if (authResult.error) return authResult.error;
 
     const { searchParams } = new URL(request.url);

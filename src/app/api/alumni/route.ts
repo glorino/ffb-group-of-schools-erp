@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { requireAuth } from "@/lib/api-rbac";
+import { getDefaultSchoolId } from "@/lib/school";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "ALUMNI"]);
+    if (authResult.error) return authResult.error;
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
 
     const where: any = {};
+    const schoolId = await getDefaultSchoolId();
+    where.schoolId = schoolId;
+
     if (search) {
       where.OR = [
         { user: { name: { contains: search, mode: "insensitive" } } },
@@ -37,8 +41,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
+    if (authResult.error) return authResult.error;
 
     const body = await request.json();
     const { userId, graduationYear, university, degree, industry, currentEmployer, currentPosition, biography, isPublic } = body;
@@ -47,9 +51,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    const schoolId = await getDefaultSchoolId();
+
     const alumni = await prisma.alumni.create({
       data: {
         userId,
+        schoolId,
         graduationYear: parseInt(graduationYear),
         university: university || undefined,
         degree: degree || undefined,
