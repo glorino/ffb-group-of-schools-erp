@@ -29,7 +29,6 @@ const apiRoleRoutes: Record<string, string[]> = {
   "/api/reports": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
   "/api/subjects": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"],
   "/api/discipline": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
-  "/api/reports": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"],
   "/api/search": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"],
   "/api/activity-log": ["OWNER", "ADMINISTRATOR", "PRINCIPAL"],
   "/api/payments": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT", "STUDENT", "PARENT"],
