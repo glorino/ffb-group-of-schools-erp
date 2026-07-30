@@ -65,23 +65,24 @@ export default function StudentsPage() {
     guardianName: "", guardianPhone: "", classId: "",
   });
 
+  const fetchStudents = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({ page: String(page), limit: "10" });
+      if (search) params.set("search", search);
+      if (classFilter) params.set("classId", classFilter);
+      if (statusFilter) params.set("status", statusFilter);
+      const res = await fetch(`/api/students?${params}`);
+      const data = await res.json();
+      setStudents(data.students || []);
+      setTotalPages(data.pagination?.pages || 1);
+    } catch {
+      setStudents([]);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchStudents = async () => {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams({ page: String(page), limit: "10" });
-        if (search) params.set("search", search);
-        if (classFilter) params.set("classId", classFilter);
-        if (statusFilter) params.set("status", statusFilter);
-        const res = await fetch(`/api/students?${params}`);
-        const data = await res.json();
-        setStudents(data.students || []);
-        setTotalPages(data.pagination?.pages || 1);
-      } catch {
-        setStudents([]);
-      }
-      setLoading(false);
-    };
     fetchStudents();
   }, [page, search, classFilter, statusFilter]);
 
