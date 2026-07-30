@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendWelcomeEmail } from "@/lib/resend";
+import { requireAuth } from "@/lib/api-rbac";
 
 export async function POST(req: NextRequest) {
   try {
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL"]);
+    if (authResult.error) return authResult.error;
+
     const body = await req.json();
     const { type, to, name, role, password } = body;
 

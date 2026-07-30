@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatCurrency } from "@/lib/school-config";
 import {
   BookOpen,
   Users,
@@ -335,7 +336,7 @@ export default function LibraryPage() {
                 <AlertCircle className="w-4 h-4 text-red-400" />
                 <span className="text-red-400 text-[13px] font-medium">{borrowings.filter((b) => b.status === "overdue").length} Overdue Books</span>
               </div>
-              <p className="text-white/40 text-[12px]">Total penalties: ₦{(borrowings.filter((b) => b.status === "overdue").length * 500).toLocaleString()}</p>
+              <p className="text-white/40 text-[12px]">Total penalties: {formatCurrency(borrowings.filter((b) => b.status === "overdue").length * 500)}</p>
               <button
                 onClick={() => setShowPenalties(true)}
                 className="mt-3 w-full py-2 rounded-lg bg-red-500/20 text-red-400 text-[13px] hover:bg-red-500/30 transition-all"

@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/api-rbac";
 
 export async function GET() {
   try {
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"]);
+    if (authResult.error) return authResult.error;
+
     // Get current term and academic year
     const currentYear = await prisma.academicYear.findFirst({ where: { isCurrent: true } });
     const currentTerm = await prisma.term.findFirst({ where: { isCurrent: true } });

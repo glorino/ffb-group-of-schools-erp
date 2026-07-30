@@ -326,11 +326,11 @@ export default function LandingPage() {
             <h4>Contact</h4>
             <p>123 Education Avenue, GRA<br />Lagos State, Nigeria</p>
             <p style={{ marginTop: "8px" }}>Phone: +234 905 998 0991</p>
-            <p style={{ marginTop: "8px" }}>Email: info@glopresc.com</p>
+            <p style={{ marginTop: "8px" }}>Email: info@ffb.edu.ng</p>
             <div className="footer-map" style={{ marginTop: "15px" }}><iframe src="https://www.google.com/maps?q=Lagos+Nigeria&output=embed"></iframe></div>
           </motion.div>
         </div>
-        <div className="footer-bottom">© 2025 FFB Group of Schools. All rights reserved.</div>
+        <div className="footer-bottom">{`© ${new Date().getFullYear()} FFB Group of Schools. All rights reserved.`}</div>
       </footer>
 
       {/* Floating Contact */}

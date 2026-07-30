@@ -175,10 +175,10 @@ export default function AboutPage() {
             <h4>Contact</h4>
             <p>123 Education Avenue, GRA, Lagos</p>
             <p style={{ marginTop: "8px" }}>+234 905 998 0991</p>
-            <p style={{ marginTop: "8px" }}>info@glopresc.com</p>
+            <p style={{ marginTop: "8px" }}>info@ffb.edu.ng</p>
           </div>
         </div>
-        <div className="footer-bottom">© 2025 FFB Group of Schools. All rights reserved.</div>
+        <div className="footer-bottom">{`© ${new Date().getFullYear()} FFB Group of Schools. All rights reserved.`}</div>
       </footer>
     </>
   );

@@ -33,6 +33,7 @@ import {
   Target,
   Loader2,
   MessageSquare,
+  X,
   Activity,
   Stethoscope,
   Droplets,
@@ -91,6 +92,10 @@ export default function StudentDetailPage() {
   const [student, setStudent] = useState<Student | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [messageSubject, setMessageSubject] = useState("");
+  const [messageBody, setMessageBody] = useState("");
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   useEffect(() => {
     const fetchStudent = async () => {
@@ -455,7 +460,7 @@ export default function StudentDetailPage() {
             <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6">
               <h3 className="text-white/80 font-semibold text-[15px] mb-4">Quick Actions</h3>
               <div className="flex flex-wrap gap-3">
-                <button onClick={() => toast("Message feature coming soon")} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[13px] font-medium hover:bg-blue-500/15 transition">
+                <button onClick={() => setShowMessageModal(true)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[13px] font-medium hover:bg-blue-500/15 transition">
                   <MessageSquare className="w-4 h-4" /> Send Message
                 </button>
                 <button onClick={() => router.push("/dashboard/report-cards")} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[13px] font-medium hover:bg-emerald-500/15 transition">
@@ -935,6 +940,70 @@ export default function StudentDetailPage() {
             </div>
           )}
         </>
+      )}
+
+      {showMessageModal && student && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-[#0a1628] border border-white/[0.12] shadow-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-white font-semibold text-lg">Send Message</h3>
+                <p className="text-white/40 text-[13px]">To: {student.firstName} {student.lastName}</p>
+              </div>
+              <button onClick={() => setShowMessageModal(false)} className="p-2 rounded-xl hover:bg-white/[0.08] text-white/40">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1.5">Subject</label>
+                <input type="text" value={messageSubject} onChange={(e) => setMessageSubject(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-blue-500" placeholder="Enter subject" />
+              </div>
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1.5">Message</label>
+                <textarea value={messageBody} onChange={(e) => setMessageBody(e.target.value)} rows={5} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-blue-500 resize-none" placeholder="Write your message..." />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => setShowMessageModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-sm hover:bg-white/[0.08]">Cancel</button>
+              <button
+                onClick={async () => {
+                  if (!messageSubject.trim() || !messageBody.trim()) {
+                    toast.error("Subject and message are required");
+                    return;
+                  }
+                  setSendingMessage(true);
+                  try {
+                    const res = await fetch("/api/notifications", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        title: messageSubject.trim(),
+                        message: messageBody.trim(),
+                        type: "message",
+                        targetUserId: student.id,
+                      }),
+                    });
+                    if (!res.ok) throw new Error("Failed");
+                    toast.success("Message sent");
+                    setShowMessageModal(false);
+                    setMessageSubject("");
+                    setMessageBody("");
+                  } catch {
+                    toast.error("Failed to send message");
+                  } finally {
+                    setSendingMessage(false);
+                  }
+                }}
+                disabled={sendingMessage}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 flex items-center gap-2"
+              >
+                {sendingMessage && <Loader2 className="w-4 h-4 animate-spin" />}
+                Send
+              </button>
+            </div>
+          </motion.div>
+        </div>
       )}
     </motion.div>
   );

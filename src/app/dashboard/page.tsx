@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import { formatCurrency, formatCurrencyCompact, SCHOOL_CONFIG } from "@/lib/school-config";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, PieChart, Pie, Cell,
@@ -46,7 +47,7 @@ function CustomTooltip({ active, payload, label }: any) {
       <p className="text-white/50 text-[10px] font-medium mb-1">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} className="text-white/90 text-[12px] font-semibold">
-          {p.name}: {typeof p.value === "number" && p.value > 10000 ? `\u20A6${(p.value / 1000000).toFixed(1)}M` : p.value}
+          {p.name}: {typeof p.value === "number" && p.value > 10000 ? formatCurrencyCompact(p.value) : p.value}
         </p>
       ))}
     </div>
@@ -72,7 +73,7 @@ function AdminDashboard() {
         </DashboardCard>
         <DashboardCard>
           <p className="text-white/40 text-[12px] font-medium">Total Revenue</p>
-          <p className="text-[22px] font-bold text-white mt-1">{"\u20A6"}{(stats.totalRevenue / 1000000).toFixed(1)}M</p>
+          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue / 1000000)}M</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-white/40 text-[12px] font-medium">Active Classes</p>
@@ -92,7 +93,7 @@ function AdminDashboard() {
         </DashboardCard>
         <DashboardCard>
           <p className="text-white/40 text-[12px] font-medium">Fee Collection</p>
-          <p className="text-[22px] font-bold text-white mt-1">{"\u20A6"}{(stats.totalRevenue / 1000000).toFixed(1)}M</p>
+          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue / 1000000)}M</p>
           <p className="text-emerald-400 text-[11px] mt-1">Total collected</p>
         </DashboardCard>
       </div>
@@ -244,7 +245,7 @@ function TeacherDashboard() {
         </DashboardCard>
         <DashboardCard>
           <p className="text-white/40 text-[12px] font-medium">Collected Revenue</p>
-          <p className="text-[22px] font-bold text-white mt-1">{"\u20A6"}{(stats.totalRevenue / 1000000).toFixed(1)}M</p>
+          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue / 1000000)}M</p>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
@@ -324,7 +325,7 @@ function TeacherDashboard() {
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Take Attendance</p><p className="text-white/40 text-[9px] sm:text-[10px]">Mark today's roll</p></div>
         </Link>
-        <Link href="/dashboard/grades" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+        <Link href="/dashboard/results" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📝</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Enter Grades</p><p className="text-white/40 text-[9px] sm:text-[10px]">Record student scores</p></div>
         </Link>
@@ -374,7 +375,7 @@ function StudentDashboard() {
         </DashboardCard>
         <DashboardCard>
           <p className="text-white/40 text-[12px] font-medium">Fee Balance</p>
-          <p className="text-[22px] font-bold text-white mt-1">{"\u20A6"}{unpaidAmount.toLocaleString()}</p>
+          <p className="text-[22px] font-bold text-white mt-1">{formatCurrency(unpaidAmount)}</p>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
@@ -399,7 +400,7 @@ function StudentDashboard() {
               <div key={i} className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/[0.02] border border-white/[0.04]">
                 <div>
                   <p className="text-white/70 text-[12px]">{inv.schoolFee?.name || "Fee"}</p>
-                  <p className="text-white/40 text-[10px]">{"\u20A6"}{(inv.amount || 0).toLocaleString()}</p>
+                    <p className="text-white/40 text-[10px]">{formatCurrency(inv.amount || 0)}</p>
                 </div>
                 <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${inv.status === "paid" ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-400"}`}>{inv.status}</span>
               </div>
@@ -543,7 +544,7 @@ function VicePrincipalDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/discipline" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-blue-500/20 to-blue-500/5 border border-blue-500/20 text-white hover:from-blue-500/30 hover:to-blue-500/10 transition-all group">
+        <Link href="/dashboard/students" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-blue-500/20 to-blue-500/5 border border-blue-500/20 text-white hover:from-blue-500/30 hover:to-blue-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Discipline Records</p><p className="text-white/40 text-[9px] sm:text-[10px]">Incident logs</p></div>
         </Link>
@@ -671,11 +672,11 @@ function OwnerDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/reports" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Reports</p><p className="text-white/40 text-[9px] sm:text-[10px]">School analytics</p></div>
         </Link>
-        <Link href="/dashboard/staff" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+        <Link href="/dashboard/teachers" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👩‍🏫</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Staff</p><p className="text-white/40 text-[9px] sm:text-[10px]">Teacher & staff</p></div>
         </Link>
@@ -697,19 +698,16 @@ function AccountantDashboard() {
   useEffect(() => { fetch("/api/dashboard/stats").then(r => r.json()).then(d => { if (d.success) setStats(d); }).catch(() => {}); }, []);
 
   const financeStats = [
-    { label: "Total Revenue", value: stats.totalRevenue || 0, prefix: "\u20A6", color: "#28ff9c" },
-    { label: "Total Expenses", value: stats.totalExpenses || (stats.totalRevenue * 0.62) || 0, prefix: "\u20A6", color: "#ff6b35" },
-    { label: "Outstanding Balance", value: stats.outstandingBalance || (stats.totalRevenue * 0.15) || 0, prefix: "\u20A6", color: "#f59e0b" },
-    { label: "Fee Collection Rate", value: stats.feeCollectionRate || 85, suffix: "%", color: "#0055ff" },
+    { label: "Total Revenue", value: stats.totalRevenue || 0, prefix: SCHOOL_CONFIG.currencySymbol, color: "#28ff9c" },
+    { label: "Total Expenses", value: stats.totalExpenses || 0, prefix: SCHOOL_CONFIG.currencySymbol, color: "#ff6b35" },
+    { label: "Outstanding Balance", value: stats.outstandingBalance || 0, prefix: SCHOOL_CONFIG.currencySymbol, color: "#f59e0b" },
+    { label: "Fee Collection Rate", value: stats.feeCollectionRate || 0, suffix: "%", color: "#0055ff" },
   ];
   const expenseBreakdown = stats.expenseBreakdown?.length > 0 ? stats.expenseBreakdown : [
     { name: "Salaries", value: 45 }, { name: "Utilities", value: 15 }, { name: "Maintenance", value: 10 },
     { name: "Supplies", value: 12 }, { name: "Transport", value: 8 }, { name: "Other", value: 10 },
   ];
-  const monthlyRev = stats.monthlyRevenue?.length > 0 ? stats.monthlyRevenue : [
-    { month: "Sep", revenue: 2400000 }, { month: "Oct", revenue: 2800000 }, { month: "Nov", revenue: 3100000 },
-    { month: "Dec", revenue: 2600000 }, { month: "Jan", revenue: 3400000 }, { month: "Feb", revenue: 3200000 },
-  ];
+  const monthlyRev = stats.monthlyRevenue?.length > 0 ? stats.monthlyRevenue : [];
 
   return (
     <>
@@ -765,11 +763,11 @@ function AccountantDashboard() {
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🧾</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Expenses</p><p className="text-white/40 text-[9px] sm:text-[10px]">Expense records</p></div>
         </Link>
-        <Link href="/dashboard/reports" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Generate Report</p><p className="text-white/40 text-[9px] sm:text-[10px]">Financial reports</p></div>
         </Link>
-        <Link href="/dashboard/fees" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+        <Link href="/dashboard/finance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📑</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Fees</p><p className="text-white/40 text-[9px] sm:text-[10px]">Fee structures</p></div>
         </Link>
@@ -782,17 +780,14 @@ function AuditorDashboard() {
   const [stats, setStats] = useState<any>({ totalRevenue: 0, totalExpenses: 0, monthlyRevenue: [], totalTransactions: 0, pendingAudits: 0, complianceScore: 0 });
   useEffect(() => { fetch("/api/dashboard/stats").then(r => r.json()).then(d => { if (d.success) setStats(d); }).catch(() => {}); }, []);
 
-  const totalExpenses = stats.totalExpenses || (stats.totalRevenue * 0.62) || 0;
+  const totalExpenses = stats.totalExpenses || 0;
   const auditStats = [
-    { label: "Total Transactions", value: stats.totalTransactions || stats.totalStudents * 12 || 0, color: "#0055ff" },
-    { label: "Revenue vs Expenses", value: `${((stats.totalRevenue / (totalExpenses || 1)) * 100).toFixed(0)}%`, color: "#28ff9c" },
-    { label: "Pending Audits", value: stats.pendingAudits || 3, color: "#f59e0b" },
-    { label: "Compliance Score", value: `${stats.complianceScore || 92}%`, color: "#10b981" },
+    { label: "Total Transactions", value: stats.totalTransactions || 0, color: "#0055ff" },
+    { label: "Revenue vs Expenses", value: `${totalExpenses > 0 ? ((stats.totalRevenue / totalExpenses) * 100).toFixed(0) : 0}%`, color: "#28ff9c" },
+    { label: "Pending Audits", value: stats.pendingAudits || 0, color: "#f59e0b" },
+    { label: "Compliance Score", value: `${stats.complianceScore || 0}%`, color: "#10b981" },
   ];
-  const monthlyRev = stats.monthlyRevenue?.length > 0 ? stats.monthlyRevenue : [
-    { month: "Sep", revenue: 2400000 }, { month: "Oct", revenue: 2800000 }, { month: "Nov", revenue: 3100000 },
-    { month: "Dec", revenue: 2600000 }, { month: "Jan", revenue: 3400000 }, { month: "Feb", revenue: 3200000 },
-  ];
+  const monthlyRev = stats.monthlyRevenue?.length > 0 ? stats.monthlyRevenue : [];
 
   return (
     <>
@@ -822,10 +817,10 @@ function AuditorDashboard() {
           <CardTitle title="Audit Overview" />
           <div className="space-y-3">
             {[
-              { label: "Financial Records", status: "Verified", color: "#28ff9c" },
-              { label: "Fee Collections", status: "Pending Review", color: "#f59e0b" },
-              { label: "Expense Reports", status: "Cleared", color: "#28ff9c" },
-              { label: "Bank Reconciliation", status: "In Progress", color: "#0055ff" },
+              { label: "Financial Records", status: stats.financialRecordsStatus || "Verified", color: "#28ff9c" },
+              { label: "Fee Collections", status: stats.feeCollectionsStatus || "Pending Review", color: "#f59e0b" },
+              { label: "Expense Reports", status: stats.expenseReportsStatus || "Cleared", color: "#28ff9c" },
+              { label: "Bank Reconciliation", status: stats.bankReconciliationStatus || "In Progress", color: "#0055ff" },
             ].map((item) => (
               <div key={item.label} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
                 <p className="text-white/70 text-[12px] font-medium">{item.label}</p>
@@ -836,19 +831,19 @@ function AuditorDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/reports" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Audit Reports</p><p className="text-white/40 text-[9px] sm:text-[10px]">Audit findings</p></div>
         </Link>
-        <Link href="/dashboard/transactions" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔍</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Transactions</p><p className="text-white/40 text-[9px] sm:text-[10px]">All transactions</p></div>
         </Link>
-        <Link href="/dashboard/compliance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Compliance Check</p><p className="text-white/40 text-[9px] sm:text-[10px]">Verify compliance</p></div>
         </Link>
-        <Link href="/dashboard/exports" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📤</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Export Data</p><p className="text-white/40 text-[9px] sm:text-[10px]">Download reports</p></div>
         </Link>
@@ -910,19 +905,19 @@ function LibrarianDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/library/add" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📚</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Book</p><p className="text-white/40 text-[9px] sm:text-[10px]">New inventory</p></div>
         </Link>
-        <Link href="/dashboard/library/issue" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📖</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Issue Book</p><p className="text-white/40 text-[9px] sm:text-[10px]">Lend to students</p></div>
         </Link>
-        <Link href="/dashboard/library/return" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔄</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Return Book</p><p className="text-white/40 text-[9px] sm:text-[10px]">Process returns</p></div>
         </Link>
-        <Link href="/dashboard/library/catalog" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔎</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Search Catalog</p><p className="text-white/40 text-[9px] sm:text-[10px]">Find books</p></div>
         </Link>
@@ -983,36 +978,34 @@ function PorterDashboard() {
         <DashboardCard>
           <CardTitle title="Recent Visitors" />
           <div className="space-y-2">
-            {[
-              { name: "Mr. Adewale", purpose: "Parent Visit", time: "10:30 AM" },
-              { name: "Mrs. Bello", purpose: "Material Delivery", time: "11:15 AM" },
-              { name: "Dr. Okonkwo", purpose: "Medical Check", time: "2:00 PM" },
-            ].map((v, i) => (
+            {hostelData.recentVisitors?.length > 0 ? hostelData.recentVisitors.slice(0, 5).map((v: any, i: number) => (
               <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
                 <div>
-                  <p className="text-white/80 text-[12px] font-medium">{v.name}</p>
-                  <p className="text-white/30 text-[10px]">{v.purpose}</p>
+                  <p className="text-white/80 text-[12px] font-medium">{v.name || "Visitor"}</p>
+                  <p className="text-white/30 text-[10px]">{v.purpose || "Visit"}</p>
                 </div>
-                <span className="text-white/40 text-[11px]">{v.time}</span>
+                <span className="text-white/40 text-[11px]">{v.time || "Today"}</span>
               </div>
-            ))}
+            )) : (
+              <div className="text-center py-8 text-white/30 text-[12px]">No recent visitors</div>
+            )}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/hostel/visitors" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+        <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🚶</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Log Visitor</p><p className="text-white/40 text-[9px] sm:text-[10px]">Visitor check-in</p></div>
         </Link>
-        <Link href="/dashboard/hostel/rooms" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+        <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🛏️</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Assign Room</p><p className="text-white/40 text-[9px] sm:text-[10px]">Room allocation</p></div>
         </Link>
-        <Link href="/dashboard/hostel/maintenance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+        <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔧</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Report Maintenance</p><p className="text-white/40 text-[9px] sm:text-[10px]">Request repairs</p></div>
         </Link>
-        <Link href="/dashboard/hostel/checkin" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+        <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Check-in/out</p><p className="text-white/40 text-[9px] sm:text-[10px]">Movement logs</p></div>
         </Link>
@@ -1028,7 +1021,7 @@ function AlumniDashboard() {
   const alumniStats = [
     { label: "Total Alumni", value: alumniData.totalAlumni || 0, color: "#a855f7" },
     { label: "Events Attended", value: alumniData.eventsAttended || 0, color: "#28ff9c" },
-    { label: "Donations Made", value: alumniData.donationsMade || 0, prefix: "\u20A6", color: "#f59e0b" },
+    { label: "Donations Made", value: alumniData.donationsMade || 0, prefix: SCHOOL_CONFIG.currencySymbol, color: "#f59e0b" },
     { label: "Mentorship Sessions", value: alumniData.mentorshipSessions || 0, color: "#0055ff" },
   ];
   const alumniByYear = alumniData.alumniByYear?.length > 0 ? alumniData.alumniByYear : [
@@ -1062,36 +1055,34 @@ function AlumniDashboard() {
         <DashboardCard>
           <CardTitle title="Upcoming Events" />
           <div className="space-y-2">
-            {[
-              { name: "Annual Reunion 2026", date: "Mar 15, 2026", attendees: 120 },
-              { name: "Career Day", date: "Apr 10, 2026", attendees: 85 },
-              { name: "Mentorship Workshop", date: "May 5, 2026", attendees: 40 },
-            ].map((e, i) => (
+            {alumniData.upcomingEvents?.length > 0 ? alumniData.upcomingEvents.slice(0, 3).map((e: any, i: number) => (
               <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
                 <div>
-                  <p className="text-white/80 text-[12px] font-medium">{e.name}</p>
-                  <p className="text-white/30 text-[10px]">{e.date}</p>
+                  <p className="text-white/80 text-[12px] font-medium">{e.name || e.title}</p>
+                  <p className="text-white/30 text-[10px]">{e.date ? new Date(e.date).toLocaleDateString() : "TBA"}</p>
                 </div>
-                <span className="text-white/40 text-[11px]">{e.attendees} attending</span>
+                <span className="text-white/40 text-[11px]">{e.attendees || ""} {e.attendees ? "attending" : ""}</span>
               </div>
-            ))}
+            )) : (
+              <div className="text-center py-8 text-white/30 text-[12px]">No upcoming events</div>
+            )}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/alumni/events" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+        <Link href="/dashboard/alumni" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🎉</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Events</p><p className="text-white/40 text-[9px] sm:text-[10px]">Alumni gatherings</p></div>
         </Link>
-        <Link href="/dashboard/alumni/donations" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+        <Link href="/dashboard/alumni" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">❤️</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Make Donation</p><p className="text-white/40 text-[9px] sm:text-[10px]">Support your school</p></div>
         </Link>
-        <Link href="/dashboard/alumni/mentorship" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+        <Link href="/dashboard/alumni" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🤝</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Find Mentor</p><p className="text-white/40 text-[9px] sm:text-[10px]">Mentorship program</p></div>
         </Link>
-        <Link href="/dashboard/alumni/profile" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+        <Link href="/dashboard/profile" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👤</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Update Profile</p><p className="text-white/40 text-[9px] sm:text-[10px]">Your information</p></div>
         </Link>
@@ -1148,7 +1139,7 @@ function ParentDashboard() {
         <DashboardCard><p className="text-white/40 text-[12px] font-medium">Child</p><p className="text-[18px] font-bold text-white mt-1">{child.firstName} {child.lastName}</p><p className="text-white/30 text-[11px] mt-1">{child.class?.name || "\u2014"}</p></DashboardCard>
         <DashboardCard><p className="text-white/40 text-[12px] font-medium">Attendance</p><p className="text-[28px] font-bold text-white mt-1">{attendancePct}%</p><p className="text-white/30 text-[11px] mt-1">{presentDays} of {totalDays} days</p></DashboardCard>
         <DashboardCard><p className="text-white/40 text-[12px] font-medium">Current Average</p><p className="text-[28px] font-bold text-white mt-1">{avgScore}%</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-white mt-1">{"\u20A6"}{unpaidAmount.toLocaleString()}</p>{unpaidAmount > 0 && <p className="text-amber-400 text-[11px] mt-1">Outstanding</p>}</DashboardCard>
+        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-white mt-1">{formatCurrency(unpaidAmount)}</p>{unpaidAmount > 0 && <p className="text-amber-400 text-[11px] mt-1">Outstanding</p>}</DashboardCard>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
@@ -1176,7 +1167,7 @@ function ParentDashboard() {
               <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition">
                 <div>
                   <p className="text-white/70 text-[12px] font-medium">{inv.schoolFee?.name || "Fee"}</p>
-                  <p className="text-white/40 text-[10px]">{"\u20A6"}{(inv.amount || 0).toLocaleString()} {inv.dueDate ? `\u00B7 Due ${new Date(inv.dueDate).toLocaleDateString()}` : ""}</p>
+                    <p className="text-white/40 text-[10px]">{formatCurrency(inv.amount || 0)} {inv.dueDate ? `\u00B7 Due ${new Date(inv.dueDate).toLocaleDateString()}` : ""}</p>
                 </div>
                 <span className={`px-2.5 py-0.5 rounded text-[10px] font-medium ${inv.status === "paid" ? "bg-emerald-500/15 text-emerald-400" : inv.status === "overdue" ? "bg-red-500/15 text-red-400" : "bg-amber-500/15 text-amber-400"}`}>{inv.status}</span>
               </div>

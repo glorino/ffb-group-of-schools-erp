@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
 
 export async function POST() {
   try {
+    const session = await auth();
+    const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+    if (!session?.user || (!userRoles.includes("OWNER") && !userRoles.includes("ADMINISTRATOR") && !userRoles.includes("PRINCIPAL"))) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const existing = await prisma.timetableEntry.count();
     if (existing > 0) {
       return NextResponse.json({ success: true, message: "Timetable already seeded", count: existing });

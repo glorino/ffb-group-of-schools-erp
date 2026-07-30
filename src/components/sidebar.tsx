@@ -49,6 +49,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
       { label: "Results", href: "/dashboard/results", emoji: "📊", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"] },
       { label: "My Results", href: "/dashboard/results", emoji: "📊", roles: ["STUDENT", "PARENT"] },
       { label: "Report Cards", href: "/dashboard/report-cards", emoji: "📄", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
+      { label: "Transcript", href: "/dashboard/transcript", emoji: "📜", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
     ],
   },
   {
@@ -66,6 +67,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
       { label: "Income", href: "/dashboard/income", emoji: "📈", roles: ["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"] },
       { label: "Expenses", href: "/dashboard/expenses", emoji: "📉", roles: ["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"] },
       { label: "Payroll", href: "/dashboard/payroll", emoji: "💵", roles: ["OWNER", "ADMINISTRATOR", "ACCOUNTANT"] },
+      { label: "My Payroll", href: "/dashboard/payroll", emoji: "💵", roles: ["TEACHER"] },
     ],
   },
   {
@@ -99,8 +101,8 @@ const navSections: { title: string; items: NavItem[] }[] = [
     title: "Institution",
     items: [
       { label: "Announcements", href: "/dashboard/announcements", emoji: "📢", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI"] },
-      { label: "News", href: "/dashboard/announcements?tab=news", emoji: "📰", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
-      { label: "Events", href: "/dashboard/announcements?tab=events", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
+      { label: "News", href: "/dashboard/news", emoji: "📰", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Events", href: "/dashboard/events", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
       { label: "Calendar", href: "/dashboard/calendar", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
       { label: "Notifications", href: "/dashboard/notifications", emoji: "🔔", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI", "ACCOUNTANT", "AUDITOR", "LIBRARIAN", "PORTER"] },
       { label: "Settings", href: "/dashboard/settings", emoji: "⚙️", roles: ["OWNER", "ADMINISTRATOR"] },
@@ -110,6 +112,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
     title: "Account",
     items: [
       { label: "My Profile", href: "/dashboard/profile", emoji: "👤", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ACCOUNTANT", "AUDITOR", "LIBRARIAN", "PORTER", "ALUMNI"] },
+      { label: "Change Password", href: "/dashboard/change-password", emoji: "🔒", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ACCOUNTANT", "AUDITOR", "LIBRARIAN", "PORTER", "ALUMNI"] },
     ],
   },
 ];
@@ -177,7 +180,7 @@ export function Sidebar() {
 
       <div className="p-3 border-t border-white/[0.08]">
         <a
-          href="https://ffb-erp.vercel.app"
+          href={process.env.NEXT_PUBLIC_APP_URL || "https://ffb-erp.vercel.app"}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg text-white/50 hover:text-[var(--accent)] hover:bg-white/[0.04] text-[13px] font-medium transition-all"
@@ -200,7 +203,7 @@ export function Sidebar() {
     <>
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-2.5 left-3 z-[60] w-10 h-10 rounded-xl bg-white/[0.08] backdrop-blur-xl flex items-center justify-center text-white border border-white/10 shadow-lg"
+        className="lg:hidden fixed top-2.5 left-3 z-[70] w-10 h-10 rounded-xl bg-white/[0.08] backdrop-blur-xl flex items-center justify-center text-white border border-white/10 shadow-lg"
       >
         <Menu className="w-5 h-5" />
       </button>

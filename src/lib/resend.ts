@@ -194,6 +194,53 @@ export async function sendPaymentReceipt(
   return sendEmail(email, `Payment Receipt - ${reference}`, html);
 }
 
+export async function sendPasswordResetEmail(
+  name: string,
+  email: string,
+  resetToken: string
+): Promise<EmailResponse> {
+  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://ffb-erp.vercel.app"}/auth/reset-password?token=${resetToken}`;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7fa; margin: 0; padding: 40px 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); padding: 40px 30px; text-align: center; }
+        .header h1 { color: white; margin: 0; font-size: 24px; font-weight: 600; }
+        .content { padding: 30px; }
+        .content h2 { color: #1e293b; margin: 0 0 16px; font-size: 20px; }
+        .content p { color: #475569; line-height: 1.6; margin: 0 0 16px; }
+        .btn { display: inline-block; background: #2563eb; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; margin: 16px 0; }
+        .footer { background: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0; }
+        .footer p { color: #94a3b8; margin: 0; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Password Reset</h1>
+        </div>
+        <div class="content">
+          <h2>Hello, ${name}!</h2>
+          <p>We received a request to reset your password. Click the button below to create a new password:</p>
+          <a href="${resetUrl}" class="btn">Reset Password</a>
+          <p>If you didn't request this, please ignore this email. The link expires in 1 hour.</p>
+        </div>
+        <div class="footer">
+          <p>&copy; ${new Date().getFullYear()} FFB Group of Schools. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail(email, "Password Reset - FFB Group of Schools", html);
+}
+
 export async function sendAdmissionLetter(
   name: string,
   email: string,

@@ -8,7 +8,9 @@ export async function GET(request: NextRequest) {
     const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI"]);
     if (authResult.error) return authResult.error;
 
+    const schoolId = await getDefaultSchoolId();
     const announcements = await prisma.announcement.findMany({
+      where: { schoolId },
       orderBy: [{ createdAt: "desc" }],
     });
 

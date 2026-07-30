@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       const dueDate = new Date(b.dueDate);
       if (b.status === "borrowed" && now > dueDate) {
         const daysOverdue = Math.floor((now.getTime() - dueDate.getTime()) / 86400000);
-        const penaltyPerDay = 100; // ₦100 per day
+        const penaltyPerDay = Number(process.env.LATE_PENALTY_PER_DAY) || 100;
         return {
           ...b,
           isOverdue: true,
@@ -105,7 +105,7 @@ export async function PUT(request: NextRequest) {
       const now = new Date();
       const dueDate = new Date(borrowing.dueDate);
       const daysOverdue = Math.max(0, Math.floor((now.getTime() - dueDate.getTime()) / 86400000));
-      const penalty = daysOverdue * 100; // ₦100 per day
+      const penalty = daysOverdue * (Number(process.env.LATE_PENALTY_PER_DAY) || 100);
 
       await prisma.libraryBorrowing.update({
         where: { id },

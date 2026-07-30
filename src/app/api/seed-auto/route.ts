@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { auth } from "@/auth";
 
 export async function POST() {
   try {
+    const session = await auth();
+    const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+    if (!session?.user || (!userRoles.includes("OWNER") && !userRoles.includes("ADMINISTRATOR"))) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const userCount = await prisma.user.count();
     if (userCount > 0) {
       return NextResponse.json({ success: true, message: "Database already seeded", userCount });
@@ -363,7 +370,7 @@ export async function POST() {
 
     // 14. Grades (for each student, 3-4 subjects)
     const gradeTypes = ["ca1", "ca2", "exam"];
-    const session = "2025/2026";
+    const academicSession = "2025/2026";
     const termName = "First Term";
     for (let i = 0; i < students.length; i++) {
       const stu = students[i];
@@ -378,7 +385,7 @@ export async function POST() {
           try {
             await prisma.grade.upsert({
               where: { studentId_subjectId_type_term_session: {
-                studentId: stu.id, subjectId: subjects[subCode], type: gtype, term: termName, session,
+                studentId: stu.id, subjectId: subjects[subCode], type: gtype, term: termName, session: academicSession,
               }},
               update: {},
               create: {
@@ -390,7 +397,7 @@ export async function POST() {
                 maxScore: 100,
                 grade: letterGrade,
                 term: termName,
-                session,
+                session: academicSession,
               },
             });
           } catch {

@@ -129,11 +129,11 @@ export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState(0);
 
   const [schoolProfile, setSchoolProfile] = useState<SchoolProfileData>({
-    schoolName: "FFB Group of Schools",
-    motto: "Excellence in Education",
-    address: "123 Education Road, Lagos, Nigeria",
-    phone: "+234 801 234 5678",
-    email: "admin@ffbschools.edu.ng",
+    schoolName: "",
+    motto: "",
+    address: "",
+    phone: "",
+    email: "",
   });
 
   const [academicYear, setAcademicYear] = useState<AcademicYearData>({
@@ -179,6 +179,26 @@ export default function SettingsPage() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
+        // Load from API first
+        try {
+          const res = await fetch("/api/settings");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.schoolProfile) setSchoolProfile(data.schoolProfile);
+            if (data.settings?.academicYear) setAcademicYear(data.settings.academicYear);
+            if (data.gradingScales?.length) {
+              setGradingConfig(data.gradingScales.map((g: any) => ({
+                label: g.grade || g.name,
+                min: g.minScore,
+                max: g.maxScore,
+                gpa: g.gpa || 0,
+              })));
+            }
+            if (data.settings?.notifications) setNotifications(data.settings.notifications);
+          }
+        } catch {}
+
+        // Fallback to localStorage
         const savedProfile = loadFromStorage<SchoolProfileData>("schoolProfile", schoolProfile);
         const savedAcademicYear = loadFromStorage<AcademicYearData>("academicYear", academicYear);
         const savedGrading = loadFromStorage<GradingGrade[]>("gradingConfig", defaultGradingConfig);
@@ -265,14 +285,12 @@ export default function SettingsPage() {
     try {
       saveToStorage(sectionName, data);
       try {
-        await fetch(`/api/settings/${sectionName}`, {
+        await fetch("/api/settings", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify({ [sectionName]: data }),
         });
-      } catch {
-        // localStorage already saved
-      }
+      } catch {}
       toast.success(`${sectionName} settings saved`);
     } catch {
       toast.error(`Failed to save ${sectionName} settings`);
@@ -843,15 +861,13 @@ export default function SettingsPage() {
                     <div>
                       <p className="text-white text-[13px] font-medium">Two-Factor Authentication</p>
                       <p className="text-white/40 text-[11px] mt-0.5">Add an extra layer of security to admin accounts</p>
+                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px] font-medium">Coming Soon</span>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
+                    <label className="relative inline-flex items-center cursor-pointer opacity-50">
                       <input
                         type="checkbox"
-                        checked={twoFactorEnabled}
-                        onChange={() => {
-                          setTwoFactorEnabled((prev) => !prev);
-                          toast.success(`Two-factor authentication ${!twoFactorEnabled ? "enabled" : "disabled"}`);
-                        }}
+                        checked={false}
+                        disabled
                         className="sr-only peer"
                       />
                       <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/40 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent)] peer-checked:after:bg-white"></div>
@@ -860,7 +876,10 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="p-4 rounded-xl bg-white/[0.04]">
-                  <p className="text-white text-[13px] font-medium mb-3">Password Policy</p>
+                  <div className="flex items-center gap-2 mb-3">
+                    <p className="text-white text-[13px] font-medium">Password Policy</p>
+                    <span className="px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px] font-medium">Coming Soon</span>
+                  </div>
                   <div className="space-y-3">
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>

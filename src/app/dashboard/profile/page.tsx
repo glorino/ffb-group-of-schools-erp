@@ -69,8 +69,8 @@ export default function ProfilePage() {
   useEffect(() => {
     setName(userName);
     setEmail(userEmail);
-    setPhone("+234 801 234 5678");
-    setAddress("12 Education Lane, Victoria Island, Lagos");
+    setPhone("");
+    setAddress("");
   }, [userName, userEmail]);
 
   useEffect(() => {

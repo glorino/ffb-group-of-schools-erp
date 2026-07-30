@@ -425,7 +425,7 @@ export default function TimetablePage() {
         if (classData.classes?.length && !selectedClass) {
           setSelectedClass(classData.classes[0].id);
         }
-      }).catch(console.error);
+      }).catch(() => {});
     }
   }, [isReadOnly, session]);
 

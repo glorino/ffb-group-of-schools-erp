@@ -62,7 +62,7 @@ export default function ContactPage() {
           {[
             { icon: "📍", title: "Address", text: "123 Education Avenue, GRA, Lagos State, Nigeria" },
             { icon: "📞", title: "Phone", text: "+234 905 998 0991" },
-            { icon: "✉️", title: "Email", text: "info@glopresc.com" },
+            { icon: "✉️", title: "Email", text: "info@ffb.edu.ng" },
             { icon: "⏰", title: "Working Hours", text: "Mon - Fri: 7:30 AM - 4:00 PM" },
           ].map((c, i) => (
             <motion.div key={i} variants={item} whileHover={{ y: -3 }} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "20px", padding: "25px", textAlign: "center", border: "1px solid rgba(255,255,255,0.08)", cursor: "default" }}>
@@ -123,7 +123,7 @@ export default function ContactPage() {
       </section>
 
       <footer className="footer">
-        <div className="footer-bottom">© 2025 FFB Group of Schools. All rights reserved.</div>
+        <div className="footer-bottom">{`© ${new Date().getFullYear()} FFB Group of Schools. All rights reserved.`}</div>
       </footer>
     </>
   );

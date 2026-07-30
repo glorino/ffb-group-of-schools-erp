@@ -50,7 +50,7 @@ export default function TeachersPage() {
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     firstName: "", lastName: "", email: "", phone: "", employeeId: "",
-    qualification: "", specialization: "", password: "teacher123",
+    qualification: "", specialization: "", password: "",
   });
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function TeachersPage() {
       .then((d) => {
         setData({ teachers: d.teachers ?? [], total: d.pagination?.total ?? 0 });
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [page, search]);
 
@@ -114,7 +114,7 @@ export default function TeachersPage() {
       }
 
       setShowModal(false);
-      setForm({ firstName: "", lastName: "", email: "", phone: "", employeeId: "", qualification: "", specialization: "", password: "teacher123" });
+      setForm({ firstName: "", lastName: "", email: "", phone: "", employeeId: "", qualification: "", specialization: "", password: "" });
       toast.success("Teacher created successfully");
       setLoading(true);
       fetch(`/api/teachers?page=${page}&limit=10${search ? `&search=${search}` : ""}`)

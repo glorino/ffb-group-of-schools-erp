@@ -299,7 +299,7 @@ export default function TransportPage() {
             <h3 className="text-white font-semibold text-lg mb-4">GPS Live Map</h3>
             <div className="aspect-video rounded-xl overflow-hidden border border-white/[0.08]">
               <iframe
-                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBCJsRJI5wjJ9l64a1RQNPsUG_WpXtYQQo&q=Lagos,Nigeria&zoom=12"
+                src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || ""}&q=Lagos,Nigeria&zoom=12`}
                 width="100%"
                 height="100%"
                 style={{ border: 0, minHeight: "200px" }}
@@ -423,7 +423,7 @@ export default function TransportPage() {
             </div>
             <div className="aspect-video rounded-xl overflow-hidden border border-white/[0.08] mb-4">
               <iframe
-                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBCJsRJI5wjJ9l64a1RQNPsUG_WpXtYQQo&q=Lagos,Nigeria&zoom=11"
+                src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || ""}&q=Lagos,Nigeria&zoom=11`}
                 width="100%"
                 height="100%"
                 style={{ border: 0, minHeight: "250px" }}

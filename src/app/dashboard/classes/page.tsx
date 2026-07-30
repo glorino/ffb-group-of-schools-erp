@@ -69,7 +69,7 @@ export default function ClassesPage() {
     fetch(`/api/classes?${params}`)
       .then((res) => res.json())
       .then((d) => setData(d))
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [search]);
 
@@ -121,7 +121,7 @@ export default function ClassesPage() {
       fetch(`/api/classes?${params}`)
         .then((res) => res.json())
         .then((d) => setData(d))
-        .catch(console.error)
+        .catch(() => {})
         .finally(() => setLoading(false));
     } catch (err: any) {
       toast.error(err.message || "Failed to create class");
@@ -508,7 +508,7 @@ export default function ClassesPage() {
                   fetch(`/api/classes?${params}`)
                     .then((res) => res.json())
                     .then((d) => setData(d))
-                    .catch(console.error)
+                    .catch(() => {})
                     .finally(() => setLoading(false));
                 } catch {
                   toast.error("Failed to update class");

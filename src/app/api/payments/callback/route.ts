@@ -1,6 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendPaymentReceipt } from "@/lib/resend";
+import crypto from "crypto";
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+
+    // Verify Flutterwave webhook signature
+    const secret = process.env.FLUTTERWAVE_SECRET_HASH;
+    if (secret) {
+      const signature = request.headers.get("verif-hash");
+      if (!signature) {
+        return NextResponse.json({ error: "Missing signature" }, { status: 400 });
+      }
+      const expectedSig = crypto.createHmac("sha256", secret).update(JSON.stringify(body)).digest("hex");
+      if (signature !== expectedSig) {
+        return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+      }
+    }
+
+    if (body.event === "charge.completed" && body.data?.status === "successful") {
+      const ref = body.data.tx_ref;
+      const payment = await prisma.payment.findFirst({
+        where: { reference: ref },
+        include: { student: true },
+      });
+
+      if (payment) {
+        await prisma.payment.update({
+          where: { id: payment.id },
+          data: { status: "completed", paidAt: new Date(), receiptNumber: `RCT-${Date.now()}` },
+        });
+
+        try {
+          await sendPaymentReceipt(
+            `${payment.student.firstName} ${payment.student.lastName}`,
+            payment.student.email || "",
+            payment.amount,
+            payment.reference
+          );
+        } catch (emailError) {
+          console.error("Failed to send receipt email:", emailError);
+        }
+      }
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Payment webhook error:", error);
+    return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 });
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,8 +79,6 @@ export async function GET(request: NextRequest) {
 
     if (result.status === "success" && result.data?.status === "successful") {
       const ref = result.data.tx_ref || txRef;
-
-      // Update payment status
       const payment = await prisma.payment.findFirst({
         where: { reference: ref },
         include: { student: true },
@@ -41,7 +90,6 @@ export async function GET(request: NextRequest) {
           data: { status: "completed", paidAt: new Date(), receiptNumber: `RCT-${Date.now()}` },
         });
 
-        // Send receipt email
         try {
           await sendPaymentReceipt(
             `${payment.student.firstName} ${payment.student.lastName}`,
@@ -55,7 +103,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Redirect to dashboard
     return NextResponse.redirect(new URL("/dashboard/finance?payment=success", request.url));
   } catch (error) {
     console.error("Payment callback error:", error);

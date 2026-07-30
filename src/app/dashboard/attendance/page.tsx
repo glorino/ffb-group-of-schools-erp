@@ -39,7 +39,7 @@ export default function AttendancePage() {
     fetch(`/api/attendance?${params}`)
       .then((res) => res.json())
       .then((d) => setRecords(d.records || []))
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [selectedDate, selectedSession]);
 

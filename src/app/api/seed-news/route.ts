@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
 
 const newsAndEvents = [
   { title: "Academic Excellence Award", content: "Our students received national recognition for outstanding WAEC results. With a 98% pass rate and multiple distinctions across key subjects, our school has been ranked among the top performing institutions in the state.", imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop", type: "news", featured: true, eventDate: null },
@@ -12,6 +13,12 @@ const newsAndEvents = [
 
 export async function POST() {
   try {
+    const session = await auth();
+    const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+    if (!session?.user || (!userRoles.includes("OWNER") && !userRoles.includes("ADMINISTRATOR"))) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const school = await prisma.school.findFirst();
     if (!school) {
       return NextResponse.json({ error: "No school found. Run seed-auto first." }, { status: 400 });
