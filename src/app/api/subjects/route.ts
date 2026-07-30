@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { name, code, description, category } = body;
+    const { name, code } = body;
 
     if (!name) {
       return NextResponse.json({ error: "Subject name is required" }, { status: 400 });
@@ -52,9 +52,7 @@ export async function POST(request: NextRequest) {
       data: {
         schoolId,
         name,
-        code: code || undefined,
-        description: description || undefined,
-        category: category || "core",
+        code: code || name.substring(0, 3).toUpperCase(),
       },
     });
 
@@ -74,7 +72,7 @@ export async function PUT(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { id, name, code, description, category } = body;
+    const { id, name, code } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Subject ID is required" }, { status: 400 });
@@ -85,8 +83,6 @@ export async function PUT(request: NextRequest) {
       data: {
         name: name || undefined,
         code: code || undefined,
-        description: description || undefined,
-        category: category || undefined,
       },
     });
 
