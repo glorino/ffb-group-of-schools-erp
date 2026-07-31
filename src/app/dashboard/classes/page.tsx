@@ -265,7 +265,7 @@ export default function ClassesPage() {
                                   initial={{ opacity: 0, scale: 0.95, y: -4 }}
                                   animate={{ opacity: 1, scale: 1, y: 0 }}
                                   exit={{ opacity: 0, scale: 0.95, y: -4 }}
-                                  className="absolute right-0 top-full mt-1 w-36 bg-[#0a0f1e] border border-white/[0.08] rounded-xl shadow-xl z-20 overflow-hidden"
+                                  className="absolute right-0 top-full mt-1 w-36 bg-[#0a0f1e] border border-white/[0.08] rounded-xl shadow-xl z-40 overflow-hidden"
                                 >
                                   <button
                                     onClick={() => {
