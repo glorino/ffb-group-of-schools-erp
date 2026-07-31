@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import Link from "next/link";
 import { toast } from "sonner";
+import { X, Loader2, DollarSign } from "lucide-react";
 
 const fadeIn = {
   initial: { opacity: 0, y: 12 },
@@ -928,9 +929,54 @@ function LibrarianDashboard() {
 
 function PorterDashboard() {
   const [hostelData, setHostelData] = useState<any>({ studentsInHostel: 0, visitorsToday: 0, roomsOccupied: 0, totalRooms: 0, maintenanceRequests: 0, roomOccupancy: [] });
+  const [showVisitorLog, setShowVisitorLog] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [hostels, setHostels] = useState<any[]>([]);
+  const [visitors, setVisitors] = useState<any[]>([]);
+  const [visitorFilter, setVisitorFilter] = useState<string>("");
+  const [visitorForm, setVisitorForm] = useState({ visitorName: "", visitorPhone: "", studentId: "", purpose: "", hostelId: "" });
+
   useEffect(() => {
     fetch("/api/hostel").then(r => r.json()).then(d => { if (d.success) setHostelData(d); }).catch(() => {});
+    fetch("/api/hostel").then(r => r.json()).then(d => { if (d.hostels) setHostels(d.hostels); }).catch(() => {});
   }, []);
+
+  const fetchVisitors = async (status?: string) => {
+    try {
+      const url = status ? `/api/hostel/visitors?status=${status}` : "/api/hostel/visitors";
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.success) setVisitors(data.visitors);
+    } catch {}
+  };
+
+  const handleLogVisitor = async () => {
+    if (!visitorForm.visitorName || !visitorForm.visitorPhone || !visitorForm.studentId || !visitorForm.purpose || !visitorForm.hostelId) {
+      toast.error("Please fill all fields");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/hostel/visitors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(visitorForm),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Visitor logged successfully");
+        setShowVisitorLog(false);
+        setVisitorForm({ visitorName: "", visitorPhone: "", studentId: "", purpose: "", hostelId: "" });
+        fetchVisitors();
+      } else {
+        toast.error(data.error || "Failed to log visitor");
+      }
+    } catch {
+      toast.error("Failed to log visitor");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const porterStats = [
     { label: "Students in Hostel", value: hostelData.studentsInHostel || 0, color: "#0055ff" },
@@ -943,6 +989,8 @@ function PorterDashboard() {
     { name: "Vacant", value: Math.max(0, (hostelData.totalRooms || 40) - (hostelData.roomsOccupied || 28)), color: "#28ff9c" },
     { name: "Maintenance", value: 2, color: "#f59e0b" },
   ];
+
+  const displayVisitors = visitorFilter ? visitors : (hostelData.recentVisitors || []);
 
   return (
     <>
@@ -976,27 +1024,46 @@ function PorterDashboard() {
           </div>
         </DashboardCard>
         <DashboardCard>
-          <CardTitle title="Recent Visitors" />
+          <div className="flex items-center justify-between mb-4">
+            <CardTitle title={visitorFilter ? `Visitors (${visitorFilter})` : "Recent Visitors"} />
+            {visitorFilter && (
+              <button onClick={() => { setVisitorFilter(""); setVisitors([]); }} className="text-white/40 hover:text-white/70 text-[11px]">Clear filter</button>
+            )}
+          </div>
           <div className="space-y-2">
-            {hostelData.recentVisitors?.length > 0 ? hostelData.recentVisitors.slice(0, 5).map((v: any, i: number) => (
-              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
-                <div>
-                  <p className="text-white/80 text-[12px] font-medium">{v.name || "Visitor"}</p>
-                  <p className="text-white/30 text-[10px]">{v.purpose || "Visit"}</p>
+            {visitorFilter ? (
+              visitors.length > 0 ? visitors.slice(0, 10).map((v: any, i: number) => (
+                <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+                  <div>
+                    <p className="text-white/80 text-[12px] font-medium">{v.visitorName}</p>
+                    <p className="text-white/30 text-[10px]">{v.purpose} - {v.student?.firstName} {v.student?.lastName}</p>
+                  </div>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${v.status === "checked_in" ? "bg-green-500/20 text-green-400" : v.status === "checked_out" ? "bg-white/10 text-white/40" : "bg-amber-500/20 text-amber-400"}`}>{v.status}</span>
                 </div>
-                <span className="text-white/40 text-[11px]">{v.time || "Today"}</span>
-              </div>
-            )) : (
-              <div className="text-center py-8 text-white/30 text-[12px]">No recent visitors</div>
+              )) : (
+                <div className="text-center py-8 text-white/30 text-[12px]">No visitors found</div>
+              )
+            ) : (
+              displayVisitors.length > 0 ? displayVisitors.slice(0, 5).map((v: any, i: number) => (
+                <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+                  <div>
+                    <p className="text-white/80 text-[12px] font-medium">{v.name || v.visitorName || "Visitor"}</p>
+                    <p className="text-white/30 text-[10px]">{v.purpose || "Visit"}</p>
+                  </div>
+                  <span className="text-white/40 text-[11px]">{v.time || "Today"}</span>
+                </div>
+              )) : (
+                <div className="text-center py-8 text-white/30 text-[12px]">No recent visitors</div>
+              )
             )}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
+        <button onClick={() => setShowVisitorLog(true)} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🚶</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Log Visitor</p><p className="text-white/40 text-[9px] sm:text-[10px]">Visitor check-in</p></div>
-        </Link>
+        </button>
         <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🛏️</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Assign Room</p><p className="text-white/40 text-[9px] sm:text-[10px]">Room allocation</p></div>
@@ -1005,17 +1072,65 @@ function PorterDashboard() {
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔧</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Report Maintenance</p><p className="text-white/40 text-[9px] sm:text-[10px]">Request repairs</p></div>
         </Link>
-        <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+        <button onClick={() => { setVisitorFilter("checked_in"); fetchVisitors("checked_in"); }} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Check-in/out</p><p className="text-white/40 text-[9px] sm:text-[10px]">Movement logs</p></div>
-        </Link>
+        </button>
       </div>
+
+      {showVisitorLog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-[var(--sidebar)] border border-white/[0.08] rounded-2xl p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-white/90 font-semibold text-[16px]">Log Visitor</h3>
+              <button onClick={() => setShowVisitorLog(false)} className="text-white/40 hover:text-white/70"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="text-white/50 text-[11px] mb-1 block">Visitor Name</label>
+                <input type="text" value={visitorForm.visitorName} onChange={e => setVisitorForm({ ...visitorForm, visitorName: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/90 text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter visitor name" />
+              </div>
+              <div>
+                <label className="text-white/50 text-[11px] mb-1 block">Phone</label>
+                <input type="text" value={visitorForm.visitorPhone} onChange={e => setVisitorForm({ ...visitorForm, visitorPhone: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/90 text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter phone number" />
+              </div>
+              <div>
+                <label className="text-white/50 text-[11px] mb-1 block">Student ID</label>
+                <input type="text" value={visitorForm.studentId} onChange={e => setVisitorForm({ ...visitorForm, studentId: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/90 text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter student ID" />
+              </div>
+              <div>
+                <label className="text-white/50 text-[11px] mb-1 block">Purpose</label>
+                <input type="text" value={visitorForm.purpose} onChange={e => setVisitorForm({ ...visitorForm, purpose: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/90 text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Reason for visit" />
+              </div>
+              <div>
+                <label className="text-white/50 text-[11px] mb-1 block">Hostel</label>
+                <select value={visitorForm.hostelId} onChange={e => setVisitorForm({ ...visitorForm, hostelId: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/90 text-[13px] outline-none focus:border-[var(--primary)]/50">
+                  <option value="">Select hostel</option>
+                  {hostels.map((h: any) => <option key={h.id} value={h.id}>{h.name}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-5">
+              <button onClick={() => setShowVisitorLog(false)} className="flex-1 px-4 py-2.5 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/60 text-[13px] hover:bg-white/[0.08] transition-colors">Cancel</button>
+              <button onClick={handleLogVisitor} disabled={submitting} className="flex-1 px-4 py-2.5 rounded-lg bg-[var(--primary)] text-white text-[13px] font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                Log Visitor
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
 
 function AlumniDashboard() {
+  const { data: session } = useSession();
   const [alumniData, setAlumniData] = useState<any>({ totalAlumni: 0, eventsAttended: 0, donationsMade: 0, mentorshipSessions: 0, alumniByYear: [] });
+  const [showDonateModal, setShowDonateModal] = useState(false);
+  const [donateForm, setDonateForm] = useState({ amount: "", purpose: "" });
+  const [donateLoading, setDonateLoading] = useState(false);
+
   useEffect(() => { fetch("/api/alumni").then(r => r.json()).then(d => { if (d.success) setAlumniData(d); }).catch(() => {}); }, []);
 
   const alumniStats = [
@@ -1028,6 +1143,36 @@ function AlumniDashboard() {
     { year: "2020", count: 45 }, { year: "2021", count: 52 }, { year: "2022", count: 61 },
     { year: "2023", count: 48 }, { year: "2024", count: 55 }, { year: "2025", count: 38 },
   ];
+
+  const handleDonate = async () => {
+    if (!donateForm.amount || parseFloat(donateForm.amount) <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+    const alumniId = (session?.user as any)?.id;
+    if (!alumniId) {
+      toast.error("Unable to identify alumni profile");
+      return;
+    }
+    setDonateLoading(true);
+    try {
+      const res = await fetch("/api/alumni/donations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ alumniId, amount: parseFloat(donateForm.amount), purpose: donateForm.purpose || undefined }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create donation");
+      toast.success("Donation recorded successfully!");
+      setShowDonateModal(false);
+      setDonateForm({ amount: "", purpose: "" });
+      fetch("/api/alumni").then(r => r.json()).then(d => { if (d.success) setAlumniData(d); }).catch(() => {});
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create donation");
+    } finally {
+      setDonateLoading(false);
+    }
+  };
 
   return (
     <>
@@ -1074,10 +1219,10 @@ function AlumniDashboard() {
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🎉</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Events</p><p className="text-white/40 text-[9px] sm:text-[10px]">Alumni gatherings</p></div>
         </Link>
-        <Link href="/dashboard/alumni" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
+        <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group cursor-pointer">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">❤️</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Make Donation</p><p className="text-white/40 text-[9px] sm:text-[10px]">Support your school</p></div>
-        </Link>
+        </button>
         <Link href="/dashboard/alumni" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🤝</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Find Mentor</p><p className="text-white/40 text-[9px] sm:text-[10px]">Mentorship program</p></div>
@@ -1087,6 +1232,54 @@ function AlumniDashboard() {
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Update Profile</p><p className="text-white/40 text-[9px] sm:text-[10px]">Your information</p></div>
         </Link>
       </div>
+
+      {showDonateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowDonateModal(false)}>
+          <div className="bg-[#1a1a2e] border border-white/10 rounded-2xl p-6 w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-purple-400" />
+                <h3 className="text-white font-semibold text-[16px]">Make a Donation</h3>
+              </div>
+              <button onClick={() => setShowDonateModal(false)} className="text-white/40 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="text-white/50 text-[12px] font-medium mb-1 block">Amount *</label>
+                <input
+                  type="number"
+                  min="1"
+                  step="0.01"
+                  placeholder="Enter amount"
+                  value={donateForm.amount}
+                  onChange={e => setDonateForm(p => ({ ...p, amount: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/[0.05] border border-white/[0.1] text-white text-[14px] placeholder:text-white/30 focus:outline-none focus:border-purple-500/50 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-white/50 text-[12px] font-medium mb-1 block">Purpose (optional)</label>
+                <textarea
+                  rows={3}
+                  placeholder="e.g. Library fund, Scholarship support..."
+                  value={donateForm.purpose}
+                  onChange={e => setDonateForm(p => ({ ...p, purpose: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/[0.05] border border-white/[0.1] text-white text-[14px] placeholder:text-white/30 focus:outline-none focus:border-purple-500/50 transition-colors resize-none"
+                />
+              </div>
+              <button
+                onClick={handleDonate}
+                disabled={donateLoading || !donateForm.amount}
+                className="w-full py-2.5 rounded-lg bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium text-[14px] transition-colors flex items-center justify-center gap-2"
+              >
+                {donateLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <DollarSign className="w-4 h-4" />}
+                {donateLoading ? "Processing..." : "Submit Donation"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
