@@ -41,6 +41,7 @@ import {
   Pill,
 } from "lucide-react";
 import { toast } from "sonner";
+import { formatCurrency } from "@/lib/school-config";
 
 const tabs = [
   { id: "overview", label: "Overview", icon: User },
@@ -362,7 +363,7 @@ export default function StudentDetailPage() {
                       { label: "Attendance Rate", value: `${attendanceRate}%`, icon: ClipboardCheck, color: "text-emerald-400" },
                       { label: "Average Score", value: `${overallAverage}%`, icon: Target, color: "text-blue-400" },
                       { label: "Total Subjects", value: gradeRows.length.toString(), icon: Award, color: "text-amber-400" },
-                      { label: "Fee Balance", value: totalBalance > 0 ? `₦${totalBalance.toLocaleString()}` : "Cleared", icon: CreditCard, color: "text-purple-400" },
+                      { label: "Fee Balance", value: totalBalance > 0 ? formatCurrency(totalBalance) : "Cleared", icon: CreditCard, color: "text-purple-400" },
                     ].map((item, i) => (
                       <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
                         <div className={`w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center`}>
@@ -725,9 +726,9 @@ export default function StudentDetailPage() {
               {/* Fee Summary */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
-                  { label: "Total Fees", value: `₦${totalFees.toLocaleString()}`, color: "from-blue-500 to-blue-700" },
-                  { label: "Total Paid", value: `₦${totalPaid.toLocaleString()}`, color: "from-emerald-500 to-emerald-700" },
-                  { label: "Balance", value: `₦${totalBalance.toLocaleString()}`, color: totalBalance > 0 ? "from-amber-500 to-amber-700" : "from-emerald-500 to-emerald-700" },
+                  { label: "Total Fees", value: formatCurrency(totalFees), color: "from-blue-500 to-blue-700" },
+                  { label: "Total Paid", value: formatCurrency(totalPaid), color: "from-emerald-500 to-emerald-700" },
+                  { label: "Balance", value: formatCurrency(totalBalance), color: totalBalance > 0 ? "from-amber-500 to-amber-700" : "from-emerald-500 to-emerald-700" },
                 ].map((stat, i) => (
                   <motion.div
                     key={i}
@@ -771,8 +772,8 @@ export default function StudentDetailPage() {
                         {feeRecords.map((f, i) => (
                           <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition">
                             <td className="px-5 py-3.5 text-white/70 text-[13px] font-medium">{f.term}</td>
-                            <td className="px-5 py-3.5 text-center text-white/60 text-[13px]">₦{f.amount.toLocaleString()}</td>
-                            <td className="px-5 py-3.5 text-center text-emerald-400 text-[13px] font-semibold">₦{f.paid.toLocaleString()}</td>
+                            <td className="px-5 py-3.5 text-center text-white/60 text-[13px]">{formatCurrency(f.amount)}</td>
+                            <td className="px-5 py-3.5 text-center text-emerald-400 text-[13px] font-semibold">{formatCurrency(f.paid)}</td>
                             <td className="px-5 py-3.5 text-center">
                               <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-medium ${
                                 f.status === "paid"
@@ -819,7 +820,7 @@ export default function StudentDetailPage() {
                           f.payments.map((p, pi) => (
                             <tr key={`${fi}-${pi}`} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition">
                               <td className="px-5 py-3.5 text-white/60 text-[13px]">{f.term}</td>
-                              <td className="px-5 py-3.5 text-center text-emerald-400 text-[13px] font-semibold">₦{p.amount.toLocaleString()}</td>
+                              <td className="px-5 py-3.5 text-center text-emerald-400 text-[13px] font-semibold">{formatCurrency(p.amount)}</td>
                               <td className="px-5 py-3.5 text-center text-white/40 text-[12px] capitalize">{p.method || "—"}</td>
                               <td className="px-5 py-3.5 text-center text-white/40 text-[12px]">
                                 {p.paidAt ? new Date(p.paidAt).toLocaleDateString("en-NG") : "—"}

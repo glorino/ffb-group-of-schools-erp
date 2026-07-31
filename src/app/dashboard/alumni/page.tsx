@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
+import { formatCurrency, formatCurrencyCompact } from "@/lib/school-config";
 
 interface AlumniRecord {
   id: string;
@@ -109,7 +110,7 @@ export default function AlumniPage() {
   const stats = [
     { label: "Total Alumni", value: alumni.length.toLocaleString(), icon: Users, color: "from-blue-500 to-blue-600" },
     { label: "Active Members", value: alumni.length.toLocaleString(), icon: Star, color: "from-emerald-500 to-emerald-600" },
-    { label: "Total Donations", value: `₦${(totalDonations / 1000).toFixed(0)}K`, icon: DollarSign, color: "from-purple-500 to-purple-600" },
+    { label: "Total Donations", value: formatCurrencyCompact(totalDonations), icon: DollarSign, color: "from-purple-500 to-purple-600" },
     { label: "Mentorship Pairs", value: totalMentorships.toString(), icon: Handshake, color: "from-[var(--accent)] to-emerald-400" },
   ];
 
@@ -297,7 +298,7 @@ export default function AlumniPage() {
                         <span className="text-white/40 text-[12px] truncate max-w-[80px]">{person.university || "—"}</span>
                       </div>
                       {totalDonation > 0 && (
-                        <p className="text-[var(--accent)] text-[12px] font-medium">₦{totalDonation.toLocaleString()}</p>
+                        <p className="text-[var(--accent)] text-[12px] font-medium">{formatCurrency(totalDonation)}</p>
                       )}
                     </div>
                     <button
@@ -347,7 +348,7 @@ export default function AlumniPage() {
             <h3 className="text-white font-semibold text-lg mb-4">Donation Summary</h3>
             <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
               <div className="text-center mb-4">
-                <p className="text-3xl font-bold text-[var(--accent)]">₦{totalDonations.toLocaleString()}</p>
+                <p className="text-3xl font-bold text-[var(--accent)]">{formatCurrency(totalDonations)}</p>
                 <p className="text-white/40 text-[12px]">Total Raised</p>
               </div>
               <div className="space-y-2">
@@ -359,7 +360,7 @@ export default function AlumniPage() {
                   <div key={i}>
                     <div className="flex items-center justify-between text-[13px] mb-1">
                       <span className="text-white/60">{item.label}</span>
-                      <span className="text-white/40 text-[12px]">₦{item.amount.toLocaleString()}</span>
+                      <span className="text-white/40 text-[12px]">{formatCurrency(item.amount)}</span>
                     </div>
                     <div className="w-full bg-white/[0.08] rounded-full h-1.5">
                       <div className="bg-[var(--accent)] h-1.5 rounded-full" style={{ width: `${item.percent}%` }} />

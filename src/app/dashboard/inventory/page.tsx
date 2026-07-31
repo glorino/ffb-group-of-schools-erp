@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
+import { formatCurrency, formatCurrencyCompact } from "@/lib/school-config";
 
 interface InventoryPurchase {
   id: string;
@@ -129,7 +130,7 @@ export default function InventoryPage() {
     { label: "Total Items", value: stats.total, icon: Package, color: "from-blue-500 to-blue-600" },
     { label: "Categories", value: stats.categories, icon: Warehouse, color: "from-emerald-500 to-emerald-600" },
     { label: "Low Stock", value: stats.lowStock, icon: AlertTriangle, color: "from-orange-500 to-orange-600" },
-    { label: "Total Value", value: `₦${(stats.totalValue / 1000).toFixed(0)}K`, icon: TrendingUp, color: "from-purple-500 to-purple-600" },
+    { label: "Total Value", value: formatCurrencyCompact(stats.totalValue), icon: TrendingUp, color: "from-purple-500 to-purple-600" },
   ];
 
   const handleExport = () => {
@@ -261,7 +262,7 @@ export default function InventoryPage() {
                       <span className="px-2 py-1 rounded-lg bg-white/[0.08] text-white/70 text-[12px]">{item.category}</span>
                     </td>
                     <td className="py-3 text-white/70 text-[13px]">{item.quantity} {item.unit}</td>
-                    <td className="py-3 text-white/70 text-[13px]">₦{item.unitPrice.toLocaleString()}</td>
+                    <td className="py-3 text-white/70 text-[13px]">{formatCurrency(item.unitPrice)}</td>
                     <td className="py-3">
                       <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
                         item.status === "ok" || item.status === "in_stock" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
@@ -327,7 +328,7 @@ export default function InventoryPage() {
                   <p className="text-white/40 text-[12px]">{purchase.vendor}</p>
                   <div className="flex items-center justify-between mt-2 text-[12px]">
                     <span className="text-white/30">{new Date(purchase.date).toLocaleDateString()}</span>
-                    <span className="text-white/60">₦{purchase.amount.toLocaleString()}</span>
+                    <span className="text-white/60">{formatCurrency(purchase.amount)}</span>
                   </div>
                 </div>
               ))}
@@ -491,7 +492,7 @@ export default function InventoryPage() {
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.04]">
                   <p className="text-white/40 text-[12px] mb-1">Unit Price</p>
-                  <p className="text-white text-[13px] font-medium">₦{viewItem.unitPrice.toLocaleString()}</p>
+                  <p className="text-white text-[13px] font-medium">{formatCurrency(viewItem.unitPrice)}</p>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.04]">
                   <p className="text-white/40 text-[12px] mb-1">Location</p>
@@ -512,7 +513,7 @@ export default function InventoryPage() {
                         </div>
                         <div className="flex items-center justify-between text-[12px]">
                           <span className="text-white/30">{new Date(p.date).toLocaleDateString()}</span>
-                          <span className="text-white/60">₦{p.amount.toLocaleString()}</span>
+                          <span className="text-white/60">{formatCurrency(p.amount)}</span>
                         </div>
                       </div>
                     ))}
@@ -633,7 +634,7 @@ export default function InventoryPage() {
                 <p className="text-white font-medium text-[14px]">{barcodeResult.name}</p>
                 <p className="text-white/40 text-[13px]">Category: {barcodeResult.category}</p>
                 <p className="text-white/40 text-[13px]">Qty: {barcodeResult.quantity} {barcodeResult.unit}</p>
-                <p className="text-white/40 text-[13px]">₦{barcodeResult.unitPrice.toLocaleString()}</p>
+                <p className="text-white/40 text-[13px]">{formatCurrency(barcodeResult.unitPrice)}</p>
                 <p className="text-white/40 text-[13px]">Location: {barcodeResult.location}</p>
               </div>
             )}

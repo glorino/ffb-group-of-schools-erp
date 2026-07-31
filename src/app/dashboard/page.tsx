@@ -544,7 +544,7 @@ function VicePrincipalDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/students" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-blue-500/20 to-blue-500/5 border border-blue-500/20 text-white hover:from-blue-500/30 hover:to-blue-500/10 transition-all group">
+        <Link href="/dashboard/discipline" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-blue-500/20 to-blue-500/5 border border-blue-500/20 text-white hover:from-blue-500/30 hover:to-blue-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Discipline Records</p><p className="text-white/40 text-[9px] sm:text-[10px]">Incident logs</p></div>
         </Link>
@@ -833,19 +833,19 @@ function AuditorDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
         <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Audit Reports</p><p className="text-white/40 text-[9px] sm:text-[10px]">Audit findings</p></div>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Analytics Overview</p><p className="text-white/40 text-[9px] sm:text-[10px]">Charts & trends</p></div>
         </Link>
         <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔍</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Transactions</p><p className="text-white/40 text-[9px] sm:text-[10px]">All transactions</p></div>
         </Link>
-        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
+        <Link href="/dashboard/activity-log" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Compliance Check</p><p className="text-white/40 text-[9px] sm:text-[10px]">Verify compliance</p></div>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Activity Log</p><p className="text-white/40 text-[9px] sm:text-[10px]">User actions audit</p></div>
         </Link>
-        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
+        <Link href="/dashboard/expenses" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📤</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Export Data</p><p className="text-white/40 text-[9px] sm:text-[10px]">Download reports</p></div>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Expense Reports</p><p className="text-white/40 text-[9px] sm:text-[10px]">Review expenses</p></div>
         </Link>
       </div>
     </>

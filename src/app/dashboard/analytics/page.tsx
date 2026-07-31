@@ -31,6 +31,7 @@ import {
 } from "recharts";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
+import { formatCurrency, formatCurrencyCompact } from "@/lib/school-config";
 
 interface DashboardStats {
   totalStudents?: number;
@@ -56,6 +57,20 @@ interface Payment {
   amount: number;
   date?: string;
   status?: string;
+  [key: string]: unknown;
+}
+
+interface Attendance {
+  id: string;
+  studentId: string;
+  status: string;
+  date?: string;
+  [key: string]: unknown;
+}
+
+interface Student {
+  id: string;
+  gender?: string;
   [key: string]: unknown;
 }
 
@@ -92,36 +107,14 @@ export default function AnalyticsPage() {
   const [classPerformance, setClassPerformance] = useState<ClassPerf[]>([]);
   const [subjectPerformance, setSubjectPerformance] = useState<SubjectPerf[]>([]);
   const [monthlyRevenue, setMonthlyRevenue] = useState<MonthlyRevenue[]>([]);
-
-  const genderData = [
-    { name: "Male", value: 320 },
-    { name: "Female", value: 280 },
-  ];
-
-  const paymentTrendData = [
-    { month: "Sep", collection: 4.2 },
-    { month: "Oct", collection: 3.8 },
-    { month: "Nov", collection: 5.1 },
-    { month: "Dec", collection: 4.7 },
-    { month: "Jan", collection: 6.3 },
-    { month: "Feb", collection: 5.9 },
-    { month: "Mar", collection: 7.1 },
-    { month: "Apr", collection: 6.8 },
-  ];
-
-  const classBarData = [
-    { class: "JSS1", avg: 72 },
-    { class: "JSS2", avg: 68 },
-    { class: "JSS3", avg: 75 },
-    { class: "SS1", avg: 61 },
-    { class: "SS2", avg: 70 },
-    { class: "SS3", avg: 78 },
-  ];
-
-  const attendanceData = [
-    { name: "Present", value: 85 },
-    { name: "Absent", value: 15 },
-  ];
+  const [genderData, setGenderData] = useState<{ name: string; value: number }[]>([
+    { name: "Male", value: 0 },
+    { name: "Female", value: 0 },
+  ]);
+  const [attendanceData, setAttendanceData] = useState<{ name: string; value: number }[]>([
+    { name: "Present", value: 0 },
+    { name: "Absent", value: 0 },
+  ]);
 
   const PIE_COLORS = ["#6366f1", "#22d3ee"];
   const ATTENDANCE_COLORS = ["#22c55e", "#ef4444"];
@@ -129,18 +122,24 @@ export default function AnalyticsPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [statsRes, gradesRes, paymentsRes] = await Promise.all([
+      const [statsRes, gradesRes, paymentsRes, studentsRes, attendanceRes] = await Promise.all([
         fetch("/api/dashboard/stats"),
         fetch("/api/grades"),
         fetch("/api/finance/payments"),
+        fetch("/api/students?limit=9999"),
+        fetch("/api/attendance?limit=9999"),
       ]);
 
       const statsData: DashboardStats = statsRes.ok ? await statsRes.json() : {};
       const gradesData: Grade[] = gradesRes.ok ? await gradesRes.json() : [];
       const paymentsData: Payment[] = paymentsRes.ok ? await paymentsRes.json() : [];
+      const studentsData = studentsRes.ok ? await studentsRes.json() : { students: [] };
+      const attendanceDataRes = attendanceRes.ok ? await attendanceRes.json() : { records: [] };
 
       const grades = Array.isArray(gradesData) ? gradesData : (gradesData as Record<string, unknown>).grades as Grade[] || [];
       const payments = Array.isArray(paymentsData) ? paymentsData : (paymentsData as Record<string, unknown>).payments as Payment[] || [];
+      const students: Student[] = Array.isArray(studentsData) ? studentsData : studentsData.students || [];
+      const attendanceRecords: Attendance[] = Array.isArray(attendanceDataRes) ? attendanceDataRes : attendanceDataRes.records || [];
 
       const totalStudents = (statsData as Record<string, unknown>).totalStudents as number || 0;
       const totalTeachers = (statsData as Record<string, unknown>).totalTeachers as number || 0;
@@ -174,7 +173,7 @@ export default function AnalyticsPage() {
         },
         {
           label: "Revenue",
-          value: totalRevenue > 0 ? `₦${(totalRevenue / 1000000).toFixed(1)}M` : "—",
+          value: totalRevenue > 0 ? formatCurrencyCompact(totalRevenue) : "—",
           change: totalRevenue > 0 ? "+18%" : "+0%",
           trend: "up",
           icon: TrendingUp,
@@ -189,6 +188,25 @@ export default function AnalyticsPage() {
           color: "from-[var(--accent)] to-emerald-400",
         },
       ];
+
+      const genderCounts: Record<string, number> = {};
+      students.forEach((s: Student) => {
+        const g = s.gender || "Unknown";
+        genderCounts[g] = (genderCounts[g] || 0) + 1;
+      });
+      const maleCount = genderCounts["Male"] || 0;
+      const femaleCount = genderCounts["Female"] || 0;
+      setGenderData([
+        { name: "Male", value: maleCount },
+        { name: "Female", value: femaleCount },
+      ]);
+
+      const presentCount = attendanceRecords.filter((a: Attendance) => a.status?.toLowerCase() === "present").length;
+      const absentCount = attendanceRecords.filter((a: Attendance) => a.status?.toLowerCase() !== "present").length;
+      setAttendanceData([
+        { name: "Present", value: presentCount },
+        { name: "Absent", value: absentCount },
+      ]);
 
       const classMap: Record<string, { scores: number[]; total: number; passed: number }> = {};
       grades.forEach((g: Grade) => {
@@ -409,7 +427,7 @@ export default function AnalyticsPage() {
         <div className="flex items-end justify-between h-48 gap-4">
           {monthlyRevenue.map((month, i) => (
             <div key={i} className="flex-1 flex flex-col items-center">
-              <span className="text-white/40 text-[13px] mb-2">₦{month.amount}M</span>
+              <span className="text-white/40 text-[13px] mb-2">{formatCurrencyCompact(month.amount * 1000000)}</span>
               <div
                 className="w-full bg-gradient-to-t from-[var(--primary)] to-[var(--accent)] rounded-t-lg transition-all duration-500"
                 style={{ height: `${month.amount > 0 ? Math.max((month.amount / 50) * 100, 5) : 2}%` }}
@@ -503,7 +521,7 @@ export default function AnalyticsPage() {
         >
           <h3 className="text-white font-semibold text-lg mb-6">Payment Trend</h3>
           <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={paymentTrendData}>
+            <LineChart data={monthlyRevenue}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis dataKey="month" stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
               <YAxis stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
@@ -518,12 +536,12 @@ export default function AnalyticsPage() {
               <Legend wrapperStyle={{ color: "rgba(255,255,255,0.6)" }} />
               <Line
                 type="monotone"
-                dataKey="collection"
+                dataKey="amount"
                 stroke="#a78bfa"
                 strokeWidth={3}
                 dot={{ fill: "#a78bfa", strokeWidth: 2 }}
                 activeDot={{ r: 6 }}
-                name="Collection (₦M)"
+                name={`Collection (${formatCurrencyCompact(0).charAt(0)}M)`}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -537,7 +555,7 @@ export default function AnalyticsPage() {
         >
           <h3 className="text-white font-semibold text-lg mb-6">Class Performance</h3>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={classBarData}>
+            <BarChart data={classPerformance}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis dataKey="class" stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
               <YAxis stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />

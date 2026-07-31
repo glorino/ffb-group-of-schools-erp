@@ -69,6 +69,17 @@ export default function LibraryPage() {
   const [editBook, setEditBook] = useState<LibraryBook | null>(null);
   const [editForm, setEditForm] = useState({ title: "", author: "", isbn: "", category: "", copies: "", available: "", location: "" });
   const [showPenalties, setShowPenalties] = useState(false);
+  const [showIssueModal, setShowIssueModal] = useState(false);
+  const [issueForm, setIssueForm] = useState({ studentId: "", bookId: "", dueDate: "" });
+
+  useEffect(() => {
+    const defaultDueDate = new Date();
+    defaultDueDate.setDate(defaultDueDate.getDate() + 14);
+    setIssueForm((prev) => ({
+      ...prev,
+      dueDate: defaultDueDate.toISOString().split("T")[0],
+    }));
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -118,6 +129,52 @@ export default function LibraryPage() {
       toast.error("Failed to add book");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleIssueBook = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!issueForm.studentId || !issueForm.bookId || !issueForm.dueDate) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/library", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId: issueForm.studentId,
+          bookId: issueForm.bookId,
+          dueDate: issueForm.dueDate,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      toast.success("Book issued successfully");
+      setShowIssueModal(false);
+      const defaultDueDate = new Date();
+      defaultDueDate.setDate(defaultDueDate.getDate() + 14);
+      setIssueForm({ studentId: "", bookId: "", dueDate: defaultDueDate.toISOString().split("T")[0] });
+      fetchData();
+    } catch {
+      toast.error("Failed to issue book");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleReturnBook = async (borrowId: string) => {
+    try {
+      const res = await fetch("/api/library", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: borrowId, action: "update", status: "returned" }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      toast.success("Book returned successfully");
+      fetchData();
+    } catch {
+      toast.error("Failed to return book");
     }
   };
 
@@ -179,13 +236,22 @@ export default function LibraryPage() {
               Export
             </button>
             {!isReadOnly && (
-              <button
-                onClick={() => setShowModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
-              >
-                <Plus className="w-4 h-4" />
-                Add Book
-              </button>
+              <>
+                <button
+                  onClick={() => setShowIssueModal(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-emerald-600/25"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  Issue Book
+                </button>
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Book
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -317,9 +383,19 @@ export default function LibraryPage() {
                     </span>
                   </div>
                   <p className="text-white/40 text-[12px]">{borrow.book.title}</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <Clock className="w-3 h-3 text-white/30" />
-                    <span className="text-white/30 text-[12px]">Due: {new Date(borrow.dueDate).toLocaleDateString()}</span>
+                  <div className="flex items-center justify-between gap-1 mt-1">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-white/30" />
+                      <span className="text-white/30 text-[12px]">Due: {new Date(borrow.dueDate).toLocaleDateString()}</span>
+                    </div>
+                    {borrow.status === "active" && !isReadOnly && (
+                      <button
+                        onClick={() => handleReturnBook(borrow.id)}
+                        className="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 text-[11px] font-medium hover:bg-emerald-500/30 transition-all"
+                      >
+                        Return
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -443,6 +519,80 @@ export default function LibraryPage() {
                   className="flex-1 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[var(--primary)]/25"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Add Book"}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+
+      {showIssueModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-lg font-semibold">Issue Book</h2>
+              <button onClick={() => setShowIssueModal(false)} className="text-white/40 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleIssueBook} className="space-y-4">
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1">Student ID *</label>
+                <input
+                  type="text"
+                  value={issueForm.studentId}
+                  onChange={(e) => setIssueForm({ ...issueForm, studentId: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  placeholder="e.g. STU-2024-001"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1">Book *</label>
+                <select
+                  value={issueForm.bookId}
+                  onChange={(e) => setIssueForm({ ...issueForm, bookId: e.target.value })}
+                  style={{ colorScheme: "dark" }}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  required
+                >
+                  <option style={{ background: "#0f1b33", color: "#fff" }} value="">Select a book</option>
+                  {books.filter((b) => b.available > 0).map((book) => (
+                    <option key={book.id} style={{ background: "#0f1b33", color: "#fff" }} value={book.id}>
+                      {book.title} ({book.available} available)
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-white/60 text-[13px] mb-1">Due Date *</label>
+                <input
+                  type="date"
+                  value={issueForm.dueDate}
+                  onChange={(e) => setIssueForm({ ...issueForm, dueDate: e.target.value })}
+                  style={{ colorScheme: "dark" }}
+                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  required
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowIssueModal(false)}
+                  className="flex-1 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25"
+                >
+                  {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Issue Book"}
                 </button>
               </div>
             </form>
@@ -593,7 +743,7 @@ export default function LibraryPage() {
                         <td className="py-3 text-white/70 text-[13px]">{borrow.book.title}</td>
                         <td className="py-3 text-white/70 text-[13px]">{new Date(borrow.dueDate).toLocaleDateString()}</td>
                         <td className="py-3 text-red-400 text-[13px]">{daysOverdue}</td>
-                        <td className="py-3 text-red-400 font-medium text-[13px]">₦{penalty.toLocaleString()}</td>
+                        <td className="py-3 text-red-400 font-medium text-[13px]">{formatCurrency(penalty)}</td>
                       </tr>
                     );
                   })}
