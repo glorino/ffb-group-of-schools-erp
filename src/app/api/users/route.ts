@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import bcrypt from "bcryptjs";
+import { UserCreateSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -45,11 +46,8 @@ export async function POST(request: NextRequest) {
     const { session } = authResult;
 
     const body = await request.json();
-    const { email, name, password, phone, role, schoolId } = body;
-
-    if (!email || !name || !password || !role) {
-      return NextResponse.json({ error: "Missing required fields: email, name, password, role" }, { status: 400 });
-    }
+    const validated = UserCreateSchema.parse(body);
+    const { email, name, password, phone, role, schoolId } = validated;
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {

@@ -64,9 +64,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
-    if (authResult.error) return authResult.error;
-
     const body = await request.json();
     const validated = AdmissionSchema.parse(body);
 
@@ -78,8 +75,8 @@ export async function POST(request: NextRequest) {
         firstName: validated.firstName,
         lastName: validated.lastName,
         middleName: validated.middleName,
-        email: validated.email,
-        phone: validated.phone,
+        email: validated.email || "",
+        phone: validated.phone || "",
         dateOfBirth: new Date(validated.dateOfBirth),
         gender: validated.gender,
         classAppliedFor: validated.classAppliedFor,

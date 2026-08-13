@@ -253,10 +253,10 @@ export default function TransportPage() {
                   </span>
                 </div>
                 <div className="flex gap-1">
-                  <button className="p-2 rounded-lg hover:bg-white/[0.08] text-white/40">
+                  <button title="View vehicle details" onClick={() => alert(`Vehicle: ${vehicle.name}\nPlate: ${vehicle.plateNumber}\nDriver: ${vehicle.driverName}\nCapacity: ${vehicle.capacity} seats\nStatus: ${vehicle.status}`)} className="p-2 rounded-lg hover:bg-white/[0.08] text-white/40">
                     <Eye className="w-4 h-4" />
                   </button>
-                  <button className="p-2 rounded-lg hover:bg-white/[0.08] text-white/40">
+                  <button title="Edit vehicle" onClick={() => { setForm({ name: vehicle.name, plateNumber: vehicle.plateNumber, type: vehicle.type, capacity: String(vehicle.capacity), driverName: vehicle.driverName, driverPhone: vehicle.driverPhone }); setShowModal(true); }} className="p-2 rounded-lg hover:bg-white/[0.08] text-white/40">
                     <Edit className="w-4 h-4" />
                   </button>
                 </div>

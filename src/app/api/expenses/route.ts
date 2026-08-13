@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
+import { ExpenseSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -49,7 +50,8 @@ export async function POST(request: NextRequest) {
     const { session } = authResult;
 
     const body = await request.json();
-    const { title, amount, category, date, reference, vendor, notes } = body;
+    const validated = ExpenseSchema.parse(body);
+    const { title, amount, category, date } = validated;
 
     if (!title || !amount || !category) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -60,14 +62,12 @@ export async function POST(request: NextRequest) {
       data: {
         schoolId,
         title,
-        amount: parseFloat(amount),
+        amount,
         category,
         date: date ? new Date(date) : new Date(),
-        reference: reference || undefined,
-        vendor: vendor || undefined,
-        notes: notes || undefined,
+        notes: validated.description || undefined,
         approvedBy: session?.user?.name || undefined,
-        status: "pending",
+        status: validated.status || "pending",
       },
     });
 

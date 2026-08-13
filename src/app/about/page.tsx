@@ -57,7 +57,7 @@ export default function AboutPage() {
       </div>
 
       {/* Hero */}
-      <section style={{ marginTop: "80px", padding: "80px 20px 40px", textAlign: "center" }}>
+      <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
         <motion.h1 {...fadeUp} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800 }}>
           About <span className="accent">FFB</span> Group of Schools
         </motion.h1>

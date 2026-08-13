@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
+import { ClinicVisitSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,17 +32,16 @@ export async function POST(request: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { studentId, reason, diagnosis, treatment, medication } = body;
-
-    if (!studentId || !reason) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const validated = ClinicVisitSchema.parse(body);
+    const { studentId, reason } = validated;
 
     const visit = await prisma.clinicVisit.create({
       data: {
         studentId,
         reason,
-        diagnosis: diagnosis || undefined,
-        treatment: treatment || undefined,
-        medication: medication || undefined,
+        diagnosis: validated.diagnosis || undefined,
+        treatment: validated.treatment || undefined,
+        nurseNotes: validated.notes || undefined,
         createdBy: session.user.name || undefined,
       },
     });

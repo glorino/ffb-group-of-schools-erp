@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -9,12 +9,26 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
   delay: `${Math.random() * 10}s`, size: `${3 + Math.random() * 3}px`,
 }));
 
+interface DemoCredential {
+  role: string;
+  email: string;
+  password: string;
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [demoCredentials, setDemoCredentials] = useState<DemoCredential[]>([]);
+
+  useEffect(() => {
+    fetch("/api/demo-credentials")
+      .then((res) => res.json())
+      .then((data) => { if (data.credentials) setDemoCredentials(data.credentials); })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,7 +105,7 @@ export default function LoginPage() {
               <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>
                 <input type="checkbox" style={{ accentColor: "#28ff9c" }} /> Remember me
               </label>
-              <a href="#" style={{ color: "#28ff9c", fontSize: "12px", textDecoration: "none" }}>Forgot password?</a>
+              <Link href="/auth/forgot-password" style={{ color: "#28ff9c", fontSize: "12px", textDecoration: "none" }}>Forgot password?</Link>
             </div>
             <motion.button type="submit" className="btn-primary" disabled={loading} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ width: "100%", padding: "16px", fontSize: "15px", fontWeight: 700, borderRadius: "20px", marginTop: "5px" }}>
               {loading ? (
@@ -104,31 +118,20 @@ export default function LoginPage() {
           </form>
 
           {/* Demo Credentials */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} style={{ marginTop: "25px", padding: "18px", background: "rgba(40,255,156,0.05)", borderRadius: "16px", border: "1px solid rgba(40,255,156,0.15)" }}>
-            <p style={{ fontSize: "12px", fontWeight: 700, color: "#28ff9c", marginBottom: "10px", textAlign: "center" }}>DEMO CREDENTIALS</p>
-            {[
-              { role: "Owner", email: "owner@ffb.edu.ng", password: "owner123" },
-              { role: "Admin", email: "admin@ffb.edu.ng", password: "admin123" },
-              { role: "Principal", email: "principal@ffb.edu.ng", password: "principal123" },
-              { role: "Vice Principal", email: "vp@ffb.edu.ng", password: "vp123" },
-              { role: "Accountant", email: "accountant@ffb.edu.ng", password: "accountant123" },
-              { role: "Auditor", email: "auditor@ffb.edu.ng", password: "auditor123" },
-              { role: "Teacher", email: "teacher@ffb.edu.ng", password: "teacher123" },
-              { role: "Librarian", email: "librarian@ffb.edu.ng", password: "librarian123" },
-              { role: "Porter", email: "porter@ffb.edu.ng", password: "porter123" },
-              { role: "Parent", email: "parent@ffb.edu.ng", password: "parent123" },
-              { role: "Alumni", email: "alumni@ffb.edu.ng", password: "alumni123" },
-              { role: "Student", email: "adebayo.johnson@student.ffb.edu.ng", password: "student123" },
-            ].map((cred) => (
-              <div key={cred.role} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 10px", borderRadius: "10px", marginBottom: "3px", background: "rgba(255,255,255,0.04)", cursor: "pointer" }} onClick={() => { setEmail(cred.email); setPassword(cred.password); }}>
-                <div>
-                  <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)" }}>{cred.role}</span>
-                  <p style={{ fontSize: "11px", fontWeight: 600 }}>{cred.email}</p>
+          {demoCredentials.length > 0 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} style={{ marginTop: "25px", padding: "18px", background: "rgba(40,255,156,0.05)", borderRadius: "16px", border: "1px solid rgba(40,255,156,0.15)" }}>
+              <p style={{ fontSize: "12px", fontWeight: 700, color: "#28ff9c", marginBottom: "10px", textAlign: "center" }}>DEMO CREDENTIALS</p>
+              {demoCredentials.map((cred) => (
+                <div key={cred.role} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 10px", borderRadius: "10px", marginBottom: "3px", background: "rgba(255,255,255,0.04)", cursor: "pointer" }} onClick={() => { setEmail(cred.email); setPassword(cred.password); }}>
+                  <div>
+                    <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)" }}>{cred.role}</span>
+                    <p style={{ fontSize: "11px", fontWeight: 600 }}>{cred.email}</p>
+                  </div>
+                  <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)" }}>Click</span>
                 </div>
-                <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)" }}>Click</span>
-              </div>
-            ))}
-          </motion.div>
+              ))}
+            </motion.div>
+          )}
 
           {/* Links */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} style={{ textAlign: "center", marginTop: "20px" }}>

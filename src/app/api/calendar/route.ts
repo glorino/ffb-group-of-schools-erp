@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { getDefaultSchoolId } from "@/lib/school";
+import { CalendarEventSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,9 +35,8 @@ export async function POST(request: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { title, start, end, allDay, color, type, description } = body;
-
-    if (!title || !start) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const validated = CalendarEventSchema.parse(body);
+    const { title, start } = validated;
 
     const schoolId = await getDefaultSchoolId();
     const event = await prisma.calendarEvent.create({
@@ -44,11 +44,10 @@ export async function POST(request: NextRequest) {
         schoolId,
         title,
         start: new Date(start),
-        end: end ? new Date(end) : new Date(start),
-        allDay: allDay || false,
-        color: color || "#0055ff",
-        type: type || "event",
-        description: description || undefined,
+        end: validated.end ? new Date(validated.end) : new Date(start),
+        allDay: validated.allDay || false,
+        type: validated.type || "event",
+        description: validated.description || undefined,
       },
     });
 

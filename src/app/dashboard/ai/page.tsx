@@ -289,7 +289,7 @@ export default function AIPage() {
               <RefreshCw className="w-4 h-4" />
               Refresh
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all">
+            <button onClick={() => window.location.href = "/dashboard/settings"} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all">
               <Settings className="w-4 h-4" />
               Configure
             </button>

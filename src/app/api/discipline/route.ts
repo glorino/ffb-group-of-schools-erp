@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
+import { DisciplineSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -47,21 +48,18 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { studentId, type, title, details, date, action, reportedBy } = body;
-
-    if (!studentId || !type || !title) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    const validated = DisciplineSchema.parse(body);
+    const { studentId, type, title } = validated;
 
     const record = await prisma.disciplineRecord.create({
       data: {
         studentId,
         type,
         title,
-        details: details || undefined,
-        date: date ? new Date(date) : new Date(),
-        action: action || "pending",
-        reportedBy: reportedBy || authResult.session?.user?.name || undefined,
+        details: validated.description || undefined,
+        date: validated.date ? new Date(validated.date) : new Date(),
+        action: validated.action || "pending",
+        reportedBy: authResult.session?.user?.name || undefined,
       },
       include: { student: { select: { id: true, firstName: true, lastName: true } } },
     });

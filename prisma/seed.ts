@@ -40,23 +40,16 @@ async function main() {
 
   // Create Roles
   const rolesData = [
-    { name: "SUPER_ADMIN", description: "Super Administrator with full access", level: 100, isSystem: true },
-    { name: "SCHOOL_OWNER", description: "School Owner", level: 90, isSystem: true },
+    { name: "OWNER", description: "School Owner", level: 100, isSystem: true },
     { name: "ADMINISTRATOR", description: "School Administrator", level: 80, isSystem: false },
     { name: "PRINCIPAL", description: "School Principal", level: 75, isSystem: false },
     { name: "VICE_PRINCIPAL", description: "Vice Principal", level: 70, isSystem: false },
-    { name: "ACADEMIC_ADMIN", description: "Academic Administrator", level: 65, isSystem: false },
     { name: "TEACHER", description: "Subject Teacher", level: 50, isSystem: false },
-    { name: "CLASS_TEACHER", description: "Class Teacher", level: 55, isSystem: false },
-    { name: "EXAM_OFFICER", description: "Examination Officer", level: 55, isSystem: false },
-    { name: "ADMISSIONS_OFFICER", description: "Admissions Officer", level: 50, isSystem: false },
-    { name: "LIBRARIAN", description: "School Librarian", level: 45, isSystem: false },
-    { name: "BURSAR", description: "School Bursar", level: 55, isSystem: false },
     { name: "ACCOUNTANT", description: "Accountant", level: 50, isSystem: false },
-    { name: "HOSTEL_MASTER", description: "Hostel Master", level: 45, isSystem: false },
-    { name: "CLINIC_STAFF", description: "Clinic Staff", level: 40, isSystem: false },
-    { name: "RECEPTIONIST", description: "Receptionist", level: 30, isSystem: false },
-    { name: "SECURITY", description: "Security Personnel", level: 25, isSystem: false },
+    { name: "AUDITOR", description: "Financial Auditor", level: 60, isSystem: false },
+    { name: "LIBRARIAN", description: "School Librarian", level: 45, isSystem: false },
+    { name: "PORTER", description: "Hostel Porter", level: 40, isSystem: false },
+    { name: "CLINIC_STAFF", description: "Clinic Staff", level: 35, isSystem: false },
     { name: "STUDENT", description: "Student", level: 10, isSystem: false },
     { name: "PARENT", description: "Parent/Guardian", level: 15, isSystem: false },
     { name: "ALUMNI", description: "Alumni Member", level: 5, isSystem: false },
@@ -95,16 +88,16 @@ async function main() {
   }
   console.log("✅ Permissions created:", permissions.length);
 
-  // Assign all permissions to SUPER_ADMIN
-  const superAdminRole = roles["SUPER_ADMIN"];
+  // Assign all permissions to OWNER
+  const ownerRole = roles["OWNER"];
   for (const permId of permissions) {
     await prisma.rolePermission.upsert({
-      where: { roleId_permissionId: { roleId: superAdminRole, permissionId: permId } },
+      where: { roleId_permissionId: { roleId: ownerRole, permissionId: permId } },
       update: {},
-      create: { roleId: superAdminRole, permissionId: permId },
+      create: { roleId: ownerRole, permissionId: permId },
     });
   }
-  console.log("✅ SUPER_ADMIN permissions assigned");
+  console.log("✅ OWNER permissions assigned");
 
   // Create Admin User
   const hashedPassword = await bcrypt.hash("admin123", 12);
@@ -121,11 +114,11 @@ async function main() {
     },
   });
 
-  // Assign SUPER_ADMIN role to admin user
+  // Assign OWNER role to admin user
   await prisma.userRole.upsert({
-    where: { userId_roleId_schoolId: { userId: adminUser.id, roleId: superAdminRole, schoolId: school.id } },
+    where: { userId_roleId_schoolId: { userId: adminUser.id, roleId: ownerRole, schoolId: school.id } },
     update: {},
-    create: { userId: adminUser.id, roleId: superAdminRole, schoolId: school.id },
+    create: { userId: adminUser.id, roleId: ownerRole, schoolId: school.id },
   });
   console.log("✅ Admin user created:", adminUser.email);
 

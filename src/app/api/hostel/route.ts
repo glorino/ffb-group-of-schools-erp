@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
+import { HostelSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -37,13 +38,12 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { name, type, capacity, address } = body;
-
-    if (!name || !capacity) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const validated = HostelSchema.parse(body);
+    const { name, capacity } = validated;
 
     const schoolId = await getDefaultSchoolId();
     const hostel = await prisma.hostel.create({
-      data: { schoolId, name, type: type || "mixed", capacity: parseInt(capacity), address: address || undefined },
+      data: { schoolId, name, capacity },
     });
 
     return NextResponse.json({ success: true, hostel }, { status: 201 });

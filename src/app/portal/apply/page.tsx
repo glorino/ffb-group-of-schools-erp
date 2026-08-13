@@ -25,6 +25,7 @@ export default function ApplyPage() {
   const [submitting, setSubmitting] = useState(false);
   const [appNumber, setAppNumber] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState("");
   const [form, setForm] = useState({
     firstName: "", lastName: "", middleName: "", dateOfBirth: "", gender: "", bloodGroup: "", nationality: "Nigerian", stateOfOrigin: "", homeAddress: "",
     previousSchool: "", classApplying: "",
@@ -62,6 +63,7 @@ export default function ApplyPage() {
   const handleSubmit = async () => {
     if (!validate()) return;
     setSubmitting(true);
+    setSubmitError("");
     try {
       const res = await fetch("/api/admissions", {
         method: "POST",
@@ -81,8 +83,12 @@ export default function ApplyPage() {
       if (data.success) {
         setAppNumber(data.applicationNumber);
         setSubmitted(true);
+      } else {
+        setSubmitError(data.error || "Submission failed. Please try again.");
       }
-    } catch { }
+    } catch {
+      setSubmitError("Network error. Please check your connection and try again.");
+    }
     setSubmitting(false);
   };
 
@@ -136,7 +142,7 @@ export default function ApplyPage() {
         </div>
       </div>
 
-      <section style={{ marginTop: "80px", padding: "40px 20px 20px", textAlign: "center" }}>
+      <section style={{ marginTop: "90px", padding: "40px 20px 20px", textAlign: "center" }}>
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800 }}>
           Admission <span className="accent">Application</span>
         </motion.h1>
@@ -256,9 +262,12 @@ export default function ApplyPage() {
               Next Step
             </motion.button>
           ) : (
-            <motion.button onClick={handleSubmit} className="btn-primary" disabled={submitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: "12px 35px", opacity: submitting ? 0.6 : 1 }}>
-              {submitting ? "Submitting..." : "Submit Application"}
-            </motion.button>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px" }}>
+              {submitError && <p style={{ color: "#ef4444", fontSize: "13px", textAlign: "right" }}>{submitError}</p>}
+              <motion.button onClick={handleSubmit} className="btn-primary" disabled={submitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: "12px 35px", opacity: submitting ? 0.6 : 1 }}>
+                {submitting ? "Submitting..." : "Submit Application"}
+              </motion.button>
+            </div>
           )}
         </div>
       </section>

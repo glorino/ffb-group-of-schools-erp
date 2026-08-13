@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
+import { TimetableEntrySchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,22 +36,18 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { classId, teacherId, dayOfWeek, startTime, endTime, room, subject, type } = body;
-
-    if (!classId || !teacherId || dayOfWeek === undefined || !startTime || !endTime) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    const validated = TimetableEntrySchema.parse(body);
+    const { classId, teacherId, dayOfWeek, startTime, endTime } = validated;
 
     const entry = await prisma.timetableEntry.create({
       data: {
         classId,
         teacherId,
-        dayOfWeek: parseInt(dayOfWeek),
+        subject: validated.subjectId || undefined,
+        dayOfWeek,
         startTime,
         endTime,
-        room: room || undefined,
-        subject: subject || undefined,
-        type: type || "lesson",
+        room: validated.room || undefined,
       },
       include: {
         class: { select: { id: true, name: true, displayName: true } },

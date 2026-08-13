@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
+import { LibraryBookSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -58,9 +59,8 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { title, author, isbn, category, copies, publisher, location } = body;
-
-    if (!title || !author) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const validated = LibraryBookSchema.parse(body);
+    const { title, author, isbn, category } = validated;
 
     const schoolId = await getDefaultSchoolId();
     const book = await prisma.libraryBook.create({
@@ -70,10 +70,9 @@ export async function POST(request: NextRequest) {
         author,
         isbn: isbn || undefined,
         category: category || "general",
-        copies: parseInt(copies) || 1,
-        available: parseInt(copies) || 1,
-        publisher: publisher || undefined,
-        location: location || undefined,
+        copies: validated.totalCopies || 1,
+        available: validated.totalCopies || 1,
+        location: validated.shelfLocation || undefined,
       },
     });
 

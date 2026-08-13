@@ -289,7 +289,7 @@ export default function ExpensesPage() {
                 <option value="approved" style={{ background: "#0f1b33", color: "#fff" }}>Approved</option>
                 <option value="rejected" style={{ background: "#0f1b33", color: "#fff" }}>Rejected</option>
               </select>
-              <button className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]">
+              <button title="Filter using dropdowns above" className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]">
                 <Filter className="w-4 h-4" />
               </button>
             </div>

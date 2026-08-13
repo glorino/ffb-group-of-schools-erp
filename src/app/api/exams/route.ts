@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
+import { ExamSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,19 +36,18 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { name, type, startDate, endDate, status: examStatus } = body;
-
-    if (!name || !startDate) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const validated = ExamSchema.parse(body);
+    const { name, startDate } = validated;
 
     const schoolId = await getDefaultSchoolId();
     const exam = await prisma.exam.create({
       data: {
         schoolId,
         name,
-        type: type || "terminal",
+        type: validated.type || "terminal",
         startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : new Date(startDate),
-        status: examStatus || "upcoming",
+        endDate: validated.endDate ? new Date(validated.endDate) : new Date(startDate),
+        status: "upcoming",
       },
     });
 

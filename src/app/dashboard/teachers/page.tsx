@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   GraduationCap,
@@ -17,7 +18,6 @@ import {
   Download,
 } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
 
@@ -201,10 +201,16 @@ export default function TeachersPage() {
     {
       key: "actions",
       label: "",
-      render: () => (
-        <button className="p-1 rounded-lg hover:bg-white/10 text-white/40">
-          <MoreVertical className="w-4 h-4" />
-        </button>
+      render: (row: any) => (
+        <div className="relative group">
+          <button className="p-1 rounded-lg hover:bg-white/10 text-white/40">
+            <MoreVertical className="w-4 h-4" />
+          </button>
+          <div className="absolute right-0 top-8 z-10 hidden group-hover:block bg-[var(--card)] border border-white/[0.1] rounded-xl shadow-xl py-1 min-w-[120px]">
+            <button onClick={() => router.push(`/dashboard/teachers/${row.id}`)} className="w-full text-left px-3 py-2 text-[12px] text-white/70 hover:bg-white/[0.06]">View Profile</button>
+            <button onClick={() => router.push(`/dashboard/teachers/${row.id}?edit=true`)} className="w-full text-left px-3 py-2 text-[12px] text-white/70 hover:bg-white/[0.06]">Edit</button>
+          </div>
+        </div>
       ),
     },
   ];

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
+import { AnnouncementSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -30,21 +31,8 @@ export async function POST(request: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { title, content, type, priority, published, audience, audienceClassId, audienceStudentId, audienceParentId, audienceTeacherId, targetUserId, imageUrl, featured, eventDate } = body;
-
-    if (!title || !content) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-
-    const targetData: Record<string, any> = {};
-    if (audience && audience !== "all") {
-      targetData.audience = audience;
-      targetData.classId = audienceClassId;
-      targetData.studentId = audienceStudentId;
-      targetData.parentId = audienceParentId;
-      targetData.teacherId = audienceTeacherId;
-    }
-    if (imageUrl) targetData.imageUrl = imageUrl;
-    if (featured !== undefined) targetData.featured = featured;
-    if (eventDate) targetData.eventDate = eventDate;
+    const validated = AnnouncementSchema.parse(body);
+    const { title, content, priority } = validated;
 
     const schoolId = await getDefaultSchoolId();
     const announcement = await prisma.announcement.create({
@@ -52,12 +40,12 @@ export async function POST(request: NextRequest) {
         schoolId,
         title,
         content,
-        type: type || "general",
-        priority: priority || "normal",
-        published: published !== false,
+        type: "general",
+        priority: priority || "medium",
+        published: true,
         authorId: session.user.id,
-        targetUserId: targetUserId || undefined,
-        target: Object.keys(targetData).length > 0 ? JSON.stringify(targetData) : undefined,
+        target: validated.targetAudience ? JSON.stringify({ audience: validated.targetAudience }) : undefined,
+        expiresAt: validated.expiresAt ? new Date(validated.expiresAt) : undefined,
       },
     });
 

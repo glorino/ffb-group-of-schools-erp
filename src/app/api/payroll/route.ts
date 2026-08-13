@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
+import { PayrollSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,22 +41,19 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { teacherId, month, year, basicSalary, allowances, deductions } = body;
+    const validated = PayrollSchema.parse(body);
+    const { teacherId, month, year, baseSalary, allowances, deductions, bonus } = validated;
 
-    if (!teacherId || !month || !year || !basicSalary) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
-
-    const netSalary = basicSalary + (allowances || 0) - (deductions || 0);
+    const netSalary = baseSalary + (allowances || 0) - (deductions || 0) + (bonus || 0);
 
     const payroll = await prisma.payroll.upsert({
-      where: { teacherId_month_year: { teacherId, month, year: parseInt(year) } },
-      update: { basicSalary, allowances: allowances || 0, deductions: deductions || 0, netSalary },
+      where: { teacherId_month_year: { teacherId, month, year } },
+      update: { basicSalary: baseSalary, allowances: allowances || 0, deductions: deductions || 0, netSalary },
       create: {
         teacherId,
         month,
-        year: parseInt(year),
-        basicSalary,
+        year,
+        basicSalary: baseSalary,
         allowances: allowances || 0,
         deductions: deductions || 0,
         netSalary,

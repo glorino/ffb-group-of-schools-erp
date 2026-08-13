@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
+import { GuardianSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -50,18 +51,15 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { studentId, firstName, lastName, phone, email, relationship, address, occupation } = body;
-
-    if (!studentId || !firstName || !lastName) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    const validated = GuardianSchema.parse(body);
+    const { studentId, firstName, lastName, phone, email, relationship, address, occupation } = validated;
 
     const guardian = await prisma.guardian.create({
       data: {
         studentId,
         firstName,
         lastName,
-        phone: phone || undefined,
+        phone,
         email: email || undefined,
         relationship: relationship || "parent",
         address: address || undefined,

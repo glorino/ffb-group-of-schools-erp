@@ -75,7 +75,7 @@ export default function TrackPage() {
         </div>
       </div>
 
-      <section style={{ marginTop: "80px", padding: "60px 20px 40px", textAlign: "center", maxWidth: "700px", margin: "80px auto 0" }}>
+      <section style={{ marginTop: "80px", padding: "60px 20px 40px", textAlign: "center", maxWidth: "700px", margin: "90px auto 0" }}>
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800 }}>
           Track Your <span className="accent">Application</span>
         </motion.h1>

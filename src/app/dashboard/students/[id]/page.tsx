@@ -245,13 +245,13 @@ export default function StudentDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 pb-1">
-                  <button className="p-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 hover:text-white/60 hover:bg-white/[0.08] transition">
+                  <button title="Print student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 hover:text-white/60 hover:bg-white/[0.08] transition">
                     <Printer className="w-4 h-4" />
                   </button>
-                  <button className="p-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 hover:text-white/60 hover:bg-white/[0.08] transition">
+                  <button title="Download student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 hover:text-white/60 hover:bg-white/[0.08] transition">
                     <Download className="w-4 h-4" />
                   </button>
-                  <button className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
+                  <button onClick={() => router.push(`/dashboard/students?edit=${student.id}`)} className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
                     <Edit3 className="w-3.5 h-3.5" /> Edit Profile
                   </button>
                 </div>
@@ -585,7 +585,7 @@ export default function StudentDetailPage() {
                     <h3 className="text-white/80 font-semibold text-[15px]">Academic Results</h3>
                     <p className="text-white/25 text-[11px] mt-0.5">All recorded grades</p>
                   </div>
-                  <button className="px-4 py-2 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/40 text-[12px] font-medium hover:bg-white/[0.08] transition flex items-center gap-2">
+                  <button onClick={() => router.push(`/dashboard/report-cards?studentId=${student.id}`)} className="px-4 py-2 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/40 text-[12px] font-medium hover:bg-white/[0.08] transition flex items-center gap-2">
                     <Download className="w-3.5 h-3.5" /> Download Report Card
                   </button>
                 </div>
@@ -931,7 +931,7 @@ export default function StudentDetailPage() {
                           <p className="text-white/25 text-[10px]">{doc.type} · {doc.size} · Uploaded {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString("en-NG") : "—"}</p>
                         </div>
                       </div>
-                      <button className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                      <button title={`Download ${doc.name}`} onClick={() => window.print()} className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
                         <Download className="w-4 h-4" />
                       </button>
                     </div>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
+import { LessonPlanSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -36,23 +37,19 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { teacherId, subject, className, topic, objectives, content, resources, startDate, endDate } = body;
-
-    if (!teacherId || !subject || !className || !topic || !content || !startDate || !endDate) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    const validated = LessonPlanSchema.parse(body);
+    const { teacherId, subject, classId, title, objective, content } = validated;
 
     const plan = await prisma.lessonPlan.create({
       data: {
         teacherId,
         subject,
-        className,
-        topic,
-        objectives: objectives || undefined,
+        className: classId,
+        topic: title,
+        objectives: objective || undefined,
         content,
-        resources: resources || undefined,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
+        startDate: validated.date ? new Date(validated.date) : new Date(),
+        endDate: validated.date ? new Date(validated.date) : new Date(),
       },
       include: {
         teacher: { select: { id: true, firstName: true, lastName: true } },

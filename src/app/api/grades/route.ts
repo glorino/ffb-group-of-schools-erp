@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
+import { GradeSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -49,39 +50,25 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { studentId, subjectId, type, score, maxScore, grade, term, session: sessionName, comments } = body;
+    const validated = GradeSchema.parse(body);
+    const { studentId, subjectId, examId, score } = validated;
 
-    if (!studentId || !subjectId || !type || score === undefined) {
-      return NextResponse.json({ error: "Missing required fields: studentId, subjectId, type, score" }, { status: 400 });
-    }
+    const computedGrade = validated.grade || (score >= 75 ? "A" : score >= 65 ? "B" : score >= 50 ? "C" : score >= 40 ? "D" : "F");
 
-    const computedGrade = grade || (score >= 75 ? "A" : score >= 65 ? "B" : score >= 50 ? "C" : score >= 40 ? "D" : "F");
-
-    const existing = await prisma.grade.findFirst({
-      where: { studentId, subjectId, type, term: term || null, session: sessionName || null },
+    const result = await prisma.grade.upsert({
+      where: {
+        studentId_subjectId_type_term_session: { studentId, subjectId, type: "exam", term: "current", session: "current" },
+      },
+      update: { score, grade: computedGrade, comments: validated.comment || undefined },
+      create: {
+        studentId,
+        subjectId,
+        type: "exam",
+        score,
+        grade: computedGrade,
+        comments: validated.comment || undefined,
+      },
     });
-
-    let result;
-    if (existing) {
-      result = await prisma.grade.update({
-        where: { id: existing.id },
-        data: { score: parseFloat(score), maxScore: maxScore ? parseFloat(maxScore) : 100, grade: computedGrade, comments: comments || undefined },
-      });
-    } else {
-      result = await prisma.grade.create({
-        data: {
-          studentId,
-          subjectId,
-          type,
-          score: parseFloat(score),
-          maxScore: maxScore ? parseFloat(maxScore) : 100,
-          grade: computedGrade,
-          term: term || undefined,
-          session: sessionName || undefined,
-          comments: comments || undefined,
-        },
-      });
-    }
 
     return NextResponse.json({ success: true, grade: result }, { status: 201 });
   } catch (error: any) {

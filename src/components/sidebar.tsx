@@ -87,7 +87,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
     title: "Operations",
     items: [
       { label: "Transport", href: "/dashboard/transport", emoji: "🚌", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
-      { label: "Clinic", href: "/dashboard/clinic", emoji: "🏥", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"] },
+      { label: "Clinic", href: "/dashboard/clinic", emoji: "🏥", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "CLINIC_STAFF"] },
       { label: "Inventory", href: "/dashboard/inventory", emoji: "📦", roles: ["OWNER", "ADMINISTRATOR"] },
     ],
   },

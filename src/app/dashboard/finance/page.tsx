@@ -107,6 +107,18 @@ export default function FinancePage() {
   }, []);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get("payment");
+    if (paymentStatus === "success") {
+      toast.success("Payment completed successfully!");
+      window.history.replaceState({}, "", "/dashboard/finance");
+    } else if (paymentStatus === "error") {
+      toast.error("Payment failed. Please try again.");
+      window.history.replaceState({}, "", "/dashboard/finance");
+    }
+  }, []);
+
+  useEffect(() => {
     fetch("/api/calendar").then(r => r.json()).then(d => {
       setAcademicYears(d.academicYears || []);
       setTerms(d.terms || []);
@@ -148,6 +160,29 @@ export default function FinancePage() {
   const totalOutstanding = invoices.filter(i => i.status === "pending" || i.status === "overdue").reduce((sum, i) => sum + (i.totalAmount || i.amount), 0);
   const verifiedPayments = payments.filter(p => p.status === "verified").length;
   const pendingPayments = payments.filter(p => p.status === "pending").length;
+
+  const handlePayNow = async (invoice: any) => {
+    try {
+      const res = await fetch("/api/payments/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId: invoice.studentId,
+          amount: invoice.totalAmount || invoice.amount,
+          email: invoice.student?.email || "",
+          name: invoice.student ? `${invoice.student.firstName} ${invoice.student.lastName}` : "",
+        }),
+      });
+      const data = await res.json();
+      if (data.paymentLink) {
+        window.location.href = data.paymentLink;
+      } else {
+        toast.error(data.error || "Failed to initialize payment");
+      }
+    } catch {
+      toast.error("Failed to initialize payment");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -421,9 +456,14 @@ export default function FinancePage() {
                         </p>
                       </div>
                       {inv.status !== "paid" && (
-                        <button onClick={() => toast.success("Payment reminder sent")} className="px-3 py-1.5 rounded-lg bg-[var(--primary)]/10 text-[var(--blue-3)] text-[11px] font-medium hover:bg-[var(--primary)]/20 transition">
-                          Remind
-                        </button>
+                        <div className="flex gap-2">
+                          <button onClick={() => handlePayNow(inv)} className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-[11px] font-medium hover:bg-emerald-500/20 transition">
+                            Pay Now
+                          </button>
+                          <button onClick={() => toast.success("Payment reminder sent")} className="px-3 py-1.5 rounded-lg bg-[var(--primary)]/10 text-[var(--blue-3)] text-[11px] font-medium hover:bg-[var(--primary)]/20 transition">
+                            Remind
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
+import { TransportVehicleSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,9 +34,8 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { name, plateNumber, type, capacity, driverName, driverPhone } = body;
-
-    if (!name || !plateNumber) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const validated = TransportVehicleSchema.parse(body);
+    const { name, plateNumber, type, capacity, driverName, driverPhone } = validated;
 
     const schoolId = await getDefaultSchoolId();
     const vehicle = await prisma.vehicle.create({
@@ -43,10 +43,10 @@ export async function POST(request: NextRequest) {
         schoolId,
         name,
         plateNumber,
-        type: type || "bus",
-        capacity: parseInt(capacity) || 30,
-        driverName: driverName || undefined,
-        driverPhone: driverPhone || undefined,
+        type,
+        capacity,
+        driverName,
+        driverPhone,
       },
     });
 

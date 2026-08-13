@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
+import { SubjectSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,11 +41,8 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { name, code } = body;
-
-    if (!name) {
-      return NextResponse.json({ error: "Subject name is required" }, { status: 400 });
-    }
+    const validated = SubjectSchema.parse(body);
+    const { name, code } = validated;
 
     const schoolId = await getDefaultSchoolId();
 

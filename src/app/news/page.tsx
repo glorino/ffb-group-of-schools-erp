@@ -54,7 +54,7 @@ export default function NewsPage() {
         </div>
       </div>
 
-      <section style={{ marginTop: "80px", padding: "80px 20px 40px", textAlign: "center" }}>
+      <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800 }}>
           School <span className="accent">News</span>
         </motion.h1>

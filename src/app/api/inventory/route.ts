@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
+import { InventoryItemSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,9 +40,8 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { name, category, quantity, unit, unitPrice, location } = body;
-
-    if (!name || !category) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const validated = InventoryItemSchema.parse(body);
+    const { name, category, quantity } = validated;
 
     const schoolId = await getDefaultSchoolId();
     const item = await prisma.inventoryItem.create({
@@ -49,10 +49,10 @@ export async function POST(request: NextRequest) {
         schoolId,
         name,
         category,
-        quantity: parseInt(quantity) || 0,
-        unit: unit || "piece",
-        unitPrice: unitPrice ? parseFloat(unitPrice) : undefined,
-        location: location || undefined,
+        quantity,
+        unitPrice: validated.unitPrice || undefined,
+        description: validated.description || undefined,
+        location: validated.location || undefined,
       },
     });
 
