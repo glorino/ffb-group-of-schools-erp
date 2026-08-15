@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -39,9 +40,11 @@ import {
   Droplets,
   AlertTriangle,
   Pill,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/school-config";
+import { useUploadThing } from "@/uploadthing";
 
 const tabs = [
   { id: "overview", label: "Overview", icon: User },
@@ -72,7 +75,7 @@ interface Student {
   class?: { name: string; id: string };
   guardians?: { name: string; phone: string; email: string; relationship: string }[];
   medicalRecords?: { bloodGroup: string; genotype: string; allergies: string; conditions: string; clinicVisits?: { id: string; date: string; reason: string; notes?: string; doctor?: string }[] }[];
-  documents?: { name: string; type: string; size: string; uploadedAt: string }[];
+  documents?: { name: string; type: string; size: string; url: string; uploadedAt: string }[];
   attendanceRecords: { date: string; status: string }[];
   grades: { subject: { name: string }; score: number; grade: string; type: string; term?: string }[];
   invoices: { id: string; amount: number; status: string; schoolFee: { name: string; amount: number }; payments: { amount: number; paidAt?: string; method?: string }[]; dueDate?: string }[];
@@ -97,6 +100,19 @@ export default function StudentDetailPage() {
   const [messageSubject, setMessageSubject] = useState("");
   const [messageBody, setMessageBody] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
+
+  const { data: session } = useSession();
+  const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+  const canUploadDocs = userRoles.some(r => ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"].includes(r));
+  const { startUpload, isUploading } = useUploadThing("document", {
+    onClientUploadComplete: () => {
+      toast.success("Document uploaded successfully");
+      window.location.reload();
+    },
+    onUploadError: () => {
+      toast.error("Failed to upload document");
+    },
+  });
 
   useEffect(() => {
     const fetchStudent = async () => {
@@ -909,9 +925,35 @@ export default function StudentDetailPage() {
 
           {activeTab === "documents" && (
             <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-6">
-              <h3 className="text-white/80 font-semibold text-[15px] mb-5 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-white/40" /> Documents
-              </h3>
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-white/80 font-semibold text-[15px] flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-white/40" /> Documents
+                </h3>
+                {canUploadDocs && (
+                  <label className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--primary)]/10 border border-[var(--primary)]/30 text-[var(--primary)] text-[12px] font-medium cursor-pointer hover:bg-[var(--primary)]/15 transition">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload</span>
+                    <input
+                      type="file"
+                      accept="image/*,.pdf,.doc,.docx,.txt,application/*"
+                      className="hidden"
+                      multiple
+                      onChange={async (e) => {
+                        const files = Array.from(e.target.files || []);
+                        if (!files.length) return;
+                        await startUpload(files, { studentId: student.id });
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+              {isUploading && (
+                <div className="mb-3 text-[12px] text-[var(--accent)] flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Uploading document...
+                </div>
+              )}
               {!student.documents || student.documents.length === 0 ? (
                 <div className="text-center py-12">
                   <FileText className="w-10 h-10 text-white/10 mx-auto mb-3" />
@@ -931,9 +973,11 @@ export default function StudentDetailPage() {
                           <p className="text-white/25 text-[10px]">{doc.type} · {doc.size} · Uploaded {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString("en-NG") : "—"}</p>
                         </div>
                       </div>
-                      <button title={`Download ${doc.name}`} onClick={() => window.print()} className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
-                        <Download className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <a href={doc.url} target="_blank" rel="noopener noreferrer" title={`View ${doc.name}`} className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                          <Download className="w-4 h-4" />
+                        </a>
+                      </div>
                     </div>
                   ))}
                 </div>
