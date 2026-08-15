@@ -44,7 +44,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/school-config";
-import { useUploadThing } from "@/uploadthing";
+import { useUploadThing } from "@/lib/uploadthing-helpers";
 
 const tabs = [
   { id: "overview", label: "Overview", icon: User },

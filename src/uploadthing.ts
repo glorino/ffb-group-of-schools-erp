@@ -51,7 +51,3 @@ export const studentDocumentsRouter = {
 } satisfies FileRouter;
 
 export type StudentDocumentsRouter = typeof studentDocumentsRouter;
-
-import { generateReactHelpers } from "@uploadthing/react";
-
-export const { useUploadThing } = generateReactHelpers<StudentDocumentsRouter>();
