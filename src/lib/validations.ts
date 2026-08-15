@@ -53,7 +53,7 @@ export const AdmissionSchema = z.object({
   gender: z.enum(["male", "female"]),
   classAppliedFor: z.string().min(1, "Class is required"),
   previousSchool: z.string().optional(),
-  schoolId: z.string().min(1, "School is required"),
+  schoolId: z.string().optional(),
   guardianName: z.string().min(1, "Guardian name is required"),
   guardianPhone: z.string().min(1, "Guardian phone is required"),
   guardianEmail: z.string().optional(),

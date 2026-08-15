@@ -406,6 +406,11 @@ model Guardian {
   isPrimary    Boolean @default(false)
 
   student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([phone])
+  @@index([email])
+  @@index([isPrimary])
 }
 
 model StudentDocument {

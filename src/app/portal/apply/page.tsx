@@ -72,7 +72,6 @@ export default function ApplyPage() {
           firstName: form.firstName, lastName: form.lastName, middleName: form.middleName,
           email: "", phone: "", dateOfBirth: form.dateOfBirth, gender: form.gender,
           classAppliedFor: form.classApplying, previousSchool: form.previousSchool,
-          schoolId: "school_ffb",
           guardianName: form.guardianName, guardianPhone: form.guardianPhone,
           guardianEmail: form.guardianEmail, guardianRelationship: form.guardianRelationship,
           address: form.homeAddress, nationality: form.nationality,
