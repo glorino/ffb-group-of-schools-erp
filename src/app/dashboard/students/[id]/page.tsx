@@ -239,7 +239,7 @@ export default function StudentDetailPage() {
             </div>
             <div className="px-6 pb-6 relative">
               <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-12">
-                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-2xl font-bold border-4 border-[var(--bg-dark)] shadow-xl flex-shrink-0">
+                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-2xl font-bold border-4 border-[var(--sidebar)] shadow-xl flex-shrink-0">
                   {initials}
                 </div>
                 <div className="flex-1 min-w-0 pb-1">

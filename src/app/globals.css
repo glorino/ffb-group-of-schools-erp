@@ -18,12 +18,15 @@ html {
   --blue-2: #001f5f;
   --blue-3: #0055ff;
   --card-bg: rgba(255,255,255,0.04);
+  --card: rgba(255,255,255,0.04);
   --card-border: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.07);
   --text-primary: rgba(255,255,255,0.9);
   --text-secondary: rgba(255,255,255,0.35);
   --text-muted: rgba(255,255,255,0.25);
   --bg-glass: rgba(255,255,255,0.06);
   --bg-glass-hover: rgba(255,255,255,0.1);
+  --bg-dark: #0a1628;
 }
 
 body {
@@ -700,8 +703,8 @@ select optgroup {
   background: rgba(255,255,255,0.04);
   backdrop-filter: blur(25px);
   border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 20px;
+  padding: 20px;
 }
 
 /* Badge */
@@ -725,8 +728,8 @@ select optgroup {
 
 /* Table */
 .table-glass { width: 100%; border-collapse: separate; border-spacing: 0; }
-.table-glass thead th { padding: 14px 20px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.08); }
-.table-glass tbody td { padding: 14px 20px; font-size: 13px; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.04); transition: all 0.2s ease; }
+.table-glass thead th { padding: 12px 16px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.08); }
+.table-glass tbody td { padding: 14px 16px; font-size: 13px; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.04); transition: all 0.2s ease; }
 .table-glass tbody tr:hover td { background: rgba(255,255,255,0.03); }
 
 /* Text gradient */
