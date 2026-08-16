@@ -789,6 +789,7 @@ select optgroup {
 .dashboard-main {
   margin-left: 240px;
   position: relative;
+  padding-bottom: 40px;
 }
 
 @media (max-width: 1024px) {
@@ -802,6 +803,9 @@ select optgroup {
 }
 
 @media (max-width: 640px) {
+  .dashboard-main {
+    padding-bottom: 24px;
+  }
   .dashboard-main main {
     padding: 16px 12px 24px 12px !important;
   }
