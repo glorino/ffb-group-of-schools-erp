@@ -308,29 +308,29 @@ export default function ExpensesPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.08]">
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Description</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Amount</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Category</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Date</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Status</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Actions</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Description</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Amount</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Category</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Date</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Status</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredExpenses.map((expense) => (
                     <tr key={expense.id} className="border-b border-white/[0.04] hover:bg-white/[0.04] transition-all">
-                      <td className="py-3">
+                      <td className="py-3 px-4">
                         <p className="text-white/80 font-medium text-[13px]">{expense.title}</p>
                         {expense.vendor && (
                           <p className="text-white/40 text-[12px]">{expense.vendor}</p>
                         )}
                       </td>
-                      <td className="py-3 text-white/80 font-medium text-[13px]">{formatNaira(expense.amount)}</td>
-                      <td className="py-3">
+                      <td className="py-3 px-4 text-white/80 font-medium text-[13px]">{formatNaira(expense.amount)}</td>
+                      <td className="py-3 px-4">
                         <span className="px-2 py-1 rounded-lg bg-white/[0.04] text-white/70 text-[12px]">{expense.category}</span>
                       </td>
-                      <td className="py-3 text-white/60 text-[13px]">{new Date(expense.date).toLocaleDateString("en-NG")}</td>
-                      <td className="py-3">
+                      <td className="py-3 px-4 text-white/60 text-[13px]">{new Date(expense.date).toLocaleDateString("en-NG")}</td>
+                      <td className="py-3 px-4">
                         <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
                           expense.status === "approved" ? "bg-emerald-500/20 text-emerald-400" :
                           expense.status === "rejected" ? "bg-red-500/20 text-red-400" :
@@ -339,7 +339,7 @@ export default function ExpensesPage() {
                           {expense.status}
                         </span>
                       </td>
-                      <td className="py-3">
+                      <td className="py-3 px-4">
                         {expense.status === "pending" && (
                           <div className="flex gap-1">
                             <button

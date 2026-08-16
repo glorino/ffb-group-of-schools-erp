@@ -262,25 +262,25 @@ export default function IncomePage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.08]">
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Source</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Amount</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Category</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Date</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3">Reference</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Source</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Amount</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Category</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Date</th>
+                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Reference</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredIncomes.map((income) => (
                     <tr key={income.id} className="border-b border-white/[0.04] hover:bg-white/[0.04] transition-all">
-                      <td className="py-3 text-white/80 font-medium text-[13px]">{income.title}</td>
-                      <td className="py-3 text-white/80 font-medium text-[13px]">{formatNaira(income.amount)}</td>
-                      <td className="py-3">
+                      <td className="py-3 px-4 text-white/80 font-medium text-[13px]">{income.title}</td>
+                      <td className="py-3 px-4 text-white/80 font-medium text-[13px]">{formatNaira(income.amount)}</td>
+                      <td className="py-3 px-4">
                         <span className="px-2 py-1 rounded-lg bg-white/[0.04] text-white/70 text-[12px]">
                           {income.category?.name || "Uncategorized"}
                         </span>
                       </td>
-                      <td className="py-3 text-white/60 text-[13px]">{new Date(income.date).toLocaleDateString("en-NG")}</td>
-                      <td className="py-3 text-white/40 text-[13px]">{income.reference || "—"}</td>
+                      <td className="py-3 px-4 text-white/60 text-[13px]">{new Date(income.date).toLocaleDateString("en-NG")}</td>
+                      <td className="py-3 px-4 text-white/40 text-[13px]">{income.reference || "—"}</td>
                     </tr>
                   ))}
                 </tbody>
