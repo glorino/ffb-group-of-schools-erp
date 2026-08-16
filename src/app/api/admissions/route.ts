@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { AdmissionSchema } from "@/lib/validations";
 import { getDefaultSchoolId } from "@/lib/school";
+import { sendApplicationSubmittedEmail } from "@/lib/resend";
 
 export async function GET(request: NextRequest) {
   try {
@@ -92,6 +93,21 @@ export async function POST(request: NextRequest) {
         bloodGroup: validated.bloodGroup,
       },
     });
+
+    try {
+      await sendApplicationSubmittedEmail({
+        firstName: validated.firstName,
+        lastName: validated.lastName,
+        applicationNumber,
+        classAppliedFor: validated.classAppliedFor,
+        email: validated.email || "",
+        guardianName: validated.guardianName,
+        guardianEmail: validated.guardianEmail,
+        guardianPhone: validated.guardianPhone,
+      });
+    } catch (emailError) {
+      console.error("Failed to send submission email:", emailError);
+    }
 
     return NextResponse.json({
       success: true,

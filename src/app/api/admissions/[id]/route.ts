@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
+import { sendApplicationStatusUpdateEmail } from "@/lib/resend";
 
 export async function GET(
   request: NextRequest,
@@ -214,6 +215,27 @@ export async function PUT(
         }
       } catch (emailError) {
         console.error("Failed to send rejection email:", emailError);
+      }
+    }
+
+    if (["under_review", "exam", "interview"].includes(newStatus) && existing.status !== newStatus) {
+      try {
+        await sendApplicationStatusUpdateEmail(
+          {
+            firstName: existing.firstName,
+            lastName: existing.lastName,
+            applicationNumber: existing.applicationNumber,
+            classAppliedFor: existing.classAppliedFor,
+            email: existing.email,
+            guardianName: existing.guardianName,
+            guardianEmail: existing.guardianEmail,
+            guardianPhone: existing.guardianPhone,
+          },
+          newStatus,
+          body.decisionNote
+        );
+      } catch (emailError) {
+        console.error("Failed to send status update email:", emailError);
       }
     }
 

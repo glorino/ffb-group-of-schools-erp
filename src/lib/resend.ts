@@ -297,3 +297,177 @@ export async function sendAdmissionLetter(
 
   return sendEmail(email, "Admission Letter - FFB Group of Schools", html);
 }
+
+export interface ApplicantForEmail {
+  firstName: string;
+  lastName: string;
+  applicationNumber: string;
+  classAppliedFor: string;
+  email: string;
+  guardianName?: string | null;
+  guardianEmail?: string | null;
+  guardianPhone?: string | null;
+}
+
+export async function sendApplicationSubmittedEmail(
+  applicantData: ApplicantForEmail
+): Promise<EmailResponse | null> {
+  const schoolName = process.env.SCHOOL_NAME || "FFB Group of Schools";
+  const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
+  const schoolPhone = process.env.SCHOOL_PHONE || "+234 905 998 0991";
+  if (!process.env.RESEND_API_KEY) return null;
+
+  const fullName = `${applicantData.firstName} ${applicantData.lastName}`;
+  const recipients = [applicantData.email, applicantData.guardianEmail].filter(Boolean);
+  if (recipients.length === 0) return null;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7fa; margin: 0; padding: 40px 20px; }
+        .container { max-width: 640px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #0039a6 0%, #0055ff 100%); padding: 40px 30px; text-align: center; }
+        .header h1 { color: white; margin: 0; font-size: 26px; font-weight: 700; }
+        .header p { color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px; }
+        .content { padding: 32px; }
+        .content h2 { color: #1e3a8a; margin: 0 0 20px; font-size: 22px; font-weight: 600; }
+        .content p { color: #475569; line-height: 1.7; margin: 0 0 16px; font-size: 15px; }
+        .info-box { background: #f0f9ff; border-left: 4px solid #0055ff; padding: 20px 24px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .info-box p { margin: 6px 0; color: #0c4a6e; font-size: 14px; }
+        .info-box strong { color: #0039a6; font-weight: 600; }
+        .btn { display: inline-block; background: #0055ff; color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; margin: 20px 0; }
+        .footer { background: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #e2e8f0; }
+        .footer p { color: #94a3b8; margin: 0; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>${schoolName}</h1>
+          <p>Application Received</p>
+        </div>
+        <div class="content">
+          <h2>Thank you for your application</h2>
+          <p>Dear ${fullName},</p>
+          <p>We have received your admission application to ${schoolName}. Your application is being reviewed by our admissions team.</p>
+          <div class="info-box">
+            <p><strong>Application Number:</strong> ${applicantData.applicationNumber}</p>
+            <p><strong>Student Name:</strong> ${fullName}</p>
+            <p><strong>Class Applied For:</strong> ${applicantData.classAppliedFor}</p>
+            ${applicantData.guardianName ? `<p><strong>Guardian:</strong> ${applicantData.guardianName}</p>` : ""}
+          </div>
+          <p><strong>What happens next?</strong></p>
+          <p>Your application will go through the following stages: review, entrance examination, and interview. We will notify you of each status change via email.</p>
+          <p>You can also track your application status at any time using your application number.</p>
+          <p>For enquiries, contact us at <a href="mailto:${schoolEmail}" style="color: #0055ff;">${schoolEmail}</a> or call <strong>${schoolPhone}</strong>.</p>
+        </div>
+        <div class="footer">
+          <p>&copy; ${new Date().getFullYear()} ${schoolName}. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const toEmails = recipients.filter((r): r is string => Boolean(r));
+  return sendEmail(toEmails, `Application Received - ${schoolName} (${applicantData.applicationNumber})`, html);
+}
+
+export async function sendApplicationStatusUpdateEmail(
+  applicantData: ApplicantForEmail,
+  newStatus: string,
+  note?: string
+): Promise<EmailResponse | null> {
+  const schoolName = process.env.SCHOOL_NAME || "FFB Group of Schools";
+  const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
+  const schoolPhone = process.env.SCHOOL_PHONE || "+234 905 998 0991";
+  if (!process.env.RESEND_API_KEY) return null;
+
+  const fullName = `${applicantData.firstName} ${applicantData.lastName}`;
+  const recipients = [applicantData.email, applicantData.guardianEmail].filter(Boolean);
+  if (recipients.length === 0) return null;
+
+  const statusMessages: Record<string, { title: string; message: string; color: string }> = {
+    under_review: {
+      title: "Application Under Review",
+      message: "Your application is now under review by our admissions team.",
+      color: "#0055ff",
+    },
+    exam: {
+      title: "Entrance Examination Scheduled",
+      message: "Your application has progressed to the entrance examination stage. Details of the exam will be communicated separately.",
+      color: "#7c3aed",
+    },
+    interview: {
+      title: "Interview Scheduled",
+      message: "Your application has progressed to the interview stage. An interview date has been scheduled.",
+      color: "#0d9488",
+    },
+  };
+
+  const statusInfo = statusMessages[newStatus] || {
+    title: "Application Status Update",
+    message: `Your application status has been updated to: ${newStatus}.`,
+    color: "#6b7280",
+  };
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7fa; margin: 0; padding: 40px 20px; }
+        .container { max-width: 640px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, ${statusInfo.color} 0%, ${statusInfo.color}dd 100%); padding: 40px 30px; text-align: center; }
+        .header h1 { color: white; margin: 0; font-size: 26px; font-weight: 700; }
+        .header p { color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px; }
+        .content { padding: 32px; }
+        .content h2 { color: #1e3a8a; margin: 0 0 20px; font-size: 22px; font-weight: 600; }
+        .content p { color: #475569; line-height: 1.7; margin: 0 0 16px; font-size: 15px; }
+        .info-box { background: #f0f9ff; border-left: 4px solid ${statusInfo.color}; padding: 20px 24px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .info-box p { margin: 6px 0; color: #0c4a6e; font-size: 14px; }
+        .info-box strong { color: #0039a6; font-weight: 600; }
+        .note-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+        .note-box p { margin: 0; color: #78350f; font-size: 14px; }
+        .footer { background: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #e2e8f0; }
+        .footer p { color: #94a3b8; margin: 0; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>${schoolName}</h1>
+          <p>${statusInfo.title}</p>
+        </div>
+        <div class="content">
+          <h2>${statusInfo.title}</h2>
+          <p>Dear ${fullName},</p>
+          <p>${statusInfo.message}</p>
+          <div class="info-box">
+            <p><strong>Application Number:</strong> ${applicantData.applicationNumber}</p>
+            <p><strong>Student Name:</strong> ${fullName}</p>
+            <p><strong>Current Status:</strong> ${newStatus}</p>
+            ${applicantData.guardianName ? `<p><strong>Guardian:</strong> ${applicantData.guardianName}</p>` : ""}
+          </div>
+          ${note ? `<div class="note-box"><p><strong>Admissions Note:</strong> ${note}</p></div>` : ""}
+          <p>For enquiries, contact us at <a href="mailto:${schoolEmail}" style="color: #0055ff;">${schoolEmail}</a> or call <strong>${schoolPhone}</strong>.</p>
+        </div>
+        <div class="footer">
+          <p>&copy; ${new Date().getFullYear()} ${schoolName}. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const subject = `${statusInfo.title} - ${schoolName} (${applicantData.applicationNumber})`;
+  const toEmails = recipients.filter((r): r is string => Boolean(r));
+  return sendEmail(toEmails, subject, html);
+}
+

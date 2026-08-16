@@ -18,6 +18,7 @@ import {
   UserCheck,
   MessageSquare,
   Loader2,
+  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
@@ -36,13 +37,19 @@ interface Applicant {
   admissionFeePaid: boolean;
   guardianName: string | null;
   guardianPhone: string | null;
+  guardianEmail: string | null;
   guardianRelationship: string | null;
   dateOfBirth: string;
   gender: string;
   previousSchool: string | null;
+  address: string | null;
+  nationality: string | null;
+  stateOfOrigin: string | null;
+  bloodGroup: string | null;
   decisionNote: string | null;
   rejectionReason: string | null;
   reviewedAt: string | null;
+  documents?: { name: string; type: string; url: string; size: number | null; uploadedAt: string }[];
 }
 
 const statusColors: Record<string, string> = {
@@ -251,53 +258,130 @@ export default function AdmissionsPage() {
       <AnimatePresence>
         {selectedApplicant && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => setSelectedApplicant(null)}>
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-lg bg-[#0a1628] border border-white/10 rounded-3xl p-6 max-h-[85vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-white font-bold text-lg">Application Details</h3>
-                <button onClick={() => setSelectedApplicant(null)} className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/10 transition"><X className="w-5 h-5" /></button>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-xl font-bold">{selectedApplicant.firstName[0]}{selectedApplicant.lastName[0]}</div>
-                  <div>
-                    <p className="text-white font-bold text-lg">{selectedApplicant.firstName} {selectedApplicant.lastName}</p>
-                    <p className="text-white/30 text-[12px]">{selectedApplicant.applicationNumber}</p>
-                  </div>
-                </div>
-                {[
-                  { label: "Class Applied", value: selectedApplicant.classAppliedFor },
-                  { label: "Gender", value: selectedApplicant.gender },
-                  { label: "Date of Birth", value: new Date(selectedApplicant.dateOfBirth).toLocaleDateString("en-NG") },
-                  { label: "Email", value: selectedApplicant.email || "—" },
-                  { label: "Phone", value: selectedApplicant.phone || "—" },
-                  { label: "Guardian", value: selectedApplicant.guardianName ? `${selectedApplicant.guardianName} (${selectedApplicant.guardianRelationship || ""})` : "—" },
-                  { label: "Guardian Phone", value: selectedApplicant.guardianPhone || "—" },
-                  { label: "Previous School", value: selectedApplicant.previousSchool || "—" },
-                  { label: "Date Submitted", value: new Date(selectedApplicant.submittedAt).toLocaleDateString("en-NG") },
-                ].map((item, i) => (
-                  <div key={i} className="flex justify-between py-2 border-b border-white/5">
-                    <span className="text-white/40 text-[13px]">{item.label}</span>
-                    <span className="text-white/80 text-[13px] font-medium text-right">{item.value}</span>
-                  </div>
-                ))}
-                {selectedApplicant.decisionNote && (
-                  <div className="mt-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/30 text-[11px] uppercase mb-1">Decision Note</p>
-                    <p className="text-white/70 text-[13px]">{selectedApplicant.decisionNote}</p>
-                  </div>
-                )}
-                {selectedApplicant.status === "pending" && (
-                  <div className="flex gap-2 mt-4">
-                    <button onClick={() => { setShowActionModal(selectedApplicant.id); }} className="flex-1 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 text-[13px] font-semibold hover:bg-emerald-500/25 transition flex items-center justify-center gap-2">
-                      <CheckCircle className="w-4 h-4" /> Approve
-                    </button>
-                    <button onClick={() => { setShowActionModal(selectedApplicant.id); }} className="flex-1 py-2.5 rounded-xl bg-red-500/15 text-red-400 text-[13px] font-semibold hover:bg-red-500/25 transition flex items-center justify-center gap-2">
-                      <XCircle className="w-4 h-4" /> Reject
-                    </button>
-                  </div>
-                )}
-              </div>
-            </motion.div>
+             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-[#0a1628] border border-white/10 rounded-3xl p-6 max-h-[85vh] overflow-y-auto">
+               <div className="flex items-center justify-between mb-5">
+                 <h3 className="text-white font-bold text-lg">Application Details</h3>
+                 <button onClick={() => setSelectedApplicant(null)} className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/10 transition"><X className="w-5 h-5" /></button>
+               </div>
+               <div className="space-y-4">
+                 <div className="flex items-center gap-4 mb-4">
+                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-xl font-bold">{selectedApplicant.firstName[0]}{selectedApplicant.lastName[0]}</div>
+                   <div>
+                     <p className="text-white font-bold text-lg">{selectedApplicant.firstName} {selectedApplicant.lastName}</p>
+                     <p className="text-white/30 text-[12px]">{selectedApplicant.applicationNumber}</p>
+                     <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusColors[selectedApplicant.status] || "bg-white/10 text-white/60"}`}>
+                       {statusLabels[selectedApplicant.status] || selectedApplicant.status}
+                     </span>
+                   </div>
+                 </div>
+
+                 <div>
+                   <h4 className="text-white/60 text-[11px] uppercase font-semibold mb-2">Personal Information</h4>
+                   <div className="grid grid-cols-2 gap-2">
+                     {[
+                       { label: "Class Applied", value: selectedApplicant.classAppliedFor },
+                       { label: "Gender", value: selectedApplicant.gender },
+                       { label: "Date of Birth", value: new Date(selectedApplicant.dateOfBirth).toLocaleDateString("en-NG") },
+                       { label: "Nationality", value: selectedApplicant.nationality || "—" },
+                       { label: "State of Origin", value: selectedApplicant.stateOfOrigin || "—" },
+                       { label: "Blood Group", value: selectedApplicant.bloodGroup || "—" },
+                     ].map((item, i) => (
+                       <div key={i} className="flex justify-between py-2 border-b border-white/5">
+                         <span className="text-white/40 text-[13px]">{item.label}</span>
+                         <span className="text-white/80 text-[13px] font-medium text-right">{item.value}</span>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+
+                 <div>
+                   <h4 className="text-white/60 text-[11px] uppercase font-semibold mb-2">Contact Information</h4>
+                   <div className="grid grid-cols-2 gap-2">
+                     {[
+                       { label: "Email", value: selectedApplicant.email || "—" },
+                       { label: "Phone", value: selectedApplicant.phone || "—" },
+                       { label: "Address", value: selectedApplicant.address || "—" },
+                       { label: "Previous School", value: selectedApplicant.previousSchool || "—" },
+                     ].map((item, i) => (
+                       <div key={i} className="flex justify-between py-2 border-b border-white/5">
+                         <span className="text-white/40 text-[13px]">{item.label}</span>
+                         <span className="text-white/80 text-[13px] font-medium text-right">{item.value}</span>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+
+                 <div>
+                   <h4 className="text-white/60 text-[11px] uppercase font-semibold mb-2">Guardian Information</h4>
+                   <div className="grid grid-cols-2 gap-2">
+                     {[
+                       { label: "Guardian Name", value: selectedApplicant.guardianName || "—" },
+                       { label: "Relationship", value: selectedApplicant.guardianRelationship || "—" },
+                       { label: "Guardian Phone", value: selectedApplicant.guardianPhone || "—" },
+                       { label: "Guardian Email", value: selectedApplicant.guardianEmail || "—" },
+                     ].map((item, i) => (
+                       <div key={i} className="flex justify-between py-2 border-b border-white/5">
+                         <span className="text-white/40 text-[13px]">{item.label}</span>
+                         <span className="text-white/80 text-[13px] font-medium text-right">{item.value}</span>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+
+                 {selectedApplicant.documents && selectedApplicant.documents.length > 0 && (
+                   <div>
+                     <h4 className="text-white/60 text-[11px] uppercase font-semibold mb-2">Uploaded Documents</h4>
+                     <div className="space-y-2">
+                       {selectedApplicant.documents.map((doc, i) => (
+                         <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition group">
+                           <div className="flex items-center gap-3">
+                             <FileText className="w-4 h-4 text-blue-400" />
+                             <div>
+                               <p className="text-white/80 text-[13px] font-medium">{doc.name}</p>
+                               <p className="text-white/25 text-[10px]">{doc.type} · {doc.size ? `${(doc.size / 1024).toFixed(1)} KB` : "—"}</p>
+                             </div>
+                           </div>
+                           <Download className="w-4 h-4 text-white/25 group-hover:text-white/60 transition" />
+                         </a>
+                       ))}
+                     </div>
+                   </div>
+                 )}
+
+                 {[
+                   { label: "Date Submitted", value: new Date(selectedApplicant.submittedAt).toLocaleDateString("en-NG") },
+                   selectedApplicant.reviewedAt ? { label: "Reviewed At", value: new Date(selectedApplicant.reviewedAt).toLocaleDateString("en-NG") } : null,
+                 ].filter(Boolean).map((item, i) => (
+                   <div key={i} className="flex justify-between py-2 border-b border-white/5">
+                     <span className="text-white/40 text-[13px]">{item!.label}</span>
+                     <span className="text-white/80 text-[13px] font-medium text-right">{item!.value}</span>
+                   </div>
+                 ))}
+
+                 {selectedApplicant.decisionNote && (
+                   <div className="mt-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                     <p className="text-white/30 text-[11px] uppercase mb-1">Decision Note</p>
+                     <p className="text-white/70 text-[13px]">{selectedApplicant.decisionNote}</p>
+                   </div>
+                 )}
+                 {selectedApplicant.rejectionReason && (
+                   <div className="mt-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                     <p className="text-red-300 text-[11px] uppercase mb-1">Rejection Reason</p>
+                     <p className="text-red-200 text-[13px]">{selectedApplicant.rejectionReason}</p>
+                   </div>
+                 )}
+                 {selectedApplicant.status === "pending" && (
+                   <div className="flex gap-2 mt-4">
+                     <button onClick={() => { setShowActionModal(selectedApplicant.id); }} className="flex-1 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 text-[13px] font-semibold hover:bg-emerald-500/25 transition flex items-center justify-center gap-2">
+                       <CheckCircle className="w-4 h-4" /> Approve
+                     </button>
+                     <button onClick={() => { setShowActionModal(selectedApplicant.id); }} className="flex-1 py-2.5 rounded-xl bg-red-500/15 text-red-400 text-[13px] font-semibold hover:bg-red-500/25 transition flex items-center justify-center gap-2">
+                       <XCircle className="w-4 h-4" /> Reject
+                     </button>
+                   </div>
+                 )}
+               </div>
+             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -318,9 +402,20 @@ export default function AdmissionsPage() {
                   <XCircle className="w-4 h-4" /> {actionLoading ? "Processing..." : "Reject"}
                 </button>
               </div>
-              <button onClick={() => handleStatusUpdate(showActionModal, "under_review")} disabled={actionLoading} className="w-full mt-2 py-2 rounded-xl bg-white/[0.04] text-white/50 text-[12px] font-medium hover:bg-white/[0.08] transition">
-                Mark as Under Review
-              </button>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <button onClick={() => handleStatusUpdate(showActionModal, "under_review")} disabled={actionLoading} className="py-2 rounded-xl bg-blue-500/15 text-blue-400 text-[12px] font-semibold hover:bg-blue-500/25 transition flex items-center justify-center gap-1">
+                  <Clock className="w-3 h-3" /> Under Review
+                </button>
+                <button onClick={() => handleStatusUpdate(showActionModal, "exam")} disabled={actionLoading} className="py-2 rounded-xl bg-purple-500/15 text-purple-400 text-[12px] font-semibold hover:bg-purple-500/25 transition flex items-center justify-center gap-1">
+                  <Calendar className="w-3 h-3" /> Schedule Exam
+                </button>
+                <button onClick={() => handleStatusUpdate(showActionModal, "interview")} disabled={actionLoading} className="py-2 rounded-xl bg-cyan-500/15 text-cyan-400 text-[12px] font-semibold hover:bg-cyan-500/25 transition flex items-center justify-center gap-1">
+                  <UserCheck className="w-3 h-3" /> Schedule Interview
+                </button>
+                <button onClick={() => setShowActionModal(null)} disabled={actionLoading} className="py-2 rounded-xl bg-white/5 text-white/50 text-[12px] font-medium hover:bg-white/10 transition">
+                  Cancel
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
