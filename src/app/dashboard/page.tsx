@@ -74,7 +74,7 @@ function AdminDashboard() {
         </DashboardCard>
         <DashboardCard>
           <p className="text-white/40 text-[12px] font-medium">Total Revenue</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue / 1000000)}M</p>
+          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-white/40 text-[12px] font-medium">Active Classes</p>
@@ -94,7 +94,7 @@ function AdminDashboard() {
         </DashboardCard>
         <DashboardCard>
           <p className="text-white/40 text-[12px] font-medium">Fee Collection</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue / 1000000)}M</p>
+          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
           <p className="text-emerald-400 text-[11px] mt-1">Total collected</p>
         </DashboardCard>
       </div>
@@ -246,7 +246,7 @@ function TeacherDashboard() {
         </DashboardCard>
         <DashboardCard>
           <p className="text-white/40 text-[12px] font-medium">Collected Revenue</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue / 1000000)}M</p>
+          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
@@ -575,7 +575,7 @@ function PrincipalDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p></DashboardCard>
         <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalTeachers}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">School Revenue</p><p className="text-[22px] font-bold text-white mt-1">{"\u20A6"}{(stats.totalRevenue / 1000000).toFixed(1)}M</p></DashboardCard>
+        <DashboardCard><p className="text-white/40 text-[12px] font-medium">School Revenue</p><p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
         <DashboardCard><p className="text-white/40 text-[12px] font-medium">Avg. Performance</p><p className="text-[28px] font-bold text-white mt-1">{stats.classPerformance?.length ? Math.round(stats.classPerformance.reduce((s: number, c: any) => s + (c.performance || c.students || 0), 0) / stats.classPerformance.length) : 0}%</p></DashboardCard>
       </div>
       <div className="grid grid-cols-3 gap-4 mt-4">
@@ -641,7 +641,7 @@ function OwnerDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p></DashboardCard>
         <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalTeachers}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Revenue</p><p className="text-[22px] font-bold text-white mt-1">{"\u20A6"}{(stats.totalRevenue / 1000000).toFixed(1)}M</p></DashboardCard>
+        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Revenue</p><p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
         <DashboardCard><p className="text-white/40 text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalClasses}</p></DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">

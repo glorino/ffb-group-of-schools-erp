@@ -40,7 +40,8 @@ import {
   Droplets,
   AlertTriangle,
   Pill,
-  Upload,
+   Upload,
+   Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/school-config";
@@ -961,7 +962,7 @@ export default function StudentDetailPage() {
                   <p className="text-white/20 text-[11px] mt-1">Upload documents such as birth certificates, ID cards, or medical records.</p>
                 </div>
               ) : (
-                <div className="space-y-2">
+                  <div className="space-y-2">
                   {student.documents.map((doc, i) => (
                     <div key={i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition">
                       <div className="flex items-center gap-3">
@@ -974,7 +975,10 @@ export default function StudentDetailPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <a href={doc.url} target="_blank" rel="noopener noreferrer" title={`View ${doc.name}`} className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                        <a href={doc.url} target="_blank" rel="noopener noreferrer" title="View document" className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                          <Eye className="w-4 h-4" />
+                        </a>
+                        <a href={doc.url} download title="Download document" className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
                           <Download className="w-4 h-4" />
                         </a>
                       </div>

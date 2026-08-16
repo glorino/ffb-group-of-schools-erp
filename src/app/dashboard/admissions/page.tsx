@@ -328,25 +328,34 @@ export default function AdmissionsPage() {
                    </div>
                  </div>
 
-                 {selectedApplicant.documents && selectedApplicant.documents.length > 0 && (
-                   <div>
-                     <h4 className="text-white/60 text-[11px] uppercase font-semibold mb-2">Uploaded Documents</h4>
-                     <div className="space-y-2">
-                       {selectedApplicant.documents.map((doc, i) => (
-                         <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition group">
-                           <div className="flex items-center gap-3">
-                             <FileText className="w-4 h-4 text-blue-400" />
-                             <div>
-                               <p className="text-white/80 text-[13px] font-medium">{doc.name}</p>
-                               <p className="text-white/25 text-[10px]">{doc.type} · {doc.size ? `${(doc.size / 1024).toFixed(1)} KB` : "—"}</p>
-                             </div>
-                           </div>
-                           <Download className="w-4 h-4 text-white/25 group-hover:text-white/60 transition" />
-                         </a>
-                       ))}
-                     </div>
-                   </div>
-                 )}
+                  {selectedApplicant.documents && selectedApplicant.documents.length > 0 && (
+                    <div>
+                      <h4 className="text-white/60 text-[11px] uppercase font-semibold mb-2">Uploaded Documents</h4>
+                      <div className="space-y-2">
+                        {selectedApplicant.documents.map((doc, i) => (
+                          <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                                <FileText className="w-4 h-4 text-blue-400" />
+                              </div>
+                              <div>
+                                <p className="text-white/80 text-[13px] font-medium">{doc.name}</p>
+                                <p className="text-white/25 text-[10px]">{doc.type} · {doc.size ? `${(doc.size / 1024).toFixed(1)} KB` : "—"}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <a href={doc.url} target="_blank" rel="noopener noreferrer" title="View document" className="p-1.5 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                                <Eye className="w-4 h-4" />
+                              </a>
+                              <a href={doc.url} download title="Download document" className="p-1.5 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                                <Download className="w-4 h-4" />
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                  {[
                    { label: "Date Submitted", value: new Date(selectedApplicant.submittedAt).toLocaleDateString("en-NG") },

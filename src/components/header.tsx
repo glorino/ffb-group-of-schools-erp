@@ -20,6 +20,7 @@ import {
   AlertTriangle,
   GraduationCap,
 } from "lucide-react";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const quickLinks = [
   { label: "My Profile", href: "/dashboard/profile", icon: User },
@@ -50,8 +51,8 @@ export function Header() {
       .catch(() => {});
   }, []);
 
-  const name = session?.user?.name || "Admin";
-  const email = session?.user?.email || "admin@ffb.edu.ng";
+const name = session?.user?.name || "Admin";
+const email = session?.user?.email || SCHOOL_CONFIG.email;
   const initials = name.split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0, 2);
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
 import { Menu, X } from "lucide-react";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 interface NavItem {
   label: string;
@@ -134,7 +135,7 @@ export function Sidebar() {
         <div className="flex justify-center mb-2">
           <img src="/logo.svg" alt="FFB Logo" className="w-14 h-14 rounded-xl" />
         </div>
-        <h2 className="text-white font-bold text-[15px] leading-tight text-center">FFB Group of Schools</h2>
+        <h2 className="text-white font-bold text-[15px] leading-tight text-center">{SCHOOL_CONFIG.name}</h2>
         <p className="text-white/40 text-[11px] mt-0.5 text-center">{roleLabel}</p>
       </div>
 
