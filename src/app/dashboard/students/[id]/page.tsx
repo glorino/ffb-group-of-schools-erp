@@ -819,7 +819,7 @@ export default function StudentDetailPage() {
               {/* Payment History */}
               {feeRecords.some((f) => f.payments.length > 0) && (
                 <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] overflow-hidden">
-                  <div className="p-5 border-b border-white/[0.06]">
+                   <div className="p-6 border-b border-white/[0.06]">
                     <h3 className="text-white/80 font-semibold text-[15px]">Payment History</h3>
                   </div>
                   <div className="overflow-x-auto">
@@ -884,7 +884,7 @@ export default function StudentDetailPage() {
 
               {/* Clinic Visit History */}
               <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] overflow-hidden">
-                <div className="p-5 border-b border-white/[0.06]">
+                <div className="p-6 border-b border-white/[0.06]">
                   <h3 className="text-white/80 font-semibold text-[15px] flex items-center gap-2">
                     <Stethoscope className="w-4 h-4 text-white/40" /> Clinic Visit History
                   </h3>
