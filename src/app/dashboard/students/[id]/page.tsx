@@ -597,7 +597,7 @@ export default function StudentDetailPage() {
 
               {/* Grades Table */}
               <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] overflow-hidden">
-                <div className="p-5 border-b border-white/[0.06] flex items-center justify-between">
+                <div className="p-6 border-b border-white/[0.06] flex items-center justify-between">
                   <div>
                     <h3 className="text-white/80 font-semibold text-[15px]">Academic Results</h3>
                     <p className="text-white/25 text-[11px] mt-0.5">All recorded grades</p>
