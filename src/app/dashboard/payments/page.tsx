@@ -231,57 +231,57 @@ export default function PaymentsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/[0.08]">
-                  <th className="text-left text-white/50 text-[12px] font-medium pb-3">Student</th>
-                  <th className="text-left text-white/50 text-[12px] font-medium pb-3">Amount</th>
-                  <th className="text-left text-white/50 text-[12px] font-medium pb-3">Method</th>
-                  <th className="text-left text-white/50 text-[12px] font-medium pb-3">Invoice</th>
-                  <th className="text-left text-white/50 text-[12px] font-medium pb-3">Date</th>
-                  <th className="text-left text-white/50 text-[12px] font-medium pb-3">Status</th>
-                  <th className="text-left text-white/50 text-[12px] font-medium pb-3">Reference</th>
-                </tr>
-              </thead>
-              <tbody>
-                {payments.map((payment) => (
-                  <tr key={payment.id} className="border-b border-white/[0.04] hover:bg-white/[0.04] transition-all">
-                    <td className="py-3">
-                      <p className="text-white/80 font-medium text-[13px]">
-                        {payment.student.firstName} {payment.student.lastName}
-                      </p>
-                      <p className="text-white/40 text-[12px]">{payment.student.admissionNumber}</p>
-                    </td>
-                    <td className="py-3 text-white/80 font-medium text-[13px]">{formatNaira(payment.amount)}</td>
-                    <td className="py-3">
-                      <span className="px-2 py-1 rounded-lg bg-white/[0.04] text-white/70 text-[12px] capitalize">
-                        {payment.method?.replace("_", " ") || "—"}
-                      </span>
-                    </td>
-                    <td className="py-3">
-                      {payment.invoice ? (
-                        <div>
-                          <p className="text-white/70 text-[13px]">{payment.invoice.invoiceNumber}</p>
-                          {payment.invoice.schoolFee && (
-                            <p className="text-white/40 text-[12px]">{payment.invoice.schoolFee.name}</p>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-white/30 text-[13px]">—</span>
-                      )}
-                    </td>
-                    <td className="py-3 text-white/60 text-[13px]">
-                      {payment.paidAt ? new Date(payment.paidAt).toLocaleDateString("en-NG") : "—"}
-                    </td>
-                    <td className="py-3">
-                      <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                        payment.status === "completed" || payment.status === "confirmed"
-                          ? "bg-emerald-500/20 text-emerald-400"
-                          : payment.status === "pending"
-                          ? "bg-orange-500/20 text-orange-400"
-                          : "bg-red-500/20 text-red-400"
-                      }`}>
-                        {payment.status}
-                      </span>
-                    </td>
-                    <td className="py-3 text-white/40 text-[13px]">{payment.reference || "—"}</td>
+              <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Student</th>
+              <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Amount</th>
+              <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Method</th>
+              <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Invoice</th>
+              <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Date</th>
+              <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Status</th>
+              <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Reference</th>
+            </tr>
+           </thead>
+           <tbody>
+             {payments.map((payment) => (
+               <tr key={payment.id} className="border-b border-white/[0.04] hover:bg-white/[0.04] transition-all">
+                 <td className="py-3 px-4">
+                   <p className="text-white/80 font-medium text-[13px]">
+                     {payment.student.firstName} {payment.student.lastName}
+                   </p>
+                   <p className="text-white/40 text-[12px]">{payment.student.admissionNumber}</p>
+                 </td>
+                 <td className="py-3 px-4 text-white/80 font-medium text-[13px]">{formatNaira(payment.amount)}</td>
+                 <td className="py-3 px-4">
+                   <span className="px-2 py-1 rounded-lg bg-white/[0.04] text-white/70 text-[12px] capitalize">
+                     {payment.method?.replace("_", " ") || "—"}
+                   </span>
+                 </td>
+                 <td className="py-3 px-4">
+                   {payment.invoice ? (
+                     <div>
+                       <p className="text-white/70 text-[13px]">{payment.invoice.invoiceNumber}</p>
+                       {payment.invoice.schoolFee && (
+                         <p className="text-white/40 text-[12px]">{payment.invoice.schoolFee.name}</p>
+                       )}
+                     </div>
+                   ) : (
+                     <span className="text-white/30 text-[13px]">—</span>
+                   )}
+                 </td>
+                 <td className="py-3 px-4 text-white/60 text-[13px]">
+                   {payment.paidAt ? new Date(payment.paidAt).toLocaleDateString("en-NG") : "—"}
+                 </td>
+                 <td className="py-3 px-4">
+                   <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
+                     payment.status === "completed" || payment.status === "confirmed"
+                       ? "bg-emerald-500/20 text-emerald-400"
+                       : payment.status === "pending"
+                       ? "bg-orange-500/20 text-orange-400"
+                       : "bg-red-500/20 text-red-400"
+                   }`}>
+                     {payment.status}
+                   </span>
+                 </td>
+                 <td className="py-3 px-4 text-white/40 text-[13px]">{payment.reference || "—"}</td>
                   </tr>
                 ))}
               </tbody>
