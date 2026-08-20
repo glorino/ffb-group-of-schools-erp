@@ -196,9 +196,9 @@ export default function AdmissionsPage() {
           style={{ colorScheme: "dark" }}
           className="px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
         >
-          <option value="" style={{ background: "#0f1b33", color: "#fff" }}>All Status</option>
+          <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>All Status</option>
           {Object.entries(statusLabels).map(([val, label]) => (
-            <option key={val} value={val} style={{ background: "#0f1b33", color: "#fff" }}>{label}</option>
+            <option key={val} value={val} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{label}</option>
           ))}
         </select>
       </div>

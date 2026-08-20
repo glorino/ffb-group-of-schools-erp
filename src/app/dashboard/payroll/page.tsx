@@ -207,7 +207,7 @@ export default function PayrollPage() {
               style={{ colorScheme: "dark" }}
             >
               {monthNames.map((m, i) => (
-                <option key={i} value={String(i + 1)} style={{ background: "#0f1b33", color: "#fff" }}>{m}</option>
+                <option key={i} value={String(i + 1)} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{m}</option>
               ))}
             </select>
             <select
@@ -217,7 +217,7 @@ export default function PayrollPage() {
               style={{ colorScheme: "dark" }}
             >
               {[2024, 2025, 2026].map(y => (
-                <option key={y} value={y} style={{ background: "#0f1b33", color: "#fff" }}>{y}</option>
+                <option key={y} value={y} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{y}</option>
               ))}
             </select>
           </div>
@@ -325,9 +325,9 @@ export default function PayrollPage() {
                   <select value={form.teacherId} onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
                     className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     style={{ colorScheme: "dark" }}>
-                    <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select Teacher</option>
+                    <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Select Teacher</option>
                     {teachers.map(t => (
-                      <option key={t.id} value={t.id} style={{ background: "#0f1b33", color: "#fff" }}>{t.firstName} {t.lastName} ({t.employeeId})</option>
+                      <option key={t.id} value={t.id} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{t.firstName} {t.lastName} ({t.employeeId})</option>
                     ))}
                   </select>
                 </div>

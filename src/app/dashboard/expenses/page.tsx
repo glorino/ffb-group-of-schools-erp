@@ -284,10 +284,10 @@ export default function ExpensesPage() {
                 style={{ colorScheme: "dark" }}
                 className="px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
               >
-                <option value="" style={{ background: "#0f1b33", color: "#fff" }}>All Status</option>
-                <option value="pending" style={{ background: "#0f1b33", color: "#fff" }}>Pending</option>
-                <option value="approved" style={{ background: "#0f1b33", color: "#fff" }}>Approved</option>
-                <option value="rejected" style={{ background: "#0f1b33", color: "#fff" }}>Rejected</option>
+                <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>All Status</option>
+                <option value="pending" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Pending</option>
+                <option value="approved" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Approved</option>
+                <option value="rejected" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Rejected</option>
               </select>
               <button title="Filter using dropdowns above" className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]">
                 <Filter className="w-4 h-4" />
@@ -497,9 +497,9 @@ export default function ExpensesPage() {
                       style={{ colorScheme: "dark" }}
                       className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     >
-                      <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select category</option>
+                      <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Select category</option>
                       {categories.map((cat) => (
-                        <option key={cat} value={cat} style={{ background: "#0f1b33", color: "#fff" }}>{cat}</option>
+                        <option key={cat} value={cat} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{cat}</option>
                       ))}
                     </select>
                   </div>

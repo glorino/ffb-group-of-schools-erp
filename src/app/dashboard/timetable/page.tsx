@@ -167,7 +167,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
           style={{ colorScheme: "dark" }}
         >
           {classes.map(c => (
-            <option key={c.id} value={c.id} style={{ background: "#0f1b33", color: "#fff" }}>{c.displayName || c.name}</option>
+            <option key={c.id} value={c.id} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{c.displayName || c.name}</option>
           ))}
         </select>
         <button
@@ -273,7 +273,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                   <select value={form.dayOfWeek} onChange={e => setForm({ ...form, dayOfWeek: e.target.value })}
                     className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     style={{ colorScheme: "dark" }}>
-                    {dayLabels.map((d, i) => <option key={i} value={i + 1} style={{ background: "#0f1b33", color: "#fff" }}>{d}</option>)}
+                    {dayLabels.map((d, i) => <option key={i} value={i + 1} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{d}</option>)}
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -282,7 +282,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                     <select value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })}
                       className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}>
-                      {timeSlots.map(t => <option key={t} value={t} style={{ background: "#0f1b33", color: "#fff" }}>{t}</option>)}
+                      {timeSlots.map(t => <option key={t} value={t} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{t}</option>)}
                     </select>
                   </div>
                   <div>
@@ -290,7 +290,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                     <select value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })}
                       className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}>
-                      {timeSlots.map(t => <option key={t} value={t} style={{ background: "#0f1b33", color: "#fff" }}>{t}</option>)}
+                      {timeSlots.map(t => <option key={t} value={t} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{t}</option>)}
                     </select>
                   </div>
                 </div>
@@ -299,8 +299,8 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                   <select value={form.teacherId} onChange={e => setForm({ ...form, teacherId: e.target.value })}
                     className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     style={{ colorScheme: "dark" }}>
-                    <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select Teacher</option>
-                    {teachers.map(t => <option key={t.id} value={t.id} style={{ background: "#0f1b33", color: "#fff" }}>{t.firstName} {t.lastName}</option>)}
+                    <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Select Teacher</option>
+                    {teachers.map(t => <option key={t.id} value={t.id} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{t.firstName} {t.lastName}</option>)}
                   </select>
                 </div>
                 <div>
@@ -321,10 +321,10 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                     <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
                       className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}>
-                      <option value="lesson" style={{ background: "#0f1b33", color: "#fff" }}>Lesson</option>
-                      <option value="break" style={{ background: "#0f1b33", color: "#fff" }}>Break</option>
-                      <option value="lab" style={{ background: "#0f1b33", color: "#fff" }}>Lab</option>
-                      <option value="assembly" style={{ background: "#0f1b33", color: "#fff" }}>Assembly</option>
+                      <option value="lesson" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Lesson</option>
+                      <option value="break" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Break</option>
+                      <option value="lab" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Lab</option>
+                      <option value="assembly" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Assembly</option>
                     </select>
                   </div>
                 </div>

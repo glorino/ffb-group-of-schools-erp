@@ -666,9 +666,9 @@ export default function ResultsPage() {
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer"
                       style={{ colorScheme: "dark" }}
                     >
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="ca1">1st CA</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="ca2">2nd CA</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="exam">Exam</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="ca1">1st CA</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="ca2">2nd CA</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="exam">Exam</option>
                     </select>
                   </div>
                   <div>

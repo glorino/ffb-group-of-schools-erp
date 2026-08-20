@@ -574,9 +574,9 @@ export default function SettingsPage() {
                       style={{ colorScheme: "dark" }}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     >
-                      <option style={{ background: "#0f1b33", color: "#fff" }}>First Term</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }}>Second Term</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }}>Third Term</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>First Term</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Second Term</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Third Term</option>
                     </select>
                   </div>
                 </div>

@@ -254,14 +254,14 @@ export default function FinancePage() {
             <select value={filterSession} onChange={(e) => setFilterSession(e.target.value)}
               className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] focus:outline-none focus:border-[var(--primary)]"
               style={{ colorScheme: "dark" }}>
-              <option style={{ background: "#0f1b33", color: "#fff" }} value="">All Sessions</option>
-              {academicYears.map((y: any) => <option key={y.id} style={{ background: "#0f1b33", color: "#fff" }} value={y.name}>{y.name}</option>)}
+              <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="">All Sessions</option>
+              {academicYears.map((y: any) => <option key={y.id} style={{ background: "#0f1b33", color: "#1a1a2e" }} value={y.name}>{y.name}</option>)}
             </select>
             <select value={filterTerm} onChange={(e) => setFilterTerm(e.target.value)}
               className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] focus:outline-none focus:border-[var(--primary)]"
               style={{ colorScheme: "dark" }}>
-              <option style={{ background: "#0f1b33", color: "#fff" }} value="">All Terms</option>
-              {terms.map((t: any) => <option key={t.id} style={{ background: "#0f1b33", color: "#fff" }} value={t.name}>{t.name}</option>)}
+              <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="">All Terms</option>
+              {terms.map((t: any) => <option key={t.id} style={{ background: "#0f1b33", color: "#1a1a2e" }} value={t.name}>{t.name}</option>)}
             </select>
           </div>
           <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200">
@@ -545,9 +545,9 @@ export default function FinancePage() {
                 <div>
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">School Fee *</label>
                   <select value={form.schoolFeeId} onChange={(e) => { setForm({ ...form, schoolFeeId: e.target.value }); const f = fees.find(fe => fe.id === e.target.value); setSelectedFeeName(f ? `${f.name} (${f.type})` : ""); }} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer" style={{ colorScheme: "dark" }}>
-                    <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select fee type</option>
+                    <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Select fee type</option>
                     {fees.map(f => (
-                      <option key={f.id} value={f.id} style={{ background: "#0f1b33", color: "#fff" }}>{f.name} — {formatCurrency(f.amount)}</option>
+                      <option key={f.id} value={f.id} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{f.name} — {formatCurrency(f.amount)}</option>
                     ))}
                   </select>
                 </div>

@@ -316,18 +316,18 @@ function AnnouncementsPageInner() {
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Type</label>
                   <select value={type} onChange={(e) => setType(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }}>
-                    <option value="general" style={{ background: "#0f1b33", color: "#fff" }}>General</option>
-                    <option value="academic" style={{ background: "#0f1b33", color: "#fff" }}>Academic</option>
-                    <option value="sports" style={{ background: "#0f1b33", color: "#fff" }}>Sports</option>
-                    <option value="admin" style={{ background: "#0f1b33", color: "#fff" }}>Admin</option>
+                    <option value="general" style={{ background: "#0f1b33", color: "#1a1a2e" }}>General</option>
+                    <option value="academic" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Academic</option>
+                    <option value="sports" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Sports</option>
+                    <option value="admin" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Admin</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Priority</label>
                   <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }}>
-                    <option value="low" style={{ background: "#0f1b33", color: "#fff" }}>Low</option>
-                    <option value="medium" style={{ background: "#0f1b33", color: "#fff" }}>Medium</option>
-                    <option value="high" style={{ background: "#0f1b33", color: "#fff" }}>High</option>
+                    <option value="low" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Low</option>
+                    <option value="medium" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Medium</option>
+                    <option value="high" style={{ background: "#0f1b33", color: "#1a1a2e" }}>High</option>
                   </select>
                 </div>
               </div>

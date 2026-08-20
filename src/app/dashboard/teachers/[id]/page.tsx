@@ -174,7 +174,7 @@ export default function TeacherDetailPage() {
               </span>
             </div>
             <p className="text-[#64748b] text-sm mt-1">{teacher.employeeId}</p>
-            <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-white/40">
+            <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-[#64748b]">
               {teacher.email && <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" />{teacher.email}</span>}
               {teacher.phone && <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" />{teacher.phone}</span>}
               {teacher.qualification && <span className="flex items-center gap-1"><GraduationCap className="w-3.5 h-3.5" />{teacher.qualification}</span>}
@@ -225,7 +225,7 @@ export default function TeacherDetailPage() {
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === t.id ? "bg-[var(--primary)] text-[#1a1a2e]" : "text-[#64748b] hover:text-white/80"
+              tab === t.id ? "bg-[var(--primary)] text-[#1a1a2e]" : "text-[#64748b] hover:text-[#1a1a2e]"
             }`}
           >
             <t.icon className="w-4 h-4" />
@@ -274,7 +274,7 @@ export default function TeacherDetailPage() {
                   { label: "Joined", value: new Date(teacher.createdAt).toLocaleDateString() },
                 ].map((item, i) => (
                   <div key={i} className="flex flex-col">
-                    <span className="text-white/40 text-[12px] mb-1">{item.label}</span>
+                    <span className="text-[#64748b] text-[12px] mb-1">{item.label}</span>
                     <span className="text-[#1a1a2e] text-sm font-medium">{item.value}</span>
                   </div>
                 ))}
@@ -287,11 +287,11 @@ export default function TeacherDetailPage() {
               <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Account Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col">
-                  <span className="text-white/40 text-[12px] mb-1">Account Email</span>
+                  <span className="text-[#64748b] text-[12px] mb-1">Account Email</span>
                   <span className="text-[#1a1a2e] text-sm font-medium">{teacher.user.email}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white/40 text-[12px] mb-1">Last Login</span>
+                  <span className="text-[#64748b] text-[12px] mb-1">Last Login</span>
                   <span className="text-[#1a1a2e] text-sm font-medium">
                     {teacher.user.lastLoginAt ? new Date(teacher.user.lastLoginAt).toLocaleString() : "Never"}
                   </span>
@@ -315,19 +315,19 @@ export default function TeacherDetailPage() {
             <div key={day} className="card">
               <h4 className="text-[#1a1a2e] font-semibold text-sm mb-3 capitalize">{day.toLowerCase()}</h4>
               {entries.length === 0 ? (
-                <p className="text-white/30 text-[13px]">No classes scheduled</p>
+                <p className="text-[#94a3b8] text-[13px]">No classes scheduled</p>
               ) : (
                 <div className="space-y-2">
                   {entries.map((e) => (
                     <div key={e.id} className="flex items-center gap-4 p-3 rounded-xl bg-[#f8fafc]">
                       <div className="text-center shrink-0 w-16">
                         <p className="text-[#1a1a2e] text-[13px] font-medium">{e.startTime}</p>
-                        <p className="text-white/40 text-[11px]">{e.endTime}</p>
+                        <p className="text-[#64748b] text-[11px]">{e.endTime}</p>
                       </div>
                       <div className="w-px h-8 bg-white/10" />
                       <div className="flex-1">
                         <p className="text-[#1a1a2e] text-[13px] font-medium">{e.subject || "General"}</p>
-                        <p className="text-white/40 text-[12px]">{e.class.displayName || e.class.name}{e.room ? ` • ${e.room}` : ""}</p>
+                        <p className="text-[#64748b] text-[12px]">{e.class.displayName || e.class.name}{e.room ? ` • ${e.room}` : ""}</p>
                       </div>
                       <span className="px-2 py-1 rounded-lg text-[11px] bg-[var(--primary)]/20 text-[var(--primary)]">Lesson</span>
                     </div>
@@ -338,8 +338,8 @@ export default function TeacherDetailPage() {
           ))}
           {timetable.length === 0 && (
             <div className="card text-center py-12">
-              <Clock className="w-12 h-12 mx-auto mb-3 text-white/20" />
-              <p className="text-white/40 text-sm">No timetable entries found</p>
+              <Clock className="w-12 h-12 mx-auto mb-3 text-[#94a3b8]" />
+              <p className="text-[#64748b] text-sm">No timetable entries found</p>
             </div>
           )}
         </motion.div>
@@ -350,7 +350,7 @@ export default function TeacherDetailPage() {
           <div className="card">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Assigned Subjects</h3>
             {teacher.teacherSubjects.length === 0 ? (
-              <p className="text-white/40 text-sm">No subjects assigned</p>
+              <p className="text-[#64748b] text-sm">No subjects assigned</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {teacher.teacherSubjects.map((ts) => (
@@ -361,7 +361,7 @@ export default function TeacherDetailPage() {
                       </div>
                       <div>
                         <p className="text-[#1a1a2e] text-[13px] font-medium">{ts.subject.name}</p>
-                        <p className="text-white/40 text-[11px]">Assigned Subject</p>
+                        <p className="text-[#64748b] text-[11px]">Assigned Subject</p>
                       </div>
                     </div>
                   </div>
@@ -373,7 +373,7 @@ export default function TeacherDetailPage() {
           <div className="card">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Assigned Classes</h3>
             {assignedClasses.length === 0 ? (
-              <p className="text-white/40 text-sm">No classes assigned</p>
+              <p className="text-[#64748b] text-sm">No classes assigned</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {assignedClasses.map((c) => (
@@ -384,7 +384,7 @@ export default function TeacherDetailPage() {
                       </div>
                       <div>
                         <p className="text-[#1a1a2e] text-[13px] font-medium">{c.displayName || c.name}</p>
-                        <p className="text-white/40 text-[11px]">Class</p>
+                        <p className="text-[#64748b] text-[11px]">Class</p>
                       </div>
                     </div>
                   </div>

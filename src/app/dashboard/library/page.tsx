@@ -488,11 +488,11 @@ export default function LibraryPage() {
                   style={{ colorScheme: "dark" }}
                   className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Textbook</option>
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Literature</option>
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Exam Prep</option>
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Reference</option>
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Practical</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Textbook</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Literature</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Exam Prep</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Reference</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Practical</option>
                 </select>
               </div>
               <div>
@@ -560,9 +560,9 @@ export default function LibraryPage() {
                   className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   required
                 >
-                  <option style={{ background: "#0f1b33", color: "#fff" }} value="">Select a book</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="">Select a book</option>
                   {books.filter((b) => b.available > 0).map((book) => (
-                    <option key={book.id} style={{ background: "#0f1b33", color: "#fff" }} value={book.id}>
+                    <option key={book.id} style={{ background: "#0f1b33", color: "#1a1a2e" }} value={book.id}>
                       {book.title} ({book.available} available)
                     </option>
                   ))}

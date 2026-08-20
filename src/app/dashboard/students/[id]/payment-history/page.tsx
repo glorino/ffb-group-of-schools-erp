@@ -99,7 +99,7 @@ export default function StudentPaymentHistoryPage() {
               Payment History
             </h1>
             {studentName && (
-              <p className="text-white/30 text-[12px] mt-1 ml-[46px]">
+              <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">
                 {studentName}
               </p>
             )}
@@ -156,7 +156,7 @@ export default function StudentPaymentHistoryPage() {
                 >
                   <stat.icon className="w-5 h-5 text-[#1a1a2e]" />
                 </div>
-                <p className="text-white/30 text-[11px]">{stat.label}</p>
+                <p className="text-[#94a3b8] text-[11px]">{stat.label}</p>
               </div>
               <p className="text-[#1a1a2e] text-xl font-bold">{stat.value}</p>
             </motion.div>
@@ -166,10 +166,10 @@ export default function StudentPaymentHistoryPage() {
         <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden mt-4">
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-6 h-6 text-white/30 animate-spin" />
+              <Loader2 className="w-6 h-6 text-[#94a3b8] animate-spin" />
             </div>
           ) : payments.length === 0 ? (
-            <div className="text-center py-20 text-white/30">
+            <div className="text-center py-20 text-[#94a3b8]">
               <Receipt className="w-10 h-10 mx-auto mb-3 opacity-40" />
               <p className="text-[13px]">No payment records found</p>
             </div>
@@ -182,7 +182,7 @@ export default function StudentPaymentHistoryPage() {
                       (h) => (
                         <th
                           key={h}
-                          className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider"
+                          className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider"
                         >
                           {h}
                         </th>
@@ -199,16 +199,16 @@ export default function StudentPaymentHistoryPage() {
                       transition={{ delay: i * 0.03 }}
                       className="border-b border-white/[0.03] hover:bg-[#f8fafc] transition"
                     >
-                      <td className="px-5 py-3.5 text-white/70 text-[13px]">
+                      <td className="px-5 py-3.5 text-[#475569] text-[13px]">
                         {p.paidAt
                           ? new Date(p.paidAt).toLocaleDateString()
                           : "—"}
                       </td>
-                      <td className="px-5 py-3.5 text-white/80 text-[13px] font-semibold">
+                      <td className="px-5 py-3.5 text-[#1a1a2e] text-[13px] font-semibold">
                         {"\u20A6"}
                         {(p.amount || 0).toLocaleString()}
                       </td>
-                      <td className="px-5 py-3.5 text-white/40 text-[12px]">
+                      <td className="px-5 py-3.5 text-[#64748b] text-[12px]">
                         <span className="flex items-center gap-1.5">
                           <span>{methodIcon(p.method)}</span>
                           {p.method || "—"}
@@ -230,10 +230,10 @@ export default function StudentPaymentHistoryPage() {
                           {p.status}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-white/30 text-[12px] font-mono">
+                      <td className="px-5 py-3.5 text-[#94a3b8] text-[12px] font-mono">
                         {p.reference || "—"}
                       </td>
-                      <td className="px-5 py-3.5 text-white/30 text-[12px] font-mono">
+                      <td className="px-5 py-3.5 text-[#94a3b8] text-[12px] font-mono">
                         {p.invoice?.invoiceNumber || "—"}
                       </td>
                     </motion.tr>

@@ -394,10 +394,10 @@ export default function ClassesPage() {
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}
                     >
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="nursery">Nursery</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="primary">Primary</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="junior">Junior</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="secondary">Secondary</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="nursery">Nursery</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="primary">Primary</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="junior">Junior</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="secondary">Secondary</option>
                     </select>
                   </div>
                   <div>
@@ -530,10 +530,10 @@ export default function ClassesPage() {
                     <select value={editForm.level} onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="nursery">Nursery</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="primary">Primary</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="junior">Junior</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="secondary">Secondary</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="nursery">Nursery</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="primary">Primary</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="junior">Junior</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="secondary">Secondary</option>
                     </select>
                   </div>
                   <div>

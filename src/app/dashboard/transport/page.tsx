@@ -355,9 +355,9 @@ export default function TransportPage() {
                     style={{ colorScheme: "dark" }}
                     className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   >
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>Bus</option>
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>Van</option>
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>Minibus</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Bus</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Van</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Minibus</option>
                   </select>
                 </div>
               </div>

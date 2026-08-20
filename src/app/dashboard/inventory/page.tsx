@@ -391,11 +391,11 @@ export default function InventoryPage() {
                     style={{ colorScheme: "dark" }}
                     className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   >
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>Stationery</option>
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>Electronics</option>
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>Medical</option>
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>Furniture</option>
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>Cleaning</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Stationery</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Electronics</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Medical</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Furniture</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Cleaning</option>
                   </select>
                 </div>
                 <div>
@@ -406,10 +406,10 @@ export default function InventoryPage() {
                     style={{ colorScheme: "dark" }}
                     className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   >
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>pieces</option>
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>boxes</option>
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>kits</option>
-                    <option style={{ background: "#0f1b33", color: "#fff" }}>units</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>pieces</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>boxes</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>kits</option>
+                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>units</option>
                   </select>
                 </div>
               </div>
@@ -588,9 +588,9 @@ export default function InventoryPage() {
                     <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="in_stock">In Stock</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="low_stock">Low Stock</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="out_of_stock">Out of Stock</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="in_stock">In Stock</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="low_stock">Low Stock</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="out_of_stock">Out of Stock</option>
                     </select>
                   </div>
                 </div>

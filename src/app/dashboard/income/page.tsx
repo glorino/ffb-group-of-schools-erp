@@ -404,9 +404,9 @@ export default function IncomePage() {
                       style={{ colorScheme: "dark" }}
                       className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     >
-                      <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select category</option>
+                      <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Select category</option>
                       {incomeCategories.map((cat) => (
-                        <option key={cat.id} value={cat.id} style={{ background: "#0f1b33", color: "#fff" }}>{cat.name}</option>
+                        <option key={cat.id} value={cat.id} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{cat.name}</option>
                       ))}
                     </select>
                   </div>

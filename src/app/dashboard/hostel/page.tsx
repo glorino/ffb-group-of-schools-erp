@@ -362,9 +362,9 @@ export default function HostelPage() {
                   style={{ colorScheme: "dark" }}
                   className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Boys</option>
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Girls</option>
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Staff</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Boys</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Girls</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Staff</option>
                 </select>
               </div>
               <div>
@@ -467,9 +467,9 @@ export default function HostelPage() {
                   style={{ colorScheme: "dark" }}
                   className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Boys</option>
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Girls</option>
-                  <option style={{ background: "#0f1b33", color: "#fff" }}>Staff</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Boys</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Girls</option>
+                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Staff</option>
                 </select>
               </div>
               <div>

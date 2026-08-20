@@ -214,7 +214,7 @@ export default function StudentDetailPage() {
       {/* Back */}
       <button
         onClick={() => router.push("/dashboard/students")}
-        className="flex items-center gap-2 text-white/35 hover:text-white/60 text-[13px] transition"
+        className="flex items-center gap-2 text-[#94a3b8] hover:text-[#475569] text-[13px] transition"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Students
       </button>
@@ -228,7 +228,7 @@ export default function StudentDetailPage() {
       ) : !student ? (
         <div className="text-center py-20">
           <User className="w-12 h-12 text-[#94a3b8] mx-auto mb-3" />
-          <p className="text-white/30 text-[13px]">Student not found</p>
+          <p className="text-[#94a3b8] text-[13px]">Student not found</p>
         </div>
       ) : (
         <>
@@ -245,16 +245,16 @@ export default function StudentDetailPage() {
                 <div className="flex-1 min-w-0 pb-1">
                   <h1 className="text-[#1a1a2e] text-xl font-bold font-display">{student.lastName} {student.firstName}</h1>
                   <div className="flex flex-wrap items-center gap-3 mt-1.5">
-                    <span className="px-2.5 py-0.5 rounded-lg bg-white/[0.06] text-white/40 text-[11px] font-medium border border-[#e2e8f0]">
+                    <span className="px-2.5 py-0.5 rounded-lg bg-white/[0.06] text-[#64748b] text-[11px] font-medium border border-[#e2e8f0]">
                       {student.admissionNumber}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-lg bg-white/[0.06] text-white/40 text-[11px] font-medium border border-[#e2e8f0]">
+                    <span className="px-2.5 py-0.5 rounded-lg bg-white/[0.06] text-[#64748b] text-[11px] font-medium border border-[#e2e8f0]">
                       {student.class?.name || "Unassigned"}
                     </span>
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-medium ${
                       student.status === "active"
                         ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                        : "bg-[#f8fafc] text-white/30 border border-[#e2e8f0]"
+                        : "bg-[#f8fafc] text-[#94a3b8] border border-[#e2e8f0]"
                     }`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${student.status === "active" ? "bg-emerald-400" : "bg-white/30"}`} />
                       {student.status}
@@ -262,10 +262,10 @@ export default function StudentDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 pb-1">
-                  <button title="Print student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e]/30 hover:text-white/60 hover:bg-[#f1f5f9] transition">
+                  <button title="Print student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e]/30 hover:text-[#475569] hover:bg-[#f1f5f9] transition">
                     <Printer className="w-4 h-4" />
                   </button>
-                  <button title="Download student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e]/30 hover:text-white/60 hover:bg-[#f1f5f9] transition">
+                  <button title="Download student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e]/30 hover:text-[#475569] hover:bg-[#f1f5f9] transition">
                     <Download className="w-4 h-4" />
                   </button>
                   <button onClick={() => router.push(`/dashboard/students?edit=${student.id}`)} className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
@@ -285,7 +285,7 @@ export default function StudentDetailPage() {
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all whitespace-nowrap ${
                   activeTab === tab.id
                     ? "bg-[#f1f5f9] text-[#1a1a2e] shadow-lg shadow-black/10"
-                    : "text-white/30 hover:text-white/60 hover:bg-[#f8fafc]"
+                    : "text-[#94a3b8] hover:text-[#475569] hover:bg-[#f8fafc]"
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
@@ -300,7 +300,7 @@ export default function StudentDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Personal Info */}
               <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                <h3 className="text-white/80 font-semibold text-[15px] mb-5">Personal Information</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Personal Information</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
                     { label: "Full Name", value: `${student.firstName} ${student.lastName}`, icon: User },
@@ -313,10 +313,10 @@ export default function StudentDetailPage() {
                     { label: "Address", value: student.address || "Not provided", icon: MapPin },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-3 px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                      <item.icon className="w-4 h-4 text-white/20 mt-0.5 flex-shrink-0" />
+                      <item.icon className="w-4 h-4 text-[#94a3b8] mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">{item.label}</p>
-                        <p className="text-white/70 text-[13px] mt-0.5">{item.value}</p>
+                        <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">{item.label}</p>
+                        <p className="text-[#475569] text-[13px] mt-0.5">{item.value}</p>
                       </div>
                     </div>
                   ))}
@@ -326,46 +326,46 @@ export default function StudentDetailPage() {
               {/* Guardian & Quick Stats */}
               <div className="space-y-4">
                 <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                  <h3 className="text-white/80 font-semibold text-[15px] mb-4">Guardian / Parent</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4">Guardian / Parent</h3>
                   <div className="space-y-3">
                     {student.guardians && student.guardians.length > 0 ? (
                       student.guardians.slice(0, 1).map((g, i) => (
                         <div key={i} className="space-y-3">
                           <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Name</p>
-                            <p className="text-white/70 text-[13px] mt-0.5">{g.name || "—"}</p>
+                            <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Name</p>
+                            <p className="text-[#475569] text-[13px] mt-0.5">{g.name || "—"}</p>
                           </div>
                           <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Phone</p>
-                            <p className="text-white/70 text-[13px] mt-0.5">{g.phone || "—"}</p>
+                            <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Phone</p>
+                            <p className="text-[#475569] text-[13px] mt-0.5">{g.phone || "—"}</p>
                           </div>
                           <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Email</p>
-                            <p className="text-white/70 text-[13px] mt-0.5">{g.email || "—"}</p>
+                            <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Email</p>
+                            <p className="text-[#475569] text-[13px] mt-0.5">{g.email || "—"}</p>
                           </div>
                           <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Relationship</p>
-                            <p className="text-white/70 text-[13px] mt-0.5">{g.relationship || "—"}</p>
+                            <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Relationship</p>
+                            <p className="text-[#475569] text-[13px] mt-0.5">{g.relationship || "—"}</p>
                           </div>
                         </div>
                       ))
                     ) : (
                       <>
                         <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                          <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Name</p>
-                          <p className="text-white/70 text-[13px] mt-0.5">{student.guardianName || "—"}</p>
+                          <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Name</p>
+                          <p className="text-[#475569] text-[13px] mt-0.5">{student.guardianName || "—"}</p>
                         </div>
                         <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                          <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Phone</p>
-                          <p className="text-white/70 text-[13px] mt-0.5">{student.guardianPhone || "—"}</p>
+                          <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Phone</p>
+                          <p className="text-[#475569] text-[13px] mt-0.5">{student.guardianPhone || "—"}</p>
                         </div>
                         <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                          <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Email</p>
-                          <p className="text-white/70 text-[13px] mt-0.5">{student.guardianEmail || "—"}</p>
+                          <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Email</p>
+                          <p className="text-[#475569] text-[13px] mt-0.5">{student.guardianEmail || "—"}</p>
                         </div>
                         <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                          <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Relationship</p>
-                          <p className="text-white/70 text-[13px] mt-0.5">{student.guardianRelation || "—"}</p>
+                          <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Relationship</p>
+                          <p className="text-[#475569] text-[13px] mt-0.5">{student.guardianRelation || "—"}</p>
                         </div>
                       </>
                     )}
@@ -374,7 +374,7 @@ export default function StudentDetailPage() {
 
                 {/* Quick Stats */}
                 <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                  <h3 className="text-white/80 font-semibold text-[15px] mb-4">Academic Summary</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4">Academic Summary</h3>
                   <div className="space-y-3">
                     {[
                       { label: "Attendance Rate", value: `${attendanceRate}%`, icon: ClipboardCheck, color: "text-emerald-400" },
@@ -387,8 +387,8 @@ export default function StudentDetailPage() {
                           <item.icon className={`w-4 h-4 ${item.color}`} />
                         </div>
                         <div className="flex-1">
-                          <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">{item.label}</p>
-                          <p className="text-white/70 text-[13px] font-semibold">{item.value}</p>
+                          <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">{item.label}</p>
+                          <p className="text-[#475569] text-[13px] font-semibold">{item.value}</p>
                         </div>
                       </div>
                     ))}
@@ -399,17 +399,17 @@ export default function StudentDetailPage() {
 
             {/* Recent Activity — Grades */}
             <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-              <h3 className="text-white/80 font-semibold text-[15px] mb-5 flex items-center gap-2">
-                <Activity className="w-4 h-4 text-white/40" /> Recent Activity
+              <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5 flex items-center gap-2">
+                <Activity className="w-4 h-4 text-[#64748b]" /> Recent Activity
               </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Recent Grades */}
                 <div>
-                  <p className="text-white/40 text-[11px] uppercase tracking-wider font-semibold mb-3">Last 5 Grade Entries</p>
+                  <p className="text-[#64748b] text-[11px] uppercase tracking-wider font-semibold mb-3">Last 5 Grade Entries</p>
                   {recentGrades.length === 0 ? (
                     <div className="text-center py-6 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                       <BookOpen className="w-6 h-6 text-[#94a3b8] mx-auto mb-1" />
-                      <p className="text-white/25 text-[12px]">No grades yet</p>
+                      <p className="text-[#94a3b8] text-[12px]">No grades yet</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -421,10 +421,10 @@ export default function StudentDetailPage() {
                               g.grade?.startsWith("B") ? "bg-blue-400" :
                               g.grade?.startsWith("C") ? "bg-amber-400" : "bg-red-400"
                             }`} />
-                            <span className="text-white/60 text-[12px]">{g.subject?.name || "Unknown"}</span>
+                            <span className="text-[#475569] text-[12px]">{g.subject?.name || "Unknown"}</span>
                           </div>
                           <div className="flex items-center gap-3">
-                            <span className="text-white/80 text-[12px] font-semibold">{g.score}</span>
+                            <span className="text-[#1a1a2e] text-[12px] font-semibold">{g.score}</span>
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                               g.grade?.startsWith("A") ? "bg-emerald-500/15 text-emerald-400" :
                               g.grade?.startsWith("B") ? "bg-blue-500/15 text-blue-400" :
@@ -440,11 +440,11 @@ export default function StudentDetailPage() {
 
                 {/* Recent Attendance */}
                 <div>
-                  <p className="text-white/40 text-[11px] uppercase tracking-wider font-semibold mb-3">Last 5 Attendance Records</p>
+                  <p className="text-[#64748b] text-[11px] uppercase tracking-wider font-semibold mb-3">Last 5 Attendance Records</p>
                   {recentAttendance.length === 0 ? (
                     <div className="text-center py-6 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                       <ClipboardCheck className="w-6 h-6 text-[#94a3b8] mx-auto mb-1" />
-                      <p className="text-white/25 text-[12px]">No attendance records</p>
+                      <p className="text-[#94a3b8] text-[12px]">No attendance records</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -455,7 +455,7 @@ export default function StudentDetailPage() {
                               a.status === "present" ? "bg-emerald-400" :
                               a.status === "absent" ? "bg-red-400" : "bg-amber-400"
                             }`} />
-                            <span className="text-white/60 text-[12px]">
+                            <span className="text-[#475569] text-[12px]">
                               {new Date(a.date).toLocaleDateString("en-NG", { weekday: "short", day: "numeric", month: "short" })}
                             </span>
                           </div>
@@ -476,7 +476,7 @@ export default function StudentDetailPage() {
 
             {/* Quick Actions */}
             <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-              <h3 className="text-white/80 font-semibold text-[15px] mb-4">Quick Actions</h3>
+              <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4">Quick Actions</h3>
               <div className="flex flex-wrap gap-3">
                 <button onClick={() => setShowMessageModal(true)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[13px] font-medium hover:bg-blue-500/15 transition">
                   <MessageSquare className="w-4 h-4" /> Send Message
@@ -493,26 +493,26 @@ export default function StudentDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Discipline Records */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                <h3 className="text-white/80 font-semibold text-[15px] mb-5">Discipline Records</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Discipline Records</h3>
                 {!student.disciplineRecords || student.disciplineRecords.length === 0 ? (
                   <div className="text-center py-8">
                     <CheckCircle2 className="w-8 h-8 text-[#94a3b8] mx-auto mb-2" />
-                    <p className="text-white/30 text-[13px]">No discipline records available</p>
+                    <p className="text-[#94a3b8] text-[13px]">No discipline records available</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {student.disciplineRecords.map((record) => (
                       <div key={record.id} className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-white/70 text-[13px] font-medium">{record.title}</p>
+                          <p className="text-[#475569] text-[13px] font-medium">{record.title}</p>
                           <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
                             record.type === "major" ? "bg-red-500/15 text-red-400" :
                             record.type === "minor" ? "bg-amber-500/15 text-amber-400" :
                             "bg-blue-500/15 text-blue-400"
                           }`}>{record.type}</span>
                         </div>
-                        {record.details && <p className="text-white/40 text-[12px] mt-0.5">{record.details}</p>}
-                        <div className="flex items-center gap-3 mt-2 text-[11px] text-white/25">
+                        {record.details && <p className="text-[#64748b] text-[12px] mt-0.5">{record.details}</p>}
+                        <div className="flex items-center gap-3 mt-2 text-[11px] text-[#94a3b8]">
                           <span>{new Date(record.date).toLocaleDateString("en-NG")}</span>
                           {record.action && <span>Action: {record.action}</span>}
                           {record.reportedBy && <span>Reported by: {record.reportedBy}</span>}
@@ -525,11 +525,11 @@ export default function StudentDetailPage() {
 
               {/* Hostel Information */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                <h3 className="text-white/80 font-semibold text-[15px] mb-5">Hostel Information</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Hostel Information</h3>
                 {!student.hostels || student.hostels.length === 0 ? (
                   <div className="text-center py-8">
                     <School className="w-8 h-8 text-[#94a3b8] mx-auto mb-2" />
-                    <p className="text-white/30 text-[13px]">No hostel allocation available</p>
+                    <p className="text-[#94a3b8] text-[13px]">No hostel allocation available</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -537,20 +537,20 @@ export default function StudentDetailPage() {
                       <div key={allocation.id} className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Hostel</p>
-                            <p className="text-white/70 text-[13px] mt-0.5">{allocation.hostel?.name || "—"}</p>
+                            <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Hostel</p>
+                            <p className="text-[#475569] text-[13px] mt-0.5">{allocation.hostel?.name || "—"}</p>
                           </div>
                           <div>
-                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Room</p>
-                            <p className="text-white/70 text-[13px] mt-0.5">{allocation.room?.number || "—"}</p>
+                            <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Room</p>
+                            <p className="text-[#475569] text-[13px] mt-0.5">{allocation.room?.number || "—"}</p>
                           </div>
                           <div>
-                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Bed Number</p>
-                            <p className="text-white/70 text-[13px] mt-0.5">{allocation.bedNumber || "—"}</p>
+                            <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Bed Number</p>
+                            <p className="text-[#475569] text-[13px] mt-0.5">{allocation.bedNumber || "—"}</p>
                           </div>
                           <div>
-                            <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">Since</p>
-                            <p className="text-white/70 text-[13px] mt-0.5">{new Date(allocation.startDate).toLocaleDateString("en-NG")}</p>
+                            <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">Since</p>
+                            <p className="text-[#475569] text-[13px] mt-0.5">{new Date(allocation.startDate).toLocaleDateString("en-NG")}</p>
                           </div>
                         </div>
                       </div>
@@ -562,10 +562,10 @@ export default function StudentDetailPage() {
 
             {/* Transport Information */}
             <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-              <h3 className="text-white/80 font-semibold text-[15px] mb-5">Transport Information</h3>
+              <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Transport Information</h3>
               <div className="text-center py-8">
                 <MapPin className="w-8 h-8 text-[#94a3b8] mx-auto mb-2" />
-                <p className="text-white/30 text-[13px]">No transport information available</p>
+                <p className="text-[#94a3b8] text-[13px]">No transport information available</p>
               </div>
             </div>
             </div>
@@ -576,17 +576,17 @@ export default function StudentDetailPage() {
               {/* Bar Chart */}
               {gradeRows.length > 0 && (
                 <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                  <h3 className="text-white/80 font-semibold text-[15px] mb-5">Subject Performance</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Subject Performance</h3>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData} barGap={4}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                        <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                        <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
                         <Tooltip
-                          contentStyle={{ background: "rgba(0,0,0,0.8)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                          labelStyle={{ color: "rgba(255,255,255,0.6)" }}
-                          itemStyle={{ color: "rgba(255,255,255,0.9)" }}
+                          contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, fontSize: 12 }}
+                          labelStyle={{ color: "#1a1a2e" }}
+                          itemStyle={{ color: "#1a1a2e" }}
                         />
                         <Bar dataKey="score" name="Total Score" fill="#0055ff" radius={[6, 6, 0, 0]} maxBarSize={36} />
                       </BarChart>
@@ -599,8 +599,8 @@ export default function StudentDetailPage() {
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
                 <div className="p-6 border-b border-[#e2e8f0] flex items-center justify-between">
                   <div>
-                    <h3 className="text-white/80 font-semibold text-[15px]">Academic Results</h3>
-                    <p className="text-white/25 text-[11px] mt-0.5">All recorded grades</p>
+                    <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Academic Results</h3>
+                    <p className="text-[#94a3b8] text-[11px] mt-0.5">All recorded grades</p>
                   </div>
                   <button onClick={() => router.push(`/dashboard/report-cards?studentId=${student.id}`)} className="px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e]/40 text-[12px] font-medium hover:bg-[#f1f5f9] transition flex items-center gap-2">
                     <Download className="w-3.5 h-3.5" /> Download Report Card
@@ -609,30 +609,30 @@ export default function StudentDetailPage() {
                 {gradeRows.length === 0 ? (
                   <div className="text-center py-16">
                     <BookOpen className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" />
-                    <p className="text-white/30 text-[13px]">No grades recorded yet</p>
+                    <p className="text-[#94a3b8] text-[13px]">No grades recorded yet</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-[#e2e8f0]">
-                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Subject</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">CA1 (20)</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">CA2 (20)</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Exam (60)</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Total (100)</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Grade</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Term</th>
+                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Subject</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">CA1 (20)</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">CA2 (20)</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Exam (60)</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Total (100)</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Grade</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Term</th>
                         </tr>
                       </thead>
                       <tbody>
                         {gradeRows.map((g, i) => (
                           <tr key={i} className="border-b border-white/[0.03] hover:bg-[#f8fafc] transition">
-                            <td className="px-5 py-3.5 text-white/70 text-[13px] font-medium">{g.subject}</td>
+                            <td className="px-5 py-3.5 text-[#475569] text-[13px] font-medium">{g.subject}</td>
                             <td className="px-5 py-3.5 text-center text-[#64748b] text-[13px]">{g.ca1 || "—"}</td>
                             <td className="px-5 py-3.5 text-center text-[#64748b] text-[13px]">{g.ca2 || "—"}</td>
                             <td className="px-5 py-3.5 text-center text-[#64748b] text-[13px]">{g.exam || "—"}</td>
-                            <td className="px-5 py-3.5 text-center text-white/80 text-[13px] font-semibold">{g.total}</td>
+                            <td className="px-5 py-3.5 text-center text-[#1a1a2e] text-[13px] font-semibold">{g.total}</td>
                             <td className="px-5 py-3.5 text-center">
                               <span className={`inline-flex px-2.5 py-0.5 rounded-lg text-[11px] font-bold ${
                                 g.grade?.startsWith("A") ? "bg-emerald-500/15 text-emerald-400" :
@@ -643,14 +643,14 @@ export default function StudentDetailPage() {
                                 {g.grade || "—"}
                               </span>
                             </td>
-                            <td className="px-5 py-3.5 text-center text-white/40 text-[12px]">{g.term}</td>
+                            <td className="px-5 py-3.5 text-center text-[#64748b] text-[12px]">{g.term}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                     <div className="px-5 py-4 border-t border-[#e2e8f0] flex items-center justify-between">
-                      <p className="text-white/30 text-[12px]">Overall Average: <span className="text-white/70 font-semibold">{overallAverage}%</span></p>
-                      <p className="text-white/30 text-[12px]">Subjects: <span className="text-white/70 font-semibold">{gradeRows.length}</span></p>
+                      <p className="text-[#94a3b8] text-[12px]">Overall Average: <span className="text-[#475569] font-semibold">{overallAverage}%</span></p>
+                      <p className="text-[#94a3b8] text-[12px]">Subjects: <span className="text-[#475569] font-semibold">{gradeRows.length}</span></p>
                     </div>
                   </div>
                 )}
@@ -679,7 +679,7 @@ export default function StudentDetailPage() {
                       <stat.icon className="w-5 h-5 text-[#1a1a2e]" />
                     </div>
                     <p className="text-[#1a1a2e] text-xl font-bold font-display">{stat.value}</p>
-                    <p className="text-white/30 text-[11px] mt-1">{stat.label}</p>
+                    <p className="text-[#94a3b8] text-[11px] mt-1">{stat.label}</p>
                   </motion.div>
                 ))}
               </div>
@@ -687,30 +687,30 @@ export default function StudentDetailPage() {
               {/* Attendance Table */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
                 <div className="p-5 border-b border-[#e2e8f0]">
-                  <h3 className="text-white/80 font-semibold text-[15px]">Attendance Records</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Attendance Records</h3>
                 </div>
                 {attendanceRecords.length === 0 ? (
                   <div className="text-center py-16">
                     <ClipboardCheck className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" />
-                    <p className="text-white/30 text-[13px]">No attendance records found</p>
+                    <p className="text-[#94a3b8] text-[13px]">No attendance records found</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-[#e2e8f0]">
-                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Date</th>
-                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Day</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Status</th>
+                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Date</th>
+                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Day</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Status</th>
                         </tr>
                       </thead>
                       <tbody>
                         {attendanceRecords.map((a, i) => (
                           <tr key={i} className="border-b border-white/[0.03] hover:bg-[#f8fafc] transition">
-                            <td className="px-5 py-3.5 text-white/60 text-[13px]">
+                            <td className="px-5 py-3.5 text-[#475569] text-[13px]">
                               {new Date(a.date).toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric" })}
                             </td>
-                            <td className="px-5 py-3.5 text-white/40 text-[13px]">
+                            <td className="px-5 py-3.5 text-[#64748b] text-[13px]">
                               {new Date(a.date).toLocaleDateString("en-NG", { weekday: "long" })}
                             </td>
                             <td className="px-5 py-3.5 text-center">
@@ -758,7 +758,7 @@ export default function StudentDetailPage() {
                       <CreditCard className="w-5 h-5 text-[#1a1a2e]" />
                     </div>
                     <p className="text-[#1a1a2e] text-xl font-bold font-display">{stat.value}</p>
-                    <p className="text-white/30 text-[11px] mt-1">{stat.label}</p>
+                    <p className="text-[#94a3b8] text-[11px] mt-1">{stat.label}</p>
                   </motion.div>
                 ))}
               </div>
@@ -766,30 +766,30 @@ export default function StudentDetailPage() {
               {/* Invoices */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
                 <div className="p-5 border-b border-[#e2e8f0]">
-                  <h3 className="text-white/80 font-semibold text-[15px]">Invoices</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Invoices</h3>
                 </div>
                 {feeRecords.length === 0 ? (
                   <div className="text-center py-16">
                     <CreditCard className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" />
-                    <p className="text-white/30 text-[13px]">No fee records found</p>
+                    <p className="text-[#94a3b8] text-[13px]">No fee records found</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-[#e2e8f0]">
-                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Fee Name</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Amount</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Paid</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Status</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Due Date</th>
+                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Fee Name</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Amount</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Paid</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Status</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Due Date</th>
                         </tr>
                       </thead>
                       <tbody>
                         {feeRecords.map((f, i) => (
                           <tr key={i} className="border-b border-white/[0.03] hover:bg-[#f8fafc] transition">
-                            <td className="px-5 py-3.5 text-white/70 text-[13px] font-medium">{f.term}</td>
-                            <td className="px-5 py-3.5 text-center text-white/60 text-[13px]">{formatCurrency(f.amount)}</td>
+                            <td className="px-5 py-3.5 text-[#475569] text-[13px] font-medium">{f.term}</td>
+                            <td className="px-5 py-3.5 text-center text-[#475569] text-[13px]">{formatCurrency(f.amount)}</td>
                             <td className="px-5 py-3.5 text-center text-emerald-400 text-[13px] font-semibold">{formatCurrency(f.paid)}</td>
                             <td className="px-5 py-3.5 text-center">
                               <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-medium ${
@@ -805,7 +805,7 @@ export default function StudentDetailPage() {
                                 {f.status === "paid" ? "Paid" : f.status === "partial" ? "Partial" : "Unpaid"}
                               </span>
                             </td>
-                            <td className="px-5 py-3.5 text-center text-white/40 text-[12px]">
+                            <td className="px-5 py-3.5 text-center text-[#64748b] text-[12px]">
                               {f.dueDate ? new Date(f.dueDate).toLocaleDateString("en-NG") : "—"}
                             </td>
                           </tr>
@@ -820,26 +820,26 @@ export default function StudentDetailPage() {
               {feeRecords.some((f) => f.payments.length > 0) && (
                 <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
                    <div className="p-6 border-b border-[#e2e8f0]">
-                    <h3 className="text-white/80 font-semibold text-[15px]">Payment History</h3>
+                    <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Payment History</h3>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-[#e2e8f0]">
-                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Fee</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Amount</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Method</th>
-                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-white/30 uppercase tracking-wider">Date</th>
+                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Fee</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Amount</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Method</th>
+                          <th className="px-5 py-3 text-center text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Date</th>
                         </tr>
                       </thead>
                       <tbody>
                         {feeRecords.flatMap((f, fi) =>
                           f.payments.map((p, pi) => (
                             <tr key={`${fi}-${pi}`} className="border-b border-white/[0.03] hover:bg-[#f8fafc] transition">
-                              <td className="px-5 py-3.5 text-white/60 text-[13px]">{f.term}</td>
+                              <td className="px-5 py-3.5 text-[#475569] text-[13px]">{f.term}</td>
                               <td className="px-5 py-3.5 text-center text-emerald-400 text-[13px] font-semibold">{formatCurrency(p.amount)}</td>
-                              <td className="px-5 py-3.5 text-center text-white/40 text-[12px] capitalize">{p.method || "—"}</td>
-                              <td className="px-5 py-3.5 text-center text-white/40 text-[12px]">
+                              <td className="px-5 py-3.5 text-center text-[#64748b] text-[12px] capitalize">{p.method || "—"}</td>
+                              <td className="px-5 py-3.5 text-center text-[#64748b] text-[12px]">
                                 {p.paidAt ? new Date(p.paidAt).toLocaleDateString("en-NG") : "—"}
                               </td>
                             </tr>
@@ -857,8 +857,8 @@ export default function StudentDetailPage() {
             <div className="space-y-4">
               {/* Medical Info */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                <h3 className="text-white/80 font-semibold text-[15px] mb-5 flex items-center gap-2">
-                  <Heart className="w-4 h-4 text-white/40" /> Medical Information
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5 flex items-center gap-2">
+                  <Heart className="w-4 h-4 text-[#64748b]" /> Medical Information
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {[
@@ -874,8 +874,8 @@ export default function StudentDetailPage() {
                         <item.icon className={`w-4 h-4 ${item.color}`} />
                       </div>
                       <div>
-                        <p className="text-white/25 text-[10px] uppercase tracking-wider font-medium">{item.label}</p>
-                        <p className="text-white/70 text-[13px] mt-0.5">{item.value}</p>
+                        <p className="text-[#94a3b8] text-[10px] uppercase tracking-wider font-medium">{item.label}</p>
+                        <p className="text-[#475569] text-[13px] mt-0.5">{item.value}</p>
                       </div>
                     </div>
                   ))}
@@ -885,8 +885,8 @@ export default function StudentDetailPage() {
               {/* Clinic Visit History */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
                 <div className="p-6 border-b border-[#e2e8f0]">
-                  <h3 className="text-white/80 font-semibold text-[15px] flex items-center gap-2">
-                    <Stethoscope className="w-4 h-4 text-white/40" /> Clinic Visit History
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px] flex items-center gap-2">
+                    <Stethoscope className="w-4 h-4 text-[#64748b]" /> Clinic Visit History
                   </h3>
                 </div>
                 {student.medicalRecords?.[0]?.clinicVisits && student.medicalRecords[0].clinicVisits.length > 0 ? (
@@ -894,21 +894,21 @@ export default function StudentDetailPage() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-[#e2e8f0]">
-                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Date</th>
-                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Reason</th>
-                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Doctor</th>
-                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Notes</th>
+                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Date</th>
+                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Reason</th>
+                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Doctor</th>
+                          <th className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Notes</th>
                         </tr>
                       </thead>
                       <tbody>
                         {student.medicalRecords[0].clinicVisits.map((visit) => (
                           <tr key={visit.id} className="border-b border-white/[0.03] hover:bg-[#f8fafc] transition">
-                            <td className="px-5 py-3.5 text-white/60 text-[13px]">
+                            <td className="px-5 py-3.5 text-[#475569] text-[13px]">
                               {new Date(visit.date).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                             </td>
-                            <td className="px-5 py-3.5 text-white/70 text-[13px] font-medium">{visit.reason}</td>
-                            <td className="px-5 py-3.5 text-white/40 text-[12px]">{visit.doctor || "—"}</td>
-                            <td className="px-5 py-3.5 text-white/40 text-[12px]">{visit.notes || "—"}</td>
+                            <td className="px-5 py-3.5 text-[#475569] text-[13px] font-medium">{visit.reason}</td>
+                            <td className="px-5 py-3.5 text-[#64748b] text-[12px]">{visit.doctor || "—"}</td>
+                            <td className="px-5 py-3.5 text-[#64748b] text-[12px]">{visit.notes || "—"}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -917,7 +917,7 @@ export default function StudentDetailPage() {
                 ) : (
                   <div className="text-center py-12">
                     <Stethoscope className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" />
-                    <p className="text-white/30 text-[13px]">No clinic visits recorded</p>
+                    <p className="text-[#94a3b8] text-[13px]">No clinic visits recorded</p>
                   </div>
                 )}
               </div>
@@ -927,8 +927,8 @@ export default function StudentDetailPage() {
           {activeTab === "documents" && (
             <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-white/80 font-semibold text-[15px] flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-white/40" /> Documents
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-[#64748b]" /> Documents
                 </h3>
                 {canUploadDocs && (
                   <label className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--primary)]/10 border border-[var(--primary)]/30 text-[var(--primary)] text-[12px] font-medium cursor-pointer hover:bg-[var(--primary)]/15 transition">
@@ -958,8 +958,8 @@ export default function StudentDetailPage() {
               {!student.documents || student.documents.length === 0 ? (
                 <div className="text-center py-12">
                   <FileText className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" />
-                  <p className="text-white/30 text-[13px]">No documents uploaded</p>
-                  <p className="text-white/20 text-[11px] mt-1">Upload documents such as birth certificates, ID cards, or medical records.</p>
+                  <p className="text-[#94a3b8] text-[13px]">No documents uploaded</p>
+                  <p className="text-[#94a3b8] text-[11px] mt-1">Upload documents such as birth certificates, ID cards, or medical records.</p>
                 </div>
               ) : (
                   <div className="space-y-2">
@@ -970,15 +970,15 @@ export default function StudentDetailPage() {
                           <FileText className="w-4 h-4 text-blue-400" />
                         </div>
                         <div>
-                          <p className="text-white/70 text-[13px] font-medium">{doc.name}</p>
-                          <p className="text-white/25 text-[10px]">{doc.type} · {doc.size} · Uploaded {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString("en-NG") : "—"}</p>
+                          <p className="text-[#475569] text-[13px] font-medium">{doc.name}</p>
+                          <p className="text-[#94a3b8] text-[10px]">{doc.type} · {doc.size} · Uploaded {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString("en-NG") : "—"}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <a href={doc.url} target="_blank" rel="noopener noreferrer" title="View document" className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                        <a href={doc.url} target="_blank" rel="noopener noreferrer" title="View document" className="p-2 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-white/[0.06] transition">
                           <Eye className="w-4 h-4" />
                         </a>
-                        <a href={doc.url} download title="Download document" className="p-2 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                        <a href={doc.url} download title="Download document" className="p-2 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-white/[0.06] transition">
                           <Download className="w-4 h-4" />
                         </a>
                       </div>
@@ -993,23 +993,23 @@ export default function StudentDetailPage() {
 
       {showMessageModal && student && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-[#0a1628] border border-white/[0.12] shadow-2xl p-6">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-[#0a1628] border border-[#e2e8f0] shadow-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Send Message</h3>
-                <p className="text-white/40 text-[13px]">To: {student.firstName} {student.lastName}</p>
+                <p className="text-[#64748b] text-[13px]">To: {student.firstName} {student.lastName}</p>
               </div>
-              <button onClick={() => setShowMessageModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-white/40">
+              <button onClick={() => setShowMessageModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b]">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-white/60 text-[13px] mb-1.5">Subject</label>
+                <label className="block text-[#475569] text-[13px] mb-1.5">Subject</label>
                 <input type="text" value={messageSubject} onChange={(e) => setMessageSubject(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-blue-500" placeholder="Enter subject" />
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1.5">Message</label>
+                <label className="block text-[#475569] text-[13px] mb-1.5">Message</label>
                 <textarea value={messageBody} onChange={(e) => setMessageBody(e.target.value)} rows={5} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-blue-500 resize-none" placeholder="Write your message..." />
               </div>
             </div>

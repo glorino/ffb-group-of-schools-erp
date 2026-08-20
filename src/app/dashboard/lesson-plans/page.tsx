@@ -162,10 +162,10 @@ export default function LessonPlansPage() {
           className="px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
           style={{ colorScheme: "dark" }}
         >
-          <option value="" style={{ background: "#0f1b33", color: "#fff" }}>All Status</option>
-          <option value="draft" style={{ background: "#0f1b33", color: "#fff" }}>Draft</option>
-          <option value="pending" style={{ background: "#0f1b33", color: "#fff" }}>Pending Review</option>
-          <option value="approved" style={{ background: "#0f1b33", color: "#fff" }}>Approved</option>
+          <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>All Status</option>
+          <option value="draft" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Draft</option>
+          <option value="pending" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Pending Review</option>
+          <option value="approved" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Approved</option>
         </select>
       </div>
 

@@ -431,12 +431,12 @@ export default function CalendarPage() {
                       style={{ colorScheme: "dark" }}
                       className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     >
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="event">Event</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="exam">Exam</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="meeting">Meeting</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="admin">Administrative</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="holiday">Holiday</option>
-                      <option style={{ background: "#0f1b33", color: "#fff" }} value="sports">Sports</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="event">Event</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="exam">Exam</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="meeting">Meeting</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="admin">Administrative</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="holiday">Holiday</option>
+                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="sports">Sports</option>
                     </select>
                   </div>
                   <div>

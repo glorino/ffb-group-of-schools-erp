@@ -195,10 +195,10 @@ export default function PaymentsPage() {
               style={{ colorScheme: "dark" }}
               className="px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
             >
-              <option value="" style={{ background: "#0f1b33", color: "#fff" }}>All Status</option>
-              <option value="completed" style={{ background: "#0f1b33", color: "#fff" }}>Completed</option>
-              <option value="pending" style={{ background: "#0f1b33", color: "#fff" }}>Pending</option>
-              <option value="failed" style={{ background: "#0f1b33", color: "#fff" }}>Failed</option>
+              <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>All Status</option>
+              <option value="completed" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Completed</option>
+              <option value="pending" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Pending</option>
+              <option value="failed" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Failed</option>
             </select>
             <select
               value={filterMethod}
@@ -206,11 +206,11 @@ export default function PaymentsPage() {
               style={{ colorScheme: "dark" }}
               className="px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
             >
-              <option value="" style={{ background: "#0f1b33", color: "#fff" }}>All Methods</option>
-              <option value="cash" style={{ background: "#0f1b33", color: "#fff" }}>Cash</option>
-              <option value="bank_transfer" style={{ background: "#0f1b33", color: "#fff" }}>Bank Transfer</option>
-              <option value="card" style={{ background: "#0f1b33", color: "#fff" }}>Card</option>
-              <option value="online" style={{ background: "#0f1b33", color: "#fff" }}>Online</option>
+              <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>All Methods</option>
+              <option value="cash" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Cash</option>
+              <option value="bank_transfer" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Bank Transfer</option>
+              <option value="card" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Card</option>
+              <option value="online" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Online</option>
             </select>
             <button title="Filter using dropdowns above" className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]">
               <Filter className="w-4 h-4" />
