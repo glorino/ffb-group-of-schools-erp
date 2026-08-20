@@ -176,9 +176,9 @@ export default function PaymentsPage() {
         transition={{ delay: 0.4 }}
         className="card"
       >
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-5">
           <h3 className="text-[#1a1a2e] font-semibold text-lg">Payment History</h3>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
               <input
@@ -241,8 +241,8 @@ export default function PaymentsPage() {
             </tr>
            </thead>
            <tbody>
-             {payments.map((payment) => (
-               <tr key={payment.id} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
+              {payments.map((payment, idx) => (
+                <tr key={payment.id} className={`border-b border-[#e2e8f0] hover:bg-[#f1f5f9] transition-all ${idx % 2 === 1 ? "bg-[#f8fafc]" : ""}`}>
                  <td className="py-3 px-4">
                    <p className="text-[#1a1a2e] font-medium text-[13px]">
                      {payment.student.firstName} {payment.student.lastName}

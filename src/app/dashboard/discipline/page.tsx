@@ -117,7 +117,7 @@ export default function DisciplinePage() {
       </div>
 
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-        <div className="flex flex-wrap gap-3 mb-4">
+        <div className="flex flex-wrap gap-3">
           <input type="text" placeholder="Search student or title..." value={filter.search} onChange={e => setFilter({ ...filter, search: e.target.value })} className="input-glass flex-1 min-w-[200px]" />
           <select value={filter.type} onChange={e => setFilter({ ...filter, type: e.target.value })} className="input-glass" style={{ colorScheme: "light" }}>
             <option value="">All Types</option>
@@ -138,18 +138,18 @@ export default function DisciplinePage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e2e8f0]">
-                <th className="text-left py-3 px-4 text-[#64748b] font-medium">Student</th>
-                <th className="text-left py-3 px-4 text-[#64748b] font-medium">Type</th>
-                <th className="text-left py-3 px-4 text-[#64748b] font-medium">Title</th>
-                <th className="text-left py-3 px-4 text-[#64748b] font-medium">Date</th>
-                <th className="text-left py-3 px-4 text-[#64748b] font-medium">Action</th>
-                <th className="text-right py-3 px-4 text-[#64748b] font-medium">Actions</th>
+              <tr className="border-b-2 border-[#e2e8f0]">
+                <th className="text-left py-3 px-4 text-[#64748b] font-semibold text-[12px] uppercase tracking-wider">Student</th>
+                <th className="text-left py-3 px-4 text-[#64748b] font-semibold text-[12px] uppercase tracking-wider">Type</th>
+                <th className="text-left py-3 px-4 text-[#64748b] font-semibold text-[12px] uppercase tracking-wider">Title</th>
+                <th className="text-left py-3 px-4 text-[#64748b] font-semibold text-[12px] uppercase tracking-wider">Date</th>
+                <th className="text-left py-3 px-4 text-[#64748b] font-semibold text-[12px] uppercase tracking-wider">Action</th>
+                <th className="text-right py-3 px-4 text-[#64748b] font-semibold text-[12px] uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredRecords.map(r => (
-                <tr key={r.id} className="border-b border-white/5 hover:bg-[#f8fafc]">
+              {filteredRecords.map((r, idx) => (
+                <tr key={r.id} className={`border-b border-[#e2e8f0] hover:bg-[#f1f5f9] transition-colors ${idx % 2 === 1 ? "bg-[#f8fafc]" : ""}`}>
                   <td className="py-3 px-4 text-[#1a1a2e]">{r.student.firstName} {r.student.lastName}</td>
                   <td className="py-3 px-4"><span className={`px-2 py-1 rounded-full text-xs ${typeColors[r.type] || "bg-gray-500/20 text-gray-400"}`}>{r.type}</span></td>
                   <td className="py-3 px-4 text-[#475569]">{r.title}</td>

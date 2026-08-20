@@ -453,12 +453,12 @@ export default function ResultsPage() {
             ) : scales.length === 0 ? (
               <p className="text-[#64748b] text-sm text-center py-10">No grading scales configured</p>
             ) : (
-              <div className="space-y-2">
-                {scales.map((scale) => (
-                  <div key={scale.id} className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-colors">
+              <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
+                {scales.map((scale, idx) => (
+                  <div key={scale.id} className={`flex items-center justify-between px-4 py-3 bg-white hover:bg-[#f8fafc] transition-colors ${idx < scales.length - 1 ? "border-b border-[#e2e8f0]" : ""}`}>
                     <span className={`text-lg font-bold ${scaleColors[scale.grade] || "text-[#475569]"}`}>{scale.grade}</span>
                     <span className="text-[#475569] text-sm">{scale.minScore} – {scale.maxScore}</span>
-                    <span className="text-[#64748b] text-xs">{scale.points} pts</span>
+                    <span className="text-[#64748b] text-xs font-medium">{scale.points} pts</span>
                   </div>
                 ))}
               </div>

@@ -230,7 +230,7 @@ export default function IncomePage() {
           transition={{ delay: 0.4 }}
           className="lg:col-span-2 card"
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-5">
             <h3 className="text-[#1a1a2e] font-semibold text-lg">Income Sources</h3>
             <div className="flex gap-2">
               <div className="relative">
@@ -270,8 +270,8 @@ export default function IncomePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredIncomes.map((income) => (
-                    <tr key={income.id} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
+                  {filteredIncomes.map((income, idx) => (
+                    <tr key={income.id} className={`border-b border-[#e2e8f0] hover:bg-[#f1f5f9] transition-all ${idx % 2 === 1 ? "bg-[#f8fafc]" : ""}`}>
                       <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{income.title}</td>
                       <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{formatNaira(income.amount)}</td>
                       <td className="py-3 px-4">
