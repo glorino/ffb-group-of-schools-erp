@@ -346,7 +346,7 @@ export default function TranscriptPage() {
     <motion.div {...fadeIn} className={`space-y-5 ${printMode ? "hidden" : ""}`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[22px] font-bold text-white/95 font-display tracking-tight flex items-center gap-2.5">
+          <h1 className="text-[22px] font-bold text-[#1a1a2e] font-display tracking-tight flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center">
               <GraduationCap className="w-[18px] h-[18px] text-[#1a1a2e]" />
             </div>
@@ -405,7 +405,7 @@ export default function TranscriptPage() {
                 setShowDropdown(true);
               }}
               onFocus={() => setShowDropdown(true)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50"
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50"
             />
           </div>
           <div className="space-y-1 max-h-[400px] overflow-y-auto">
@@ -452,7 +452,7 @@ export default function TranscriptPage() {
                     {selectedStudent.firstName?.[0]}{selectedStudent.lastName?.[0]}
                   </div>
                   <div>
-                    <h3 className="text-white/95 font-bold text-[16px]">{selectedStudent.firstName} {selectedStudent.lastName}</h3>
+                    <h3 className="text-[#1a1a2e] font-bold text-[16px]">{selectedStudent.firstName} {selectedStudent.lastName}</h3>
                     <p className="text-[#64748b] text-[12px]">
                       {selectedStudent.admissionNumber} · {selectedStudent.class?.displayName || selectedStudent.class?.name || "—"}
                     </p>
@@ -584,13 +584,13 @@ export default function TranscriptPage() {
 
                 <div className="grid grid-cols-2 gap-6 mt-8 pt-6 border-t border-[#e2e8f0]">
                   <div className="text-center">
-                    <div className="w-48 mx-auto border-b border-white/30 mb-2" />
+                    <div className="w-48 mx-auto border-b border-[#94a3b8] mb-2" />
                     <PenLine className="w-4 h-4 text-[#94a3b8] mx-auto mb-1" />
                     <p className="text-[#475569] text-[12px] font-medium">Dean of Faculty</p>
                     <p className="text-[#94a3b8] text-[10px]">Date: _______________</p>
                   </div>
                   <div className="text-center">
-                    <div className="w-48 mx-auto border-b border-white/30 mb-2" />
+                    <div className="w-48 mx-auto border-b border-[#94a3b8] mb-2" />
                     <PenLine className="w-4 h-4 text-[#94a3b8] mx-auto mb-1" />
                     <p className="text-[#475569] text-[12px] font-medium">School Principal</p>
                     <p className="text-[#94a3b8] text-[10px]">Date: _______________</p>

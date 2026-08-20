@@ -133,7 +133,7 @@ export default function ReportCardsPage() {
     <motion.div {...fadeIn} className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[22px] font-bold text-white/95 font-display tracking-tight flex items-center gap-2.5">
+          <h1 className="text-[22px] font-bold text-[#1a1a2e] font-display tracking-tight flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
               <FileText className="w-[18px] h-[18px] text-[#1a1a2e]" />
             </div>
@@ -170,7 +170,7 @@ export default function ReportCardsPage() {
                 placeholder="Search students..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50"
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50"
               />
             </div>
             <div className="space-y-1 max-h-[400px] overflow-y-auto">

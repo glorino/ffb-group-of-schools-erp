@@ -265,14 +265,14 @@ export default function ClassesPage() {
                                   initial={{ opacity: 0, scale: 0.95, y: -4 }}
                                   animate={{ opacity: 1, scale: 1, y: 0 }}
                                   exit={{ opacity: 0, scale: 0.95, y: -4 }}
-                                  className="absolute right-0 top-full mt-1 w-36 bg-[#0a0f1e] border border-[#e2e8f0] rounded-xl shadow-xl z-40 overflow-hidden"
+                                  className="absolute right-0 top-full mt-1 w-36 bg-white border border-[#e2e8f0] rounded-xl shadow-xl z-40 overflow-hidden"
                                 >
                                   <button
                                     onClick={() => {
                                       setDropdownOpen(null);
                                       setViewClass(cls);
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-[#475569] hover:bg-white/[0.06] transition"
+                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-[#475569] hover:bg-[#f1f5f9] transition"
                                   >
                                     <Eye className="w-3.5 h-3.5" /> View
                                   </button>
@@ -283,7 +283,7 @@ export default function ClassesPage() {
                                       const levelNames: Record<number, string> = { 1: "nursery", 2: "primary", 3: "junior", 4: "secondary" };
                                       setEditForm({ name: cls.name, displayName: cls.displayName, level: levelNames[cls.level] || "primary", capacity: String(cls.capacity) });
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-[#475569] hover:bg-white/[0.06] transition"
+                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-[#475569] hover:bg-[#f1f5f9] transition"
                                   >
                                     <Pencil className="w-3.5 h-3.5" /> Edit
                                   </button>
@@ -345,7 +345,7 @@ export default function ClassesPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl"
+              className="relative w-full max-w-lg bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Class</h3>
@@ -392,12 +392,12 @@ export default function ClassesPage() {
                       value={form.level}
                       onChange={(e) => setForm({ ...form, level: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                     >
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="nursery">Nursery</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="primary">Primary</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="junior">Junior</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="secondary">Secondary</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="nursery">Nursery</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="primary">Primary</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="junior">Junior</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="secondary">Secondary</option>
                     </select>
                   </div>
                   <div>
@@ -440,7 +440,7 @@ export default function ClassesPage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setViewClass(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Class Details</h3>
                 <button onClick={() => setViewClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
@@ -466,7 +466,7 @@ export default function ClassesPage() {
                 </div>
               </div>
               <div className="flex justify-end mt-6">
-                <button onClick={() => setViewClass(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all">Close</button>
+                <button onClick={() => setViewClass(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all">Close</button>
               </div>
             </motion.div>
           </motion.div>
@@ -479,7 +479,7 @@ export default function ClassesPage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditClass(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Class</h3>
                 <button onClick={() => setEditClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
@@ -529,11 +529,11 @@ export default function ClassesPage() {
                     <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
                     <select value={editForm.level} onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "dark" }}>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="nursery">Nursery</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="primary">Primary</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="junior">Junior</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="secondary">Secondary</option>
+                      style={{ colorScheme: "light" }}>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="nursery">Nursery</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="primary">Primary</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="junior">Junior</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="secondary">Secondary</option>
                     </select>
                   </div>
                   <div>

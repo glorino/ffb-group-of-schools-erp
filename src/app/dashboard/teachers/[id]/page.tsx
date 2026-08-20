@@ -148,7 +148,7 @@ export default function TeacherDetailPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <button
           onClick={() => router.push("/dashboard/teachers")}
-          className="flex items-center gap-2 text-[#64748b] hover:text-white text-sm mb-4 transition-colors"
+          className="flex items-center gap-2 text-[#64748b] hover:text-[#1a1a2e] text-sm mb-4 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Teachers
@@ -186,12 +186,12 @@ export default function TeacherDetailPage() {
                 <button onClick={handleSave} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent)] text-black text-sm font-semibold hover:brightness-110 transition-all">
                   <Save className="w-4 h-4" /> Save
                 </button>
-                <button onClick={() => setEditing(false)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e]/60 text-sm hover:bg-white/[0.1] transition-all">
+                <button onClick={() => setEditing(false)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e]/60 text-sm hover:bg-[#f1f5f9] transition-all">
                   <X className="w-4 h-4" /> Cancel
                 </button>
               </>
             ) : (
-              <button onClick={startEdit} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-white/[0.1] transition-all">
+              <button onClick={startEdit} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-[#f1f5f9] transition-all">
                 <Edit className="w-4 h-4" /> Edit Profile
               </button>
             )}

@@ -220,7 +220,7 @@ export default function ExpensesPage() {
           <div className="flex gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
@@ -281,13 +281,13 @@ export default function ExpensesPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                style={{ colorScheme: "dark" }}
+                style={{ colorScheme: "light" }}
                 className="px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
               >
-                <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>All Status</option>
-                <option value="pending" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Pending</option>
-                <option value="approved" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Approved</option>
-                <option value="rejected" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Rejected</option>
+                <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>All Status</option>
+                <option value="pending" style={{ background: "#ffffff", color: "#1a1a2e" }}>Pending</option>
+                <option value="approved" style={{ background: "#ffffff", color: "#1a1a2e" }}>Approved</option>
+                <option value="rejected" style={{ background: "#ffffff", color: "#1a1a2e" }}>Rejected</option>
               </select>
               <button title="Filter using dropdowns above" className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]">
                 <Filter className="w-4 h-4" />
@@ -456,13 +456,13 @@ export default function ExpensesPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg bg-[#0a1628] border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
+              className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-5">
                 <h3 className="text-[#1a1a2e] font-bold text-lg">Record New Expense</h3>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="p-1.5 rounded-lg text-[#94a3b8] hover:text-white hover:bg-[#f1f5f9] transition"
+                  className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -494,12 +494,12 @@ export default function ExpensesPage() {
                     <select
                       value={formCategory}
                       onChange={(e) => setFormCategory(e.target.value)}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     >
-                      <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Select category</option>
+                      <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select category</option>
                       {categories.map((cat) => (
-                        <option key={cat} value={cat} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{cat}</option>
+                        <option key={cat} value={cat} style={{ background: "#ffffff", color: "#1a1a2e" }}>{cat}</option>
                       ))}
                     </select>
                   </div>
@@ -511,7 +511,7 @@ export default function ExpensesPage() {
                       type="date"
                       value={formDate}
                       onChange={(e) => setFormDate(e.target.value)}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     />
                   </div>

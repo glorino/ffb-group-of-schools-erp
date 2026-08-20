@@ -159,14 +159,14 @@ export default function HostelPage() {
           <div className="flex gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowQRScanner(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <QrCode className="w-4 h-4" />
               QR Attendance
@@ -335,11 +335,11 @@ export default function HostelPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
+            className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Hostel Block</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -359,12 +359,12 @@ export default function HostelPage() {
                 <select
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
-                  style={{ colorScheme: "dark" }}
+                  style={{ colorScheme: "light" }}
                   className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Boys</option>
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Girls</option>
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Staff</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Boys</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Girls</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Staff</option>
                 </select>
               </div>
               <div>
@@ -403,11 +403,11 @@ export default function HostelPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
+            className="w-full max-w-lg rounded-2xl bg-white border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewBlock.name} — Rooms</h2>
-              <button onClick={() => setViewBlock(null)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setViewBlock(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -441,11 +441,11 @@ export default function HostelPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
+            className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Edit {editBlock.name}</h2>
-              <button onClick={() => setEditBlock(null)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setEditBlock(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -464,12 +464,12 @@ export default function HostelPage() {
                 <select
                   value={editForm.type}
                   onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
-                  style={{ colorScheme: "dark" }}
+                  style={{ colorScheme: "light" }}
                   className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Boys</option>
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Girls</option>
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Staff</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Boys</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Girls</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Staff</option>
                 </select>
               </div>
               <div>
@@ -517,10 +517,10 @@ export default function HostelPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowQRScanner(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6">
+            className="w-full max-w-md rounded-2xl bg-white border border-[#e2e8f0] p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">QR Attendance</h2>
-              <button onClick={() => setShowQRScanner(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowQRScanner(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
             </div>
             <p className="text-[#475569] text-[13px] mb-4">Scan or type the student admission number to check in to the hostel.</p>
             <input

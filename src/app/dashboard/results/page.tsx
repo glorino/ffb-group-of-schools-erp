@@ -318,7 +318,7 @@ export default function ResultsPage() {
             )}
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
@@ -455,7 +455,7 @@ export default function ResultsPage() {
             ) : (
               <div className="space-y-2">
                 {scales.map((scale) => (
-                  <div key={scale.id} className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc] hover:bg-white/[0.06] transition-colors">
+                  <div key={scale.id} className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-colors">
                     <span className={`text-lg font-bold ${scaleColors[scale.grade] || "text-[#475569]"}`}>{scale.grade}</span>
                     <span className="text-[#475569] text-sm">{scale.minScore} – {scale.maxScore}</span>
                     <span className="text-[#64748b] text-xs">{scale.points} pts</span>
@@ -505,7 +505,7 @@ export default function ResultsPage() {
                       {!isReadOnly && (
                         <button
                           onClick={() => openEditModal(g)}
-                          className="p-1.5 rounded-lg bg-white/[0.06] border border-[#e2e8f0] text-[#64748b] hover:text-white hover:bg-white/[0.1] transition-all"
+                          className="p-1.5 rounded-lg bg-white/[0.06] border border-[#e2e8f0] text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
@@ -536,7 +536,7 @@ export default function ResultsPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="bg-gradient-to-r from-[var(--primary)]/30 to-[var(--accent)]/10 px-6 py-4 border-b border-[#e2e8f0]">
                 <div className="flex items-center justify-between">
@@ -544,7 +544,7 @@ export default function ResultsPage() {
                     <h3 className="text-[#1a1a2e] font-semibold text-lg">Enter Results</h3>
                     <p className="text-[#64748b] text-xs mt-0.5">Add or update student grades</p>
                   </div>
-                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-colors">
+                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-colors">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -564,7 +564,7 @@ export default function ResultsPage() {
                     <ChevronDown className={`w-4 h-4 text-[#64748b] transition-transform ${showStudentDropdown ? "rotate-180" : ""}`} />
                   </button>
                   {showStudentDropdown && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#0f1b33] border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
                       <div className="p-2 border-b border-[#e2e8f0]">
                         <input
                           type="text"
@@ -617,7 +617,7 @@ export default function ResultsPage() {
                     <ChevronDown className={`w-4 h-4 text-[#64748b] transition-transform ${showSubjectDropdown ? "rotate-180" : ""}`} />
                   </button>
                   {showSubjectDropdown && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#0f1b33] border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
                       <div className="p-2 border-b border-[#e2e8f0]">
                         <input
                           type="text"
@@ -664,11 +664,11 @@ export default function ResultsPage() {
                       value={form.type}
                       onChange={(e) => setForm({ ...form, type: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer"
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                     >
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="ca1">1st CA</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="ca2">2nd CA</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="exam">Exam</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="ca1">1st CA</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="ca2">2nd CA</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="exam">Exam</option>
                     </select>
                   </div>
                   <div>
@@ -767,7 +767,7 @@ export default function ResultsPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-sm bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-sm bg-white border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="bg-gradient-to-r from-[var(--primary)]/30 to-[var(--accent)]/10 px-6 py-4 border-b border-[#e2e8f0]">
                 <div className="flex items-center justify-between">
@@ -777,7 +777,7 @@ export default function ResultsPage() {
                       {editingGrade.student?.firstName} {editingGrade.student?.lastName} — {editingGrade.subject?.name}
                     </p>
                   </div>
-                  <button onClick={() => setEditingGrade(null)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-colors">
+                  <button onClick={() => setEditingGrade(null)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-colors">
                     <X className="w-5 h-5" />
                   </button>
                 </div>

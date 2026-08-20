@@ -172,14 +172,14 @@ export default function InventoryPage() {
           <div className="flex gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowBarcodeScan(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <Barcode className="w-4 h-4" />
               Scan
@@ -363,11 +363,11 @@ export default function InventoryPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
+            className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Inventory Item</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -388,14 +388,14 @@ export default function InventoryPage() {
                   <select
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    style={{ colorScheme: "dark" }}
+                    style={{ colorScheme: "light" }}
                     className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   >
-                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Stationery</option>
-                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Electronics</option>
-                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Medical</option>
-                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Furniture</option>
-                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Cleaning</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Stationery</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Electronics</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Medical</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Furniture</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Cleaning</option>
                   </select>
                 </div>
                 <div>
@@ -403,13 +403,13 @@ export default function InventoryPage() {
                   <select
                     value={form.unit}
                     onChange={(e) => setForm({ ...form, unit: e.target.value })}
-                    style={{ colorScheme: "dark" }}
+                    style={{ colorScheme: "light" }}
                     className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   >
-                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>pieces</option>
-                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>boxes</option>
-                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>kits</option>
-                    <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>units</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>pieces</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>boxes</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>kits</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>units</option>
                   </select>
                 </div>
               </div>
@@ -472,11 +472,11 @@ export default function InventoryPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
+            className="w-full max-w-lg rounded-2xl bg-white border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewItem.name}</h2>
-              <button onClick={() => setViewItem(null)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setViewItem(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -531,7 +531,7 @@ export default function InventoryPage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditItem(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Inventory Item</h3>
                 <button onClick={() => setEditItem(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
@@ -587,10 +587,10 @@ export default function InventoryPage() {
                     <label className="block text-[#475569] text-[13px] mb-1.5">Status</label>
                     <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "dark" }}>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="in_stock">In Stock</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="low_stock">Low Stock</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="out_of_stock">Out of Stock</option>
+                      style={{ colorScheme: "light" }}>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="in_stock">In Stock</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="low_stock">Low Stock</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="out_of_stock">Out of Stock</option>
                     </select>
                   </div>
                 </div>
@@ -608,10 +608,10 @@ export default function InventoryPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6">
+            className="w-full max-w-md rounded-2xl bg-white border border-[#e2e8f0] p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Barcode Scanner</h2>
-              <button onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
+              <button onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
             </div>
             <input
               type="text"

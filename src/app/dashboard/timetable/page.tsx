@@ -159,21 +159,21 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
 
   return (
     <>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between gap-4 mb-4 relative z-30">
         <select
           value={selectedClass}
           onChange={(e) => setSelectedClass(e.target.value)}
           className="px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-          style={{ colorScheme: "dark" }}
+          style={{ colorScheme: "light" }}
         >
           {classes.map(c => (
-            <option key={c.id} value={c.id} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{c.displayName || c.name}</option>
+            <option key={c.id} value={c.id} style={{ background: "#ffffff", color: "#1a1a2e" }}>{c.displayName || c.name}</option>
           ))}
         </select>
         <button
           onClick={() => setShowModal(true)}
           disabled={!selectedClass}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 shadow-lg shadow-[var(--primary)]/25"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 shadow-lg shadow-[var(--primary)]/25 relative z-30"
         >
           <Plus className="w-4 h-4" />
           Add Slot
@@ -226,7 +226,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                           onClick={() => entry && setDetailSlot(entry)}
                           className={`min-h-[52px] rounded-lg p-2 flex items-center justify-center text-center transition-all ${
                             entry
-                              ? "bg-white/[0.06] border border-[#e2e8f0] hover:bg-white/[0.1] cursor-pointer group relative"
+                              ? "bg-white/[0.06] border border-[#e2e8f0] hover:bg-[#f1f5f9] cursor-pointer group relative"
                               : "bg-[#f8fafc] hover:bg-[#f8fafc] cursor-pointer"
                           }`}
                         >
@@ -262,7 +262,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#0a0f1e] rounded-2xl border border-[#e2e8f0] p-6 w-full max-w-md shadow-2xl">
+              className="bg-white rounded-2xl border border-[#e2e8f0] p-6 w-full max-w-md shadow-2xl">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Timetable Slot</h3>
                 <button onClick={() => setShowModal(false)} className="text-[#94a3b8] hover:text-[#475569]"><X className="w-5 h-5" /></button>
@@ -272,8 +272,8 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                   <label className="text-[#64748b] text-[12px] mb-1 block">Day of Week</label>
                   <select value={form.dayOfWeek} onChange={e => setForm({ ...form, dayOfWeek: e.target.value })}
                     className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    style={{ colorScheme: "dark" }}>
-                    {dayLabels.map((d, i) => <option key={i} value={i + 1} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{d}</option>)}
+                    style={{ colorScheme: "light" }}>
+                    {dayLabels.map((d, i) => <option key={i} value={i + 1} style={{ background: "#ffffff", color: "#1a1a2e" }}>{d}</option>)}
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -281,16 +281,16 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                     <label className="text-[#64748b] text-[12px] mb-1 block">Start Time</label>
                     <select value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })}
                       className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "dark" }}>
-                      {timeSlots.map(t => <option key={t} value={t} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{t}</option>)}
+                      style={{ colorScheme: "light" }}>
+                      {timeSlots.map(t => <option key={t} value={t} style={{ background: "#ffffff", color: "#1a1a2e" }}>{t}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="text-[#64748b] text-[12px] mb-1 block">End Time</label>
                     <select value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })}
                       className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "dark" }}>
-                      {timeSlots.map(t => <option key={t} value={t} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{t}</option>)}
+                      style={{ colorScheme: "light" }}>
+                      {timeSlots.map(t => <option key={t} value={t} style={{ background: "#ffffff", color: "#1a1a2e" }}>{t}</option>)}
                     </select>
                   </div>
                 </div>
@@ -298,9 +298,9 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                   <label className="text-[#64748b] text-[12px] mb-1 block">Teacher</label>
                   <select value={form.teacherId} onChange={e => setForm({ ...form, teacherId: e.target.value })}
                     className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    style={{ colorScheme: "dark" }}>
-                    <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Select Teacher</option>
-                    {teachers.map(t => <option key={t.id} value={t.id} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{t.firstName} {t.lastName}</option>)}
+                    style={{ colorScheme: "light" }}>
+                    <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select Teacher</option>
+                    {teachers.map(t => <option key={t.id} value={t.id} style={{ background: "#ffffff", color: "#1a1a2e" }}>{t.firstName} {t.lastName}</option>)}
                   </select>
                 </div>
                 <div>
@@ -320,11 +320,11 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                     <label className="text-[#64748b] text-[12px] mb-1 block">Type</label>
                     <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
                       className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "dark" }}>
-                      <option value="lesson" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Lesson</option>
-                      <option value="break" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Break</option>
-                      <option value="lab" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Lab</option>
-                      <option value="assembly" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Assembly</option>
+                      style={{ colorScheme: "light" }}>
+                      <option value="lesson" style={{ background: "#ffffff", color: "#1a1a2e" }}>Lesson</option>
+                      <option value="break" style={{ background: "#ffffff", color: "#1a1a2e" }}>Break</option>
+                      <option value="lab" style={{ background: "#ffffff", color: "#1a1a2e" }}>Lab</option>
+                      <option value="assembly" style={{ background: "#ffffff", color: "#1a1a2e" }}>Assembly</option>
                     </select>
                   </div>
                 </div>
@@ -350,7 +350,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#0a0f1e] rounded-2xl border border-[#e2e8f0] p-6 w-full max-w-md shadow-2xl">
+              className="bg-white rounded-2xl border border-[#e2e8f0] p-6 w-full max-w-md shadow-2xl">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Timetable Slot Details</h3>
                 <button onClick={() => setDetailSlot(null)} className="text-[#94a3b8] hover:text-[#475569]"><X className="w-5 h-5" /></button>

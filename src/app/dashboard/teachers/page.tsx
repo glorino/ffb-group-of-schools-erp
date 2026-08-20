@@ -206,7 +206,7 @@ export default function TeachersPage() {
           <button className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]">
             <MoreVertical className="w-4 h-4" />
           </button>
-          <div className="absolute right-0 top-8 z-[60] hidden group-hover:block bg-[var(--sidebar)] border border-[#e2e8f0] rounded-xl shadow-xl py-1 min-w-[120px]">
+          <div className="absolute right-0 top-8 z-[60] hidden group-hover:block bg-white border border-[#e2e8f0] rounded-xl shadow-xl py-1 min-w-[120px]">
             <button onClick={() => router.push(`/dashboard/teachers/${row.id}`)} className="w-full text-left px-3 py-2 text-[12px] text-[#475569] hover:bg-[#f1f5f9]">View Profile</button>
             <button onClick={() => router.push(`/dashboard/teachers/${row.id}?edit=true`)} className="w-full text-left px-3 py-2 text-[12px] text-[#475569] hover:bg-[#f1f5f9]">Edit</button>
           </div>

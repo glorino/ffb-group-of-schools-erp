@@ -1079,7 +1079,7 @@ function PorterDashboard() {
 
       {showVisitorLog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[var(--sidebar)] border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-md mx-4">
+          <div className="bg-white border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-[#1a1a2e] font-semibold text-[16px]">Log Visitor</h3>
               <button onClick={() => setShowVisitorLog(false)} className="text-[#64748b] hover:text-[#475569]"><X className="w-5 h-5" /></button>
@@ -1234,13 +1234,13 @@ function AlumniDashboard() {
 
       {showDonateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowDonateModal(false)}>
-          <div className="bg-[#1a1a2e] border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
+          <div className="bg-white border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-[#7c3aed]" />
                 <h3 className="text-[#1a1a2e] font-semibold text-[16px]">Make a Donation</h3>
               </div>
-              <button onClick={() => setShowDonateModal(false)} className="text-[#64748b] hover:text-white transition-colors">
+              <button onClick={() => setShowDonateModal(false)} className="text-[#64748b] hover:text-[#1a1a2e] transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>

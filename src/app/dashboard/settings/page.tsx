@@ -571,12 +571,12 @@ export default function SettingsPage() {
                     <select
                       value={academicYear.term}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, term: e.target.value }))}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     >
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>First Term</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Second Term</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Third Term</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }}>First Term</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Second Term</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Third Term</option>
                     </select>
                   </div>
                 </div>
@@ -587,7 +587,7 @@ export default function SettingsPage() {
                       type="date"
                       value={academicYear.firstTermStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, firstTermStart: e.target.value }))}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
@@ -597,7 +597,7 @@ export default function SettingsPage() {
                       type="date"
                       value={academicYear.firstTermEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, firstTermEnd: e.target.value }))}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
@@ -609,7 +609,7 @@ export default function SettingsPage() {
                       type="date"
                       value={academicYear.secondTermStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, secondTermStart: e.target.value }))}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
@@ -619,7 +619,7 @@ export default function SettingsPage() {
                       type="date"
                       value={academicYear.secondTermEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, secondTermEnd: e.target.value }))}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
@@ -631,7 +631,7 @@ export default function SettingsPage() {
                       type="date"
                       value={academicYear.thirdTermStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, thirdTermStart: e.target.value }))}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
@@ -641,7 +641,7 @@ export default function SettingsPage() {
                       type="date"
                       value={academicYear.thirdTermEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, thirdTermEnd: e.target.value }))}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
@@ -653,14 +653,14 @@ export default function SettingsPage() {
                       type="date"
                       value={academicYear.midTermBreakStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, midTermBreakStart: e.target.value }))}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                     <input
                       type="date"
                       value={academicYear.midTermBreakEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, midTermBreakEnd: e.target.value }))}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
@@ -677,7 +677,7 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={addGradingRow}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.06] text-[#475569] text-[13px] font-medium hover:bg-white/[0.1] transition-all"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.06] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all"
                   >
                     <Plus className="w-4 h-4" />
                     Add Grade
@@ -776,7 +776,7 @@ export default function SettingsPage() {
                   { key: "attendanceAlerts" as const, label: "Attendance Alerts", desc: "Notify parents of student absences" },
                   { key: "reportCardAlerts" as const, label: "Report Card Alerts", desc: "Notify when report cards are ready" },
                 ]).map((item, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-[#f8fafc] hover:bg-white/[0.06] transition">
+                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition">
                     <div>
                       <p className="text-[#1a1a2e] text-[13px] font-medium">{item.label}</p>
                       <p className="text-[#64748b] text-[11px] mt-0.5">{item.desc}</p>
@@ -811,7 +811,7 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-3">
                 {roles.map((item) => (
-                  <div key={item.id} className="p-4 rounded-xl bg-[#f8fafc] hover:bg-white/[0.06] transition">
+                  <div key={item.id} className="p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition">
                     <div className="flex items-center gap-3 mb-3">
                       <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center text-white text-[11px] font-bold`}>
                         {item.role.slice(0, 2).toUpperCase()}

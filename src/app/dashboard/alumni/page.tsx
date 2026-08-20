@@ -245,7 +245,7 @@ export default function AlumniPage() {
                   <Filter className="w-4 h-4" />
                 </button>
                 {showFilter && (
-                  <div className="absolute right-0 top-full mt-2 z-40 w-48 rounded-xl bg-[#0f1b33] border border-white/[0.12] shadow-2xl p-1">
+                  <div className="absolute right-0 top-full mt-2 z-40 w-48 rounded-xl bg-white border border-[#e2e8f0] shadow-2xl p-1">
                     {["all", "mentoring", "donating", "recent"].map((opt) => (
                       <button
                         key={opt}
@@ -282,7 +282,7 @@ export default function AlumniPage() {
                 const initials = name.split(" ").map((n) => n[0]).join("").slice(0, 2);
                 const totalDonation = person.donations.reduce((s, d) => s + d.amount, 0);
                 return (
-                  <div key={person.id} className="flex items-center gap-4 p-4 rounded-xl bg-[#f8fafc] hover:bg-white/[0.06] transition-all border border-[#e2e8f0]">
+                  <div key={person.id} className="flex items-center gap-4 p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all border border-[#e2e8f0]">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
                       {initials}
                     </div>
@@ -380,11 +380,11 @@ export default function AlumniPage() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-[#0a1628] border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
+            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-[#1a1a2e] font-bold text-lg">Add Alumni Record</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-white hover:bg-[#f1f5f9] transition">
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -488,11 +488,11 @@ export default function AlumniPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-[#0a1628] border border-[#e2e8f0] rounded-3xl p-6"
+            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6"
           >
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-[#1a1a2e] font-bold text-lg">Send Message</h3>
-              <button onClick={() => setMessageModal(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-white hover:bg-[#f1f5f9] transition">
+              <button onClick={() => setMessageModal(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition">
                 <X className="w-5 h-5" />
               </button>
             </div>

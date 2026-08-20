@@ -975,10 +975,10 @@ export default function StudentDetailPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <a href={doc.url} target="_blank" rel="noopener noreferrer" title="View document" className="p-2 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-white/[0.06] transition">
+                        <a href={doc.url} target="_blank" rel="noopener noreferrer" title="View document" className="p-2 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] transition">
                           <Eye className="w-4 h-4" />
                         </a>
-                        <a href={doc.url} download title="Download document" className="p-2 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-white/[0.06] transition">
+                        <a href={doc.url} download title="Download document" className="p-2 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] transition">
                           <Download className="w-4 h-4" />
                         </a>
                       </div>
@@ -993,7 +993,7 @@ export default function StudentDetailPage() {
 
       {showMessageModal && student && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-[#0a1628] border border-[#e2e8f0] shadow-2xl p-6">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Send Message</h3>

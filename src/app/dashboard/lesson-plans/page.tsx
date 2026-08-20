@@ -160,12 +160,12 @@ export default function LessonPlansPage() {
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
-          style={{ colorScheme: "dark" }}
+          style={{ colorScheme: "light" }}
         >
-          <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>All Status</option>
-          <option value="draft" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Draft</option>
-          <option value="pending" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Pending Review</option>
-          <option value="approved" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Approved</option>
+          <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>All Status</option>
+          <option value="draft" style={{ background: "#ffffff", color: "#1a1a2e" }}>Draft</option>
+          <option value="pending" style={{ background: "#ffffff", color: "#1a1a2e" }}>Pending Review</option>
+          <option value="approved" style={{ background: "#ffffff", color: "#1a1a2e" }}>Approved</option>
         </select>
       </div>
 
@@ -210,7 +210,7 @@ export default function LessonPlansPage() {
                 "bg-white/[0.06] text-[#64748b]"
               }`}>{lp.status}</span>
               <div className="flex items-center gap-1">
-                <button onClick={() => setShowDetail(lp)} className="p-2 rounded-lg hover:bg-white/[0.06] text-[#94a3b8] hover:text-[#475569] transition"><Eye className="w-4 h-4" /></button>
+                <button onClick={() => setShowDetail(lp)} className="p-2 rounded-lg hover:bg-[#f1f5f9] text-[#94a3b8] hover:text-[#475569] transition"><Eye className="w-4 h-4" /></button>
                 {lp.status === "draft" && (
                   <button onClick={() => handleStatusUpdate(lp.id, "pending")} className="p-2 rounded-lg hover:bg-amber-500/10 text-[#94a3b8] hover:text-[#d97706] transition text-[10px]">Submit</button>
                 )}
@@ -239,9 +239,9 @@ export default function LessonPlansPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-[#e2e8f0] shadow-2xl"
+              className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white/95 backdrop-blur-2xl rounded-2xl border border-[#e2e8f0] shadow-2xl"
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#e2e8f0] sticky top-0 bg-[var(--sidebar)]/95 backdrop-blur-2xl z-10">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#e2e8f0] sticky top-0 bg-white/95 backdrop-blur-2xl z-10">
                 <h3 className="text-[#1a1a2e] font-semibold">New Lesson Plan</h3>
                 <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#475569] transition">
                   <X className="w-5 h-5" />
@@ -285,16 +285,16 @@ export default function LessonPlansPage() {
                   <div>
                     <label className="block text-[#64748b] text-[12px] mb-1.5">Start Date *</label>
                     <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-                      className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" style={{ colorScheme: "dark" }} />
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" style={{ colorScheme: "light" }} />
                   </div>
                   <div>
                     <label className="block text-[#64748b] text-[12px] mb-1.5">End Date *</label>
                     <input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-                      className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" style={{ colorScheme: "dark" }} />
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" style={{ colorScheme: "light" }} />
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#e2e8f0] sticky bottom-0 bg-[var(--sidebar)]/95 backdrop-blur-2xl">
+              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#e2e8f0] sticky bottom-0 bg-white/95 backdrop-blur-2xl">
                 <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition">Cancel</button>
                 <button onClick={handleCreate} disabled={submitting}
                   className="px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center gap-2">
@@ -322,7 +322,7 @@ export default function LessonPlansPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-[#e2e8f0] shadow-2xl"
+              className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white/95 backdrop-blur-2xl rounded-2xl border border-[#e2e8f0] shadow-2xl"
             >
               <div className="flex items-center justify-between px-6 py-4 border-b border-[#e2e8f0]">
                 <div>

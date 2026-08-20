@@ -358,7 +358,7 @@ export default function StudentsPage() {
                               <MoreHorizontal className="w-4 h-4" />
                             </button>
                             {openMenu === student.id && (
-                              <div className="absolute right-0 top-8 w-36 rounded-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl border border-[#e2e8f0] shadow-2xl z-[60] overflow-hidden">
+                              <div className="absolute right-0 top-8 w-36 rounded-xl bg-white/95 backdrop-blur-2xl border border-[#e2e8f0] shadow-2xl z-[60] overflow-hidden">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/students/${student.id}`); setOpenMenu(null); }}
                                   className="w-full flex items-center gap-2 px-3 py-2 text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] text-[12px]"
@@ -366,7 +366,22 @@ export default function StudentsPage() {
                                   <Eye className="w-3.5 h-3.5" /> View Profile
                                 </button>
                                 <button
-                                  onClick={(e) => { e.stopPropagation(); setEditingStudent(student); setShowModal(true); setOpenMenu(null); }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingStudent(student);
+                                    setForm({
+                                      firstName: student.firstName,
+                                      lastName: student.lastName,
+                                      email: student.email || "",
+                                      phone: "",
+                                      admissionNumber: student.admissionNumber || "",
+                                      guardianName: student.guardianName || "",
+                                      guardianPhone: student.guardianPhone || "",
+                                      classId: student.class ? (classes.find(c => c.name === student.class?.name)?.id || "") : "",
+                                    });
+                                    setShowModal(true);
+                                    setOpenMenu(null);
+                                  }}
                                   className="w-full flex items-center gap-2 px-3 py-2 text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] text-[12px]"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" /> Edit

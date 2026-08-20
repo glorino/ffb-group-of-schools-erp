@@ -439,7 +439,7 @@ export default function ProfilePage() {
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Change Password</h3>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-white hover:bg-white/[0.1] transition-all"
+                  className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -476,7 +476,7 @@ export default function ProfilePage() {
               <div className="flex justify-end gap-3 mt-6">
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="px-4 py-2 rounded-xl bg-white/[0.06] text-[#475569] text-sm font-medium hover:bg-white/[0.1] transition-all"
+                  className="px-4 py-2 rounded-xl bg-white/[0.06] text-[#475569] text-sm font-medium hover:bg-[#f1f5f9] transition-all"
                 >
                   Cancel
                 </button>
@@ -501,7 +501,7 @@ export default function ProfilePage() {
             className="w-full max-w-md mx-4 p-6 rounded-2xl bg-[#0d1425] border border-[#e2e8f0] shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-semibold text-lg">Two-Factor Authentication</h3>
-              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-white hover:bg-white/[0.1] transition-all">
+              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all">
                 <X className="w-4 h-4" />
               </button>
             </div>

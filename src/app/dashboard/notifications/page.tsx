@@ -182,7 +182,7 @@ export default function NotificationsPage() {
             className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
               filter === f.value
                 ? "bg-[var(--primary)] text-[#1a1a2e]"
-                : "bg-[#f8fafc] text-[#64748b] hover:text-white hover:bg-[#f1f5f9]"
+                : "bg-[#f8fafc] text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9]"
             }`}
           >
             {f.label}

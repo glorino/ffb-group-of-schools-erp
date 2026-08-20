@@ -220,7 +220,7 @@ function AnnouncementsPageInner() {
                 <Filter className="w-4 h-4" />
               </button>
               {showFilter && (
-                <div className="absolute right-0 top-full mt-2 z-40 w-44 rounded-xl bg-[#0f1b33] border border-white/[0.12] shadow-2xl p-1">
+                <div className="absolute right-0 top-full mt-2 z-40 w-44 rounded-xl bg-white border border-[#e2e8f0] shadow-2xl p-1">
                   {["all", "published", "draft", "pinned"].map((opt) => (
                     <button
                       key={opt}
@@ -278,7 +278,7 @@ function AnnouncementsPageInner() {
                   </div>
                   {!isReadOnly && (
                     <div className="flex items-center gap-2">
-                      <button onClick={() => openEdit(announcement)} className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-all">
+                      <button onClick={() => openEdit(announcement)} className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-all">
                         <Edit className="w-4 h-4" />
                       </button>
                       <button onClick={() => handleDelete(announcement.id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-[#64748b] hover:text-[#dc2626] transition-all">
@@ -295,7 +295,7 @@ function AnnouncementsPageInner() {
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-[#0a1628] border border-white/[0.12] shadow-2xl p-6">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-semibold text-lg">{editAnnouncement ? "Edit Announcement" : "New Announcement"}</h3>
               <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b]">
@@ -315,19 +315,19 @@ function AnnouncementsPageInner() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Type</label>
-                  <select value={type} onChange={(e) => setType(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }}>
-                    <option value="general" style={{ background: "#0f1b33", color: "#1a1a2e" }}>General</option>
-                    <option value="academic" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Academic</option>
-                    <option value="sports" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Sports</option>
-                    <option value="admin" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Admin</option>
+                  <select value={type} onChange={(e) => setType(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
+                    <option value="general" style={{ background: "#ffffff", color: "#1a1a2e" }}>General</option>
+                    <option value="academic" style={{ background: "#ffffff", color: "#1a1a2e" }}>Academic</option>
+                    <option value="sports" style={{ background: "#ffffff", color: "#1a1a2e" }}>Sports</option>
+                    <option value="admin" style={{ background: "#ffffff", color: "#1a1a2e" }}>Admin</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Priority</label>
-                  <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }}>
-                    <option value="low" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Low</option>
-                    <option value="medium" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Medium</option>
-                    <option value="high" style={{ background: "#0f1b33", color: "#1a1a2e" }}>High</option>
+                  <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
+                    <option value="low" style={{ background: "#ffffff", color: "#1a1a2e" }}>Low</option>
+                    <option value="medium" style={{ background: "#ffffff", color: "#1a1a2e" }}>Medium</option>
+                    <option value="high" style={{ background: "#ffffff", color: "#1a1a2e" }}>High</option>
                   </select>
                 </div>
               </div>

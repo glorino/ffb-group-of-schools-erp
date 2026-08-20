@@ -230,7 +230,7 @@ export default function LibraryPage() {
           <div className="flex gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
@@ -429,11 +429,11 @@ export default function LibraryPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
+            className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Book</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -485,14 +485,14 @@ export default function LibraryPage() {
                 <select
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  style={{ colorScheme: "dark" }}
+                  style={{ colorScheme: "light" }}
                   className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Textbook</option>
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Literature</option>
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Exam Prep</option>
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Reference</option>
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }}>Practical</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Textbook</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Literature</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Exam Prep</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Reference</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Practical</option>
                 </select>
               </div>
               <div>
@@ -531,11 +531,11 @@ export default function LibraryPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
+            className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Issue Book</h2>
-              <button onClick={() => setShowIssueModal(false)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setShowIssueModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -556,13 +556,13 @@ export default function LibraryPage() {
                 <select
                   value={issueForm.bookId}
                   onChange={(e) => setIssueForm({ ...issueForm, bookId: e.target.value })}
-                  style={{ colorScheme: "dark" }}
+                  style={{ colorScheme: "light" }}
                   className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   required
                 >
-                  <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="">Select a book</option>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">Select a book</option>
                   {books.filter((b) => b.available > 0).map((book) => (
-                    <option key={book.id} style={{ background: "#0f1b33", color: "#1a1a2e" }} value={book.id}>
+                    <option key={book.id} style={{ background: "#ffffff", color: "#1a1a2e" }} value={book.id}>
                       {book.title} ({book.available} available)
                     </option>
                   ))}
@@ -574,7 +574,7 @@ export default function LibraryPage() {
                   type="date"
                   value={issueForm.dueDate}
                   onChange={(e) => setIssueForm({ ...issueForm, dueDate: e.target.value })}
-                  style={{ colorScheme: "dark" }}
+                  style={{ colorScheme: "light" }}
                   className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   required
                 />
@@ -605,11 +605,11 @@ export default function LibraryPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
+            className="w-full max-w-lg rounded-2xl bg-white border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewBook.title}</h2>
-              <button onClick={() => setViewBook(null)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setViewBook(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -652,7 +652,7 @@ export default function LibraryPage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditBook(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Book</h3>
                 <button onClick={() => setEditBook(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
@@ -717,10 +717,10 @@ export default function LibraryPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowPenalties(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6">
+            className="w-full max-w-2xl rounded-2xl bg-white border border-[#e2e8f0] p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Penalty Details</h2>
-              <button onClick={() => setShowPenalties(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowPenalties(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">

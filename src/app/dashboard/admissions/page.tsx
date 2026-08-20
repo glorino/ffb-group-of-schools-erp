@@ -193,12 +193,12 @@ export default function AdmissionsPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          style={{ colorScheme: "dark" }}
+          style={{ colorScheme: "light" }}
           className="px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
         >
-          <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>All Status</option>
+          <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>All Status</option>
           {Object.entries(statusLabels).map(([val, label]) => (
-            <option key={val} value={val} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{label}</option>
+            <option key={val} value={val} style={{ background: "#ffffff", color: "#1a1a2e" }}>{label}</option>
           ))}
         </select>
       </div>
@@ -213,7 +213,7 @@ export default function AdmissionsPage() {
           <div className="text-center py-16"><FileText className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" /><p className="text-[#94a3b8] text-[13px]">No applications found</p></div>
         ) : (
           applicants.map((a, i) => (
-            <motion.div key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5 hover:border-white/[0.12] transition-all">
+            <motion.div key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5 hover:border-[#e2e8f0] transition-all">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-sm font-bold border border-[#e2e8f0] flex-shrink-0">
@@ -234,7 +234,7 @@ export default function AdmissionsPage() {
                   <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusColors[a.status] || "bg-[#f1f5f9] text-[#475569]"}`}>
                     {statusLabels[a.status] || a.status}
                   </span>
-                  <button onClick={() => setSelectedApplicant(a)} className="p-2 rounded-lg bg-[#f8fafc] text-[#64748b] hover:text-white hover:bg-[#f1f5f9] transition">
+                  <button onClick={() => setSelectedApplicant(a)} className="p-2 rounded-lg bg-[#f8fafc] text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition">
                     <Eye className="w-4 h-4" />
                   </button>
                   {a.status === "pending" && (
@@ -258,10 +258,10 @@ export default function AdmissionsPage() {
       <AnimatePresence>
         {selectedApplicant && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => setSelectedApplicant(null)}>
-             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-[#0a1628] border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto">
+             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-white border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto">
                <div className="flex items-center justify-between mb-5">
                  <h3 className="text-[#1a1a2e] font-bold text-lg">Application Details</h3>
-                 <button onClick={() => setSelectedApplicant(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-white hover:bg-[#f1f5f9] transition"><X className="w-5 h-5" /></button>
+                 <button onClick={() => setSelectedApplicant(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition"><X className="w-5 h-5" /></button>
                </div>
                <div className="space-y-4">
                  <div className="flex items-center gap-4 mb-4">
@@ -344,10 +344,10 @@ export default function AdmissionsPage() {
                               </div>
                             </div>
                             <div className="flex items-center gap-1">
-                              <a href={doc.url} target="_blank" rel="noopener noreferrer" title="View document" className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-white/[0.06] transition">
+                              <a href={doc.url} target="_blank" rel="noopener noreferrer" title="View document" className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] transition">
                                 <Eye className="w-4 h-4" />
                               </a>
-                              <a href={doc.url} download title="Download document" className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-white/[0.06] transition">
+                              <a href={doc.url} download title="Download document" className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] transition">
                                 <Download className="w-4 h-4" />
                               </a>
                             </div>
@@ -399,7 +399,7 @@ export default function AdmissionsPage() {
       <AnimatePresence>
         {showActionModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => { setShowActionModal(null); setActionNote(""); }}>
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-xl bg-[#0a1628] border border-[#e2e8f0] rounded-3xl p-6">
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-xl bg-white border border-[#e2e8f0] rounded-3xl p-6">
               <h3 className="text-[#1a1a2e] font-bold text-lg mb-2">Review Application</h3>
               <p className="text-[#64748b] text-[13px] mb-4">Add a note for the applicant (optional)</p>
               <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder="Enter notes, instructions or reason..." rows={4} className="w-full p-3 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />

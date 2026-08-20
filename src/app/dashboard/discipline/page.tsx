@@ -119,14 +119,14 @@ export default function DisciplinePage() {
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
         <div className="flex flex-wrap gap-3 mb-4">
           <input type="text" placeholder="Search student or title..." value={filter.search} onChange={e => setFilter({ ...filter, search: e.target.value })} className="input-glass flex-1 min-w-[200px]" />
-          <select value={filter.type} onChange={e => setFilter({ ...filter, type: e.target.value })} className="input-glass" style={{ colorScheme: "dark" }}>
+          <select value={filter.type} onChange={e => setFilter({ ...filter, type: e.target.value })} className="input-glass" style={{ colorScheme: "light" }}>
             <option value="">All Types</option>
             <option value="behavior">Behavior</option>
             <option value="academic">Academic</option>
             <option value="attendance">Attendance</option>
             <option value="safety">Safety</option>
           </select>
-          <select value={filter.status} onChange={e => setFilter({ ...filter, status: e.target.value })} className="input-glass" style={{ colorScheme: "dark" }}>
+          <select value={filter.status} onChange={e => setFilter({ ...filter, status: e.target.value })} className="input-glass" style={{ colorScheme: "light" }}>
             <option value="">All Status</option>
             <option value="pending">Pending</option>
             <option value="warning">Warning</option>
@@ -172,12 +172,12 @@ export default function DisciplinePage() {
       <AnimatePresence>
         {showModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={() => setShowModal(false)}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={e => e.stopPropagation()} className="bg-[#0f1b33] border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={e => e.stopPropagation()} className="bg-white border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
               <h2 className="text-xl font-bold text-[#1a1a2e] mb-4">{editingRecord ? "Edit Record" : "New Discipline Record"}</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-[#64748b] text-sm mb-1">Student</label>
-                  <select required value={form.studentId} onChange={e => setForm({ ...form, studentId: e.target.value })} className="input-glass w-full" style={{ colorScheme: "dark" }}>
+                  <select required value={form.studentId} onChange={e => setForm({ ...form, studentId: e.target.value })} className="input-glass w-full" style={{ colorScheme: "light" }}>
                     <option value="">Select student</option>
                     {students.map(s => <option key={s.id} value={s.id}>{s.firstName} {s.lastName} ({s.admissionNumber})</option>)}
                   </select>
@@ -185,7 +185,7 @@ export default function DisciplinePage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[#64748b] text-sm mb-1">Type</label>
-                    <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className="input-glass w-full" style={{ colorScheme: "dark" }}>
+                    <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className="input-glass w-full" style={{ colorScheme: "light" }}>
                       <option value="behavior">Behavior</option>
                       <option value="academic">Academic</option>
                       <option value="attendance">Attendance</option>
@@ -194,7 +194,7 @@ export default function DisciplinePage() {
                   </div>
                   <div>
                     <label className="block text-[#64748b] text-sm mb-1">Action</label>
-                    <select value={form.action} onChange={e => setForm({ ...form, action: e.target.value })} className="input-glass w-full" style={{ colorScheme: "dark" }}>
+                    <select value={form.action} onChange={e => setForm({ ...form, action: e.target.value })} className="input-glass w-full" style={{ colorScheme: "light" }}>
                       <option value="pending">Pending</option>
                       <option value="warning">Warning</option>
                       <option value="suspension">Suspension</option>
@@ -213,7 +213,7 @@ export default function DisciplinePage() {
                 </div>
                 <div>
                   <label className="block text-[#64748b] text-sm mb-1">Date</label>
-                  <input type="date" required value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="input-glass w-full" style={{ colorScheme: "dark" }} />
+                  <input type="date" required value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="input-glass w-full" style={{ colorScheme: "light" }} />
                 </div>
                 <div className="flex gap-3 pt-2">
                   <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-2 border border-[#e2e8f0] rounded-lg text-[#475569] hover:bg-[#f8fafc]">Cancel</button>

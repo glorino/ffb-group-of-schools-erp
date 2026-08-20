@@ -38,15 +38,42 @@ export default function ParentsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [viewGuardian, setViewGuardian] = useState<Guardian | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchGuardians();
   }, []);
 
   useEffect(() => {
+    setCurrentPage(1);
     const timeout = setTimeout(() => fetchGuardians(), 300);
     return () => clearTimeout(timeout);
   }, [search]);
+
+  const rowsPerPage = 10;
+  const totalPages = Math.ceil(guardians.length / rowsPerPage);
+  const displayedGuardians = guardians.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+  const startIndex = (currentPage - 1) * rowsPerPage + 1;
+  const endIndex = Math.min(currentPage * rowsPerPage, guardians.length);
+
+  const getPageNumbers = () => {
+    const pages: (number | "...")[] = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push("...");
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (currentPage < totalPages - 2) pages.push("...");
+      pages.push(totalPages);
+    }
+    return pages;
+  };
 
   const fetchGuardians = async () => {
     setLoading(true);
@@ -156,7 +183,7 @@ export default function ParentsPage() {
                 </tr>
               </thead>
               <tbody>
-                {guardians.map((g) => (
+                {displayedGuardians.map((g) => (
                   <tr key={g.id} className="border-b border-white/5 hover:bg-[#f8fafc] transition-all">
                     <td className="py-3">
                       <div className="flex items-center gap-3">
@@ -202,6 +229,49 @@ export default function ParentsPage() {
             </table>
           </div>
         )}
+
+        {!loading && guardians.length > 0 && totalPages > 0 && (
+          <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#e2e8f0]">
+            <p className="text-[13px] text-[#64748b]">
+              Showing {startIndex}-{endIndex} of {guardians.length}
+            </p>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-[#1a1a2e] hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                Previous
+              </button>
+              {getPageNumbers().map((page, i) =>
+                page === "..." ? (
+                  <span key={`ellipsis-${i}`} className="px-2 py-1.5 text-[13px] text-[#64748b]">
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page as number)}
+                    className={`w-8 h-8 text-[13px] rounded-lg border transition-all ${
+                      currentPage === page
+                        ? "bg-white text-white border-[#1a1a2e]"
+                        : "bg-white text-[#1a1a2e] border-[#e2e8f0] hover:bg-[#f8fafc]"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-[#1a1a2e] hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </motion.div>
 
       <AnimatePresence>
@@ -210,7 +280,7 @@ export default function ParentsPage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setViewGuardian(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Guardian Details</h3>
                 <button onClick={() => setViewGuardian(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
@@ -245,7 +315,7 @@ export default function ParentsPage() {
                 </div>
               </div>
               <div className="flex justify-end mt-6">
-                <button onClick={() => setViewGuardian(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all">Close</button>
+                <button onClick={() => setViewGuardian(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all">Close</button>
               </div>
             </motion.div>
           </motion.div>

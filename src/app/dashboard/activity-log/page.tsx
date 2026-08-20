@@ -77,7 +77,7 @@ export default function ActivityLogPage() {
         ) : (
           <div className="space-y-2">
             {filtered.map((log) => (
-              <div key={log.id} className="flex items-center gap-4 p-4 rounded-xl bg-[#f8fafc] hover:bg-white/[0.06] transition-all">
+              <div key={log.id} className="flex items-center gap-4 p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#dbeafe] text-[#2563eb]">
                   <Activity className="w-5 h-5" />
                 </div>

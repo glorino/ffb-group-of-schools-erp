@@ -196,7 +196,7 @@ export default function CalendarPage() {
                 handleExport();
                 toast.success("Exported successfully");
               }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <Filter className="w-4 h-4" />
               Filter
@@ -379,11 +379,11 @@ export default function CalendarPage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
+              className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Event</h3>
-                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
+                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -407,7 +407,7 @@ export default function CalendarPage() {
                       required
                       value={form.start}
                       onChange={(e) => setForm({ ...form, start: e.target.value })}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
@@ -417,7 +417,7 @@ export default function CalendarPage() {
                       type="datetime-local"
                       value={form.end}
                       onChange={(e) => setForm({ ...form, end: e.target.value })}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
@@ -428,15 +428,15 @@ export default function CalendarPage() {
                     <select
                       value={form.type}
                       onChange={(e) => setForm({ ...form, type: e.target.value })}
-                      style={{ colorScheme: "dark" }}
+                      style={{ colorScheme: "light" }}
                       className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     >
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="event">Event</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="exam">Exam</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="meeting">Meeting</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="admin">Administrative</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="holiday">Holiday</option>
-                      <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="sports">Sports</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="event">Event</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="exam">Exam</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="meeting">Meeting</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="admin">Administrative</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="holiday">Holiday</option>
+                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="sports">Sports</option>
                     </select>
                   </div>
                   <div>

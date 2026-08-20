@@ -253,18 +253,18 @@ export default function FinancePage() {
           <div className="flex items-center gap-2">
             <select value={filterSession} onChange={(e) => setFilterSession(e.target.value)}
               className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] focus:outline-none focus:border-[var(--primary)]"
-              style={{ colorScheme: "dark" }}>
-              <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="">All Sessions</option>
-              {academicYears.map((y: any) => <option key={y.id} style={{ background: "#0f1b33", color: "#1a1a2e" }} value={y.name}>{y.name}</option>)}
+              style={{ colorScheme: "light" }}>
+              <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">All Sessions</option>
+              {academicYears.map((y: any) => <option key={y.id} style={{ background: "#ffffff", color: "#1a1a2e" }} value={y.name}>{y.name}</option>)}
             </select>
             <select value={filterTerm} onChange={(e) => setFilterTerm(e.target.value)}
               className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] focus:outline-none focus:border-[var(--primary)]"
-              style={{ colorScheme: "dark" }}>
-              <option style={{ background: "#0f1b33", color: "#1a1a2e" }} value="">All Terms</option>
-              {terms.map((t: any) => <option key={t.id} style={{ background: "#0f1b33", color: "#1a1a2e" }} value={t.name}>{t.name}</option>)}
+              style={{ colorScheme: "light" }}>
+              <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">All Terms</option>
+              {terms.map((t: any) => <option key={t.id} style={{ background: "#ffffff", color: "#1a1a2e" }} value={t.name}>{t.name}</option>)}
             </select>
           </div>
-          <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200">
+          <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200">
             <Download className="w-4 h-4" /> Export
           </button>
           {!isReadOnly && (
@@ -318,7 +318,7 @@ export default function FinancePage() {
               ) : (
                 <div className="space-y-2">
                   {payments.slice(0, 5).map((p, i) => (
-                    <div key={p.id || i} className="flex items-center justify-between p-3 rounded-xl bg-[#f1f5f9] hover:bg-white/[0.06] transition">
+                    <div key={p.id || i} className="flex items-center justify-between p-3 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] transition">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                           <CheckCircle2 className="w-4 h-4 text-[#16a34a]" />
@@ -478,14 +478,14 @@ export default function FinancePage() {
         {showModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden">
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden">
               <div className="bg-gradient-to-r from-emerald-500/20 to-emerald-600/5 px-6 py-4 border-b border-[#e2e8f0]">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-[#1a1a2e] font-semibold text-lg">Create Invoice</h3>
                     <p className="text-[#64748b] text-xs mt-0.5">Generate a new fee invoice for a student</p>
                   </div>
-                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-colors">
+                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-colors">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -498,7 +498,7 @@ export default function FinancePage() {
                     <ChevronDown className={`w-4 h-4 text-[#64748b] transition-transform ${showStudentDropdown ? "rotate-180" : ""}`} />
                   </button>
                   {showStudentDropdown && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#0f1b33] border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
                       <div className="p-2 border-b border-[#e2e8f0]">
                         <input type="text" placeholder="Search students..." value={studentSearch} onChange={(e) => setStudentSearch(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-xs focus:outline-none focus:border-[var(--primary)]" autoFocus />
                       </div>
@@ -526,7 +526,7 @@ export default function FinancePage() {
                   </div>
                   <div>
                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Due Date *</label>
-                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }} />
+                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
                   </div>
                 </div>
                 ) : (
@@ -537,17 +537,17 @@ export default function FinancePage() {
                   </div>
                   <div>
                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Due Date *</label>
-                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }} />
+                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
                   </div>
                 </div>
                 )}
 
                 <div>
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">School Fee *</label>
-                  <select value={form.schoolFeeId} onChange={(e) => { setForm({ ...form, schoolFeeId: e.target.value }); const f = fees.find(fe => fe.id === e.target.value); setSelectedFeeName(f ? `${f.name} (${f.type})` : ""); }} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer" style={{ colorScheme: "dark" }}>
-                    <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Select fee type</option>
+                  <select value={form.schoolFeeId} onChange={(e) => { setForm({ ...form, schoolFeeId: e.target.value }); const f = fees.find(fe => fe.id === e.target.value); setSelectedFeeName(f ? `${f.name} (${f.type})` : ""); }} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer" style={{ colorScheme: "light" }}>
+                    <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select fee type</option>
                     {fees.map(f => (
-                      <option key={f.id} value={f.id} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{f.name} — {formatCurrency(f.amount)}</option>
+                      <option key={f.id} value={f.id} style={{ background: "#ffffff", color: "#1a1a2e" }}>{f.name} — {formatCurrency(f.amount)}</option>
                     ))}
                   </select>
                 </div>

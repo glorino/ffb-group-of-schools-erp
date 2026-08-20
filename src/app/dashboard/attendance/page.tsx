@@ -326,7 +326,7 @@ export default function AttendancePage() {
       {showQRScanner && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60" onClick={() => setShowQRScanner(false)} />
-          <div className="relative bg-[#0a0f1e] rounded-2xl p-6 w-full max-w-md border border-[#e2e8f0]">
+          <div className="relative bg-white rounded-2xl p-6 w-full max-w-md border border-[#e2e8f0]">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">QR Scanner / Admission Number</h3>
             <input type="text" placeholder="Scan QR or type admission number..." autoFocus
               onKeyDown={async (e) => {

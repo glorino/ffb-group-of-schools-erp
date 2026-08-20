@@ -148,7 +148,7 @@ export default function PayrollPage() {
                 })), `payroll_${monthLabel}`);
                 toast.success("Exported successfully");
               }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
@@ -204,20 +204,20 @@ export default function PayrollPage() {
               value={currentMonth}
               onChange={(e) => setCurrentMonth(e.target.value)}
               className="px-3 py-1.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-xs outline-none"
-              style={{ colorScheme: "dark" }}
+              style={{ colorScheme: "light" }}
             >
               {monthNames.map((m, i) => (
-                <option key={i} value={String(i + 1)} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{m}</option>
+                <option key={i} value={String(i + 1)} style={{ background: "#ffffff", color: "#1a1a2e" }}>{m}</option>
               ))}
             </select>
             <select
               value={currentYear}
               onChange={(e) => setCurrentYear(e.target.value)}
               className="px-3 py-1.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-xs outline-none"
-              style={{ colorScheme: "dark" }}
+              style={{ colorScheme: "light" }}
             >
               {[2024, 2025, 2026].map(y => (
-                <option key={y} value={y} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{y}</option>
+                <option key={y} value={y} style={{ background: "#ffffff", color: "#1a1a2e" }}>{y}</option>
               ))}
             </select>
           </div>
@@ -313,7 +313,7 @@ export default function PayrollPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-[#e2e8f0] shadow-2xl"
+              className="w-full max-w-xl bg-white/95 backdrop-blur-2xl rounded-2xl border border-[#e2e8f0] shadow-2xl"
             >
               <div className="flex items-center justify-between px-6 py-4 border-b border-[#e2e8f0]">
                 <h3 className="text-[#1a1a2e] font-semibold">Add Payroll Entry</h3>
@@ -324,10 +324,10 @@ export default function PayrollPage() {
                   <label className="block text-[#64748b] text-[12px] mb-1.5">Teacher *</label>
                   <select value={form.teacherId} onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
                     className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
-                    style={{ colorScheme: "dark" }}>
-                    <option value="" style={{ background: "#0f1b33", color: "#1a1a2e" }}>Select Teacher</option>
+                    style={{ colorScheme: "light" }}>
+                    <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select Teacher</option>
                     {teachers.map(t => (
-                      <option key={t.id} value={t.id} style={{ background: "#0f1b33", color: "#1a1a2e" }}>{t.firstName} {t.lastName} ({t.employeeId})</option>
+                      <option key={t.id} value={t.id} style={{ background: "#ffffff", color: "#1a1a2e" }}>{t.firstName} {t.lastName} ({t.employeeId})</option>
                     ))}
                   </select>
                 </div>
