@@ -290,23 +290,21 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20"
+        className="dashboard-card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20"
       >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="section-header">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Analytics Dashboard</h1>
-            <p className="text-white/60 text-[13px]">
-              Charts, KPIs, heatmaps, and trend analysis for data-driven decisions
-            </p>
+            <h1 className="section-title">Analytics Dashboard</h1>
+            <p className="section-subtitle">Charts, KPIs, heatmaps, and trend analysis for data-driven decisions</p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => toast.success("Filters applied")}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all"
+              className="btn btn-secondary"
             >
               <Filter className="w-4 h-4" />
               Filter
@@ -321,7 +319,7 @@ export default function AnalyticsPage() {
                 }));
                 downloadCSV(data, "analytics_report");
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+              className="btn btn-primary"
             >
               <Download className="w-4 h-4" />
               Export Report
@@ -330,57 +328,55 @@ export default function AnalyticsPage() {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="stats-grid-4">
         {kpiData.map((kpi, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="card"
+            className="stat-card"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-white/50 text-[12px] mb-1">{kpi.label}</p>
-                <p className="text-3xl font-bold text-white">{kpi.value}</p>
-                <div className="flex items-center gap-1 mt-2">
-                  {kpi.trend === "up" ? (
-                    <ArrowUpRight className="w-4 h-4 text-emerald-400" />
-                  ) : (
-                    <ArrowDownRight className="w-4 h-4 text-red-400" />
-                  )}
-                  <span className={`text-sm font-medium ${kpi.trend === "up" ? "text-emerald-400" : "text-red-400"}`}>
-                    {kpi.change}
-                  </span>
-                </div>
-              </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center`}>
-                <kpi.icon className="w-6 h-6 text-white" />
+            <div className={`stat-card-icon bg-gradient-to-br ${kpi.color}`}>
+              <kpi.icon className="w-6 h-6 text-white" />
+            </div>
+            <div className="stat-card-content">
+              <p className="stat-card-label">{kpi.label}</p>
+              <p className="stat-card-value">{kpi.value}</p>
+              <div className="flex items-center gap-1 mt-1">
+                {kpi.trend === "up" ? (
+                  <ArrowUpRight className="w-3 h-3 text-[#16a34a]" />
+                ) : (
+                  <ArrowDownRight className="w-3 h-3 text-[#dc2626]" />
+                )}
+                <span className={`text-[11px] font-medium ${kpi.trend === "up" ? "text-[#16a34a]" : "text-[#dc2626]"}`}>
+                  {kpi.change}
+                </span>
               </div>
             </div>
           </motion.div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="charts-grid-equal">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="card"
+          className="dashboard-card"
         >
-          <h3 className="text-white font-semibold text-lg mb-6">Class Performance</h3>
-          <div className="space-y-4">
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Class Performance</h3>
+          <div className="space-y-3">
             {classPerformance.map((cls, i) => (
-              <div key={i} className="flex items-center gap-4">
-                <span className="text-white/60 text-[13px] w-12">{cls.class}</span>
-                <div className="flex-1">
-                  <div className="flex gap-1">
-                    <div className="bg-emerald-500/80 h-6 rounded-l-lg" style={{ width: `${cls.pass}%` }} />
-                    <div className="bg-red-500/80 h-6 rounded-r-lg" style={{ width: `${cls.fail}%` }} />
+              <div key={i} className="flex items-center gap-3">
+                <span className="text-[#475569] text-[12px] w-12 flex-shrink-0">{cls.class}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex gap-0.5">
+                    <div className="bg-emerald-500/80 h-5 rounded-l" style={{ width: `${cls.pass}%` }} />
+                    <div className="bg-red-500/80 h-5 rounded-r" style={{ width: `${cls.fail}%` }} />
                   </div>
                 </div>
-                <span className="text-white/40 text-[13px] w-16 text-right">{cls.avg}% avg</span>
+                <span className="text-[#64748b] text-[11px] w-14 text-right flex-shrink-0">{cls.avg}% avg</span>
               </div>
             ))}
           </div>
@@ -390,26 +386,26 @@ export default function AnalyticsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="card"
+          className="dashboard-card"
         >
-          <h3 className="text-white font-semibold text-lg mb-6">Subject Performance</h3>
-          <div className="space-y-4">
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Subject Performance</h3>
+          <div className="space-y-3">
             {subjectPerformance.map((subject, i) => (
-              <div key={i} className="flex items-center gap-4">
-                <span className="text-white/60 text-[13px] w-24">{subject.subject}</span>
-                <div className="flex-1">
-                  <div className="w-full bg-white/10 rounded-full h-3">
+              <div key={i} className="flex items-center gap-3">
+                <span className="text-[#475569] text-[12px] w-24 flex-shrink-0 truncate">{subject.subject}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="progress-bar">
                     <div
-                      className="bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] h-3 rounded-full"
+                      className="progress-bar-fill bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]"
                       style={{ width: `${subject.avg}%` }}
                     />
                   </div>
                 </div>
-                <span className="text-white/40 text-[13px] w-12 text-right">{subject.avg}%</span>
+                <span className="text-[#64748b] text-[11px] w-10 text-right flex-shrink-0">{subject.avg}%</span>
                 {subject.trend === "up" ? (
-                  <ArrowUpRight className="w-4 h-4 text-emerald-400" />
+                  <ArrowUpRight className="w-3 h-3 text-[#16a34a] flex-shrink-0" />
                 ) : (
-                  <ArrowDownRight className="w-4 h-4 text-red-400" />
+                  <ArrowDownRight className="w-3 h-3 text-[#dc2626] flex-shrink-0" />
                 )}
               </div>
             ))}
@@ -421,32 +417,32 @@ export default function AnalyticsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="card"
+        className="dashboard-card"
       >
-        <h3 className="text-white font-semibold text-lg mb-6">Monthly Revenue Trend</h3>
+        <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Monthly Revenue Trend</h3>
         <div className="flex items-end justify-between h-48 gap-4">
           {monthlyRevenue.map((month, i) => (
             <div key={i} className="flex-1 flex flex-col items-center">
-              <span className="text-white/40 text-[13px] mb-2">{formatCurrencyCompact(month.amount * 1000000)}</span>
+              <span className="text-[#64748b] text-[11px] mb-2">{formatCurrencyCompact(month.amount * 1000000)}</span>
               <div
                 className="w-full bg-gradient-to-t from-[var(--primary)] to-[var(--accent)] rounded-t-lg transition-all duration-500"
                 style={{ height: `${month.amount > 0 ? Math.max((month.amount / 50) * 100, 5) : 2}%` }}
               />
-              <span className="text-white/40 text-[13px] mt-2">{month.month}</span>
+              <span className="text-[#64748b] text-[11px] mt-2">{month.month}</span>
             </div>
           ))}
         </div>
       </motion.div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="charts-grid-equal">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="card bg-white/[0.03] backdrop-blur-xl border border-white/[0.08]"
+          className="dashboard-card"
         >
-          <h3 className="text-white font-semibold text-lg mb-6">Gender Distribution</h3>
-          <ResponsiveContainer width="100%" height={280}>
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Gender Distribution</h3>
+          <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie
                 data={genderData}
@@ -464,13 +460,13 @@ export default function AnalyticsPage() {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  background: "rgba(15,23,42,0.9)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "#ffffff",
+                  border: "1px solid #e2e8f0",
                   borderRadius: "12px",
-                  color: "#fff",
+                  color: "#1a1a2e",
                 }}
               />
-              <Legend wrapperStyle={{ color: "rgba(255,255,255,0.6)" }} />
+              <Legend wrapperStyle={{ color: "#64748b" }} />
             </PieChart>
           </ResponsiveContainer>
         </motion.div>
@@ -479,10 +475,10 @@ export default function AnalyticsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="card bg-white/[0.03] backdrop-blur-xl border border-white/[0.08]"
+          className="dashboard-card"
         >
-          <h3 className="text-white font-semibold text-lg mb-6">Attendance Overview</h3>
-          <ResponsiveContainer width="100%" height={280}>
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Attendance Overview</h3>
+          <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie
                 data={attendanceData}
@@ -500,40 +496,40 @@ export default function AnalyticsPage() {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  background: "rgba(15,23,42,0.9)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "#ffffff",
+                  border: "1px solid #e2e8f0",
                   borderRadius: "12px",
-                  color: "#fff",
+                  color: "#1a1a2e",
                 }}
               />
-              <Legend wrapperStyle={{ color: "rgba(255,255,255,0.6)" }} />
+              <Legend wrapperStyle={{ color: "#64748b" }} />
             </PieChart>
           </ResponsiveContainer>
         </motion.div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="charts-grid-equal">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
-          className="card bg-white/[0.03] backdrop-blur-xl border border-white/[0.08]"
+          className="dashboard-card"
         >
-          <h3 className="text-white font-semibold text-lg mb-6">Payment Trend</h3>
-          <ResponsiveContainer width="100%" height={280}>
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Payment Trend</h3>
+          <ResponsiveContainer width="100%" height={260}>
             <LineChart data={monthlyRevenue}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-              <XAxis dataKey="month" stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
-              <YAxis stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="month" stroke="#94a3b8" tick={{ fontSize: 11 }} />
+              <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
               <Tooltip
                 contentStyle={{
-                  background: "rgba(15,23,42,0.9)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "#ffffff",
+                  border: "1px solid #e2e8f0",
                   borderRadius: "12px",
-                  color: "#fff",
+                  color: "#1a1a2e",
                 }}
               />
-              <Legend wrapperStyle={{ color: "rgba(255,255,255,0.6)" }} />
+              <Legend wrapperStyle={{ color: "#64748b" }} />
               <Line
                 type="monotone"
                 dataKey="amount"
@@ -551,23 +547,23 @@ export default function AnalyticsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.0 }}
-          className="card bg-white/[0.03] backdrop-blur-xl border border-white/[0.08]"
+          className="dashboard-card"
         >
-          <h3 className="text-white font-semibold text-lg mb-6">Class Performance</h3>
-          <ResponsiveContainer width="100%" height={280}>
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Class Performance</h3>
+          <ResponsiveContainer width="100%" height={260}>
             <BarChart data={classPerformance}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-              <XAxis dataKey="class" stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
-              <YAxis stroke="rgba(255,255,255,0.4)" tick={{ fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="class" stroke="#94a3b8" tick={{ fontSize: 11 }} />
+              <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
               <Tooltip
                 contentStyle={{
-                  background: "rgba(15,23,42,0.9)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "#ffffff",
+                  border: "1px solid #e2e8f0",
                   borderRadius: "12px",
-                  color: "#fff",
+                  color: "#1a1a2e",
                 }}
               />
-              <Legend wrapperStyle={{ color: "rgba(255,255,255,0.6)" }} />
+              <Legend wrapperStyle={{ color: "#64748b" }} />
               <Bar dataKey="avg" fill="#34d399" radius={[6, 6, 0, 0]} name="Avg Score %" />
             </BarChart>
           </ResponsiveContainer>

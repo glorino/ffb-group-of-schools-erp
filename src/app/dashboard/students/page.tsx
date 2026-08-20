@@ -155,15 +155,10 @@ export default function StudentsPage() {
   return (
     <motion.div {...fadeIn} className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="section-header">
         <div>
-          <h1 className="text-[22px] font-bold text-white/95 font-display tracking-tight flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-              <Users className="w-[18px] h-[18px] text-white" />
-            </div>
-            Students
-          </h1>
-          <p className="text-white/30 text-[12px] mt-1 ml-[46px]">Manage student records and profiles</p>
+          <h1 className="section-title">Students</h1>
+          <p className="section-subtitle">Manage student records and profiles</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -178,7 +173,7 @@ export default function StudentsPage() {
                 toast.error(err.message || "Graduation failed");
               }
             }}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-600/10 border border-amber-500/30 text-amber-300 text-[13px] font-medium hover:bg-amber-500/25 transition flex items-center gap-2"
+            className="btn btn-secondary"
           >
             <GraduationCap className="w-4 h-4" />
             Graduate SSS 3
@@ -192,14 +187,14 @@ export default function StudentsPage() {
               Status: s.status,
               "Date Added": new Date(s.createdAt).toLocaleDateString(),
             })), "students_list")}
-            className="px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition flex items-center gap-2"
+            className="btn btn-secondary"
           >
             <Download className="w-4 h-4" />
             Export
           </button>
           <button
             onClick={() => { setEditingStudent(null); setForm({ firstName: "", lastName: "", email: "", phone: "", admissionNumber: "", guardianName: "", guardianPhone: "", classId: "" }); setShowModal(true); }}
-            className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2"
+            className="btn btn-primary"
           >
             <UserPlus className="w-4 h-4" />
             Add Student
@@ -210,19 +205,19 @@ export default function StudentsPage() {
       {/* Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1 relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
           <input
             type="text"
             placeholder="Search by name, admission number, or email..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 focus:bg-white/[0.06] transition-all"
+            className="input-search pl-10"
           />
         </div>
         <select
           value={classFilter}
           onChange={(e) => { setClassFilter(e.target.value); setPage(1); }}
-          className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
+          className="select-field"
         >
           <option value="">All Classes</option>
           {classes.map((c) => (
@@ -232,23 +227,23 @@ export default function StudentsPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
+          className="select-field"
         >
           <option value="">All Status</option>
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
           <option value="graduated">Graduated</option>
         </select>
-        <div className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.08] rounded-xl p-1">
+        <div className="flex items-center gap-1 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-1">
           <button
             onClick={() => setViewMode("table")}
-            className={`p-2 rounded-lg transition ${viewMode === "table" ? "bg-white/[0.08] text-white/80" : "text-white/30 hover:text-white/50"}`}
+            className={`p-2 rounded-lg transition ${viewMode === "table" ? "bg-[#f8fafc] text-[#1a1a2e]" : "text-[#94a3b8] hover:text-[#64748b]"}`}
           >
             <List className="w-4 h-4" />
           </button>
           <button
             onClick={() => setViewMode("grid")}
-            className={`p-2 rounded-lg transition ${viewMode === "grid" ? "bg-white/[0.08] text-white/80" : "text-white/30 hover:text-white/50"}`}
+            className={`p-2 rounded-lg transition ${viewMode === "grid" ? "bg-[#f8fafc] text-[#1a1a2e]" : "text-[#94a3b8] hover:text-[#64748b]"}`}
           >
             <Grid3X3 className="w-4 h-4" />
           </button>
@@ -257,11 +252,11 @@ export default function StudentsPage() {
 
       {/* Table View */}
       {viewMode === "table" && (
-        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] overflow-hidden">
+        <div className="table-container">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/[0.06]">
+                <tr className="border-b border-[#e2e8f0]">
                   {[
                     { key: "name" as const, label: "Student" },
                     { key: "class" as const, label: "Class" },
@@ -270,7 +265,7 @@ export default function StudentsPage() {
                     <th
                       key={col.key}
                       onClick={() => toggleSort(col.key)}
-                      className="px-5 py-3.5 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider cursor-pointer hover:text-white/50 transition select-none"
+                      className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider cursor-pointer hover:text-[#64748b] transition select-none"
                     >
                       <span className="flex items-center gap-1.5">
                         {col.label}
@@ -280,26 +275,26 @@ export default function StudentsPage() {
                       </span>
                     </th>
                   ))}
-                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Guardian</th>
-                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-white/30 uppercase tracking-wider">Status</th>
-                  <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-white/30 uppercase tracking-wider">Actions</th>
+                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Guardian</th>
+                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i} className="border-b border-white/[0.03]">
+                    <tr key={i} className="border-b border-[#f1f5f9]">
                       <td colSpan={6} className="px-5 py-4">
-                        <div className="h-4 rounded-lg bg-white/[0.04] animate-pulse" />
+                        <div className="h-4 rounded-lg bg-[#f8fafc] animate-pulse" />
                       </td>
                     </tr>
                   ))
                 ) : sortedStudents.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-5 py-16 text-center">
-                      <Users className="w-10 h-10 text-white/10 mx-auto mb-3" />
-                      <p className="text-white/30 text-sm">No students found</p>
-                      <p className="text-white/15 text-[11px] mt-1">Try adjusting your filters</p>
+                      <Users className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" />
+                      <p className="text-[#94a3b8] text-sm">No students found</p>
+                      <p className="text-[#94a3b8] text-[11px] mt-1">Try adjusting your filters</p>
                     </td>
                   </tr>
                 ) : (
@@ -311,45 +306,45 @@ export default function StudentsPage() {
                         initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.03 }}
-                        className="border-b border-white/[0.03] hover:bg-white/[0.03] transition cursor-pointer group"
+                        className="border-b border-[#f1f5f9] hover:bg-[#f1f5f9] transition cursor-pointer group"
                         onClick={() => router.push(`/dashboard/students/${student.id}`)}
                       >
                         <td className="px-5 py-3.5">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-[11px] font-bold border border-white/10 flex-shrink-0">
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-[11px] font-bold border border-[#e2e8f0] flex-shrink-0">
                               {initials}
                             </div>
                             <div>
-                              <p className="text-white/85 text-[13px] font-medium">{student.lastName} {student.firstName}</p>
-                              <p className="text-white/25 text-[11px]">{student.admissionNumber}</p>
+                              <p className="text-[#1a1a2e] text-[13px] font-medium">{student.lastName} {student.firstName}</p>
+                              <p className="text-[#94a3b8] text-[11px]">{student.admissionNumber}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-5 py-3.5">
-                          <span className="px-2.5 py-1 rounded-lg bg-white/[0.05] text-white/50 text-[12px] font-medium border border-white/[0.06]">
+                          <span className="px-2.5 py-1 rounded-lg bg-[#f8fafc] text-[#64748b] text-[12px] font-medium border border-[#e2e8f0]">
                             {student.class?.name || "—"}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 text-white/35 text-[12px]">
+                        <td className="px-5 py-3.5 text-[#64748b] text-[12px]">
                           {new Date(student.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                         </td>
                         <td className="px-5 py-3.5">
                           <div>
-                            <p className="text-white/50 text-[12px]">{student.guardianName || "—"}</p>
-                            <p className="text-white/25 text-[10px]">{student.guardianPhone || ""}</p>
+                            <p className="text-[#64748b] text-[12px]">{student.guardianName || "—"}</p>
+                            <p className="text-[#94a3b8] text-[10px]">{student.guardianPhone || ""}</p>
                           </div>
                         </td>
                         <td className="px-5 py-3.5">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium ${
                             student.status === "active"
-                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                              ? "bg-[#dcfce7] text-[#16a34a] border border-[#dcfce7]"
                               : student.status === "graduated"
-                              ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                              : "bg-white/[0.05] text-white/30 border border-white/[0.06]"
+                              ? "bg-[#dbeafe] text-[#2563eb] border border-[#dbeafe]"
+                              : "bg-[#f8fafc] text-[#94a3b8] border border-[#e2e8f0]"
                           }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${
-                              student.status === "active" ? "bg-emerald-400" :
-                              student.status === "graduated" ? "bg-blue-400" : "bg-white/30"
+                              student.status === "active" ? "bg-[#16a34a]" :
+                              student.status === "graduated" ? "bg-[#2563eb]" : "bg-[#94a3b8]"
                             }`} />
                             {student.status}
                           </span>
@@ -358,27 +353,27 @@ export default function StudentsPage() {
                           <div className="relative">
                             <button
                               onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === student.id ? null : student.id); }}
-                              className="p-1.5 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition opacity-0 group-hover:opacity-100"
+                              className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] transition opacity-0 group-hover:opacity-100"
                             >
                               <MoreHorizontal className="w-4 h-4" />
                             </button>
                             {openMenu === student.id && (
-                              <div className="absolute right-0 top-8 w-36 rounded-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl border border-white/[0.1] shadow-2xl z-[60] overflow-hidden">
+                              <div className="absolute right-0 top-8 w-36 rounded-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl border border-[#e2e8f0] shadow-2xl z-[60] overflow-hidden">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/students/${student.id}`); setOpenMenu(null); }}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-white/50 hover:text-white/80 hover:bg-white/[0.06] text-[12px]"
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] text-[12px]"
                                 >
                                   <Eye className="w-3.5 h-3.5" /> View Profile
                                 </button>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); setEditingStudent(student); setShowModal(true); setOpenMenu(null); }}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-white/50 hover:text-white/80 hover:bg-white/[0.06] text-[12px]"
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] text-[12px]"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" /> Edit
                                 </button>
                                 <button
                                   onClick={async (e) => { e.stopPropagation(); if (confirm(`Remove ${student.firstName} ${student.lastName}?`)) { await fetch(`/api/students?id=${student.id}`, { method: "DELETE" }); toast.success("Student removed"); fetchStudents(); } setOpenMenu(null); }}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.06] text-[12px]"
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-[#dc2626]/70 hover:text-[#dc2626] hover:bg-[#fee2e2]/30 text-[12px]"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" /> Remove
                                 </button>
@@ -396,13 +391,13 @@ export default function StudentsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-5 py-3.5 border-t border-white/[0.05] flex items-center justify-between">
-              <p className="text-white/25 text-[11px]">Page {page} of {totalPages}</p>
+            <div className="px-5 py-3.5 border-t border-[#f8fafc] flex items-center justify-between">
+              <p className="text-[#94a3b8] text-[11px]">Page {page} of {totalPages}</p>
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setPage(Math.max(1, page - 1))}
                   disabled={page === 1}
-                  className="p-1.5 rounded-lg bg-white/[0.04] text-white/30 hover:text-white/60 hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition"
+                  className="p-1.5 rounded-lg bg-[#f8fafc] text-[#94a3b8] hover:text-[#475569] hover:bg-[#e2e8f0] disabled:opacity-30 disabled:cursor-not-allowed transition"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -415,7 +410,7 @@ export default function StudentsPage() {
                       className={`w-8 h-8 rounded-lg text-[12px] font-medium transition ${
                         page === pageNum
                           ? "bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)]/20"
-                          : "bg-white/[0.04] text-white/30 hover:text-white/60 hover:bg-white/[0.08]"
+                          : "bg-[#f8fafc] text-[#94a3b8] hover:text-[#475569] hover:bg-[#e2e8f0]"
                       }`}
                     >
                       {pageNum}
@@ -425,7 +420,7 @@ export default function StudentsPage() {
                 <button
                   onClick={() => setPage(Math.min(totalPages, page + 1))}
                   disabled={page === totalPages}
-                  className="p-1.5 rounded-lg bg-white/[0.04] text-white/30 hover:text-white/60 hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition"
+                  className="p-1.5 rounded-lg bg-[#f8fafc] text-[#94a3b8] hover:text-[#475569] hover:bg-[#e2e8f0] disabled:opacity-30 disabled:cursor-not-allowed transition"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -440,17 +435,17 @@ export default function StudentsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {loading ? (
             Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5 animate-pulse">
+              <div key={i} className="dashboard-card animate-pulse">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-white/[0.06]" />
+                  <div className="w-11 h-11 rounded-xl bg-[#e2e8f0]" />
                   <div className="space-y-1.5 flex-1">
-                    <div className="h-3.5 rounded bg-white/[0.06] w-2/3" />
-                    <div className="h-2.5 rounded bg-white/[0.04] w-1/2" />
+                    <div className="h-3.5 rounded bg-[#e2e8f0] w-2/3" />
+                    <div className="h-2.5 rounded bg-[#f1f5f9] w-1/2" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <div className="h-2.5 rounded bg-white/[0.04]" />
-                  <div className="h-2.5 rounded bg-white/[0.04] w-3/4" />
+                  <div className="h-2.5 rounded bg-[#f1f5f9]" />
+                  <div className="h-2.5 rounded bg-[#f1f5f9] w-3/4" />
                 </div>
               </div>
             ))
@@ -463,45 +458,45 @@ export default function StudentsPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.03 }}
                 onClick={() => router.push(`/dashboard/students/${student.id}`)}
-                className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5 hover:border-white/[0.12] hover:bg-white/[0.05] transition-all cursor-pointer group"
+                className="dashboard-card hover:border-[#e2e8f0] hover:bg-[#f1f5f9] transition-all cursor-pointer group"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-[13px] font-bold border border-white/10">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-[13px] font-bold border border-[#e2e8f0]">
                     {initials}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-white/85 text-[14px] font-medium truncate">{student.lastName} {student.firstName}</p>
-                    <p className="text-white/25 text-[11px]">{student.admissionNumber}</p>
+                    <p className="text-[#1a1a2e] text-[14px] font-medium truncate">{student.lastName} {student.firstName}</p>
+                    <p className="text-[#94a3b8] text-[11px]">{student.admissionNumber}</p>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-[12px]">
-                    <GraduationCap className="w-3.5 h-3.5 text-white/25" />
-                    <span className="text-white/40">{student.class?.name || "Unassigned"}</span>
+                    <GraduationCap className="w-3.5 h-3.5 text-[#94a3b8]" />
+                    <span className="text-[#64748b]">{student.class?.name || "Unassigned"}</span>
                   </div>
                   {student.guardianName && (
                     <div className="flex items-center gap-2 text-[12px]">
-                      <Phone className="w-3.5 h-3.5 text-white/25" />
-                      <span className="text-white/40 truncate">{student.guardianName}</span>
+                      <Phone className="w-3.5 h-3.5 text-[#94a3b8]" />
+                      <span className="text-[#64748b] truncate">{student.guardianName}</span>
                     </div>
                   )}
                   {student.email && (
                     <div className="flex items-center gap-2 text-[12px]">
-                      <Mail className="w-3.5 h-3.5 text-white/25" />
-                      <span className="text-white/40 truncate">{student.email}</span>
+                      <Mail className="w-3.5 h-3.5 text-[#94a3b8]" />
+                      <span className="text-[#64748b] truncate">{student.email}</span>
                     </div>
                   )}
                 </div>
-                <div className="mt-4 pt-3 border-t border-white/[0.05] flex items-center justify-between">
+                <div className="mt-4 pt-3 border-t border-[#f8fafc] flex items-center justify-between">
                   <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-medium ${
                     student.status === "active"
-                      ? "bg-emerald-500/10 text-emerald-400"
-                      : "bg-white/[0.05] text-white/30"
+                      ? "bg-[#dcfce7] text-[#16a34a]"
+                      : "bg-[#f8fafc] text-[#94a3b8]"
                   }`}>
-                    <span className={`w-1 h-1 rounded-full ${student.status === "active" ? "bg-emerald-400" : "bg-white/30"}`} />
+                    <span className={`w-1 h-1 rounded-full ${student.status === "active" ? "bg-[#16a34a]" : "bg-[#94a3b8]"}`} />
                     {student.status}
                   </span>
-                  <span className="text-white/20 text-[10px]">
+                  <span className="text-[#94a3b8] text-[10px]">
                     {new Date(student.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}
                   </span>
                 </div>
@@ -518,7 +513,7 @@ export default function StudentsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            className="modal-overlay"
             onClick={() => setShowModal(false)}
           >
             <motion.div
@@ -526,67 +521,66 @@ export default function StudentsPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
+              className="modal-content"
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
-                <h3 className="text-white font-semibold">{editingStudent ? "Edit Student" : "Add New Student"}</h3>
-                <button onClick={() => { setShowModal(false); setEditingStudent(null); }} className="text-white/40 hover:text-white/70 transition">
+              <div className="modal-header">
+                <h3>{editingStudent ? "Edit Student" : "Add New Student"}</h3>
+                <button onClick={() => { setShowModal(false); setEditingStudent(null); }} className="text-[#64748b] hover:text-[#1a1a2e] transition">
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="px-6 py-5 space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-white/50 text-[12px] mb-1.5">First Name *</label>
+              <div className="modal-body space-y-4">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="input-label">First Name *</label>
                     <input type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      className="input-field" />
                   </div>
-                  <div>
-                    <label className="block text-white/50 text-[12px] mb-1.5">Last Name *</label>
+                  <div className="form-group">
+                    <label className="input-label">Last Name *</label>
                     <input type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      className="input-field" />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-white/50 text-[12px] mb-1.5">Admission No.</label>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="input-label">Admission No.</label>
                     <input type="text" value={form.admissionNumber} onChange={(e) => setForm({ ...form, admissionNumber: e.target.value })}
-                      placeholder="Auto-generated if empty" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="Auto-generated if empty" className="input-field" />
                   </div>
-                  <div>
-                    <label className="block text-white/50 text-[12px] mb-1.5">Email</label>
+                  <div className="form-group">
+                    <label className="input-label">Email</label>
                     <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      placeholder="student@email.com" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="student@email.com" className="input-field" />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-white/50 text-[12px] mb-1.5">Class</label>
+                <div className="form-group">
+                  <label className="input-label">Class</label>
                   <select value={form.classId} onChange={(e) => setForm({ ...form, classId: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] outline-none focus:border-[var(--primary)]/50"
-                    style={{ colorScheme: "dark" }}>
-                    <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select Class</option>
+                    className="select-field">
+                    <option value="">Select Class</option>
                     {classes.map(c => (
-                      <option key={c.id} value={c.id} style={{ background: "#0f1b33", color: "#fff" }}>{c.name}</option>
+                      <option key={c.id} value={c.id}>{c.name}</option>
                     ))}
                   </select>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-white/50 text-[12px] mb-1.5">Guardian Name</label>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="input-label">Guardian Name</label>
                     <input type="text" value={form.guardianName} onChange={(e) => setForm({ ...form, guardianName: e.target.value })}
-                      placeholder="Parent/Guardian name" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="Parent/Guardian name" className="input-field" />
                   </div>
-                  <div>
-                    <label className="block text-white/50 text-[12px] mb-1.5">Guardian Phone</label>
+                  <div className="form-group">
+                    <label className="input-label">Guardian Phone</label>
                     <input type="text" value={form.guardianPhone} onChange={(e) => setForm({ ...form, guardianPhone: e.target.value })}
-                      placeholder="+234..." className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="+234..." className="input-field" />
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/[0.06]">
-                <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.05] text-white/50 text-[13px] font-medium hover:bg-white/[0.08] transition">Cancel</button>
+              <div className="modal-footer">
+                <button onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
                 <button onClick={handleCreate} disabled={submitting}
-                  className="px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center gap-2">
+                  className="btn btn-primary disabled:opacity-50">
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   {editingStudent ? "Update Student" : "Add Student"}
                 </button>

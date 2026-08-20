@@ -26,7 +26,7 @@ const COLORS = ["#0055ff", "#28ff9c", "#ff6b35", "#a855f7", "#f59e0b", "#06b6d4"
 
 function DashboardCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.07] p-5 ${className}`}>
+    <div className={`dashboard-card ${className}`}>
       {children}
     </div>
   );
@@ -35,8 +35,8 @@ function DashboardCard({ children, className = "" }: { children: React.ReactNode
 function CardTitle({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div className="mb-4">
-      <h3 className="text-white/90 font-semibold text-[14px]">{title}</h3>
-      {subtitle && <p className="text-white/30 text-[11px] mt-0.5">{subtitle}</p>}
+      <h3 className="text-[#1a1a2e] font-semibold text-[14px]">{title}</h3>
+      {subtitle && <p className="text-[#64748b] text-[11px] mt-0.5">{subtitle}</p>}
     </div>
   );
 }
@@ -44,10 +44,10 @@ function CardTitle({ title, subtitle }: { title: string; subtitle?: string }) {
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[var(--sidebar)]/95 backdrop-blur-xl border border-white/[0.1] rounded-lg px-3 py-2 shadow-2xl">
-      <p className="text-white/50 text-[10px] font-medium mb-1">{label}</p>
+    <div className="bg-white border border-[#e2e8f0] rounded-lg px-3 py-2 shadow-lg">
+      <p className="text-[#64748b] text-[10px] font-medium mb-1">{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} className="text-white/90 text-[12px] font-semibold">
+        <p key={i} className="text-[#1a1a2e] text-[12px] font-semibold">
           {p.name}: {typeof p.value === "number" && p.value > 10000 ? formatCurrencyCompact(p.value) : p.value}
         </p>
       ))}
@@ -63,56 +63,56 @@ function AdminDashboard() {
 
   return (
     <>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="stats-grid-4">
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Total Students</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Total Students</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p>
         </DashboardCard>
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Total Teachers</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.totalTeachers}</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalTeachers}</p>
         </DashboardCard>
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Total Revenue</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Total Revenue</p>
+          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
         </DashboardCard>
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Active Classes</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.totalClasses}</p>
-        </DashboardCard>
-      </div>
-      <div className="grid grid-cols-3 gap-4 mt-4">
-        <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Pending Admissions</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.pendingAdmissions}</p>
-          <p className="text-amber-400 text-[11px] mt-1">Needs review</p>
-        </DashboardCard>
-        <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Attendance Today</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.attendance?.rate || 0}%</p>
-          <p className="text-emerald-400 text-[11px] mt-1">{stats.attendance?.present || 0} present</p>
-        </DashboardCard>
-        <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Fee Collection</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
-          <p className="text-emerald-400 text-[11px] mt-1">Total collected</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Active Classes</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p>
         </DashboardCard>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
-        <DashboardCard className="lg:col-span-2">
+      <div className="stats-grid-3">
+        <DashboardCard>
+          <p className="text-[#64748b] text-[12px] font-medium">Pending Admissions</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.pendingAdmissions}</p>
+          <p className="text-[#d97706] text-[11px] mt-1">Needs review</p>
+        </DashboardCard>
+        <DashboardCard>
+          <p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.attendance?.rate || 0}%</p>
+          <p className="text-[#16a34a] text-[11px] mt-1">{stats.attendance?.present || 0} present</p>
+        </DashboardCard>
+        <DashboardCard>
+          <p className="text-[#64748b] text-[12px] font-medium">Fee Collection</p>
+          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
+          <p className="text-[#16a34a] text-[11px] mt-1">Total collected</p>
+        </DashboardCard>
+      </div>
+      <div className="charts-grid">
+        <DashboardCard>
           <CardTitle title="Class Performance" subtitle="Students per class" />
           {stats.classPerformance?.length > 0 ? (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={stats.classPerformance} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} cursor={false} />
                 <Bar dataKey="students" name="Students" fill="#0055ff" radius={[6, 6, 0, 0]} maxBarSize={36} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[220px] text-white/30 text-[13px]">No class data yet</div>
+            <div className="flex items-center justify-center h-[220px] text-[#94a3b8] text-[13px]">No class data yet</div>
           )}
         </DashboardCard>
         <DashboardCard>
@@ -120,31 +120,31 @@ function AdminDashboard() {
           <ResponsiveContainer width="100%" height={160}>
             <PieChart>
               <Pie data={[
-                { name: "Present", value: stats.attendance?.present || 0, color: "#28ff9c" },
-                { name: "Absent", value: stats.attendance?.absent || 0, color: "#ff4444" },
+                { name: "Present", value: stats.attendance?.present || 0, color: "#10b981" },
+                { name: "Absent", value: stats.attendance?.absent || 0, color: "#ef4444" },
                 { name: "Late", value: stats.attendance?.late || 0, color: "#f59e0b" },
               ]} cx="50%" cy="50%" innerRadius={50} outerRadius={70} paddingAngle={3} dataKey="value">
-                {[{ color: "#28ff9c" }, { color: "#ff4444" }, { color: "#f59e0b" }].map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
+                {[{ color: "#10b981" }, { color: "#ef4444" }, { color: "#f59e0b" }].map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
             </PieChart>
           </ResponsiveContainer>
           <div className="grid grid-cols-3 gap-1.5 mt-2">
             {[
-              { label: "Present", value: stats.attendance?.present || 0, color: "#28ff9c" },
-              { label: "Absent", value: stats.attendance?.absent || 0, color: "#ff4444" },
+              { label: "Present", value: stats.attendance?.present || 0, color: "#10b981" },
+              { label: "Absent", value: stats.attendance?.absent || 0, color: "#ef4444" },
               { label: "Late", value: stats.attendance?.late || 0, color: "#f59e0b" },
             ].map((item) => (
-              <div key={item.label} className="flex items-center gap-1.5 text-[10px]">
+              <div key={item.label} className="flex items-center gap-1.5 text-[10px] min-w-0">
                 <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                <span className="text-white/40">{item.label}</span>
-                <span className="text-white/70 font-medium ml-auto">{item.value}</span>
+                <span className="text-[#64748b] truncate">{item.label}</span>
+                <span className="text-[#475569] font-medium ml-auto flex-shrink-0">{item.value}</span>
               </div>
             ))}
           </div>
         </DashboardCard>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+      <div className="charts-grid-equal">
         <DashboardCard>
           <CardTitle title="Revenue Trend" subtitle="6-month overview" />
           {stats.monthlyRevenue?.length > 0 ? (
@@ -152,56 +152,55 @@ function AdminDashboard() {
               <AreaChart data={stats.monthlyRevenue}>
                 <defs>
                   <linearGradient id="gRev" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0055ff" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#0055ff" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#0055ff" stopOpacity={0.15} /><stop offset="95%" stopColor="#0055ff" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="month" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="month" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#0055ff" fill="url(#gRev)" strokeWidth={2} dot={false} />
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[200px] text-white/30 text-[13px]">No revenue data yet</div>
+            <div className="flex items-center justify-center h-[200px] text-[#94a3b8] text-[13px]">No revenue data yet</div>
           )}
         </DashboardCard>
         <DashboardCard>
           <CardTitle title="Recent Activity" />
           <div className="space-y-2">
             {stats.recentActivities?.length > 0 ? stats.recentActivities.slice(0, 5).map((item: any, i: number) => (
-              <div key={i} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-white/[0.03] transition">
-                <div className={`w-7 h-7 rounded-md ${item.type === "payment" ? "bg-emerald-500/15 text-emerald-400" : "bg-blue-500/15 text-blue-400"} flex items-center justify-center flex-shrink-0 text-[10px] font-bold`}>
+              <div key={i} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#f1f5f9] transition min-w-0">
+                <div className={`w-7 h-7 rounded-md ${item.type === "payment" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#dbeafe] text-[#2563eb]"} flex items-center justify-center flex-shrink-0 text-[10px] font-bold`}>
                   {i + 1}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white/60 text-[12px] leading-relaxed">{item.description}</p>
-                  <p className="text-white/20 text-[10px] mt-0.5">{new Date(item.time).toLocaleDateString()}</p>
+                  <p className="text-[#475569] text-[12px] leading-relaxed truncate">{item.description}</p>
+                  <p className="text-[#94a3b8] text-[10px] mt-0.5">{new Date(item.time).toLocaleDateString()}</p>
                 </div>
               </div>
             )) : (
-              <p className="text-white/30 text-[12px] text-center py-4">No recent activity</p>
+              <p className="text-[#94a3b8] text-[12px] text-center py-4">No recent activity</p>
             )}
           </div>
         </DashboardCard>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/admissions" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-white/40 text-[9px] sm:text-[10px]">New admissions</p></div>
+      <div className="stats-grid-4">
+        <Link href="/dashboard/admissions" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">New admissions</p></div>
         </Link>
-        <Link href="/dashboard/classes" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-white/40 text-[9px] sm:text-[10px]">Organize classes</p></div>
+        <Link href="/dashboard/classes" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Organize classes</p></div>
         </Link>
-        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-white/40 text-[9px] sm:text-[10px]">Fee records</p></div>
+        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Fee records</p></div>
         </Link>
-        <Link href="/dashboard/announcements" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-white/40 text-[9px] sm:text-[10px]">Broadcast to all</p></div>
+        <Link href="/dashboard/announcements" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Broadcast to all</p></div>
         </Link>
       </div>
     </>
@@ -233,20 +232,20 @@ function TeacherDashboard() {
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Total Students</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Total Students</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p>
         </DashboardCard>
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Active Classes</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.totalClasses}</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Active Classes</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p>
         </DashboardCard>
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Attendance Today</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.attendance?.rate || 0}%</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.attendance?.rate || 0}%</p>
         </DashboardCard>
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Collected Revenue</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Collected Revenue</p>
+          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
@@ -255,15 +254,15 @@ function TeacherDashboard() {
           {classPerf.length > 0 ? (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={classPerf} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} cursor={false} />
                 <Bar dataKey="students" name="Students" fill="#0055ff" radius={[6, 6, 0, 0]} maxBarSize={36} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[220px] text-white/30 text-[13px]">No data</div>
+            <div className="flex items-center justify-center h-[220px] text-[#94a3b8] text-[13px]">No data</div>
           )}
         </DashboardCard>
         <DashboardCard>
@@ -280,8 +279,8 @@ function TeacherDashboard() {
             {gradeDistribution.map((item: any) => (
               <div key={item.name} className="flex flex-col items-center gap-0.5">
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                <span className="text-white/40 text-[9px]">{item.name}</span>
-                <span className="text-white/70 text-[10px] font-medium">{item.value}</span>
+                <span className="text-[#64748b] text-[9px]">{item.name}</span>
+                <span className="text-[#475569] text-[10px] font-medium">{item.value}</span>
               </div>
             ))}
           </div>
@@ -294,13 +293,13 @@ function TeacherDashboard() {
             <AreaChart data={attendanceTrend}>
               <defs>
                 <linearGradient id="gAtt" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#28ff9c" stopOpacity={0.3} />
+                  <stop offset="5%" stopColor="#28ff9c" stopOpacity={0.15} />
                   <stop offset="95%" stopColor="#28ff9c" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="week" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="week" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="rate" name="Attendance %" stroke="#28ff9c" fill="url(#gAtt)" strokeWidth={2} dot={{ r: 3, fill: "#28ff9c" }} />
             </AreaChart>
@@ -310,33 +309,33 @@ function TeacherDashboard() {
           <CardTitle title="Recent Activity" />
           <div className="space-y-2">
             {stats.recentActivities?.slice(0, 5).map((item: any, i: number) => (
-              <div key={i} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-white/[0.03] transition">
-                <div className={`w-7 h-7 rounded-md ${item.type === "payment" ? "bg-emerald-500/15 text-emerald-400" : "bg-blue-500/15 text-blue-400"} flex items-center justify-center flex-shrink-0 text-[10px] font-bold`}>{i + 1}</div>
+              <div key={i} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#f1f5f9] transition">
+                <div className={`w-7 h-7 rounded-md ${item.type === "payment" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#dbeafe] text-[#2563eb]"} flex items-center justify-center flex-shrink-0 text-[10px] font-bold`}>{i + 1}</div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white/60 text-[12px] leading-relaxed">{item.description}</p>
-                  <p className="text-white/20 text-[10px] mt-0.5">{new Date(item.time).toLocaleDateString()}</p>
+                  <p className="text-[#475569] text-[12px] leading-relaxed">{item.description}</p>
+                  <p className="text-[#94a3b8] text-[10px] mt-0.5">{new Date(item.time).toLocaleDateString()}</p>
                 </div>
               </div>
-            )) || <p className="text-white/30 text-[12px] text-center py-4">No recent activity</p>}
+            )) || <p className="text-[#94a3b8] text-[12px] text-center py-4">No recent activity</p>}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/attendance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Take Attendance</p><p className="text-white/40 text-[9px] sm:text-[10px]">Mark today's roll</p></div>
+        <Link href="/dashboard/attendance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Take Attendance</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Mark today's roll</p></div>
         </Link>
-        <Link href="/dashboard/results" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📝</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Enter Grades</p><p className="text-white/40 text-[9px] sm:text-[10px]">Record student scores</p></div>
+        <Link href="/dashboard/results" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📝</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Enter Grades</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Record student scores</p></div>
         </Link>
-        <Link href="/dashboard/timetable" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📅</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Schedule</p><p className="text-white/40 text-[9px] sm:text-[10px]">Your class timetable</p></div>
+        <Link href="/dashboard/timetable" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📅</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Schedule</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Your class timetable</p></div>
         </Link>
-        <Link href="/dashboard/lesson-plans" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Create Lesson Plan</p><p className="text-white/40 text-[9px] sm:text-[10px]">Plan your lessons</p></div>
+        <Link href="/dashboard/lesson-plans" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Create Lesson Plan</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Plan your lessons</p></div>
         </Link>
       </div>
     </>
@@ -363,31 +362,31 @@ function StudentDashboard() {
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">My Class</p>
-          <p className="text-[22px] font-bold text-white mt-1">{child?.class?.name || "—"}</p>
+          <p className="text-[#64748b] text-[12px] font-medium">My Class</p>
+          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{child?.class?.name || "—"}</p>
         </DashboardCard>
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Attendance</p>
-          <p className="text-[28px] font-bold text-white mt-1">{attendance.length ? Math.round((presentDays / attendance.length) * 100) : 0}%</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Attendance</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{attendance.length ? Math.round((presentDays / attendance.length) * 100) : 0}%</p>
         </DashboardCard>
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Current Average</p>
-          <p className="text-[28px] font-bold text-white mt-1">{avgScore}%</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Current Average</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{avgScore}%</p>
         </DashboardCard>
         <DashboardCard>
-          <p className="text-white/40 text-[12px] font-medium">Fee Balance</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrency(unpaidAmount)}</p>
+          <p className="text-[#64748b] text-[12px] font-medium">Fee Balance</p>
+          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrency(unpaidAmount)}</p>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <DashboardCard>
           <CardTitle title="Recent Results" />
           <div className="space-y-2">
-            {grades.length === 0 ? <p className="text-white/30 text-[12px]">No results yet</p> : grades.slice(0, 6).map((g: any, i: number) => (
-              <div key={i} className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/[0.02] border border-white/[0.04]">
-                <p className="text-white/70 text-[12px]">{g.subject?.name || "—"}</p>
+            {grades.length === 0 ? <p className="text-[#94a3b8] text-[12px]">No results yet</p> : grades.slice(0, 6).map((g: any, i: number) => (
+              <div key={i} className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+                <p className="text-[#475569] text-[12px]">{g.subject?.name || "—"}</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-white/80 text-[12px] font-semibold">{g.score}%</p>
+                  <p className="text-[#1a1a2e] text-[12px] font-semibold">{g.score}%</p>
                   {g.grade && <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[10px] font-bold">{g.grade}</span>}
                 </div>
               </div>
@@ -397,13 +396,13 @@ function StudentDashboard() {
         <DashboardCard>
           <CardTitle title="Fee Status" />
           <div className="space-y-2">
-            {invoices.length === 0 ? <p className="text-white/30 text-[12px]">No invoices</p> : invoices.slice(0, 5).map((inv: any, i: number) => (
-              <div key={i} className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+            {invoices.length === 0 ? <p className="text-[#94a3b8] text-[12px]">No invoices</p> : invoices.slice(0, 5).map((inv: any, i: number) => (
+              <div key={i} className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
                 <div>
-                  <p className="text-white/70 text-[12px]">{inv.schoolFee?.name || "Fee"}</p>
-                    <p className="text-white/40 text-[10px]">{formatCurrency(inv.amount || 0)}</p>
+                  <p className="text-[#475569] text-[12px]">{inv.schoolFee?.name || "Fee"}</p>
+                    <p className="text-[#64748b] text-[10px]">{formatCurrency(inv.amount || 0)}</p>
                 </div>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${inv.status === "paid" ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-400"}`}>{inv.status}</span>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${inv.status === "paid" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#fef3c7] text-[#d97706]"}`}>{inv.status}</span>
               </div>
             ))}
           </div>
@@ -415,14 +414,14 @@ function StudentDashboard() {
           {grades.length > 0 ? (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={grades.slice(0, 8).map((g: any) => ({ name: (g.subject?.name || "\u2014").slice(0, 8), score: g.score || 0 }))} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 9 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 9 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
                 <Tooltip content={<CustomTooltip />} cursor={false} />
                 <Bar dataKey="score" name="Score %" fill="#0055ff" radius={[6, 6, 0, 0]} maxBarSize={36} />
               </BarChart>
             </ResponsiveContainer>
-          ) : <div className="flex items-center justify-center h-[200px] text-white/30 text-[13px]">No grade data yet</div>}
+          ) : <div className="flex items-center justify-center h-[200px] text-[#94a3b8] text-[13px]">No grade data yet</div>}
         </DashboardCard>
         <DashboardCard>
           <CardTitle title="Attendance Overview" />
@@ -438,27 +437,27 @@ function StudentDashboard() {
             </PieChart>
           </ResponsiveContainer>
           <div className="flex justify-center gap-4 mt-2">
-            <div className="flex items-center gap-1.5 text-[10px]"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#28ff9c" }} /><span className="text-white/40">Present</span><span className="text-white/70 font-medium ml-1">{presentDays}</span></div>
-            <div className="flex items-center gap-1.5 text-[10px]"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#ff4444" }} /><span className="text-white/40">Absent</span><span className="text-white/70 font-medium ml-1">{Math.max(0, attendance.length - presentDays)}</span></div>
+            <div className="flex items-center gap-1.5 text-[10px]"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#28ff9c" }} /><span className="text-[#64748b]">Present</span><span className="text-[#475569] font-medium ml-1">{presentDays}</span></div>
+            <div className="flex items-center gap-1.5 text-[10px]"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#ff4444" }} /><span className="text-[#64748b]">Absent</span><span className="text-[#475569] font-medium ml-1">{Math.max(0, attendance.length - presentDays)}</span></div>
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/timetable" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📅</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Timetable</p><p className="text-white/40 text-[9px] sm:text-[10px]">Your class schedule</p></div>
+        <Link href="/dashboard/timetable" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📅</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Timetable</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Your class schedule</p></div>
         </Link>
-        <Link href="/dashboard/exams" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📝</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">My Exams</p><p className="text-white/40 text-[9px] sm:text-[10px]">View upcoming exams</p></div>
+        <Link href="/dashboard/exams" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📝</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">My Exams</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">View upcoming exams</p></div>
         </Link>
-        <Link href="/dashboard/results" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Results</p><p className="text-white/40 text-[9px] sm:text-[10px]">Check your grades</p></div>
+        <Link href="/dashboard/results" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Results</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Check your grades</p></div>
         </Link>
-        <Link href="/dashboard/finance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Pay Fees</p><p className="text-white/40 text-[9px] sm:text-[10px]">View & pay fees</p></div>
+        <Link href="/dashboard/finance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Pay Fees</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">View & pay fees</p></div>
         </Link>
       </div>
     </>
@@ -493,19 +492,19 @@ function VicePrincipalDashboard() {
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Discipline Cases</p><p className="text-[28px] font-bold text-white mt-1">{discipline.totalIncidents}</p><p className="text-amber-400 text-[11px] mt-1">{discipline.pending} pending</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalTeachers}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Resolution Rate</p><p className="text-[28px] font-bold text-white mt-1">{discipline.totalIncidents ? Math.round((discipline.resolved / discipline.totalIncidents) * 100) : 0}%</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Discipline Cases</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{discipline.totalIncidents}</p><p className="text-amber-400 text-[11px] mt-1">{discipline.pending} pending</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalTeachers}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Resolution Rate</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{discipline.totalIncidents ? Math.round((discipline.resolved / discipline.totalIncidents) * 100) : 0}%</p></DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
         <DashboardCard>
           <CardTitle title="Discipline by Type" />
           <ResponsiveContainer width="100%" height={180}>
             <BarChart data={disciplineByType} barGap={4}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="type" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="type" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip content={<CustomTooltip />} cursor={false} />
               <Bar dataKey="count" name="Cases" fill="#ff6b35" radius={[6, 6, 0, 0]} maxBarSize={36} />
             </BarChart>
@@ -515,10 +514,10 @@ function VicePrincipalDashboard() {
           <CardTitle title="Monthly Discipline Trend" />
           <ResponsiveContainer width="100%" height={180}>
             <AreaChart data={disciplineTrend}>
-              <defs><linearGradient id="gDisc" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#ff6b35" stopOpacity={0.3} /><stop offset="95%" stopColor="#ff6b35" stopOpacity={0} /></linearGradient></defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="month" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <defs><linearGradient id="gDisc" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#ff6b35" stopOpacity={0.15} /><stop offset="95%" stopColor="#ff6b35" stopOpacity={0} /></linearGradient></defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="month" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="incidents" name="Incidents" stroke="#ff6b35" fill="url(#gDisc)" strokeWidth={2} dot={{ r: 3, fill: "#ff6b35" }} />
             </AreaChart>
@@ -528,38 +527,38 @@ function VicePrincipalDashboard() {
           <CardTitle title="Teacher Supervision" />
           <div className="space-y-3">
             {teacherSupervision.map((item) => (
-              <div key={item.label} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
-                <p className="text-white/60 text-[12px]">{item.label}</p>
-                <p className="text-white/90 text-[14px] font-bold">{item.value}</p>
+              <div key={item.label} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+                <p className="text-[#475569] text-[12px]">{item.label}</p>
+                <p className="text-[#1a1a2e] text-[14px] font-bold">{item.value}</p>
               </div>
             ))}
           </div>
           <div className="mt-3 grid grid-cols-3 gap-2">
             {disciplineStats.map((item) => (
-              <div key={item.label} className="text-center p-2 rounded-lg bg-white/[0.02]">
+              <div key={item.label} className="text-center p-2 rounded-lg bg-[#f8fafc]">
                 <p className="text-[18px] font-bold" style={{ color: item.color }}>{item.value}</p>
-                <p className="text-white/30 text-[9px] mt-0.5">{item.label}</p>
+                <p className="text-[#94a3b8] text-[9px] mt-0.5">{item.label}</p>
               </div>
             ))}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/discipline" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-blue-500/20 to-blue-500/5 border border-blue-500/20 text-white hover:from-blue-500/30 hover:to-blue-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Discipline Records</p><p className="text-white/40 text-[9px] sm:text-[10px]">Incident logs</p></div>
+        <Link href="/dashboard/discipline" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Discipline Records</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Incident logs</p></div>
         </Link>
-        <Link href="/dashboard/students" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👥</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Student Affairs</p><p className="text-white/40 text-[9px] sm:text-[10px]">Manage students</p></div>
+        <Link href="/dashboard/students" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👥</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Student Affairs</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Manage students</p></div>
         </Link>
-        <Link href="/dashboard/teachers" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👩‍🏫</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Teacher Supervision</p><p className="text-white/40 text-[9px] sm:text-[10px]">Staff oversight</p></div>
+        <Link href="/dashboard/teachers" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👩‍🏫</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Teacher Supervision</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Staff oversight</p></div>
         </Link>
-        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Generate Report</p><p className="text-white/40 text-[9px] sm:text-[10px]">Analytics & insights</p></div>
+        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Generate Report</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Analytics & insights</p></div>
         </Link>
       </div>
     </>
@@ -573,15 +572,15 @@ function PrincipalDashboard() {
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalTeachers}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">School Revenue</p><p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Avg. Performance</p><p className="text-[28px] font-bold text-white mt-1">{stats.classPerformance?.length ? Math.round(stats.classPerformance.reduce((s: number, c: any) => s + (c.performance || c.students || 0), 0) / stats.classPerformance.length) : 0}%</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalTeachers}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">School Revenue</p><p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Avg. Performance</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.classPerformance?.length ? Math.round(stats.classPerformance.reduce((s: number, c: any) => s + (c.performance || c.students || 0), 0) / stats.classPerformance.length) : 0}%</p></DashboardCard>
       </div>
       <div className="grid grid-cols-3 gap-4 mt-4">
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Pending Admissions</p><p className="text-[28px] font-bold text-white mt-1">{stats.pendingAdmissions}</p><p className="text-amber-400 text-[11px] mt-1">Needs review</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalClasses}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Attendance Today</p><p className="text-[28px] font-bold text-white mt-1">{stats.attendance?.rate || 0}%</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Pending Admissions</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.pendingAdmissions}</p><p className="text-amber-400 text-[11px] mt-1">Needs review</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.attendance?.rate || 0}%</p></DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <DashboardCard>
@@ -589,43 +588,43 @@ function PrincipalDashboard() {
           {stats.classPerformance?.length > 0 ? (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={stats.classPerformance} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} cursor={false} />
                 <Bar dataKey="students" name="Students" fill="#0055ff" radius={[6, 6, 0, 0]} maxBarSize={36} />
               </BarChart>
             </ResponsiveContainer>
-          ) : <div className="flex items-center justify-center h-[220px] text-white/30 text-[13px]">No data</div>}
+          ) : <div className="flex items-center justify-center h-[220px] text-[#94a3b8] text-[13px]">No data</div>}
         </DashboardCard>
         <DashboardCard>
           <CardTitle title="Recent Activity" />
           <div className="space-y-2">
             {stats.recentActivities?.slice(0, 5).map((item: any, i: number) => (
-              <div key={i} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-white/[0.03] transition">
-                <div className={`w-7 h-7 rounded-md ${item.type === "payment" ? "bg-emerald-500/15 text-emerald-400" : "bg-blue-500/15 text-blue-400"} flex items-center justify-center flex-shrink-0 text-[10px] font-bold`}>{i + 1}</div>
-                <div className="flex-1 min-w-0"><p className="text-white/60 text-[12px] leading-relaxed">{item.description}</p><p className="text-white/20 text-[10px] mt-0.5">{new Date(item.time).toLocaleDateString()}</p></div>
+              <div key={i} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#f1f5f9] transition">
+                <div className={`w-7 h-7 rounded-md ${item.type === "payment" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#dbeafe] text-[#2563eb]"} flex items-center justify-center flex-shrink-0 text-[10px] font-bold`}>{i + 1}</div>
+                <div className="flex-1 min-w-0"><p className="text-[#475569] text-[12px] leading-relaxed">{item.description}</p><p className="text-[#94a3b8] text-[10px] mt-0.5">{new Date(item.time).toLocaleDateString()}</p></div>
               </div>
-            )) || <p className="text-white/30 text-[12px] text-center py-4">No recent activity</p>}
+            )) || <p className="text-[#94a3b8] text-[12px] text-center py-4">No recent activity</p>}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/admissions" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-white/40 text-[9px] sm:text-[10px]">New admissions</p></div>
+        <Link href="/dashboard/admissions" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">New admissions</p></div>
         </Link>
-        <Link href="/dashboard/classes" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-white/40 text-[9px] sm:text-[10px]">Organize classes</p></div>
+        <Link href="/dashboard/classes" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Organize classes</p></div>
         </Link>
-        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-white/40 text-[9px] sm:text-[10px]">Fee records</p></div>
+        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Fee records</p></div>
         </Link>
-        <Link href="/dashboard/announcements" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-white/40 text-[9px] sm:text-[10px]">Broadcast to all</p></div>
+        <Link href="/dashboard/announcements" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Broadcast to all</p></div>
         </Link>
       </div>
     </>
@@ -639,10 +638,10 @@ function OwnerDashboard() {
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalTeachers}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Total Revenue</p><p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalClasses}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalTeachers}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Revenue</p><p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p></DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <DashboardCard>
@@ -650,44 +649,44 @@ function OwnerDashboard() {
           {stats.monthlyRevenue?.length > 0 ? (
             <ResponsiveContainer width="100%" height={200}>
               <AreaChart data={stats.monthlyRevenue}>
-                <defs><linearGradient id="gRevO" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#0055ff" stopOpacity={0.3} /><stop offset="95%" stopColor="#0055ff" stopOpacity={0} /></linearGradient></defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="month" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} />
+                <defs><linearGradient id="gRevO" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#0055ff" stopOpacity={0.15} /><stop offset="95%" stopColor="#0055ff" stopOpacity={0} /></linearGradient></defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="month" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#0055ff" fill="url(#gRevO)" strokeWidth={2} dot={false} />
               </AreaChart>
             </ResponsiveContainer>
-          ) : <div className="flex items-center justify-center h-[200px] text-white/30 text-[13px]">No revenue data</div>}
+          ) : <div className="flex items-center justify-center h-[200px] text-[#94a3b8] text-[13px]">No revenue data</div>}
         </DashboardCard>
         <DashboardCard>
           <CardTitle title="Recent Activity" />
           <div className="space-y-2">
             {stats.recentActivities?.slice(0, 5).map((item: any, i: number) => (
-              <div key={i} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-white/[0.03] transition">
-                <div className={`w-7 h-7 rounded-md ${item.type === "payment" ? "bg-emerald-500/15 text-emerald-400" : "bg-blue-500/15 text-blue-400"} flex items-center justify-center flex-shrink-0 text-[10px] font-bold`}>{i + 1}</div>
-                <div className="flex-1 min-w-0"><p className="text-white/60 text-[12px] leading-relaxed">{item.description}</p><p className="text-white/20 text-[10px] mt-0.5">{new Date(item.time).toLocaleDateString()}</p></div>
+              <div key={i} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#f1f5f9] transition">
+                <div className={`w-7 h-7 rounded-md ${item.type === "payment" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#dbeafe] text-[#2563eb]"} flex items-center justify-center flex-shrink-0 text-[10px] font-bold`}>{i + 1}</div>
+                <div className="flex-1 min-w-0"><p className="text-[#475569] text-[12px] leading-relaxed">{item.description}</p><p className="text-[#94a3b8] text-[10px] mt-0.5">{new Date(item.time).toLocaleDateString()}</p></div>
               </div>
-            )) || <p className="text-white/30 text-[12px] text-center py-4">No recent activity</p>}
+            )) || <p className="text-[#94a3b8] text-[12px] text-center py-4">No recent activity</p>}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Reports</p><p className="text-white/40 text-[9px] sm:text-[10px]">School analytics</p></div>
+        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Reports</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">School analytics</p></div>
         </Link>
-        <Link href="/dashboard/teachers" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👩‍🏫</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Staff</p><p className="text-white/40 text-[9px] sm:text-[10px]">Teacher & staff</p></div>
+        <Link href="/dashboard/teachers" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👩‍🏫</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Staff</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Teacher & staff</p></div>
         </Link>
-        <Link href="/dashboard/finance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Financial Summary</p><p className="text-white/40 text-[9px] sm:text-[10px]">Revenue & expenses</p></div>
+        <Link href="/dashboard/finance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Financial Summary</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Revenue & expenses</p></div>
         </Link>
-        <Link href="/dashboard/settings" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">⚙️</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">School Settings</p><p className="text-white/40 text-[9px] sm:text-[10px]">Configure school</p></div>
+        <Link href="/dashboard/settings" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">⚙️</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">School Settings</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Configure school</p></div>
         </Link>
       </div>
     </>
@@ -715,7 +714,7 @@ function AccountantDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {financeStats.map((s) => (
           <DashboardCard key={s.label}>
-            <p className="text-white/40 text-[12px] font-medium">{s.label}</p>
+            <p className="text-[#64748b] text-[12px] font-medium">{s.label}</p>
             <p className="text-[22px] font-bold mt-1" style={{ color: s.color }}>{s.prefix || ""}{typeof s.value === "number" && s.value > 10000 ? `${(s.value / 1000000).toFixed(1)}M` : s.value}{s.suffix || ""}</p>
           </DashboardCard>
         ))}
@@ -725,10 +724,10 @@ function AccountantDashboard() {
           <CardTitle title="Revenue Trend" subtitle="6-month overview" />
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={monthlyRev}>
-              <defs><linearGradient id="gRevAc" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#28ff9c" stopOpacity={0.3} /><stop offset="95%" stopColor="#28ff9c" stopOpacity={0} /></linearGradient></defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="month" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} />
+              <defs><linearGradient id="gRevAc" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#28ff9c" stopOpacity={0.15} /><stop offset="95%" stopColor="#28ff9c" stopOpacity={0} /></linearGradient></defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="month" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#28ff9c" fill="url(#gRevAc)" strokeWidth={2} dot={false} />
             </AreaChart>
@@ -748,29 +747,29 @@ function AccountantDashboard() {
             {expenseBreakdown.map((item: any, i: number) => (
               <div key={item.name} className="flex items-center gap-1.5 text-[10px]">
                 <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                <span className="text-white/40">{item.name}</span>
-                <span className="text-white/70 font-medium ml-auto">{item.value}%</span>
+                <span className="text-[#64748b]">{item.name}</span>
+                <span className="text-[#475569] font-medium ml-auto">{item.value}%</span>
               </div>
             ))}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💳</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Record Payment</p><p className="text-white/40 text-[9px] sm:text-[10px]">Log a payment</p></div>
+        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💳</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Record Payment</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Log a payment</p></div>
         </Link>
-        <Link href="/dashboard/expenses" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🧾</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Expenses</p><p className="text-white/40 text-[9px] sm:text-[10px]">Expense records</p></div>
+        <Link href="/dashboard/expenses" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🧾</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Expenses</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Expense records</p></div>
         </Link>
-        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Generate Report</p><p className="text-white/40 text-[9px] sm:text-[10px]">Financial reports</p></div>
+        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Generate Report</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Financial reports</p></div>
         </Link>
-        <Link href="/dashboard/finance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📑</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Fees</p><p className="text-white/40 text-[9px] sm:text-[10px]">Fee structures</p></div>
+        <Link href="/dashboard/finance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📑</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Fees</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Fee structures</p></div>
         </Link>
       </div>
     </>
@@ -795,7 +794,7 @@ function AuditorDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {auditStats.map((s) => (
           <DashboardCard key={s.label}>
-            <p className="text-white/40 text-[12px] font-medium">{s.label}</p>
+            <p className="text-[#64748b] text-[12px] font-medium">{s.label}</p>
             <p className="text-[22px] font-bold mt-1" style={{ color: s.color }}>{typeof s.value === "number" && s.value > 10000 ? `${(s.value / 1000000).toFixed(1)}M` : s.value}</p>
           </DashboardCard>
         ))}
@@ -805,10 +804,10 @@ function AuditorDashboard() {
           <CardTitle title="Revenue vs Expenses" subtitle="6-month comparison" />
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={monthlyRev}>
-              <defs><linearGradient id="gRevAu" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#0055ff" stopOpacity={0.3} /><stop offset="95%" stopColor="#0055ff" stopOpacity={0} /></linearGradient></defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="month" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} />
+              <defs><linearGradient id="gRevAu" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#0055ff" stopOpacity={0.15} /><stop offset="95%" stopColor="#0055ff" stopOpacity={0} /></linearGradient></defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="month" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#0055ff" fill="url(#gRevAu)" strokeWidth={2} dot={false} />
             </AreaChart>
@@ -823,8 +822,8 @@ function AuditorDashboard() {
               { label: "Expense Reports", status: stats.expenseReportsStatus || "Cleared", color: "#28ff9c" },
               { label: "Bank Reconciliation", status: stats.bankReconciliationStatus || "In Progress", color: "#0055ff" },
             ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
-                <p className="text-white/70 text-[12px] font-medium">{item.label}</p>
+              <div key={item.label} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+                <p className="text-[#475569] text-[12px] font-medium">{item.label}</p>
                 <span className="text-[11px] font-medium px-2 py-0.5 rounded" style={{ color: item.color, backgroundColor: `${item.color}15` }}>{item.status}</span>
               </div>
             ))}
@@ -832,21 +831,21 @@ function AuditorDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Analytics Overview</p><p className="text-white/40 text-[9px] sm:text-[10px]">Charts & trends</p></div>
+        <Link href="/dashboard/analytics" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Analytics Overview</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Charts & trends</p></div>
         </Link>
-        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔍</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Transactions</p><p className="text-white/40 text-[9px] sm:text-[10px]">All transactions</p></div>
+        <Link href="/dashboard/payments" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔍</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Transactions</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">All transactions</p></div>
         </Link>
-        <Link href="/dashboard/activity-log" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Activity Log</p><p className="text-white/40 text-[9px] sm:text-[10px]">User actions audit</p></div>
+        <Link href="/dashboard/activity-log" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Activity Log</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">User actions audit</p></div>
         </Link>
-        <Link href="/dashboard/expenses" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📤</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Expense Reports</p><p className="text-white/40 text-[9px] sm:text-[10px]">Review expenses</p></div>
+        <Link href="/dashboard/expenses" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📤</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Expense Reports</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Review expenses</p></div>
         </Link>
       </div>
     </>
@@ -875,7 +874,7 @@ function LibrarianDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {libStats.map((s) => (
           <DashboardCard key={s.label}>
-            <p className="text-white/40 text-[12px] font-medium">{s.label}</p>
+            <p className="text-[#64748b] text-[12px] font-medium">{s.label}</p>
             <p className="text-[28px] font-bold mt-1" style={{ color: s.color }}>{s.value}</p>
           </DashboardCard>
         ))}
@@ -885,9 +884,9 @@ function LibrarianDashboard() {
           <CardTitle title="Books by Category" subtitle="Collection distribution" />
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={booksByCategory} barGap={4}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="category" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="category" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip content={<CustomTooltip />} cursor={false} />
               <Bar dataKey="count" name="Books" fill="#a855f7" radius={[6, 6, 0, 0]} maxBarSize={36} />
             </BarChart>
@@ -897,30 +896,30 @@ function LibrarianDashboard() {
           <CardTitle title="Recent Borrowing Activity" />
           <div className="space-y-2">
             {booksByCategory.slice(0, 5).map((item: any, i: number) => (
-              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
-                <p className="text-white/80 text-[13px] font-medium">{item.category}</p>
-                <span className="text-white/40 text-[12px]">{item.count} books</span>
+              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+                <p className="text-[#1a1a2e] text-[13px] font-medium">{item.category}</p>
+                <span className="text-[#64748b] text-[12px]">{item.count} books</span>
               </div>
             ))}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📚</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Book</p><p className="text-white/40 text-[9px] sm:text-[10px]">New inventory</p></div>
+        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📚</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Book</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">New inventory</p></div>
         </Link>
-        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📖</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Issue Book</p><p className="text-white/40 text-[9px] sm:text-[10px]">Lend to students</p></div>
+        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📖</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Issue Book</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Lend to students</p></div>
         </Link>
-        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔄</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Return Book</p><p className="text-white/40 text-[9px] sm:text-[10px]">Process returns</p></div>
+        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔄</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Return Book</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Process returns</p></div>
         </Link>
-        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔎</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Search Catalog</p><p className="text-white/40 text-[9px] sm:text-[10px]">Find books</p></div>
+        <Link href="/dashboard/library" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔎</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Search Catalog</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Find books</p></div>
         </Link>
       </div>
     </>
@@ -997,7 +996,7 @@ function PorterDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {porterStats.map((s) => (
           <DashboardCard key={s.label}>
-            <p className="text-white/40 text-[12px] font-medium">{s.label}</p>
+            <p className="text-[#64748b] text-[12px] font-medium">{s.label}</p>
             <p className="text-[28px] font-bold mt-1" style={{ color: s.color }}>{s.value}</p>
           </DashboardCard>
         ))}
@@ -1017,8 +1016,8 @@ function PorterDashboard() {
             {occupancyData.map((item: any) => (
               <div key={item.name} className="flex items-center gap-1.5 text-[10px]">
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                <span className="text-white/40">{item.name}</span>
-                <span className="text-white/70 font-medium ml-1">{item.value}</span>
+                <span className="text-[#64748b]">{item.name}</span>
+                <span className="text-[#475569] font-medium ml-1">{item.value}</span>
               </div>
             ))}
           </div>
@@ -1027,54 +1026,54 @@ function PorterDashboard() {
           <div className="flex items-center justify-between mb-4">
             <CardTitle title={visitorFilter ? `Visitors (${visitorFilter})` : "Recent Visitors"} />
             {visitorFilter && (
-              <button onClick={() => { setVisitorFilter(""); setVisitors([]); }} className="text-white/40 hover:text-white/70 text-[11px]">Clear filter</button>
+              <button onClick={() => { setVisitorFilter(""); setVisitors([]); }} className="text-[#64748b] hover:text-[#1a1a2e] text-[11px]">Clear filter</button>
             )}
           </div>
           <div className="space-y-2">
             {visitorFilter ? (
               visitors.length > 0 ? visitors.slice(0, 10).map((v: any, i: number) => (
-                <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+                <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
                   <div>
-                    <p className="text-white/80 text-[12px] font-medium">{v.visitorName}</p>
-                    <p className="text-white/30 text-[10px]">{v.purpose} - {v.student?.firstName} {v.student?.lastName}</p>
+                    <p className="text-[#1a1a2e] text-[12px] font-medium">{v.visitorName}</p>
+                    <p className="text-[#94a3b8] text-[10px]">{v.purpose} - {v.student?.firstName} {v.student?.lastName}</p>
                   </div>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${v.status === "checked_in" ? "bg-green-500/20 text-green-400" : v.status === "checked_out" ? "bg-white/10 text-white/40" : "bg-amber-500/20 text-amber-400"}`}>{v.status}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${v.status === "checked_in" ? "bg-green-500/20 text-green-400" : v.status === "checked_out" ? "bg-[#f1f5f9] text-[#64748b]" : "bg-amber-500/20 text-amber-400"}`}>{v.status}</span>
                 </div>
               )) : (
-                <div className="text-center py-8 text-white/30 text-[12px]">No visitors found</div>
+                <div className="text-center py-8 text-[#94a3b8] text-[12px]">No visitors found</div>
               )
             ) : (
               displayVisitors.length > 0 ? displayVisitors.slice(0, 5).map((v: any, i: number) => (
-                <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+                <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
                   <div>
-                    <p className="text-white/80 text-[12px] font-medium">{v.name || v.visitorName || "Visitor"}</p>
-                    <p className="text-white/30 text-[10px]">{v.purpose || "Visit"}</p>
+                    <p className="text-[#1a1a2e] text-[12px] font-medium">{v.name || v.visitorName || "Visitor"}</p>
+                    <p className="text-[#94a3b8] text-[10px]">{v.purpose || "Visit"}</p>
                   </div>
-                  <span className="text-white/40 text-[11px]">{v.time || "Today"}</span>
+                  <span className="text-[#64748b] text-[11px]">{v.time || "Today"}</span>
                 </div>
               )) : (
-                <div className="text-center py-8 text-white/30 text-[12px]">No recent visitors</div>
+                <div className="text-center py-8 text-[#94a3b8] text-[12px]">No recent visitors</div>
               )
             )}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <button onClick={() => setShowVisitorLog(true)} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🚶</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Log Visitor</p><p className="text-white/40 text-[9px] sm:text-[10px]">Visitor check-in</p></div>
+        <button onClick={() => setShowVisitorLog(true)} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🚶</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Log Visitor</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Visitor check-in</p></div>
         </button>
-        <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🛏️</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Assign Room</p><p className="text-white/40 text-[9px] sm:text-[10px]">Room allocation</p></div>
+        <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🛏️</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Assign Room</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Room allocation</p></div>
         </Link>
-        <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔧</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Report Maintenance</p><p className="text-white/40 text-[9px] sm:text-[10px]">Request repairs</p></div>
+        <Link href="/dashboard/hostel" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔧</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Report Maintenance</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Request repairs</p></div>
         </Link>
-        <button onClick={() => { setVisitorFilter("checked_in"); fetchVisitors("checked_in"); }} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Check-in/out</p><p className="text-white/40 text-[9px] sm:text-[10px]">Movement logs</p></div>
+        <button onClick={() => { setVisitorFilter("checked_in"); fetchVisitors("checked_in"); }} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Check-in/out</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Movement logs</p></div>
         </button>
       </div>
 
@@ -1083,7 +1082,7 @@ function PorterDashboard() {
           <div className="bg-[var(--sidebar)] border border-white/[0.08] rounded-2xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-white/90 font-semibold text-[16px]">Log Visitor</h3>
-              <button onClick={() => setShowVisitorLog(false)} className="text-white/40 hover:text-white/70"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowVisitorLog(false)} className="text-[#64748b] hover:text-white/70"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-3">
               <div>
@@ -1111,7 +1110,7 @@ function PorterDashboard() {
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <button onClick={() => setShowVisitorLog(false)} className="flex-1 px-4 py-2.5 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/60 text-[13px] hover:bg-white/[0.08] transition-colors">Cancel</button>
+              <button onClick={() => setShowVisitorLog(false)} className="flex-1 px-4 py-2.5 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/60 text-[13px] hover:bg-[#f1f5f9] transition-colors">Cancel</button>
               <button onClick={handleLogVisitor} disabled={submitting} className="flex-1 px-4 py-2.5 rounded-lg bg-[var(--primary)] text-white text-[13px] font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                 Log Visitor
@@ -1179,7 +1178,7 @@ function AlumniDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {alumniStats.map((s) => (
           <DashboardCard key={s.label}>
-            <p className="text-white/40 text-[12px] font-medium">{s.label}</p>
+            <p className="text-[#64748b] text-[12px] font-medium">{s.label}</p>
             <p className="text-[22px] font-bold mt-1" style={{ color: s.color }}>{s.prefix || ""}{s.value}</p>
           </DashboardCard>
         ))}
@@ -1189,9 +1188,9 @@ function AlumniDashboard() {
           <CardTitle title="Alumni by Graduation Year" subtitle="Network growth" />
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={alumniByYear} barGap={4}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="year" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="year" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip content={<CustomTooltip />} cursor={false} />
               <Bar dataKey="count" name="Alumni" fill="#a855f7" radius={[6, 6, 0, 0]} maxBarSize={36} />
             </BarChart>
@@ -1201,35 +1200,35 @@ function AlumniDashboard() {
           <CardTitle title="Upcoming Events" />
           <div className="space-y-2">
             {alumniData.upcomingEvents?.length > 0 ? alumniData.upcomingEvents.slice(0, 3).map((e: any, i: number) => (
-              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
                 <div>
-                  <p className="text-white/80 text-[12px] font-medium">{e.name || e.title}</p>
-                  <p className="text-white/30 text-[10px]">{e.date ? new Date(e.date).toLocaleDateString() : "TBA"}</p>
+                  <p className="text-[#1a1a2e] text-[12px] font-medium">{e.name || e.title}</p>
+                  <p className="text-[#94a3b8] text-[10px]">{e.date ? new Date(e.date).toLocaleDateString() : "TBA"}</p>
                 </div>
-                <span className="text-white/40 text-[11px]">{e.attendees || ""} {e.attendees ? "attending" : ""}</span>
+                <span className="text-[#64748b] text-[11px]">{e.attendees || ""} {e.attendees ? "attending" : ""}</span>
               </div>
             )) : (
-              <div className="text-center py-8 text-white/30 text-[12px]">No upcoming events</div>
+              <div className="text-center py-8 text-[#94a3b8] text-[12px]">No upcoming events</div>
             )}
           </div>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/alumni" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🎉</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Events</p><p className="text-white/40 text-[9px] sm:text-[10px]">Alumni gatherings</p></div>
+        <Link href="/dashboard/alumni" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🎉</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Events</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Alumni gatherings</p></div>
         </Link>
-        <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group cursor-pointer">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">❤️</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Make Donation</p><p className="text-white/40 text-[9px] sm:text-[10px]">Support your school</p></div>
+        <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group cursor-pointer">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">❤️</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Make Donation</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Support your school</p></div>
         </button>
-        <Link href="/dashboard/alumni" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🤝</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Find Mentor</p><p className="text-white/40 text-[9px] sm:text-[10px]">Mentorship program</p></div>
+        <Link href="/dashboard/alumni" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🤝</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Find Mentor</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Mentorship program</p></div>
         </Link>
-        <Link href="/dashboard/profile" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👤</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Update Profile</p><p className="text-white/40 text-[9px] sm:text-[10px]">Your information</p></div>
+        <Link href="/dashboard/profile" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👤</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Update Profile</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Your information</p></div>
         </Link>
       </div>
 
@@ -1241,7 +1240,7 @@ function AlumniDashboard() {
                 <DollarSign className="w-5 h-5 text-purple-400" />
                 <h3 className="text-white font-semibold text-[16px]">Make a Donation</h3>
               </div>
-              <button onClick={() => setShowDonateModal(false)} className="text-white/40 hover:text-white transition-colors">
+              <button onClick={() => setShowDonateModal(false)} className="text-[#64748b] hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1297,11 +1296,11 @@ function ParentDashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="flex items-center justify-center py-20"><div className="w-6 h-6 border-2 border-white/20 border-t-[var(--primary)] rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex items-center justify-center py-20"><div className="w-6 h-6 border-2 border-[#e2e8f0] border-t-[var(--primary)] rounded-full animate-spin" /></div>;
   if (!children.length) return (
     <div className="text-center py-20">
-      <p className="text-white/40 text-[15px] mb-2">No children linked to this account</p>
-      <p className="text-white/25 text-[12px]">Contact the school administrator to link your children</p>
+      <p className="text-[#64748b] text-[15px] mb-2">No children linked to this account</p>
+      <p className="text-[#94a3b8] text-[12px]">Contact the school administrator to link your children</p>
     </div>
   );
 
@@ -1318,9 +1317,9 @@ function ParentDashboard() {
   return (
     <>
       {children.length > 1 && (
-        <div className="flex items-center gap-2 mb-4 p-1 bg-white/[0.03] backdrop-blur-xl rounded-xl border border-white/[0.07] inline-flex">
+        <div className="flex items-center gap-2 mb-4 p-1 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] inline-flex">
           {children.map((c: any, i: number) => (
-            <button key={c.id} onClick={() => setSelectedIdx(i)} className={`px-4 py-2 rounded-lg text-[13px] font-medium transition-all ${selectedIdx === i ? "bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)]/20" : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"}`}>
+            <button key={c.id} onClick={() => setSelectedIdx(i)} className={`px-4 py-2 rounded-lg text-[13px] font-medium transition-all ${selectedIdx === i ? "bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)]/20" : "text-[#64748b] hover:text-[#1a1a2e] hover:bg-white"}`}>
               {c.firstName} {c.lastName}
               {c.class?.name && <span className="ml-1.5 text-[11px] opacity-60">{c.class.name}</span>}
             </button>
@@ -1329,25 +1328,25 @@ function ParentDashboard() {
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Child</p><p className="text-[18px] font-bold text-white mt-1">{child.firstName} {child.lastName}</p><p className="text-white/30 text-[11px] mt-1">{child.class?.name || "\u2014"}</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Attendance</p><p className="text-[28px] font-bold text-white mt-1">{attendancePct}%</p><p className="text-white/30 text-[11px] mt-1">{presentDays} of {totalDays} days</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Current Average</p><p className="text-[28px] font-bold text-white mt-1">{avgScore}%</p></DashboardCard>
-        <DashboardCard><p className="text-white/40 text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-white mt-1">{formatCurrency(unpaidAmount)}</p>{unpaidAmount > 0 && <p className="text-amber-400 text-[11px] mt-1">Outstanding</p>}</DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Child</p><p className="text-[18px] font-bold text-[#1a1a2e] mt-1">{child.firstName} {child.lastName}</p><p className="text-[#94a3b8] text-[11px] mt-1">{child.class?.name || "\u2014"}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Attendance</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{attendancePct}%</p><p className="text-[#94a3b8] text-[11px] mt-1">{presentDays} of {totalDays} days</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Current Average</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{avgScore}%</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrency(unpaidAmount)}</p>{unpaidAmount > 0 && <p className="text-amber-400 text-[11px] mt-1">Outstanding</p>}</DashboardCard>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <DashboardCard>
           <CardTitle title={`Results \u2014 ${child.firstName}`} subtitle={`${grades.length} grade${grades.length !== 1 ? "s" : ""} recorded`} />
           <div className="space-y-2">
-            {grades.length === 0 ? <p className="text-white/30 text-[12px] text-center py-6">No results yet for {child.firstName}</p> : grades.slice(0, 8).map((g: any, i: number) => (
-              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition">
+            {grades.length === 0 ? <p className="text-[#94a3b8] text-[12px] text-center py-6">No results yet for {child.firstName}</p> : grades.slice(0, 8).map((g: any, i: number) => (
+              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] hover:bg-[#f8fafc] transition">
                 <div>
-                  <p className="text-white/70 text-[12px] font-medium">{g.subject?.name || "\u2014"}</p>
-                  <p className="text-white/30 text-[10px]">{g.type} {g.term ? `\u00B7 ${g.term}` : ""}</p>
+                  <p className="text-[#475569] text-[12px] font-medium">{g.subject?.name || "\u2014"}</p>
+                  <p className="text-[#94a3b8] text-[10px]">{g.type} {g.term ? `\u00B7 ${g.term}` : ""}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <p className="text-white/80 text-[13px] font-bold">{g.score}/{g.maxScore}</p>
-                  {g.grade && <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${g.grade === "A" ? "bg-emerald-500/15 text-emerald-400" : g.grade === "B" ? "bg-blue-500/15 text-blue-400" : g.grade === "C" ? "bg-yellow-500/15 text-yellow-400" : g.grade === "F" ? "bg-red-500/15 text-red-400" : "bg-white/10 text-white/50"}`}>{g.grade}</span>}
+                  <p className="text-[#1a1a2e] text-[13px] font-bold">{g.score}/{g.maxScore}</p>
+                  {g.grade && <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${g.grade === "A" ? "bg-[#dcfce7] text-[#16a34a]" : g.grade === "B" ? "bg-[#dbeafe] text-[#2563eb]" : g.grade === "C" ? "bg-yellow-500/15 text-yellow-400" : g.grade === "F" ? "bg-[#fee2e2] text-[#dc2626]" : "bg-white/10 text-white/50"}`}>{g.grade}</span>}
                 </div>
               </div>
             ))}
@@ -1356,13 +1355,13 @@ function ParentDashboard() {
         <DashboardCard>
           <CardTitle title={`Fee Status \u2014 ${child.firstName}`} subtitle={`${invoices.length} invoice${invoices.length !== 1 ? "s" : ""}`} />
           <div className="space-y-2">
-            {invoices.length === 0 ? <p className="text-white/30 text-[12px] text-center py-6">No invoices for {child.firstName}</p> : invoices.slice(0, 6).map((inv: any, i: number) => (
-              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition">
+            {invoices.length === 0 ? <p className="text-[#94a3b8] text-[12px] text-center py-6">No invoices for {child.firstName}</p> : invoices.slice(0, 6).map((inv: any, i: number) => (
+              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] hover:bg-[#f8fafc] transition">
                 <div>
-                  <p className="text-white/70 text-[12px] font-medium">{inv.schoolFee?.name || "Fee"}</p>
-                    <p className="text-white/40 text-[10px]">{formatCurrency(inv.amount || 0)} {inv.dueDate ? `\u00B7 Due ${new Date(inv.dueDate).toLocaleDateString()}` : ""}</p>
+                  <p className="text-[#475569] text-[12px] font-medium">{inv.schoolFee?.name || "Fee"}</p>
+                    <p className="text-[#64748b] text-[10px]">{formatCurrency(inv.amount || 0)} {inv.dueDate ? `\u00B7 Due ${new Date(inv.dueDate).toLocaleDateString()}` : ""}</p>
                 </div>
-                <span className={`px-2.5 py-0.5 rounded text-[10px] font-medium ${inv.status === "paid" ? "bg-emerald-500/15 text-emerald-400" : inv.status === "overdue" ? "bg-red-500/15 text-red-400" : "bg-amber-500/15 text-amber-400"}`}>{inv.status}</span>
+                <span className={`px-2.5 py-0.5 rounded text-[10px] font-medium ${inv.status === "paid" ? "bg-[#dcfce7] text-[#16a34a]" : inv.status === "overdue" ? "bg-[#fee2e2] text-[#dc2626]" : "bg-[#fef3c7] text-[#d97706]"}`}>{inv.status}</span>
               </div>
             ))}
           </div>
@@ -1373,10 +1372,10 @@ function ParentDashboard() {
           <CardTitle title="Attendance Trend" subtitle={`${child.firstName}'s attendance over time`} />
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={attendance.length > 0 ? attendance.slice(-10).map((a: any, i: number) => ({ day: `Day ${i + 1}`, rate: a.status === "present" ? 100 : 0 })) : [{ day: "Mon", rate: 100 }, { day: "Tue", rate: 100 }, { day: "Wed", rate: 0 }, { day: "Thu", rate: 100 }, { day: "Fri", rate: 100 }]}>
-              <defs><linearGradient id="gAttP" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#28ff9c" stopOpacity={0.3} /><stop offset="95%" stopColor="#28ff9c" stopOpacity={0} /></linearGradient></defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="day" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+              <defs><linearGradient id="gAttP" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#28ff9c" stopOpacity={0.15} /><stop offset="95%" stopColor="#28ff9c" stopOpacity={0} /></linearGradient></defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="day" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="rate" name="Attendance %" stroke="#28ff9c" fill="url(#gAttP)" strokeWidth={2} dot={{ r: 3, fill: "#28ff9c" }} />
             </AreaChart>
@@ -1387,32 +1386,32 @@ function ParentDashboard() {
           {grades.length > 0 ? (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={grades.slice(0, 8).map((g: any) => ({ name: (g.subject?.name || "\u2014").slice(0, 8), score: g.score || 0 }))} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 9 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 9 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
                 <Tooltip content={<CustomTooltip />} cursor={false} />
                 <Bar dataKey="score" name="Score %" fill="#0055ff" radius={[6, 6, 0, 0]} maxBarSize={36} />
               </BarChart>
             </ResponsiveContainer>
-          ) : <div className="flex items-center justify-center h-[200px] text-white/30 text-[13px]">No grade data yet</div>}
+          ) : <div className="flex items-center justify-center h-[200px] text-[#94a3b8] text-[13px]">No grade data yet</div>}
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/finance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--primary)]/20 to-[var(--primary)]/5 border border-[var(--primary)]/20 text-white hover:from-[var(--primary)]/30 hover:to-[var(--primary)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Pay Fees</p><p className="text-white/40 text-[9px] sm:text-[10px]">View & pay fees</p></div>
+        <Link href="/dashboard/finance" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Pay Fees</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">View & pay fees</p></div>
         </Link>
-        <Link href="/dashboard/timetable" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-500/5 border border-purple-500/20 text-white hover:from-purple-500/30 hover:to-purple-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📅</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Timetable</p><p className="text-white/40 text-[9px] sm:text-[10px]">Child's schedule</p></div>
+        <Link href="/dashboard/timetable" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📅</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Timetable</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Child's schedule</p></div>
         </Link>
-        <Link href="/dashboard/results" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[var(--accent)]/20 to-[var(--accent)]/5 border border-[var(--accent)]/20 text-white hover:from-[var(--accent)]/30 hover:to-[var(--accent)]/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Results</p><p className="text-white/40 text-[9px] sm:text-[10px]">Check grades</p></div>
+        <Link href="/dashboard/results" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Results</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Check grades</p></div>
         </Link>
-        <Link href="/dashboard/calendar" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-500/5 border border-amber-500/20 text-white hover:from-amber-500/30 hover:to-amber-500/10 transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/20 flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📆</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Calendar</p><p className="text-white/40 text-[9px] sm:text-[10px]">School events</p></div>
+        <Link href="/dashboard/calendar" className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📆</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Calendar</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">School events</p></div>
         </Link>
       </div>
     </>
@@ -1443,10 +1442,10 @@ export default function DashboardPage() {
   const { title, component } = roleDashboardMap[role] || roleDashboardMap.ADMINISTRATOR;
 
   return (
-    <motion.div variants={stagger} initial="initial" animate="animate" className="space-y-6">
-      <motion.div variants={fadeIn} className="flex items-center justify-between gap-4">
-        <h1 className="text-[18px] sm:text-[20px] font-bold text-white/95 truncate">{title}</h1>
-        <p className="text-white/30 text-[11px] sm:text-[12px] hidden sm:block whitespace-nowrap">Welcome, {name}</p>
+    <motion.div variants={stagger} initial="initial" animate="animate" className="space-y-5">
+      <motion.div variants={fadeIn} className="section-header">
+        <h1 className="section-title">{title}</h1>
+        <p className="text-[#94a3b8] text-[12px] whitespace-nowrap">Welcome, {name}</p>
       </motion.div>
       {component}
     </motion.div>

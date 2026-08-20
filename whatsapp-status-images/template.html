@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, initial-scale=1.0">
+    <title>FFB Group of Schools - Marketing Flyer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8fafc;
+            width: 1080px;
+            margin: 0 auto;
+        }
+
+        .flyer {
+            width: 1080px;
+            min-height: 1920px;
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: #0039a6;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0039a6 0%, #001f5f 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ffd700;
+        }
+
+        .logo-icon svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .logo-text {
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffd700;
+            line-height: 1;
+        }
+
+        .logo-text p {
+            font-size: 10px;
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        .badge {
+            background: #ffd700;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .badge h3 {
+            font-size: 14px;
+            font-weight: 800;
+            color: #001f5f;
+            line-height: 1.2;
+        }
+
+        .badge p {
+            font-size: 11px;
+            color: #0039a6;
+            font-weight: 600;
+        }
+
+        /* Gold Accent Bar */
+        .accent-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #ffd700 0%, #ffb700 100%);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 40px 50px 30px;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero-title {
+            font-size: 52px;
+            font-weight: 900;
+            color: #1e293b;
+            line-height: 1.05;
+            margin-bottom: 15px;
+        }
+
+        .hero-title span {
+            color: #0039a6;
+        }
+
+        .hero-tagline {
+            font-size: 22px;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .hero-tagline span {
+            color: #0039a6;
+            font-weight: 700;
+        }
+
+        .hero-desc {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-top: 15px;
+            max-width: 400px;
+        }
+
+        .hero-image {
+            flex: 1;
+            position: relative;
+        }
+
+        .hero-image img {
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        .laptop-mockup {
+            background: linear-gradient(145deg, #e2e8f0 0%, #cbd5e1 100%);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .laptop-screen {
+            background: #1e293b;
+            border-radius: 8px 8px 0 0;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background: #ef4444; }
+        .dot.yellow { background: #eab308; }
+        .dot.green { background: #22c55e; }
+
+        .laptop-content {
+            background: white;
+            border-radius: 0 0 8px 8px;
+            padding: 15px;
+            min-height: 200px;
+        }
+
+        .dashboard-header {
+            background: #0039a6;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid;
+        }
+
+        .stat-card.blue { border-color: #0039a6; }
+        .stat-card.green { border-color: #22c55e; }
+        .stat-card.orange { border-color: #f97316; }
+
+        .stat-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .stat-card p {
+            font-size: 9px;
+            color: #64748b;
+        }
+
+        .laptop-base {
+            background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+            height: 20px;
+            border-radius: 0 0 8px 8px;
+            margin: 0 -20px -20px;
+        }
+
+        /* Perfect For Section */
+        .section-divider {
+            background: #0039a6;
+            padding: 12px 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-divider h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .section-divider .line {
+            flex: 1;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .perfect-for {
+            padding: 25px 50px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .target-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+        }
+
+        .target-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .target-icon.blue { background: #0039a6; }
+        .target-icon.green { background: #22c55e; }
+        .target-icon.orange { background: #f97316; }
+        .target-icon.purple { background: #8b5cf6; }
+
+        .target-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .target-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .target-info p {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 25px 50px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .feature-card h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.3;
+        }
+
+        /* Certificate Section */
+        .certificate-section {
+            padding: 25px 50px;
+        }
+
+        .certificate-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .certificate-preview {
+            flex: 1;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .certificate-preview h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0039a6;
+            margin-bottom: 10px;
+        }
+
+        .certificate-preview p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .certificate-preview .name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 10px 0;
+        }
+
+        .certificate-badge {
+            width: 60px;
+            height: 60px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .certificate-badge svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+        .certificate-info {
+            flex: 1;
+        }
+
+        .certificate-info h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .certificate-info p {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* Bottom Badges */
+        .bottom-badges {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 50px;
+            background: #f8fafc;
+        }
+
+        .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .badge-item span {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Contact Bar */
+        .contact-bar {
+            background: linear-gradient(180deg, #001f5f 0%, #001845 100%);
+            padding: 25px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .contact-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .contact-icons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-icon.phone { background: #22c55e; }
+        .contact-icon.whatsapp { background: #25d366; }
+
+        .contact-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .contact-text h4 {
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-text p {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        .contact-right {
+            text-align: right;
+        }
+
+        .contact-right p:first-child {
+            font-size: 12px;
+            color: white;
+        }
+
+        .contact-right p:last-child {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffd700;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0039a6;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: white;
+        }
+
+        .footer span {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        /* Person Image Placeholder */
+        .person-image {
+            width: 280px;
+            height: 320px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: absolute;
+            right: 50px;
+            top: 100px;
+        }
+
+        .person-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .person-placeholder {
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .person-placeholder svg {
+            width: 80px;
+            height: 80px;
+            fill: #cbd5e1;
+        }
+
+        /* Decorative Elements */
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .bg-circle-1 {
+            width: 300px;
+            height: 300px;
+            background: #0039a6;
+            top: -100px;
+            right: -100px;
+        }
+
+        .bg-circle-2 {
+            width: 200px;
+            height: 200px;
+            background: #ffd700;
+            bottom: 200px;
+            left: -50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="flyer">
+        <!-- Background Decorations -->
+        <div class="bg-circle bg-circle-1"></div>
+        <div class="bg-circle bg-circle-2"></div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="white">
+                        <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.5L19 8v8l-7 3.5L5 16V8l7-3.5z"/>
+                        <path d="M12 6v12M7 9l5 3 5-3" stroke="white" stroke-width="1.5" fill="none"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>FFB</h1>
+                    <p>GROUP OF SCHOOLS</p>
+                </div>
+            </div>
+            <div class="badge">
+                <h3>SMART SCHOOL</h3>
+                <p>BETTER RESULTS</p>
+            </div>
+        </header>
+
+        <div class="accent-bar"></div>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    FFB GROUP OF<br>
+                    <span>SCHOOLS ERP</span>
+                </h1>
+                <p class="hero-tagline">
+                    Manage. Automate. Grow.<br>
+                    <span>Anywhere, Anytime.</span>
+                </p>
+                <p class="hero-desc">
+                    A comprehensive School Management System for Schools, Organizations and Training Centers. 
+                    Empowering administrators, teachers, parents and students with digital tools that build 
+                    efficiency and drive success.
+                </p>
+            </div>
+            <div class="hero-image">
+                <div class="laptop-mockup">
+                    <div class="laptop-screen">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <div class="laptop-content">
+                        <div class="dashboard-header">
+                            <span>FFB ERP Dashboard</span>
+                            <span>Welcome, Admin</span>
+                        </div>
+                        <div class="dashboard-stats">
+                            <div class="stat-card blue">
+                                <h4>2,847</h4>
+                                <p>Total Students</p>
+                            </div>
+                            <div class="stat-card green">
+                                <h4>156</h4>
+                                <p>Active Staff</p>
+                            </div>
+                            <div class="stat-card orange">
+                                <h4>₦12.4M</h4>
+                                <p>Fees Collected</p>
+                            </div>
+                        </div>
+                        <div style="background: #f8fafc; padding: 10px; border-radius: 6px;">
+                            <p style="font-size: 10px; color: #64748b; margin-bottom: 8px;">Monthly Revenue</p>
+                            <div style="display: flex; gap: 4px; align-items: flex-end; height: 60px;">
+                                <div style="flex: 1; background: #0039a6; height: 40%; border-radius: 2px;"></div>
+                                <div style="flex: 1; background: #0039a6; height: 60%; border-radius: 2px;"></div>
+                                <div style="flex: 1; background: #0039a6; height: 45%; border-radius: 2px;"></div>
+                                <div style="flex: 1; background: #0039a6; height: 75%; border-radius: 2px;"></div>
+                                <div style="flex: 1; background: #0039a6; height: 55%; border-radius: 2px;"></div>
+                                <div style="flex: 1; background: #0039a6; height: 85%; border-radius: 2px;"></div>
+                                <div style="flex: 1; background: #0039a6; height: 65%; border-radius: 2px;"></div>
+                                <div style="flex: 1; background: #0039a6; height: 90%; border-radius: 2px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="laptop-base"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Perfect For Section -->
+        <div class="section-divider">
+            <h2>PERFECT FOR</h2>
+            <div class="line"></div>
+        </div>
+
+        <section class="perfect-for">
+            <div class="target-card">
+                <div class="target-icon blue">
+                    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
+                </div>
+                <div class="target-info">
+                    <h3>SCHOOLS</h3>
+                    <p>Deliver learning during holidays and beyond. Manage classes, assignments, exams and results seamlessly.</p>
+                </div>
+            </div>
+            <div class="target-card">
+                <div class="target-icon green">
+                    <svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+                </div>
+                <div class="target-info">
+                    <h3>ORGANIZATIONS</h3>
+                    <p>Onboard staff, deliver training and conduct periodic assessments to improve productivity.</p>
+                </div>
+            </div>
+            <div class="target-card">
+                <div class="target-icon orange">
+                    <svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+                </div>
+                <div class="target-info">
+                    <h3>TRAINING CENTERS</h3>
+                    <p>Create courses, track learner progress and issue certificates that add value and credibility.</p>
+                </div>
+            </div>
+            <div class="target-card">
+                <div class="target-icon purple">
+                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                </div>
+                <div class="target-info">
+                    <h3>PARENTS & STUDENTS</h3>
+                    <p>Access grades, attendance, fees and communicate with teachers from anywhere.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Powerful Features Section -->
+        <div class="section-divider">
+            <h2>POWERFUL FEATURES</h2>
+            <div class="line"></div>
+        </div>
+
+        <section class="features-section">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #e0f2fe;">
+                        <svg viewBox="0 0 24 24" fill="#0284c7"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <h4>Student Management</h4>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #dcfce7;">
+                        <svg viewBox="0 0 24 24" fill="#16a34a"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+                    </div>
+                    <h4>Fee Collection</h4>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #fef3c7;">
+                        <svg viewBox="0 0 24 24" fill="#d97706"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                    </div>
+                    <h4>Analytics & Reports</h4>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #ede9fe;">
+                        <svg viewBox="0 0 24 24" fill="#7c3aed"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+                    </div>
+                    <h4>Communication Hub</h4>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #ccfbf1;">
+                        <svg viewBox="0 0 24 24" fill="#0d9488"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    </div>
+                    <h4>Attendance Tracking</h4>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #dbeafe;">
+                        <svg viewBox="0 0 24 24" fill="#2563eb"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    </div>
+                    <h4>Security & Privacy</h4>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #fce7f3;">
+                        <svg viewBox="0 0 24 24" fill="#db2777"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    </div>
+                    <h4>Staff Management</h4>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #ffedd5;">
+                        <svg viewBox="0 0 24 24" fill="#ea580c"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                    </div>
+                    <h4>Academic Results</h4>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certificate Section -->
+        <section class="certificate-section">
+            <div class="certificate-card">
+                <div class="certificate-preview">
+                    <div class="certificate-badge">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <h3>Certificate</h3>
+                    <p style="font-size: 10px; color: #64748b;">OF COMPLETION</p>
+                    <p class="name">John Doe</p>
+                    <p style="font-size: 10px; color: #64748b;">has successfully completed the course</p>
+                    <p style="font-size: 11px; color: #0039a6; font-weight: 600;">Project Management Fundamentals</p>
+                </div>
+                <div class="certificate-info">
+                    <h3>Certificate Generation</h3>
+                    <p>Automatically generate and issue certificates for course completions, achievements, and academic milestones. Shareable and verifiable.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom Badges -->
+        <div class="bottom-badges">
+            <div class="badge-item">
+                <svg viewBox="0 0 24 24" fill="#0039a6"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <span>Easy to Use</span>
+            </div>
+            <div class="badge-item">
+                <svg viewBox="0 0 24 24" fill="#0039a6"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                <span>Accessible Anywhere</span>
+            </div>
+            <div class="badge-item">
+                <svg viewBox="0 0 24 24" fill="#0039a6"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                <span>Engaging Learning</span>
+            </div>
+            <div class="badge-item">
+                <svg viewBox="0 0 24 24" fill="#0039a6"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+                <span>Better Performance</span>
+            </div>
+        </div>
+
+        <!-- Contact Bar -->
+        <div class="contact-bar">
+            <div class="contact-left">
+                <div class="contact-icons">
+                    <div class="contact-icon phone">
+                        <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                    </div>
+                    <div class="contact-icon whatsapp">
+                        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </div>
+                </div>
+                <div class="contact-text">
+                    <h4>CONTACT & WHATSAPP</h4>
+                    <p>+234 800 FFB SCHOOL</p>
+                </div>
+            </div>
+            <div class="contact-right">
+                <p>Visit Our Platform</p>
+                <p>https://ffb-erp.vercel.app</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><span>Empower Learning. Improve Performance. Build Success.</span></p>
+        </div>
+    </div>
+</body>
+</html>

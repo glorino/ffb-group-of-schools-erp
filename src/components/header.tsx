@@ -87,30 +87,30 @@ const email = session?.user?.email || SCHOOL_CONFIG.email;
 
   return (
     <>
-      <header className="sticky top-0 z-30 h-12 bg-[var(--sidebar)]/80 backdrop-blur-2xl border-b border-white/[0.06]">
+      <header className="sticky top-0 z-30 h-14 bg-white border-b border-[#e8ecf1] overflow-hidden">
         <div className="h-full pl-14 pr-4 flex items-center gap-3 lg:pl-4">
           <div className="flex-1 min-w-0">
             <button
               onClick={() => setSearchOpen(true)}
-              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white/25 text-[12px] w-full max-w-xs hover:bg-white/[0.07] hover:border-white/[0.1] transition-all"
+              className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-[#f1f5f9] border border-[#e2e8f0] text-[#94a3b8] text-[12px] w-full max-w-xs hover:bg-[#e2e8f0] transition-all"
             >
-              <Search className="w-3.5 h-3.5" />
+              <Search className="w-4 h-4" />
               <span className="flex-1 text-left">Search anything...</span>
-              <kbd className="hidden md:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white/[0.05] text-white/20 text-[9px] font-mono border border-white/[0.06]">
+              <kbd className="hidden md:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-[#e2e8f0] text-[#94a3b8] text-[9px] font-mono border border-[#cbd5e1]">
                 ⌘K
               </kbd>
             </button>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <div ref={notifRef} className="relative">
               <button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-white/30 hover:text-white/60 hover:bg-white/[0.05] transition-all relative"
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all relative"
               >
-                <Bell className="w-4 h-4" />
+                <Bell className="w-4.5 h-4.5" />
                 {notifUnread > 0 && (
-                  <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-[var(--accent)] text-[var(--sidebar)] text-[8px] font-bold flex items-center justify-center">
+                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#ef4444] text-white text-[8px] font-bold flex items-center justify-center">
                     {notifUnread}
                   </span>
                 )}
@@ -121,22 +121,22 @@ const email = session?.user?.email || SCHOOL_CONFIG.email;
                     initial={{ opacity: 0, y: 6, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.96 }}
-                    className="absolute right-0 top-10 w-[320px] rounded-xl bg-[var(--sidebar)]/95 backdrop-blur-3xl border border-white/[0.08] shadow-2xl shadow-black/40 overflow-hidden z-[55]"
+                    className="absolute right-0 top-12 w-[320px] rounded-xl bg-white border border-[#e2e8f0] shadow-xl overflow-hidden z-[55]"
                   >
-                    <div className="px-3 py-2.5 border-b border-white/[0.06] flex items-center justify-between">
-                      <h3 className="text-white font-semibold text-[13px]">Notifications</h3>
-                      <span className="text-[9px] text-[var(--accent)] bg-[var(--accent)]/10 px-1.5 py-0.5 rounded-full font-medium">{notifUnread} new</span>
+                    <div className="px-4 py-3 border-b border-[#e8ecf1] flex items-center justify-between">
+                      <h3 className="text-[#1a1a2e] font-semibold text-[13px]">Notifications</h3>
+                      <span className="text-[10px] text-[#0055ff] bg-[#dbeafe] px-2 py-0.5 rounded-full font-medium">{notifUnread} new</span>
                     </div>
                     <div className="max-h-[280px] overflow-y-auto">
                       {notifList.map((n) => (
-                        <div key={n.id} className={`px-3 py-2.5 border-b border-white/[0.04] hover:bg-white/[0.04] transition cursor-pointer ${!n.read ? "bg-white/[0.02]" : ""}`}>
+                        <div key={n.id} className={`px-4 py-3 border-b border-[#f1f5f9] hover:bg-[#f8fafc] transition cursor-pointer ${!n.read ? "bg-[#f0f9ff]" : ""}`}>
                           <div className="flex items-start gap-2.5">
                             <div className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                              n.type === "finance" ? "bg-emerald-500/15 text-emerald-400" :
-                              n.type === "academic" ? "bg-blue-500/15 text-blue-400" :
-                              n.type === "system" ? "bg-amber-500/15 text-amber-400" :
-                              n.type === "warning" ? "bg-red-500/15 text-red-400" :
-                              "bg-purple-500/15 text-purple-400"
+                              n.type === "finance" ? "bg-[#dcfce7] text-[#16a34a]" :
+                              n.type === "academic" ? "bg-[#dbeafe] text-[#2563eb]" :
+                              n.type === "system" ? "bg-[#fef3c7] text-[#d97706]" :
+                              n.type === "warning" ? "bg-[#fee2e2] text-[#dc2626]" :
+                              "bg-[#f3e8ff] text-[#9333ea]"
                             }`}>
                               {n.type === "finance" ? <CreditCard className="w-3.5 h-3.5" /> :
                                n.type === "academic" ? <GraduationCap className="w-3.5 h-3.5" /> :
@@ -145,9 +145,9 @@ const email = session?.user?.email || SCHOOL_CONFIG.email;
                                <Bell className="w-3.5 h-3.5" />}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-white/85 text-[12px] font-medium leading-tight">{n.title}</p>
-                              <p className="text-white/30 text-[10px] mt-0.5 truncate">{n.message}</p>
-                              <p className="text-white/15 text-[9px] mt-0.5">{n.createdAt ? (() => {
+                              <p className="text-[#1a1a2e] text-[12px] font-medium leading-tight">{n.title}</p>
+                              <p className="text-[#64748b] text-[10px] mt-0.5 truncate">{n.message}</p>
+                              <p className="text-[#94a3b8] text-[9px] mt-0.5">{n.createdAt ? (() => {
                                 const diff = Date.now() - new Date(n.createdAt).getTime();
                                 const mins = Math.floor(diff / 60000);
                                 if (mins < 60) return `${mins}m ago`;
@@ -156,13 +156,13 @@ const email = session?.user?.email || SCHOOL_CONFIG.email;
                                 return `${Math.floor(hrs / 24)}d ago`;
                               })() : ""}</p>
                             </div>
-                            {!n.read && <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] mt-1.5 flex-shrink-0" />}
+                            {!n.read && <div className="w-1.5 h-1.5 rounded-full bg-[#0055ff] mt-1.5 flex-shrink-0" />}
                           </div>
                         </div>
                       ))}
                     </div>
-                    <div className="p-2 border-t border-white/[0.06]">
-                      <button onClick={() => { router.push("/dashboard/notifications"); setNotificationsOpen(false); }} className="w-full py-1.5 rounded-lg bg-white/[0.04] text-white/30 text-[11px] font-medium hover:bg-white/[0.07] transition">
+                    <div className="p-2 border-t border-[#e8ecf1]">
+                      <button onClick={() => { router.push("/dashboard/notifications"); setNotificationsOpen(false); }} className="w-full py-2 rounded-lg bg-[#f1f5f9] text-[#64748b] text-[11px] font-medium hover:bg-[#e2e8f0] transition">
                         View all notifications
                       </button>
                     </div>
@@ -174,16 +174,16 @@ const email = session?.user?.email || SCHOOL_CONFIG.email;
             <div ref={profileRef} className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-2 pl-1.5 pr-2 py-1 rounded-lg hover:bg-white/[0.05] transition-all"
+                className="flex items-center gap-2 pl-1.5 pr-2 py-1 rounded-lg hover:bg-[#f1f5f9] transition-all"
               >
-                <div className="w-7 h-7 rounded-md bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-[10px] font-bold border border-white/10">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0055ff] to-[#0039a6] flex items-center justify-center text-white text-[11px] font-bold">
                   {initials}
                 </div>
                 <div className="hidden sm:block text-left">
-                  <p className="text-white/85 text-[12px] font-medium leading-tight">{name}</p>
-                  <p className="text-white/25 text-[9px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</p>
+                  <p className="text-[#1a1a2e] text-[12px] font-medium leading-tight">{name}</p>
+                  <p className="text-[#64748b] text-[9px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</p>
                 </div>
-                <ChevronDown className={`w-3 h-3 text-white/25 transition-transform ${profileOpen ? "rotate-180" : ""}`} />
+                <ChevronDown className={`w-3 h-3 text-[#94a3b8] transition-transform ${profileOpen ? "rotate-180" : ""}`} />
               </button>
               <AnimatePresence>
                 {profileOpen && (
@@ -191,28 +191,28 @@ const email = session?.user?.email || SCHOOL_CONFIG.email;
                     initial={{ opacity: 0, y: 6, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.96 }}
-                    className="absolute right-0 top-10 w-[200px] rounded-xl bg-[var(--sidebar)]/95 backdrop-blur-3xl border border-white/[0.08] shadow-2xl shadow-black/40 overflow-hidden z-[60]"
+                    className="absolute right-0 top-12 w-[200px] rounded-xl bg-white border border-[#e2e8f0] shadow-xl overflow-hidden z-[60]"
                   >
-                    <div className="px-3 py-2 border-b border-white/[0.06]">
-                      <p className="text-white/85 text-[13px] font-medium">{name}</p>
-                      <p className="text-white/25 text-[10px]">{email}</p>
+                    <div className="px-3 py-2 border-b border-[#e8ecf1]">
+                      <p className="text-[#1a1a2e] text-[13px] font-medium">{name}</p>
+                      <p className="text-[#64748b] text-[10px]">{email}</p>
                     </div>
                     <div className="p-1">
                       {quickLinks.map((link) => (
                         <button
                           key={link.href}
                           onClick={() => { router.push(link.href); setProfileOpen(false); }}
-                          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-white/40 hover:text-white/75 hover:bg-white/[0.05] text-[12px] transition-all"
+                          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] text-[12px] transition-all"
                         >
                           <link.icon className="w-3.5 h-3.5" />
                           {link.label}
                         </button>
                       ))}
                     </div>
-                    <div className="p-1 border-t border-white/[0.06]">
+                    <div className="p-1 border-t border-[#e8ecf1]">
                       <button
                         onClick={() => signOut({ callbackUrl: "/auth/login" })}
-                        className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-red-400/60 hover:text-red-400 hover:bg-red-500/[0.06] text-[12px] transition-all"
+                        className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[#dc2626] hover:bg-[#fee2e2] text-[12px] transition-all"
                       >
                         <LogOut className="w-3.5 h-3.5" />
                         Sign Out

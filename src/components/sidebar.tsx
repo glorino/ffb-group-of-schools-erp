@@ -217,7 +217,7 @@ export function Sidebar() {
               className="lg:hidden fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
             <motion.aside initial={{ x: -260 }} animate={{ x: 0 }} exit={{ x: -260 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="lg:hidden fixed left-0 top-0 bottom-0 w-[240px] z-[80] bg-[var(--sidebar)] shadow-2xl">
+              className="lg:hidden fixed left-0 top-0 bottom-0 w-[256px] z-[80] bg-[var(--sidebar)] shadow-2xl">
               <button onClick={() => setMobileOpen(false)} className="absolute top-3 right-3 text-white/40 hover:text-white z-10">
                 <X className="w-5 h-5" />
               </button>
@@ -227,7 +227,7 @@ export function Sidebar() {
         )}
       </AnimatePresence>
 
-      <aside className="hidden lg:block fixed left-0 top-0 bottom-0 w-[240px] z-20 bg-[var(--sidebar)] border-r border-white/[0.06]">
+      <aside className="hidden lg:block fixed left-0 top-0 bottom-0 w-[256px] z-20 bg-[var(--sidebar)] border-r border-white/[0.06]">
         <SidebarContent />
       </aside>
     </>
