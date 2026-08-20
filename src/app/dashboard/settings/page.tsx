@@ -86,11 +86,11 @@ const settingSections = [
 ];
 
 const defaultGradingConfig: GradingGrade[] = [
-  { grade: "A", min: 70, max: 100, points: 5, color: "text-emerald-400" },
-  { grade: "B", min: 60, max: 69, points: 4, color: "text-blue-400" },
-  { grade: "C", min: 50, max: 59, points: 3, color: "text-yellow-400" },
+  { grade: "A", min: 70, max: 100, points: 5, color: "text-[#16a34a]" },
+  { grade: "B", min: 60, max: 69, points: 4, color: "text-[#2563eb]" },
+  { grade: "C", min: 50, max: 59, points: 3, color: "text-[#ca8a04]" },
   { grade: "D", min: 40, max: 49, points: 2, color: "text-orange-400" },
-  { grade: "F", min: 0, max: 39, points: 0, color: "text-red-400" },
+  { grade: "F", min: 0, max: 39, points: 0, color: "text-[#dc2626]" },
 ];
 
 const defaultRoles: RoleAssignment[] = [
@@ -367,7 +367,7 @@ export default function SettingsPage() {
     const newGrade = String.fromCharCode(65 + gradingConfig.length);
     setGradingConfig((prev) => [
       ...prev,
-      { grade: newGrade, min: 0, max: 0, points: 0, color: "text-white/60" },
+      { grade: newGrade, min: 0, max: 0, points: 0, color: "text-[#475569]" },
     ]);
   };
 
@@ -426,8 +426,8 @@ export default function SettingsPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">System Settings</h1>
-            <p className="text-white/60 text-[13px]">
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">System Settings</h1>
+            <p className="text-[#475569] text-[13px]">
               Configure school profile, academic year, grading, and notifications
             </p>
           </div>
@@ -449,20 +449,20 @@ export default function SettingsPage() {
           transition={{ delay: 0.4 }}
           className="card"
         >
-          <h3 className="text-white font-semibold text-lg mb-4">Settings Menu</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Settings Menu</h3>
           <div className="space-y-2">
             {settingSections.map((section, i) => (
               <button
                 key={i}
                 onClick={() => setActiveSection(i)}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
-                  i === activeSection ? "bg-[var(--primary)]/20 border border-[var(--primary)]/30" : "hover:bg-white/[0.04]"
+                  i === activeSection ? "bg-[var(--primary)]/20 border border-[var(--primary)]/30" : "hover:bg-[#f8fafc]"
                 }`}
               >
-                <section.icon className={`w-5 h-5 ${i === activeSection ? "text-[var(--accent)]" : "text-white/40"}`} />
+                <section.icon className={`w-5 h-5 ${i === activeSection ? "text-[var(--accent)]" : "text-[#64748b]"}`} />
                 <div>
-                  <p className={`text-[13px] font-medium ${i === activeSection ? "text-white" : "text-white/70"}`}>{section.title}</p>
-                  <p className="text-white/40 text-[12px]">{section.description}</p>
+                  <p className={`text-[13px] font-medium ${i === activeSection ? "text-[#1a1a2e]" : "text-[#475569]"}`}>{section.title}</p>
+                  <p className="text-[#64748b] text-[12px]">{section.description}</p>
                 </div>
               </button>
             ))}
@@ -479,7 +479,7 @@ export default function SettingsPage() {
           {activeSection === 0 && (
             <>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">School Profile</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">School Profile</h3>
                 <button
                   onClick={handleSaveSchoolProfile}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all"
@@ -491,50 +491,50 @@ export default function SettingsPage() {
               <div className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">School Name</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">School Name</label>
                     <input
                       type="text"
                       value={schoolProfile.schoolName}
                       onChange={(e) => setSchoolProfile((p) => ({ ...p, schoolName: e.target.value }))}
-                      className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">Motto</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">Motto</label>
                     <input
                       type="text"
                       value={schoolProfile.motto}
                       onChange={(e) => setSchoolProfile((p) => ({ ...p, motto: e.target.value }))}
-                      className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="text-white/60 text-[13px] mb-2 block">Address</label>
+                  <label className="text-[#475569] text-[13px] mb-2 block">Address</label>
                   <input
                     type="text"
                     value={schoolProfile.address}
                     onChange={(e) => setSchoolProfile((p) => ({ ...p, address: e.target.value }))}
-                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   />
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">Phone</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">Phone</label>
                     <input
                       type="text"
                       value={schoolProfile.phone}
                       onChange={(e) => setSchoolProfile((p) => ({ ...p, phone: e.target.value }))}
-                      className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">Email</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">Email</label>
                     <input
                       type="email"
                       value={schoolProfile.email}
                       onChange={(e) => setSchoolProfile((p) => ({ ...p, email: e.target.value }))}
-                      className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -546,7 +546,7 @@ export default function SettingsPage() {
           {activeSection === 1 && (
             <>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Academic Year</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Academic Year</h3>
                 <button
                   onClick={handleSaveAcademicYear}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all"
@@ -558,21 +558,21 @@ export default function SettingsPage() {
               <div className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">Academic Session</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">Academic Session</label>
                     <input
                       type="text"
                       value={academicYear.session}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, session: e.target.value }))}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">Current Term</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">Current Term</label>
                     <select
                       value={academicYear.term}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, term: e.target.value }))}
                       style={{ colorScheme: "dark" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     >
                       <option style={{ background: "#0f1b33", color: "#fff" }}>First Term</option>
                       <option style={{ background: "#0f1b33", color: "#fff" }}>Second Term</option>
@@ -582,86 +582,86 @@ export default function SettingsPage() {
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">First Term Start</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">First Term Start</label>
                     <input
                       type="date"
                       value={academicYear.firstTermStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, firstTermStart: e.target.value }))}
                       style={{ colorScheme: "dark" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">First Term End</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">First Term End</label>
                     <input
                       type="date"
                       value={academicYear.firstTermEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, firstTermEnd: e.target.value }))}
                       style={{ colorScheme: "dark" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">Second Term Start</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">Second Term Start</label>
                     <input
                       type="date"
                       value={academicYear.secondTermStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, secondTermStart: e.target.value }))}
                       style={{ colorScheme: "dark" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">Second Term End</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">Second Term End</label>
                     <input
                       type="date"
                       value={academicYear.secondTermEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, secondTermEnd: e.target.value }))}
                       style={{ colorScheme: "dark" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">Third Term Start</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">Third Term Start</label>
                     <input
                       type="date"
                       value={academicYear.thirdTermStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, thirdTermStart: e.target.value }))}
                       style={{ colorScheme: "dark" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
-                    <label className="text-white/60 text-[13px] mb-2 block">Third Term End</label>
+                    <label className="text-[#475569] text-[13px] mb-2 block">Third Term End</label>
                     <input
                       type="date"
                       value={academicYear.thirdTermEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, thirdTermEnd: e.target.value }))}
                       style={{ colorScheme: "dark" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="text-white/60 text-[13px] mb-2 block">Mid-Term Break</label>
+                  <label className="text-[#475569] text-[13px] mb-2 block">Mid-Term Break</label>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <input
                       type="date"
                       value={academicYear.midTermBreakStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, midTermBreakStart: e.target.value }))}
                       style={{ colorScheme: "dark" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                     <input
                       type="date"
                       value={academicYear.midTermBreakEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, midTermBreakEnd: e.target.value }))}
                       style={{ colorScheme: "dark" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -673,11 +673,11 @@ export default function SettingsPage() {
           {activeSection === 2 && (
             <>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Grading System</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Grading System</h3>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={addGradingRow}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.06] text-white/70 text-[13px] font-medium hover:bg-white/[0.1] transition-all"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.06] text-[#475569] text-[13px] font-medium hover:bg-white/[0.1] transition-all"
                   >
                     <Plus className="w-4 h-4" />
                     Add Grade
@@ -694,12 +694,12 @@ export default function SettingsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/[0.08]">
-                      <th className="text-left text-white/50 text-[13px] font-medium pb-3">Grade</th>
-                      <th className="text-left text-white/50 text-[13px] font-medium pb-3">Min %</th>
-                      <th className="text-left text-white/50 text-[13px] font-medium pb-3">Max %</th>
-                      <th className="text-left text-white/50 text-[13px] font-medium pb-3">Points</th>
-                      <th className="text-left text-white/50 text-[13px] font-medium pb-3 w-10"></th>
+                    <tr className="border-b border-[#e2e8f0]">
+                      <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Grade</th>
+                      <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Min %</th>
+                      <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Max %</th>
+                      <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Points</th>
+                      <th className="text-left text-[#64748b] text-[13px] font-medium pb-3 w-10"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -710,7 +710,7 @@ export default function SettingsPage() {
                             type="text"
                             value={grade.grade}
                             onChange={(e) => updateGradingRow(i, "grade", e.target.value)}
-                            className="w-16 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] font-bold focus:outline-none focus:border-[var(--primary)]"
+                            className="w-16 px-3 py-1 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-bold focus:outline-none focus:border-[var(--primary)]"
                           />
                         </td>
                         <td className="py-2">
@@ -718,7 +718,7 @@ export default function SettingsPage() {
                             type="number"
                             value={grade.min}
                             onChange={(e) => updateGradingRow(i, "min", e.target.value)}
-                            className="w-20 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                            className="w-20 px-3 py-1 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                           />
                         </td>
                         <td className="py-2">
@@ -726,7 +726,7 @@ export default function SettingsPage() {
                             type="number"
                             value={grade.max}
                             onChange={(e) => updateGradingRow(i, "max", e.target.value)}
-                            className="w-20 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                            className="w-20 px-3 py-1 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                           />
                         </td>
                         <td className="py-2">
@@ -734,13 +734,13 @@ export default function SettingsPage() {
                             type="number"
                             value={grade.points}
                             onChange={(e) => updateGradingRow(i, "points", e.target.value)}
-                            className="w-20 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                            className="w-20 px-3 py-1 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                           />
                         </td>
                         <td className="py-2">
                           <button
                             onClick={() => removeGradingRow(i)}
-                            className="p-1.5 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                            className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#dc2626] hover:bg-red-400/10 transition-all"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -757,7 +757,7 @@ export default function SettingsPage() {
           {activeSection === 3 && (
             <>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Notification Settings</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Notification Settings</h3>
                 <button
                   onClick={handleSaveNotifications}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all"
@@ -776,10 +776,10 @@ export default function SettingsPage() {
                   { key: "attendanceAlerts" as const, label: "Attendance Alerts", desc: "Notify parents of student absences" },
                   { key: "reportCardAlerts" as const, label: "Report Card Alerts", desc: "Notify when report cards are ready" },
                 ]).map((item, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] transition">
+                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-[#f8fafc] hover:bg-white/[0.06] transition">
                     <div>
-                      <p className="text-white text-[13px] font-medium">{item.label}</p>
-                      <p className="text-white/40 text-[11px] mt-0.5">{item.desc}</p>
+                      <p className="text-[#1a1a2e] text-[13px] font-medium">{item.label}</p>
+                      <p className="text-[#64748b] text-[11px] mt-0.5">{item.desc}</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -788,7 +788,7 @@ export default function SettingsPage() {
                         onChange={() => toggleNotification(item.key)}
                         className="sr-only peer"
                       />
-                      <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/40 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent)] peer-checked:after:bg-white"></div>
+                      <div className="w-9 h-5 bg-[#f1f5f9] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/40 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent)] peer-checked:after:bg-white"></div>
                     </label>
                   </div>
                 ))}
@@ -800,7 +800,7 @@ export default function SettingsPage() {
           {activeSection === 4 && (
             <>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">User Roles & Permissions</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">User Roles & Permissions</h3>
                 <button
                   onClick={handleSaveRoles}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all"
@@ -811,14 +811,14 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-3">
                 {roles.map((item) => (
-                  <div key={item.id} className="p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] transition">
+                  <div key={item.id} className="p-4 rounded-xl bg-[#f8fafc] hover:bg-white/[0.06] transition">
                     <div className="flex items-center gap-3 mb-3">
                       <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center text-white text-[11px] font-bold`}>
                         {item.role.slice(0, 2).toUpperCase()}
                       </div>
                       <div className="flex-1">
-                        <p className="text-white text-[13px] font-medium">{item.role}</p>
-                        <p className="text-white/40 text-[11px] mt-0.5">{item.desc}</p>
+                        <p className="text-[#1a1a2e] text-[13px] font-medium">{item.role}</p>
+                        <p className="text-[#64748b] text-[11px] mt-0.5">{item.desc}</p>
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 ml-12">
@@ -828,11 +828,11 @@ export default function SettingsPage() {
                             type="text"
                             value={perm}
                             onChange={(e) => updateRolePermissions(item.id, j, e.target.value)}
-                            className="px-2 py-0.5 rounded-md bg-white/[0.06] border border-white/[0.08] text-white/60 text-[10px] font-medium focus:outline-none focus:border-[var(--primary)] w-28"
+                            className="px-2 py-0.5 rounded-md bg-white/[0.06] border border-[#e2e8f0] text-[#475569] text-[10px] font-medium focus:outline-none focus:border-[var(--primary)] w-28"
                           />
                           <button
                             onClick={() => removeRolePermission(item.id, j)}
-                            className="p-0.5 rounded text-white/20 hover:text-red-400 transition"
+                            className="p-0.5 rounded text-[#94a3b8] hover:text-[#dc2626] transition"
                           >
                             <Trash2 className="w-3 h-3" />
                           </button>
@@ -840,7 +840,7 @@ export default function SettingsPage() {
                       ))}
                       <button
                         onClick={() => addRolePermission(item.id)}
-                        className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-dashed border-white/10 text-white/30 text-[10px] hover:text-white/60 hover:border-white/20 transition"
+                        className="px-2 py-0.5 rounded-md bg-[#f8fafc] border border-dashed border-[#e2e8f0] text-[#94a3b8] text-[10px] hover:text-[#475569] hover:border-[#e2e8f0] transition"
                       >
                         + Add
                       </button>
@@ -854,14 +854,14 @@ export default function SettingsPage() {
           {/* Security */}
           {activeSection === 5 && (
             <>
-              <h3 className="text-white font-semibold text-lg mb-6">Security Settings</h3>
+              <h3 className="text-[#1a1a2e] font-semibold text-lg mb-6">Security Settings</h3>
               <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-white/[0.04]">
+                <div className="p-4 rounded-xl bg-[#f8fafc]">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className="text-white text-[13px] font-medium">Two-Factor Authentication</p>
-                      <p className="text-white/40 text-[11px] mt-0.5">Add an extra layer of security to admin accounts</p>
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px] font-medium">Coming Soon</span>
+                      <p className="text-[#1a1a2e] text-[13px] font-medium">Two-Factor Authentication</p>
+                      <p className="text-[#64748b] text-[11px] mt-0.5">Add an extra layer of security to admin accounts</p>
+                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-yellow-500/20 text-[#ca8a04] text-[10px] font-medium">Coming Soon</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer opacity-50">
                       <input
@@ -870,48 +870,48 @@ export default function SettingsPage() {
                         disabled
                         className="sr-only peer"
                       />
-                      <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/40 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent)] peer-checked:after:bg-white"></div>
+                      <div className="w-9 h-5 bg-[#f1f5f9] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/40 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent)] peer-checked:after:bg-white"></div>
                     </label>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-white/[0.04]">
+                <div className="p-4 rounded-xl bg-[#f8fafc]">
                   <div className="flex items-center gap-2 mb-3">
-                    <p className="text-white text-[13px] font-medium">Password Policy</p>
-                    <span className="px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px] font-medium">Coming Soon</span>
+                    <p className="text-[#1a1a2e] text-[13px] font-medium">Password Policy</p>
+                    <span className="px-2 py-0.5 rounded-full bg-yellow-500/20 text-[#ca8a04] text-[10px] font-medium">Coming Soon</span>
                   </div>
                   <div className="space-y-3">
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-white/60 text-[11px] mb-1 block">Minimum Length</label>
+                        <label className="text-[#475569] text-[11px] mb-1 block">Minimum Length</label>
                         <input
                           type="number"
                           value={passwordPolicy.minLength}
                           onChange={(e) => setPasswordPolicy((p) => ({ ...p, minLength: Number(e.target.value) }))}
                           min={6}
-                          className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                         />
                       </div>
                       <div>
-                        <label className="text-white/60 text-[11px] mb-1 block">Password Expiry (days)</label>
+                        <label className="text-[#475569] text-[11px] mb-1 block">Password Expiry (days)</label>
                         <input
                           type="number"
                           value={passwordPolicy.expiryDays}
                           onChange={(e) => setPasswordPolicy((p) => ({ ...p, expiryDays: Number(e.target.value) }))}
                           min={30}
-                          className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                         />
                       </div>
                     </div>
                     {(["requireUppercase", "requireLowercase", "requireNumber", "requireSpecial"] as const).map((rule, i) => (
-                      <label key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/[0.04] cursor-pointer">
+                      <label key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#f8fafc] cursor-pointer">
                         <input
                           type="checkbox"
                           checked={passwordPolicy[rule]}
                           onChange={() => setPasswordPolicy((p) => ({ ...p, [rule]: !p[rule] }))}
-                          className="w-4 h-4 rounded bg-white/[0.04] border-white/[0.1] text-[var(--primary)] focus:ring-[var(--primary)]"
+                          className="w-4 h-4 rounded bg-[#f8fafc] border-[#e2e8f0] text-[var(--primary)] focus:ring-[var(--primary)]"
                         />
-                        <span className="text-white/60 text-[12px]">
+                        <span className="text-[#475569] text-[12px]">
                           {["Require uppercase letter", "Require lowercase letter", "Require number", "Require special character"][i]}
                         </span>
                       </label>
@@ -919,64 +919,64 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-white/[0.04]">
-                  <p className="text-white text-[13px] font-medium mb-3">Session Management</p>
+                <div className="p-4 rounded-xl bg-[#f8fafc]">
+                  <p className="text-[#1a1a2e] text-[13px] font-medium mb-3">Session Management</p>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-white/60 text-[12px]">Max login attempts before lockout</span>
+                      <span className="text-[#475569] text-[12px]">Max login attempts before lockout</span>
                       <input
                         type="number"
                         value={sessionPolicy.maxAttempts}
                         onChange={(e) => setSessionPolicy((p) => ({ ...p, maxAttempts: Number(e.target.value) }))}
                         min={3}
-                        className="w-20 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] text-right focus:outline-none focus:border-[var(--primary)]"
+                        className="w-20 px-3 py-1.5 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] text-right focus:outline-none focus:border-[var(--primary)]"
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-white/60 text-[12px]">Session timeout (minutes)</span>
+                      <span className="text-[#475569] text-[12px]">Session timeout (minutes)</span>
                       <input
                         type="number"
                         value={sessionPolicy.timeoutMinutes}
                         onChange={(e) => setSessionPolicy((p) => ({ ...p, timeoutMinutes: Number(e.target.value) }))}
                         min={15}
-                        className="w-20 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] text-right focus:outline-none focus:border-[var(--primary)]"
+                        className="w-20 px-3 py-1.5 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] text-right focus:outline-none focus:border-[var(--primary)]"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-white/[0.04]">
-                  <p className="text-white text-[13px] font-medium mb-3">Change Password</p>
+                <div className="p-4 rounded-xl bg-[#f8fafc]">
+                  <p className="text-[#1a1a2e] text-[13px] font-medium mb-3">Change Password</p>
                   <div className="space-y-3">
                     <div>
-                      <label className="text-white/60 text-[11px] mb-1 block">Current Password</label>
+                      <label className="text-[#475569] text-[11px] mb-1 block">Current Password</label>
                       <input
                         type="password"
                         value={passwords.currentPassword}
                         onChange={(e) => setPasswords((p) => ({ ...p, currentPassword: e.target.value }))}
                         placeholder="Enter current password"
-                        className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] placeholder:text-white/20 focus:outline-none focus:border-[var(--primary)]"
+                        className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder:text-[#94a3b8] focus:outline-none focus:border-[var(--primary)]"
                       />
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-white/60 text-[11px] mb-1 block">New Password</label>
+                        <label className="text-[#475569] text-[11px] mb-1 block">New Password</label>
                         <input
                           type="password"
                           value={passwords.newPassword}
                           onChange={(e) => setPasswords((p) => ({ ...p, newPassword: e.target.value }))}
                           placeholder="Enter new password"
-                          className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] placeholder:text-white/20 focus:outline-none focus:border-[var(--primary)]"
+                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder:text-[#94a3b8] focus:outline-none focus:border-[var(--primary)]"
                         />
                       </div>
                       <div>
-                        <label className="text-white/60 text-[11px] mb-1 block">Confirm New Password</label>
+                        <label className="text-[#475569] text-[11px] mb-1 block">Confirm New Password</label>
                         <input
                           type="password"
                           value={passwords.confirmPassword}
                           onChange={(e) => setPasswords((p) => ({ ...p, confirmPassword: e.target.value }))}
                           placeholder="Confirm new password"
-                          className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[13px] placeholder:text-white/20 focus:outline-none focus:border-[var(--primary)]"
+                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder:text-[#94a3b8] focus:outline-none focus:border-[var(--primary)]"
                         />
                       </div>
                     </div>

@@ -135,51 +135,51 @@ export default function ReportCardsPage() {
         <div>
           <h1 className="text-[22px] font-bold text-white/95 font-display tracking-tight flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-              <FileText className="w-[18px] h-[18px] text-white" />
+              <FileText className="w-[18px] h-[18px] text-[#1a1a2e]" />
             </div>
             Report Cards
           </h1>
-          <p className="text-white/30 text-[12px] mt-1 ml-[46px]">Generate, preview, and download report cards with QR verification</p>
+          <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">Generate, preview, and download report cards with QR verification</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <p className="text-white/40 text-[12px]">Total Students</p>
-          <p className="text-[28px] font-bold text-white mt-1">{students.length}</p>
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+          <p className="text-[#64748b] text-[12px]">Total Students</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{students.length}</p>
         </div>
-        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <p className="text-white/40 text-[12px]">Selected</p>
-          <p className="text-[28px] font-bold text-white mt-1">{selectedStudent ? "1" : "0"}</p>
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+          <p className="text-[#64748b] text-[12px]">Selected</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{selectedStudent ? "1" : "0"}</p>
         </div>
-        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <p className="text-white/40 text-[12px]">Status</p>
-          <p className="text-[18px] font-bold text-white mt-1">{generating ? "Generating..." : reportData ? "Ready" : "Select student"}</p>
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+          <p className="text-[#64748b] text-[12px]">Status</p>
+          <p className="text-[18px] font-bold text-[#1a1a2e] mt-1">{generating ? "Generating..." : reportData ? "Ready" : "Select student"}</p>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-5 gap-5">
         {/* Student List - hidden for students/parents (auto-selected) */}
         {!isReadOnly && (
-          <div className="lg:col-span-2 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-            <h3 className="text-white/90 font-semibold text-[14px] mb-3">Select Student</h3>
+          <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+            <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">Select Student</h3>
             <div className="relative mb-3">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
               <input
                 type="text"
                 placeholder="Search students..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[12px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50"
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50"
               />
             </div>
             <div className="space-y-1 max-h-[400px] overflow-y-auto">
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-12 rounded-xl bg-white/[0.04] animate-pulse" />
+                  <div key={i} className="h-12 rounded-xl bg-[#f8fafc] animate-pulse" />
                 ))
               ) : filteredStudents.length === 0 ? (
-                <p className="text-white/30 text-[12px] text-center py-8">No students found</p>
+                <p className="text-[#94a3b8] text-[12px] text-center py-8">No students found</p>
               ) : (
                 filteredStudents.map((s) => (
                   <button
@@ -188,15 +188,15 @@ export default function ReportCardsPage() {
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition ${
                       selectedStudent === s.id
                         ? "bg-[var(--primary)]/20 border border-[var(--primary)]/40"
-                        : "hover:bg-white/[0.04] border border-transparent"
+                        : "hover:bg-[#f8fafc] border border-transparent"
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
                       {s.firstName?.[0]}{s.lastName?.[0]}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white/80 text-[12px] font-medium truncate">{s.firstName} {s.lastName}</p>
-                      <p className="text-white/30 text-[10px]">{s.class?.displayName || s.class?.name || "—"} · {s.admissionNumber}</p>
+                      <p className="text-[#1a1a2e] text-[12px] font-medium truncate">{s.firstName} {s.lastName}</p>
+                      <p className="text-[#94a3b8] text-[10px]">{s.class?.displayName || s.class?.name || "—"} · {s.admissionNumber}</p>
                     </div>
                   </button>
                 ))
@@ -212,7 +212,7 @@ export default function ReportCardsPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowPreview(!showPreview)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/60 text-[12px] font-medium hover:bg-white/[0.08] transition"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
                 >
                   <Eye className="w-4 h-4" /> {showPreview ? "Hide Preview" : "Preview"}
                 </button>
@@ -232,14 +232,14 @@ export default function ReportCardsPage() {
                       }</table><p><strong>Attendance:</strong> ${reportData.attendance.present}/${reportData.attendance.totalDays} days</p>`
                     );
                   }}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/60 text-[12px] font-medium hover:bg-white/[0.08] transition"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
                 >
                   <Printer className="w-4 h-4" /> Print
                 </button>
               </div>
 
               {showPreview && (
-                <div className="bg-white rounded-2xl border border-white/[0.07] overflow-hidden" style={{ height: "700px" }}>
+                <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden" style={{ height: "700px" }}>
                   <PDFViewer width="100%" height="100%" showToolbar={false}>
                     <ReportCardPDF {...reportData} />
                   </PDFViewer>
@@ -247,41 +247,41 @@ export default function ReportCardsPage() {
               )}
 
               {!showPreview && (
-                <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-                  <h3 className="text-white/90 font-semibold text-[14px] mb-3">Report Card Details</h3>
+                <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+                  <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">Report Card Details</h3>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 rounded-xl bg-white/[0.04]">
-                      <p className="text-white/40 text-[10px]">Student</p>
-                      <p className="text-white/80 text-[13px] font-medium">{reportData.studentData.name}</p>
+                    <div className="p-3 rounded-xl bg-[#f8fafc]">
+                      <p className="text-[#64748b] text-[10px]">Student</p>
+                      <p className="text-[#1a1a2e] text-[13px] font-medium">{reportData.studentData.name}</p>
                     </div>
-                    <div className="p-3 rounded-xl bg-white/[0.04]">
-                      <p className="text-white/40 text-[10px]">Class</p>
-                      <p className="text-white/80 text-[13px] font-medium">{reportData.studentData.className}</p>
+                    <div className="p-3 rounded-xl bg-[#f8fafc]">
+                      <p className="text-[#64748b] text-[10px]">Class</p>
+                      <p className="text-[#1a1a2e] text-[13px] font-medium">{reportData.studentData.className}</p>
                     </div>
-                    <div className="p-3 rounded-xl bg-white/[0.04]">
-                      <p className="text-white/40 text-[10px]">Term</p>
-                      <p className="text-white/80 text-[13px] font-medium">{reportData.termData.name}</p>
+                    <div className="p-3 rounded-xl bg-[#f8fafc]">
+                      <p className="text-[#64748b] text-[10px]">Term</p>
+                      <p className="text-[#1a1a2e] text-[13px] font-medium">{reportData.termData.name}</p>
                     </div>
-                    <div className="p-3 rounded-xl bg-white/[0.04]">
-                      <p className="text-white/40 text-[10px]">Session</p>
-                      <p className="text-white/80 text-[13px] font-medium">{reportData.termData.academicYear}</p>
+                    <div className="p-3 rounded-xl bg-[#f8fafc]">
+                      <p className="text-[#64748b] text-[10px]">Session</p>
+                      <p className="text-[#1a1a2e] text-[13px] font-medium">{reportData.termData.academicYear}</p>
                     </div>
                   </div>
                   {reportData.grades.length > 0 && (
                     <div className="mt-3">
-                      <p className="text-white/40 text-[10px] mb-2">Subjects ({reportData.grades.length})</p>
+                      <p className="text-[#64748b] text-[10px] mb-2">Subjects ({reportData.grades.length})</p>
                       <div className="space-y-1">
                         {reportData.grades.map((g, i) => (
-                          <div key={i} className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-white/[0.02]">
-                            <span className="text-white/60 text-[11px]">{g.subject}</span>
+                          <div key={i} className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#f8fafc]">
+                            <span className="text-[#475569] text-[11px]">{g.subject}</span>
                             <div className="flex items-center gap-3">
-                              <span className="text-white/50 text-[10px]">CA: {g.ca1 + g.ca2}</span>
-                              <span className="text-white/50 text-[10px]">Exam: {g.exam}</span>
-                              <span className="text-white/80 text-[11px] font-semibold">{g.total}%</span>
+                              <span className="text-[#64748b] text-[10px]">CA: {g.ca1 + g.ca2}</span>
+                              <span className="text-[#64748b] text-[10px]">Exam: {g.exam}</span>
+                              <span className="text-[#1a1a2e] text-[11px] font-semibold">{g.total}%</span>
                               <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                                g.total >= 70 ? "bg-emerald-500/15 text-emerald-400" :
-                                g.total >= 50 ? "bg-blue-500/15 text-blue-400" :
-                                "bg-red-500/15 text-red-400"
+                                g.total >= 70 ? "bg-[#dcfce7] text-[#16a34a]" :
+                                g.total >= 50 ? "bg-[#dbeafe] text-[#2563eb]" :
+                                "bg-[#fee2e2] text-[#dc2626]"
                               }`}>{g.grade}</span>
                             </div>
                           </div>
@@ -293,24 +293,24 @@ export default function ReportCardsPage() {
               )}
 
               {/* QR Code */}
-              <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-                <h3 className="text-white/90 font-semibold text-[14px] mb-3">QR Verification</h3>
+              <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+                <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">QR Verification</h3>
                 <div className="flex items-center gap-4">
                   <div className="w-24 h-24 rounded-xl bg-white flex items-center justify-center">
                     <QrCode className="w-16 h-16 text-[var(--blue-1)]" />
                   </div>
                   <div>
-                    <p className="text-white/60 text-[12px]">Each report card includes a unique QR code for third-party verification.</p>
-                    <p className="text-white/30 text-[10px] mt-1">Scan to verify authenticity of this report card.</p>
+                    <p className="text-[#475569] text-[12px]">Each report card includes a unique QR code for third-party verification.</p>
+                    <p className="text-[#94a3b8] text-[10px] mt-1">Scan to verify authenticity of this report card.</p>
                   </div>
                 </div>
               </div>
             </>
           ) : (
-            <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-12 text-center">
-              <FileText className="w-16 h-16 text-white/10 mx-auto mb-4" />
-              <p className="text-white/30 text-[14px]">Select a student to generate their report card</p>
-              <p className="text-white/20 text-[11px] mt-1">The report card will be generated with real data from the database</p>
+            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center">
+              <FileText className="w-16 h-16 text-[#94a3b8] mx-auto mb-4" />
+              <p className="text-[#94a3b8] text-[14px]">Select a student to generate their report card</p>
+              <p className="text-[#94a3b8] text-[11px] mt-1">The report card will be generated with real data from the database</p>
             </div>
           )}
         </div>

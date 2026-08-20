@@ -151,22 +151,22 @@ export default function HostelPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Hostel Management</h1>
-            <p className="text-white/60 text-[13px]">
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Hostel Management</h1>
+            <p className="text-[#475569] text-[13px]">
               Manage blocks, rooms, beds, allocation, and QR attendance
             </p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowQRScanner(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <QrCode className="w-4 h-4" />
               QR Attendance
@@ -193,11 +193,11 @@ export default function HostelPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
+                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -212,15 +212,15 @@ export default function HostelPage() {
           className="lg:col-span-2 card"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white font-semibold text-lg">Hostel Blocks</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg">Hostel Blocks</h3>
             <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
               <input
                 type="text"
                 placeholder="Search blocks..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
               />
             </div>
           </div>
@@ -229,20 +229,20 @@ export default function HostelPage() {
               const occupied = block.rooms.reduce((acc, r) => acc + r.beds.length, 0);
               const totalRoomBeds = block.rooms.reduce((acc, r) => acc + r.capacity, 0);
               return (
-                <div key={block.id} className="p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all">
+                <div key={block.id} className="p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <h4 className="text-white font-medium text-[13px]">{block.name}</h4>
-                      <p className="text-white/40 text-[12px]">{block.type} • {block.rooms.length} rooms</p>
+                      <h4 className="text-[#1a1a2e] font-medium text-[13px]">{block.name}</h4>
+                      <p className="text-[#64748b] text-[12px]">{block.type} • {block.rooms.length} rooms</p>
                     </div>
-                    <span className="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 text-[12px]">active</span>
+                    <span className="px-2 py-1 rounded-lg bg-[#dcfce7] text-[#16a34a] text-[12px]">active</span>
                   </div>
                   <div className="mb-3">
                     <div className="flex items-center justify-between text-[13px] mb-1">
-                      <span className="text-white/60">Occupancy</span>
-                      <span className="text-white/40">{occupied}/{totalRoomBeds || block.capacity}</span>
+                      <span className="text-[#475569]">Occupancy</span>
+                      <span className="text-[#64748b]">{occupied}/{totalRoomBeds || block.capacity}</span>
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className="w-full bg-[#f1f5f9] rounded-full h-2">
                       <div
                         className="bg-[var(--accent)] h-2 rounded-full"
                         style={{ width: `${totalRoomBeds ? (occupied / totalRoomBeds) * 100 : block.capacity ? (occupied / block.capacity) * 100 : 0}%` }}
@@ -252,7 +252,7 @@ export default function HostelPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => setViewBlock(block)}
-                      className="flex-1 py-1.5 rounded-lg bg-white/[0.04] text-white/60 text-[12px] hover:bg-white/[0.08] transition-all"
+                      className="flex-1 py-1.5 rounded-lg bg-[#f8fafc] text-[#475569] text-[12px] hover:bg-[#f1f5f9] transition-all"
                     >
                       <Eye className="w-3 h-3 inline mr-1" />
                       View
@@ -262,7 +262,7 @@ export default function HostelPage() {
                         setEditBlock(block);
                         setEditForm({ name: block.name, type: block.type, capacity: String(block.capacity) });
                       }}
-                      className="flex-1 py-1.5 rounded-lg bg-white/[0.04] text-white/60 text-[12px] hover:bg-white/[0.08] transition-all"
+                      className="flex-1 py-1.5 rounded-lg bg-[#f8fafc] text-[#475569] text-[12px] hover:bg-[#f1f5f9] transition-all"
                     >
                       <Edit className="w-3 h-3 inline mr-1" />
                       Edit
@@ -272,7 +272,7 @@ export default function HostelPage() {
               );
             })}
             {filteredBlocks.length === 0 && (
-              <div className="col-span-2 text-center py-8 text-white/40 text-[13px]">No hostel blocks found</div>
+              <div className="col-span-2 text-center py-8 text-[#64748b] text-[13px]">No hostel blocks found</div>
             )}
           </div>
         </motion.div>
@@ -284,32 +284,32 @@ export default function HostelPage() {
           className="space-y-6"
         >
           <div className="card">
-            <h3 className="text-white font-semibold text-lg mb-4">Room Status</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Room Status</h3>
             <div className="space-y-3">
               {allRooms.slice(0, 6).map((room) => (
-                <div key={room.id} className="p-3 rounded-xl bg-white/[0.04]">
+                <div key={room.id} className="p-3 rounded-xl bg-[#f8fafc]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white text-[13px] font-medium">{room.blockName} - Room {room.number}</span>
+                    <span className="text-[#1a1a2e] text-[13px] font-medium">{room.blockName} - Room {room.number}</span>
                     <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                      room.status === "full" ? "bg-red-500/20 text-red-400" : "bg-emerald-500/20 text-emerald-400"
+                      room.status === "full" ? "bg-[#fee2e2] text-[#dc2626]" : "bg-[#dcfce7] text-[#16a34a]"
                     }`}>
                       {room.status}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-[12px]">
-                    <span className="text-white/40">{room.beds.length}/{room.capacity} beds</span>
-                    <span className="text-white/30">{room.capacity - room.beds.length} available</span>
+                    <span className="text-[#64748b]">{room.beds.length}/{room.capacity} beds</span>
+                    <span className="text-[#94a3b8]">{room.capacity - room.beds.length} available</span>
                   </div>
                 </div>
               ))}
               {allRooms.length === 0 && (
-                <p className="text-center py-4 text-white/40 text-[13px]">No rooms yet</p>
+                <p className="text-center py-4 text-[#64748b] text-[13px]">No rooms yet</p>
               )}
             </div>
           </div>
 
           <div className="card">
-            <h3 className="text-white font-semibold text-lg mb-4">Facilities</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Facilities</h3>
             <div className="grid grid-cols-2 gap-3">
               {[
                 { icon: Wifi, label: "WiFi", status: "Active" },
@@ -317,11 +317,11 @@ export default function HostelPage() {
                 { icon: AlertCircle, label: "Security", status: "Active" },
                 { icon: Building, label: "Water", status: "Active" },
               ].map((facility, i) => (
-                <div key={i} className="p-3 rounded-xl bg-white/[0.04] flex items-center gap-2">
+                <div key={i} className="p-3 rounded-xl bg-[#f8fafc] flex items-center gap-2">
                   <facility.icon className="w-4 h-4 text-[var(--accent)]" />
                   <div>
-                    <p className="text-white text-[13px] font-medium">{facility.label}</p>
-                    <p className="text-white/40 text-[12px]">{facility.status}</p>
+                    <p className="text-[#1a1a2e] text-[13px] font-medium">{facility.label}</p>
+                    <p className="text-[#64748b] text-[12px]">{facility.status}</p>
                   </div>
                 </div>
               ))}
@@ -335,32 +335,32 @@ export default function HostelPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-lg font-semibold">Add Hostel Block</h2>
-              <button onClick={() => setShowModal(false)} className="text-white/40 hover:text-white">
+              <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Hostel Block</h2>
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Block Name</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Block Name</label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. Block E"
                 />
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Type</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Type</label>
                 <select
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
                   style={{ colorScheme: "dark" }}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
                   <option style={{ background: "#0f1b33", color: "#fff" }}>Boys</option>
                   <option style={{ background: "#0f1b33", color: "#fff" }}>Girls</option>
@@ -368,12 +368,12 @@ export default function HostelPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Capacity</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Capacity</label>
                 <input
                   type="number"
                   value={form.capacity}
                   onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. 80"
                 />
               </div>
@@ -381,7 +381,7 @@ export default function HostelPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
+                  className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
                 >
                   Cancel
                 </button>
@@ -403,31 +403,31 @@ export default function HostelPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            className="w-full max-w-lg rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-lg font-semibold">{viewBlock.name} — Rooms</h2>
-              <button onClick={() => setViewBlock(null)} className="text-white/40 hover:text-white">
+              <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewBlock.name} — Rooms</h2>
+              <button onClick={() => setViewBlock(null)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="space-y-3 max-h-[400px] overflow-y-auto">
               {viewBlock.rooms.length === 0 && (
-                <p className="text-white/40 text-[13px] text-center py-4">No rooms in this block</p>
+                <p className="text-[#64748b] text-[13px] text-center py-4">No rooms in this block</p>
               )}
               {viewBlock.rooms.map((room) => (
-                <div key={room.id} className="p-3 rounded-xl bg-white/[0.04]">
+                <div key={room.id} className="p-3 rounded-xl bg-[#f8fafc]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white text-[13px] font-medium">Room {room.number}</span>
+                    <span className="text-[#1a1a2e] text-[13px] font-medium">Room {room.number}</span>
                     <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                      room.status === "full" ? "bg-red-500/20 text-red-400" : "bg-emerald-500/20 text-emerald-400"
+                      room.status === "full" ? "bg-[#fee2e2] text-[#dc2626]" : "bg-[#dcfce7] text-[#16a34a]"
                     }`}>
                       {room.status}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-[12px]">
-                    <span className="text-white/40">Beds: {room.beds.length}/{room.capacity}</span>
-                    <span className="text-white/30">{room.capacity - room.beds.length} available</span>
+                    <span className="text-[#64748b]">Beds: {room.beds.length}/{room.capacity}</span>
+                    <span className="text-[#94a3b8]">{room.capacity - room.beds.length} available</span>
                   </div>
                 </div>
               ))}
@@ -441,31 +441,31 @@ export default function HostelPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-lg font-semibold">Edit {editBlock.name}</h2>
-              <button onClick={() => setEditBlock(null)} className="text-white/40 hover:text-white">
+              <h2 className="text-[#1a1a2e] text-lg font-semibold">Edit {editBlock.name}</h2>
+              <button onClick={() => setEditBlock(null)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Block Name</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Block Name</label>
                 <input
                   type="text"
                   value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Type</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Type</label>
                 <select
                   value={editForm.type}
                   onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
                   style={{ colorScheme: "dark" }}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
                   <option style={{ background: "#0f1b33", color: "#fff" }}>Boys</option>
                   <option style={{ background: "#0f1b33", color: "#fff" }}>Girls</option>
@@ -473,18 +473,18 @@ export default function HostelPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Capacity</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Capacity</label>
                 <input
                   type="number"
                   value={editForm.capacity}
                   onChange={(e) => setEditForm({ ...editForm, capacity: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setEditBlock(null)}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
+                  className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
                 >
                   Cancel
                 </button>
@@ -517,12 +517,12 @@ export default function HostelPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowQRScanner(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6">
+            className="w-full max-w-md rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-lg font-semibold">QR Attendance</h2>
-              <button onClick={() => setShowQRScanner(false)} className="text-white/40 hover:text-white"><X className="w-5 h-5" /></button>
+              <h2 className="text-[#1a1a2e] text-lg font-semibold">QR Attendance</h2>
+              <button onClick={() => setShowQRScanner(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
             </div>
-            <p className="text-white/60 text-[13px] mb-4">Scan or type the student admission number to check in to the hostel.</p>
+            <p className="text-[#475569] text-[13px] mb-4">Scan or type the student admission number to check in to the hostel.</p>
             <input
               type="text"
               autoFocus
@@ -536,9 +536,9 @@ export default function HostelPage() {
                 }
               }}
               placeholder="Scan or type admission number..."
-              className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+              className="w-full px-4 py-3 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
             />
-            <p className="text-white/30 text-[12px] mt-2">Press Enter to submit</p>
+            <p className="text-[#94a3b8] text-[12px] mt-2">Press Enter to submit</p>
           </motion.div>
         </div>
       )}

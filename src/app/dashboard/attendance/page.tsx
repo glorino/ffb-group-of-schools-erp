@@ -130,7 +130,7 @@ export default function AttendancePage() {
             className="stat-card"
           >
             <div className={`stat-card-icon bg-gradient-to-br ${stat.color}`}>
-              <stat.icon className="w-6 h-6 text-white" />
+              <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
             </div>
             <div className="stat-card-content">
               <p className="stat-card-value">{Number(stat.value).toLocaleString()}</p>
@@ -193,7 +193,7 @@ export default function AttendancePage() {
                           <td className="text-[#1a1a2e] font-medium">{className}</td>
                           <td className="text-[#16a34a]">{s.present}</td>
                           <td className="text-[#dc2626]">{s.absent}</td>
-                          <td className="text-yellow-400">{s.late}</td>
+                          <td className="text-[#ca8a04]">{s.late}</td>
                           <td>
                             <div className="flex items-center gap-2">
                               <div className="progress-bar flex-1 max-w-[100px]">
@@ -224,7 +224,7 @@ export default function AttendancePage() {
         >
           <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Today&apos;s Summary</h3>
           <div className="space-y-4">
-            <div className="p-4 rounded-xl bg-[#f1f5f9] border border-white/[0.06]">
+            <div className="p-4 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[#1a1a2e] text-[13px] font-medium">Present</span>
                 <span className="text-[#16a34a] text-[13px] font-bold">
@@ -235,7 +235,7 @@ export default function AttendancePage() {
                 <div className="progress-bar-fill bg-emerald-500" style={{ width: `${stats.total ? (stats.present / stats.total) * 100 : 0}%` }} />
               </div>
             </div>
-            <div className="p-4 rounded-xl bg-[#f1f5f9] border border-white/[0.06]">
+            <div className="p-4 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[#1a1a2e] text-[13px] font-medium">Absent</span>
                 <span className="text-[#dc2626] text-[13px] font-bold">
@@ -246,10 +246,10 @@ export default function AttendancePage() {
                 <div className="progress-bar-fill bg-red-500" style={{ width: `${stats.total ? (stats.absent / stats.total) * 100 : 0}%` }} />
               </div>
             </div>
-            <div className="p-4 rounded-xl bg-[#f1f5f9] border border-white/[0.06]">
+            <div className="p-4 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[#1a1a2e] text-[13px] font-medium">Late</span>
-                <span className="text-yellow-400 text-[13px] font-bold">
+                <span className="text-[#ca8a04] text-[13px] font-bold">
                   {stats.total ? ((stats.late / stats.total) * 100).toFixed(1) : 0}%
                 </span>
               </div>
@@ -326,7 +326,7 @@ export default function AttendancePage() {
       {showQRScanner && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60" onClick={() => setShowQRScanner(false)} />
-          <div className="relative bg-[#0a0f1e] rounded-2xl p-6 w-full max-w-md border border-white/10">
+          <div className="relative bg-[#0a0f1e] rounded-2xl p-6 w-full max-w-md border border-[#e2e8f0]">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">QR Scanner / Admission Number</h3>
             <input type="text" placeholder="Scan QR or type admission number..." autoFocus
               onKeyDown={async (e) => {

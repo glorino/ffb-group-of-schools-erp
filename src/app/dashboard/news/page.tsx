@@ -169,8 +169,8 @@ export default function NewsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-white text-2xl font-bold">News Management</h1>
-          <p className="text-white/50 text-sm mt-1">Create and manage school news articles</p>
+          <h1 className="text-[#1a1a2e] text-2xl font-bold">News Management</h1>
+          <p className="text-[#64748b] text-sm mt-1">Create and manage school news articles</p>
         </div>
         {canManage && (
           <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all">
@@ -189,11 +189,11 @@ export default function NewsPage() {
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="card">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-[13px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                <p className="text-[#64748b] text-[13px] mb-1">{stat.label}</p>
+                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <Newspaper className="w-6 h-6 text-white" />
+                <Newspaper className="w-6 h-6 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -202,25 +202,25 @@ export default function NewsPage() {
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="card">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-white font-semibold text-lg">All News</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-lg">All News</h3>
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
             <input
               type="text"
               placeholder="Search news..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-blue-500"
+              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-blue-500"
             />
           </div>
         </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
+            <Loader2 className="w-8 h-8 text-[#64748b] animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-20 text-white/40">
+          <div className="text-center py-20 text-[#64748b]">
             <Newspaper className="w-12 h-12 mx-auto mb-3 opacity-40" />
             <p className="text-[13px]">No news articles found</p>
           </div>
@@ -229,32 +229,32 @@ export default function NewsPage() {
             {filtered.map((item) => {
               const img = item.target?.imageUrl;
               return (
-                <div key={item.id} className="rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all overflow-hidden">
+                <div key={item.id} className="rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all overflow-hidden">
                   {img && (
-                    <div className="h-40 bg-white/[0.04] overflow-hidden">
+                    <div className="h-40 bg-[#f8fafc] overflow-hidden">
                       <img src={img} alt={item.title} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                     </div>
                   )}
                   <div className="p-4">
                     <div className="flex items-center gap-2 mb-2">
                       {item.target?.featured && (
-                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[11px] font-medium">
+                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-yellow-500/20 text-[#ca8a04] text-[11px] font-medium">
                           <Star className="w-3 h-3" /> Featured
                         </span>
                       )}
-                      <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${item.published ? "bg-emerald-500/20 text-emerald-400" : "bg-white/10 text-white/40"}`}>
+                      <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${item.published ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#f1f5f9] text-[#64748b]"}`}>
                         {item.published ? "Published" : "Draft"}
                       </span>
                     </div>
-                    <h4 className="text-white font-medium text-[14px] mb-2">{item.title}</h4>
-                    <p className="text-white/50 text-[13px] line-clamp-2 mb-3">{item.content}</p>
+                    <h4 className="text-[#1a1a2e] font-medium text-[14px] mb-2">{item.title}</h4>
+                    <p className="text-[#64748b] text-[13px] line-clamp-2 mb-3">{item.content}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-white/30 text-[12px]">{new Date(item.createdAt).toLocaleDateString()}</span>
+                      <span className="text-[#94a3b8] text-[12px]">{new Date(item.createdAt).toLocaleDateString()}</span>
                       <div className="flex items-center gap-2">
-                        <button onClick={() => openEdit(item)} className="p-1.5 rounded-lg hover:bg-white/[0.08] text-white/40 hover:text-white transition-all">
+                        <button onClick={() => openEdit(item)} className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-all">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-white/40 hover:text-red-400 transition-all">
+                        <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-[#64748b] hover:text-[#dc2626] transition-all">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -271,26 +271,26 @@ export default function NewsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-[#0a1628] border border-white/[0.12] shadow-2xl p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-white font-semibold text-lg">{editItem ? "Edit News" : "New News"}</h3>
-              <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-white/[0.08] text-white/40">
+              <h3 className="text-[#1a1a2e] font-semibold text-lg">{editItem ? "Edit News" : "New News"}</h3>
+              <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b]">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-white/60 text-[13px] mb-1.5">Title *</label>
-                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-blue-500" placeholder="Enter news title" />
+                <label className="block text-[#475569] text-[13px] mb-1.5">Title *</label>
+                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-blue-500" placeholder="Enter news title" />
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1.5">Content *</label>
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-blue-500 resize-none" placeholder="Write news content..." />
+                <label className="block text-[#475569] text-[13px] mb-1.5">Content *</label>
+                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-blue-500 resize-none" placeholder="Write news content..." />
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1.5">Featured Image</label>
+                <label className="block text-[#475569] text-[13px] mb-1.5">Featured Image</label>
                 <div className="flex gap-2">
-                  <input type="text" value={imageUrl} onChange={(e) => { setImageUrl(e.target.value); setImageFile(""); }} placeholder="Image URL" className="flex-1 px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-blue-500" />
-                  <label className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.04] border border-dashed border-white/[0.15] text-white/50 text-[13px] cursor-pointer hover:bg-white/[0.08]">
+                  <input type="text" value={imageUrl} onChange={(e) => { setImageUrl(e.target.value); setImageFile(""); }} placeholder="Image URL" className="flex-1 px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-blue-500" />
+                  <label className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-dashed border-white/[0.15] text-[#64748b] text-[13px] cursor-pointer hover:bg-[#f1f5f9]">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                     Upload
                     <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
@@ -299,20 +299,20 @@ export default function NewsPage() {
                 {(imageFile || imageUrl) && (
                   <div className="mt-2 relative inline-block">
                     <img src={imageFile || imageUrl} alt="Preview" className="h-20 rounded-lg object-cover" />
-                    <button onClick={() => { setImageFile(""); setImageUrl(""); }} className="absolute -top-1 -right-1 p-1 rounded-full bg-red-500 text-white">
+                    <button onClick={() => { setImageFile(""); setImageUrl(""); }} className="absolute -top-1 -right-1 p-1 rounded-full bg-red-500 text-[#1a1a2e]">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
                 )}
               </div>
-              <label className="flex items-center gap-2 text-white/60 text-[13px] cursor-pointer">
-                <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="rounded border-white/20" />
+              <label className="flex items-center gap-2 text-[#475569] text-[13px] cursor-pointer">
+                <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="rounded border-[#e2e8f0]" />
                 Mark as featured
               </label>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-sm hover:bg-white/[0.08]">Cancel</button>
+              <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-sm hover:bg-[#f1f5f9]">Cancel</button>
               <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 flex items-center gap-2">
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                 {editItem ? "Update" : "Create"}

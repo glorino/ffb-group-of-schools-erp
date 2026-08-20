@@ -166,8 +166,8 @@ function AnnouncementsPageInner() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-white text-2xl font-bold">Announcements</h1>
-          <p className="text-white/50 text-sm mt-1">View and manage school announcements</p>
+          <h1 className="text-[#1a1a2e] text-2xl font-bold">Announcements</h1>
+          <p className="text-[#64748b] text-sm mt-1">View and manage school announcements</p>
         </div>
         {canManage && (
           <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all">
@@ -187,11 +187,11 @@ function AnnouncementsPageInner() {
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="card">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-[13px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                <p className="text-[#64748b] text-[13px] mb-1">{stat.label}</p>
+                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -200,22 +200,22 @@ function AnnouncementsPageInner() {
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="card">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-white font-semibold text-lg">All Announcements</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-lg">All Announcements</h3>
           <div className="flex gap-2">
             <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
               <input
                 type="text"
                 placeholder="Search announcements..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
               />
             </div>
             <div className="relative">
               <button
                 onClick={() => setShowFilter(!showFilter)}
-                className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]"
+                className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]"
               >
                 <Filter className="w-4 h-4" />
               </button>
@@ -225,7 +225,7 @@ function AnnouncementsPageInner() {
                     <button
                       key={opt}
                       onClick={() => { setFilterStatus(opt); setShowFilter(false); }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-[13px] capitalize transition-all ${filterStatus === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-white/60 hover:bg-white/[0.08]"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-[13px] capitalize transition-all ${filterStatus === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-[#475569] hover:bg-[#f1f5f9]"}`}
                     >
                       {opt === "all" ? "All" : opt}
                     </button>
@@ -238,50 +238,50 @@ function AnnouncementsPageInner() {
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
+            <Loader2 className="w-8 h-8 text-[#64748b] animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-20 text-white/40">
+          <div className="text-center py-20 text-[#64748b]">
             <Megaphone className="w-12 h-12 mx-auto mb-3 opacity-40" />
             <p className="text-[13px]">No announcements found</p>
           </div>
         ) : (
           <div className="space-y-4">
             {filtered.map((announcement) => (
-              <div key={announcement.id} className="p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all">
+              <div key={announcement.id} className="p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    {!announcement.published && <Pin className="w-4 h-4 text-white/30" />}
-                    <h4 className="text-white font-medium text-[13px]">{announcement.title}</h4>
+                    {!announcement.published && <Pin className="w-4 h-4 text-[#94a3b8]" />}
+                    <h4 className="text-[#1a1a2e] font-medium text-[13px]">{announcement.title}</h4>
                   </div>
                   <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                    announcement.priority === "high" ? "bg-red-500/20 text-red-400" :
+                    announcement.priority === "high" ? "bg-[#fee2e2] text-[#dc2626]" :
                     announcement.priority === "medium" ? "bg-orange-500/20 text-orange-400" :
-                    "bg-white/10 text-white/40"
+                    "bg-[#f1f5f9] text-[#64748b]"
                   }`}>
                     {announcement.priority}
                   </span>
                 </div>
-                <p className="text-white/60 text-[13px] mb-3 line-clamp-2">{announcement.content}</p>
+                <p className="text-[#475569] text-[13px] mb-3 line-clamp-2">{announcement.content}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4 text-[12px]">
-                    <span className="text-white/40">Type: {announcement.type}</span>
+                    <span className="text-[#64748b]">Type: {announcement.type}</span>
                     <span className={`px-1.5 py-0.5 rounded text-[11px] ${
-                      announcement.published ? "bg-emerald-500/20 text-emerald-400" : "bg-white/10 text-white/40"
+                      announcement.published ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#f1f5f9] text-[#64748b]"
                     }`}>
                       {announcement.published ? "Published" : "Draft"}
                     </span>
                     <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-white/30" />
-                      <span className="text-white/30">{new Date(announcement.createdAt).toLocaleDateString()}</span>
+                      <Calendar className="w-3 h-3 text-[#94a3b8]" />
+                      <span className="text-[#94a3b8]">{new Date(announcement.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                   {!isReadOnly && (
                     <div className="flex items-center gap-2">
-                      <button onClick={() => openEdit(announcement)} className="p-1.5 rounded-lg hover:bg-white/[0.08] text-white/40 hover:text-white transition-all">
+                      <button onClick={() => openEdit(announcement)} className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-all">
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(announcement.id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-white/40 hover:text-red-400 transition-all">
+                      <button onClick={() => handleDelete(announcement.id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-[#64748b] hover:text-[#dc2626] transition-all">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -297,25 +297,25 @@ function AnnouncementsPageInner() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-[#0a1628] border border-white/[0.12] shadow-2xl p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-white font-semibold text-lg">{editAnnouncement ? "Edit Announcement" : "New Announcement"}</h3>
-              <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-white/[0.08] text-white/40">
+              <h3 className="text-[#1a1a2e] font-semibold text-lg">{editAnnouncement ? "Edit Announcement" : "New Announcement"}</h3>
+              <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b]">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-white/60 text-[13px] mb-1.5">Title *</label>
-                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Enter title" />
+                <label className="block text-[#475569] text-[13px] mb-1.5">Title *</label>
+                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Enter title" />
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1.5">Content *</label>
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none" placeholder="Write content..." />
+                <label className="block text-[#475569] text-[13px] mb-1.5">Content *</label>
+                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none" placeholder="Write content..." />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1.5">Type</label>
-                  <select value={type} onChange={(e) => setType(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }}>
+                  <label className="block text-[#475569] text-[13px] mb-1.5">Type</label>
+                  <select value={type} onChange={(e) => setType(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }}>
                     <option value="general" style={{ background: "#0f1b33", color: "#fff" }}>General</option>
                     <option value="academic" style={{ background: "#0f1b33", color: "#fff" }}>Academic</option>
                     <option value="sports" style={{ background: "#0f1b33", color: "#fff" }}>Sports</option>
@@ -323,8 +323,8 @@ function AnnouncementsPageInner() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1.5">Priority</label>
-                  <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }}>
+                  <label className="block text-[#475569] text-[13px] mb-1.5">Priority</label>
+                  <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "dark" }}>
                     <option value="low" style={{ background: "#0f1b33", color: "#fff" }}>Low</option>
                     <option value="medium" style={{ background: "#0f1b33", color: "#fff" }}>Medium</option>
                     <option value="high" style={{ background: "#0f1b33", color: "#fff" }}>High</option>
@@ -332,7 +332,7 @@ function AnnouncementsPageInner() {
                 </div>
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1.5">Target Audience</label>
+                <label className="block text-[#475569] text-[13px] mb-1.5">Target Audience</label>
                 <div className="flex flex-wrap gap-2">
                   {["all", "students", "parents", "teachers", "staff"].map((aud) => (
                     <button
@@ -352,7 +352,7 @@ function AnnouncementsPageInner() {
                       className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
                         targetAudience.includes(aud)
                           ? "bg-[var(--primary)]/20 text-[var(--primary)] border border-[var(--primary)]/30"
-                          : "bg-white/[0.04] text-white/50 border border-white/[0.08] hover:bg-white/[0.08]"
+                          : "bg-[#f8fafc] text-[#64748b] border border-[#e2e8f0] hover:bg-[#f1f5f9]"
                       }`}
                     >
                       {aud.charAt(0).toUpperCase() + aud.slice(1)}
@@ -363,7 +363,7 @@ function AnnouncementsPageInner() {
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-sm hover:bg-white/[0.08]">Cancel</button>
+              <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-sm hover:bg-[#f1f5f9]">Cancel</button>
               <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 flex items-center gap-2">
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                 {editAnnouncement ? "Update" : "Create"}
@@ -378,7 +378,7 @@ function AnnouncementsPageInner() {
 
 export default function AnnouncementsPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-white/40 animate-spin" /></div>}>
+    <Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-[#64748b] animate-spin" /></div>}>
       <AnnouncementsPageInner />
     </Suspense>
   );

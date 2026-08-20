@@ -280,11 +280,11 @@ export default function ResultsPage() {
   };
 
   const scaleColors: Record<string, string> = {
-    A: "text-emerald-400",
-    B: "text-blue-400",
-    C: "text-yellow-400",
+    A: "text-[#16a34a]",
+    B: "text-[#2563eb]",
+    C: "text-[#ca8a04]",
     D: "text-orange-400",
-    F: "text-red-400",
+    F: "text-[#dc2626]",
   };
 
   const typeLabel: Record<string, string> = {
@@ -302,15 +302,15 @@ export default function ResultsPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Results Management</h1>
-            <p className="text-white/60 text-sm">Grading, ranking, CA marks, and result analysis</p>
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Results Management</h1>
+            <p className="text-[#475569] text-sm">Grading, ranking, CA marks, and result analysis</p>
           </div>
           <div className="flex gap-3">
             {!isReadOnly && (
               <button
                 onClick={handlePublishAll}
                 disabled={publishing}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition-all duration-200 disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#dcfce7] border border-emerald-500/30 text-[#16a34a] text-sm font-medium hover:bg-emerald-500/30 transition-all duration-200 disabled:opacity-50"
               >
                 {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
                 Publish Results
@@ -318,7 +318,7 @@ export default function ResultsPage() {
             )}
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-sm font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
@@ -348,15 +348,15 @@ export default function ResultsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5"
+            className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-5"
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-xs mb-1">{kpi.label}</p>
-                <p className="text-2xl font-bold text-white">{kpi.value}</p>
+                <p className="text-[#64748b] text-xs mb-1">{kpi.label}</p>
+                <p className="text-2xl font-bold text-[#1a1a2e]">{kpi.value}</p>
               </div>
               <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center`}>
-                <kpi.icon className="w-5 h-5 text-white" />
+                <kpi.icon className="w-5 h-5 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -368,42 +368,42 @@ export default function ResultsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6"
+          className="lg:col-span-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-6"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white font-semibold">Subject Results</h3>
+            <h3 className="text-[#1a1a2e] font-semibold">Subject Results</h3>
             <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
               <input
                 type="text"
                 placeholder="Search subjects..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)] transition-colors w-56"
+                className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] transition-colors w-56"
               />
             </div>
           </div>
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
+              <Loader2 className="w-8 h-8 text-[#64748b] animate-spin" />
             </div>
           ) : filteredResults.length === 0 ? (
-            <div className="text-center py-20 text-white/40">
+            <div className="text-center py-20 text-[#64748b]">
               <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-40" />
               <p className="text-sm">No results found</p>
-              <p className="text-xs mt-1 text-white/30">Enter grades to see subject results here</p>
+              <p className="text-xs mt-1 text-[#94a3b8]">Enter grades to see subject results here</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/[0.08]">
-                    <th className="text-left text-white/50 text-xs font-medium pb-3 uppercase tracking-wider">Subject</th>
-                    <th className="text-left text-white/50 text-xs font-medium pb-3 uppercase tracking-wider">Avg</th>
-                    <th className="text-left text-white/50 text-xs font-medium pb-3 uppercase tracking-wider">High</th>
-                    <th className="text-left text-white/50 text-xs font-medium pb-3 uppercase tracking-wider">Low</th>
-                    <th className="text-left text-white/50 text-xs font-medium pb-3 uppercase tracking-wider">Pass</th>
-                    <th className="text-right text-white/50 text-xs font-medium pb-3 uppercase tracking-wider">Count</th>
+                  <tr className="border-b border-[#e2e8f0]">
+                    <th className="text-left text-[#64748b] text-xs font-medium pb-3 uppercase tracking-wider">Subject</th>
+                    <th className="text-left text-[#64748b] text-xs font-medium pb-3 uppercase tracking-wider">Avg</th>
+                    <th className="text-left text-[#64748b] text-xs font-medium pb-3 uppercase tracking-wider">High</th>
+                    <th className="text-left text-[#64748b] text-xs font-medium pb-3 uppercase tracking-wider">Low</th>
+                    <th className="text-left text-[#64748b] text-xs font-medium pb-3 uppercase tracking-wider">Pass</th>
+                    <th className="text-right text-[#64748b] text-xs font-medium pb-3 uppercase tracking-wider">Count</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -412,23 +412,23 @@ export default function ResultsPage() {
                     const passing = subjectGrades.filter((g) => (g.score / g.maxScore) * 100 >= 50).length;
                     const subjectPassRate = result.count > 0 ? Math.round((passing / result.count) * 100) : 0;
                     return (
-                      <tr key={idx} className="border-b border-white/[0.04] hover:bg-white/[0.04] transition-all">
-                        <td className="py-3 text-white font-medium text-sm">{result.subject}</td>
-                        <td className="py-3 text-white/70 text-sm">{result.avgScore}%</td>
-                        <td className="py-3 text-emerald-400 text-sm font-medium">{result.highest}%</td>
-                        <td className="py-3 text-red-400 text-sm font-medium">{result.lowest}%</td>
+                      <tr key={idx} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
+                        <td className="py-3 text-[#1a1a2e] font-medium text-sm">{result.subject}</td>
+                        <td className="py-3 text-[#475569] text-sm">{result.avgScore}%</td>
+                        <td className="py-3 text-[#16a34a] text-sm font-medium">{result.highest}%</td>
+                        <td className="py-3 text-[#dc2626] text-sm font-medium">{result.lowest}%</td>
                         <td className="py-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-16 bg-white/10 rounded-full h-1.5">
+                            <div className="w-16 bg-[#f1f5f9] rounded-full h-1.5">
                               <div
                                 className={`h-1.5 rounded-full ${subjectPassRate >= 50 ? "bg-emerald-400" : "bg-red-400"}`}
                                 style={{ width: `${subjectPassRate}%` }}
                               />
                             </div>
-                            <span className="text-white/70 text-xs">{subjectPassRate}%</span>
+                            <span className="text-[#475569] text-xs">{subjectPassRate}%</span>
                           </div>
                         </td>
-                        <td className="py-3 text-white/70 text-sm text-right">{result.count}</td>
+                        <td className="py-3 text-[#475569] text-sm text-right">{result.count}</td>
                       </tr>
                     );
                   })}
@@ -444,41 +444,41 @@ export default function ResultsPage() {
           transition={{ delay: 0.5 }}
           className="space-y-6"
         >
-          <div className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6">
-            <h3 className="text-white font-semibold mb-4">Grading Scale</h3>
+          <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-6">
+            <h3 className="text-[#1a1a2e] font-semibold mb-4">Grading Scale</h3>
             {loading ? (
               <div className="flex items-center justify-center py-10">
-                <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
+                <Loader2 className="w-6 h-6 text-[#64748b] animate-spin" />
               </div>
             ) : scales.length === 0 ? (
-              <p className="text-white/40 text-sm text-center py-10">No grading scales configured</p>
+              <p className="text-[#64748b] text-sm text-center py-10">No grading scales configured</p>
             ) : (
               <div className="space-y-2">
                 {scales.map((scale) => (
-                  <div key={scale.id} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] transition-colors">
-                    <span className={`text-lg font-bold ${scaleColors[scale.grade] || "text-white/60"}`}>{scale.grade}</span>
-                    <span className="text-white/60 text-sm">{scale.minScore} – {scale.maxScore}</span>
-                    <span className="text-white/40 text-xs">{scale.points} pts</span>
+                  <div key={scale.id} className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc] hover:bg-white/[0.06] transition-colors">
+                    <span className={`text-lg font-bold ${scaleColors[scale.grade] || "text-[#475569]"}`}>{scale.grade}</span>
+                    <span className="text-[#475569] text-sm">{scale.minScore} – {scale.maxScore}</span>
+                    <span className="text-[#64748b] text-xs">{scale.points} pts</span>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6">
-            <h3 className="text-white font-semibold mb-4">Grade Breakdown</h3>
+          <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-6">
+            <h3 className="text-[#1a1a2e] font-semibold mb-4">Grade Breakdown</h3>
             <div className="space-y-3">
               {[
                 { label: "1st CA", pct: 20, color: "bg-blue-500" },
                 { label: "2nd CA", pct: 20, color: "bg-emerald-500" },
                 { label: "Exam", pct: 60, color: "bg-purple-500" },
               ].map((item, i) => (
-                <div key={i} className="p-3 rounded-xl bg-white/[0.04]">
+                <div key={i} className="p-3 rounded-xl bg-[#f8fafc]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white text-sm">{item.label}</span>
-                    <span className="text-white/40 text-xs">{item.pct}%</span>
+                    <span className="text-[#1a1a2e] text-sm">{item.label}</span>
+                    <span className="text-[#64748b] text-xs">{item.pct}%</span>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-1.5">
+                  <div className="w-full bg-[#f1f5f9] rounded-full h-1.5">
                     <div className={`${item.color} h-1.5 rounded-full transition-all duration-500`} style={{ width: `${item.pct}%` }} />
                   </div>
                 </div>
@@ -487,32 +487,32 @@ export default function ResultsPage() {
           </div>
 
           {grades.length > 0 && (
-            <div className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6">
-              <h3 className="text-white font-semibold mb-4">Recent Grades</h3>
+            <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-6">
+              <h3 className="text-[#1a1a2e] font-semibold mb-4">Recent Grades</h3>
               <div className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin">
                 {grades.slice(0, 8).map((g) => (
-                  <div key={g.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.04] transition-colors">
+                  <div key={g.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-[#f8fafc] transition-colors">
                     <div className="flex-1 min-w-0">
-                      <p className="text-white text-xs font-medium">
+                      <p className="text-[#1a1a2e] text-xs font-medium">
                         {g.student ? `${g.student.firstName} ${g.student.lastName}` : "—"}
                       </p>
-                      <p className="text-white/40 text-[10px]">{g.subject?.name} · {typeLabel[g.type] || g.type}</p>
+                      <p className="text-[#64748b] text-[10px]">{g.subject?.name} · {typeLabel[g.type] || g.type}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-0.5 rounded text-[9px] font-semibold ${g.published ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-400"}`}>
+                      <span className={`px-2 py-0.5 rounded text-[9px] font-semibold ${g.published ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#fef3c7] text-[#d97706]"}`}>
                         {g.published ? "Published" : "Draft"}
                       </span>
                       {!isReadOnly && (
                         <button
                           onClick={() => openEditModal(g)}
-                          className="p-1.5 rounded-lg bg-white/[0.06] border border-white/[0.1] text-white/50 hover:text-white hover:bg-white/[0.1] transition-all"
+                          className="p-1.5 rounded-lg bg-white/[0.06] border border-[#e2e8f0] text-[#64748b] hover:text-white hover:bg-white/[0.1] transition-all"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
                       )}
                       <div className="text-right">
-                        <p className="text-white text-xs font-bold">{g.score}/{g.maxScore}</p>
-                        <p className={`text-[10px] font-bold ${scaleColors[g.grade] || "text-white/40"}`}>{g.grade}</p>
+                        <p className="text-[#1a1a2e] text-xs font-bold">{g.score}/{g.maxScore}</p>
+                        <p className={`text-[10px] font-bold ${scaleColors[g.grade] || "text-[#64748b]"}`}>{g.grade}</p>
                       </div>
                     </div>
                   </div>
@@ -536,15 +536,15 @@ export default function ResultsPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-white/[0.1] rounded-2xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden"
             >
-              <div className="bg-gradient-to-r from-[var(--primary)]/30 to-[var(--accent)]/10 px-6 py-4 border-b border-white/[0.08]">
+              <div className="bg-gradient-to-r from-[var(--primary)]/30 to-[var(--accent)]/10 px-6 py-4 border-b border-[#e2e8f0]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-white font-semibold text-lg">Enter Results</h3>
-                    <p className="text-white/50 text-xs mt-0.5">Add or update student grades</p>
+                    <h3 className="text-[#1a1a2e] font-semibold text-lg">Enter Results</h3>
+                    <p className="text-[#64748b] text-xs mt-0.5">Add or update student grades</p>
                   </div>
-                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-white/10 text-white/40 hover:text-white transition-colors">
+                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-colors">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -552,32 +552,32 @@ export default function ResultsPage() {
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div className="relative">
-                  <label className="block text-white/60 text-xs font-medium mb-1.5">Student *</label>
+                  <label className="block text-[#475569] text-xs font-medium mb-1.5">Student *</label>
                   <button
                     type="button"
                     onClick={() => { setShowStudentDropdown(!showStudentDropdown); setShowSubjectDropdown(false); }}
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between"
                   >
-                    <span className={selectedStudentName ? "text-white" : "text-white/40"}>
+                    <span className={selectedStudentName ? "text-[#1a1a2e]" : "text-[#64748b]"}>
                       {selectedStudentName || "Select a student..."}
                     </span>
-                    <ChevronDown className={`w-4 h-4 text-white/40 transition-transform ${showStudentDropdown ? "rotate-180" : ""}`} />
+                    <ChevronDown className={`w-4 h-4 text-[#64748b] transition-transform ${showStudentDropdown ? "rotate-180" : ""}`} />
                   </button>
                   {showStudentDropdown && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#0f1b33] border border-white/[0.1] rounded-xl shadow-xl max-h-60 overflow-hidden">
-                      <div className="p-2 border-b border-white/[0.06]">
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#0f1b33] border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
+                      <div className="p-2 border-b border-[#e2e8f0]">
                         <input
                           type="text"
                           placeholder="Search students..."
                           value={studentSearch}
                           onChange={(e) => setStudentSearch(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-xs focus:outline-none focus:border-[var(--primary)]"
+                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-xs focus:outline-none focus:border-[var(--primary)]"
                           autoFocus
                         />
                       </div>
                       <div className="overflow-y-auto max-h-44">
                         {filteredStudents.length === 0 ? (
-                          <p className="text-white/40 text-xs text-center py-4">No students found</p>
+                          <p className="text-[#64748b] text-xs text-center py-4">No students found</p>
                         ) : (
                           filteredStudents.map((s) => (
                             <button
@@ -589,11 +589,11 @@ export default function ResultsPage() {
                                 setShowStudentDropdown(false);
                                 setStudentSearch("");
                               }}
-                              className={`w-full px-3 py-2 text-left text-sm hover:bg-white/[0.08] transition-colors flex items-center justify-between ${form.studentId === s.id ? "bg-[var(--primary)]/20 text-white" : "text-white/80"}`}
+                              className={`w-full px-3 py-2 text-left text-sm hover:bg-[#f1f5f9] transition-colors flex items-center justify-between ${form.studentId === s.id ? "bg-[var(--primary)]/20 text-[#1a1a2e]" : "text-[#1a1a2e]"}`}
                             >
                               <div>
                                 <p className="font-medium text-xs">{s.firstName} {s.lastName}</p>
-                                <p className="text-white/40 text-[10px]">{s.admissionNumber}</p>
+                                <p className="text-[#64748b] text-[10px]">{s.admissionNumber}</p>
                               </div>
                               {form.studentId === s.id && <div className="w-2 h-2 rounded-full bg-[var(--accent)]" />}
                             </button>
@@ -605,32 +605,32 @@ export default function ResultsPage() {
                 </div>
 
                 <div className="relative">
-                  <label className="block text-white/60 text-xs font-medium mb-1.5">Subject *</label>
+                  <label className="block text-[#475569] text-xs font-medium mb-1.5">Subject *</label>
                   <button
                     type="button"
                     onClick={() => { setShowSubjectDropdown(!showSubjectDropdown); setShowStudentDropdown(false); }}
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between"
                   >
-                    <span className={selectedSubjectName ? "text-white" : "text-white/40"}>
+                    <span className={selectedSubjectName ? "text-[#1a1a2e]" : "text-[#64748b]"}>
                       {selectedSubjectName || "Select a subject..."}
                     </span>
-                    <ChevronDown className={`w-4 h-4 text-white/40 transition-transform ${showSubjectDropdown ? "rotate-180" : ""}`} />
+                    <ChevronDown className={`w-4 h-4 text-[#64748b] transition-transform ${showSubjectDropdown ? "rotate-180" : ""}`} />
                   </button>
                   {showSubjectDropdown && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#0f1b33] border border-white/[0.1] rounded-xl shadow-xl max-h-60 overflow-hidden">
-                      <div className="p-2 border-b border-white/[0.06]">
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#0f1b33] border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
+                      <div className="p-2 border-b border-[#e2e8f0]">
                         <input
                           type="text"
                           placeholder="Search subjects..."
                           value={subjectSearch}
                           onChange={(e) => setSubjectSearch(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-xs focus:outline-none focus:border-[var(--primary)]"
+                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-xs focus:outline-none focus:border-[var(--primary)]"
                           autoFocus
                         />
                       </div>
                       <div className="overflow-y-auto max-h-44">
                         {filteredSubjects.length === 0 ? (
-                          <p className="text-white/40 text-xs text-center py-4">No subjects found</p>
+                          <p className="text-[#64748b] text-xs text-center py-4">No subjects found</p>
                         ) : (
                           filteredSubjects.map((s) => (
                             <button
@@ -642,11 +642,11 @@ export default function ResultsPage() {
                                 setShowSubjectDropdown(false);
                                 setSubjectSearch("");
                               }}
-                              className={`w-full px-3 py-2 text-left text-sm hover:bg-white/[0.08] transition-colors flex items-center justify-between ${form.subjectId === s.id ? "bg-[var(--primary)]/20 text-white" : "text-white/80"}`}
+                              className={`w-full px-3 py-2 text-left text-sm hover:bg-[#f1f5f9] transition-colors flex items-center justify-between ${form.subjectId === s.id ? "bg-[var(--primary)]/20 text-[#1a1a2e]" : "text-[#1a1a2e]"}`}
                             >
                               <div>
                                 <p className="font-medium text-xs">{s.name}</p>
-                                <p className="text-white/40 text-[10px]">{s.code}</p>
+                                <p className="text-[#64748b] text-[10px]">{s.code}</p>
                               </div>
                               {form.subjectId === s.id && <div className="w-2 h-2 rounded-full bg-[var(--accent)]" />}
                             </button>
@@ -659,11 +659,11 @@ export default function ResultsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white/60 text-xs font-medium mb-1.5">Type *</label>
+                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Type *</label>
                     <select
                       value={form.type}
                       onChange={(e) => setForm({ ...form, type: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer"
                       style={{ colorScheme: "dark" }}
                     >
                       <option style={{ background: "#0f1b33", color: "#fff" }} value="ca1">1st CA</option>
@@ -672,14 +672,14 @@ export default function ResultsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-white/60 text-xs font-medium mb-1.5">Score *</label>
+                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Score *</label>
                     <input
                       type="number"
                       required
                       min="0"
                       value={form.score}
                       onChange={(e) => setForm({ ...form, score: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="0"
                     />
                   </div>
@@ -687,22 +687,22 @@ export default function ResultsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white/60 text-xs font-medium mb-1.5">Max Score</label>
+                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Max Score</label>
                     <input
                       type="number"
                       min="1"
                       value={form.maxScore}
                       onChange={(e) => setForm({ ...form, maxScore: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
-                    <label className="block text-white/60 text-xs font-medium mb-1.5">Term</label>
+                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Term</label>
                     <input
                       type="text"
                       value={form.term}
                       onChange={(e) => setForm({ ...form, term: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="e.g. 2nd Term"
                     />
                   </div>
@@ -710,32 +710,32 @@ export default function ResultsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white/60 text-xs font-medium mb-1.5">Session</label>
+                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Session</label>
                     <input
                       type="text"
                       value={form.session}
                       onChange={(e) => setForm({ ...form, session: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="e.g. 2024/2025"
                     />
                   </div>
                   <div>
-                    <label className="block text-white/60 text-xs font-medium mb-1.5">Comments</label>
+                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Comments</label>
                     <input
                       type="text"
                       value={form.comments}
                       onChange={(e) => setForm({ ...form, comments: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="Optional"
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-2 border-t border-white/[0.06]">
+                <div className="flex justify-end gap-3 pt-2 border-t border-[#e2e8f0]">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-sm font-medium hover:bg-white/[0.08] transition-colors"
+                    className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-sm font-medium hover:bg-[#f1f5f9] transition-colors"
                   >
                     Cancel
                   </button>
@@ -767,52 +767,52 @@ export default function ResultsPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-sm bg-[#0a0f1e] border border-white/[0.1] rounded-2xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-sm bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden"
             >
-              <div className="bg-gradient-to-r from-[var(--primary)]/30 to-[var(--accent)]/10 px-6 py-4 border-b border-white/[0.08]">
+              <div className="bg-gradient-to-r from-[var(--primary)]/30 to-[var(--accent)]/10 px-6 py-4 border-b border-[#e2e8f0]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-white font-semibold text-lg">Edit Grade</h3>
-                    <p className="text-white/50 text-xs mt-0.5">
+                    <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Grade</h3>
+                    <p className="text-[#64748b] text-xs mt-0.5">
                       {editingGrade.student?.firstName} {editingGrade.student?.lastName} — {editingGrade.subject?.name}
                     </p>
                   </div>
-                  <button onClick={() => setEditingGrade(null)} className="p-2 rounded-xl hover:bg-white/10 text-white/40 hover:text-white transition-colors">
+                  <button onClick={() => setEditingGrade(null)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-colors">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
               </div>
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-white/60 text-xs font-medium mb-1.5">Type</label>
-                  <p className="text-white text-sm font-medium">{typeLabel[editingGrade.type] || editingGrade.type}</p>
+                  <label className="block text-[#475569] text-xs font-medium mb-1.5">Type</label>
+                  <p className="text-[#1a1a2e] text-sm font-medium">{typeLabel[editingGrade.type] || editingGrade.type}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white/60 text-xs font-medium mb-1.5">Score *</label>
+                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Score *</label>
                     <input
                       type="number"
                       min="0"
                       value={editForm.score}
                       onChange={(e) => setEditForm({ ...editForm, score: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
-                    <label className="block text-white/60 text-xs font-medium mb-1.5">Max Score</label>
+                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Max Score</label>
                     <input
                       type="number"
                       min="1"
                       value={editForm.maxScore}
                       onChange={(e) => setEditForm({ ...editForm, maxScore: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
-                <div className="flex justify-end gap-3 pt-2 border-t border-white/[0.06]">
+                <div className="flex justify-end gap-3 pt-2 border-t border-[#e2e8f0]">
                   <button
                     onClick={() => setEditingGrade(null)}
-                    className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-sm font-medium hover:bg-white/[0.08] transition-colors"
+                    className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-sm font-medium hover:bg-[#f1f5f9] transition-colors"
                   >
                     Cancel
                   </button>

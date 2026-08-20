@@ -203,7 +203,7 @@ export default function TeachersPage() {
       label: "",
       render: (row: any) => (
         <div className="relative group">
-          <button className="p-1 rounded-lg hover:bg-white/10 text-[#64748b]">
+          <button className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]">
             <MoreVertical className="w-4 h-4" />
           </button>
           <div className="absolute right-0 top-8 z-[60] hidden group-hover:block bg-[var(--sidebar)] border border-[#e2e8f0] rounded-xl shadow-xl py-1 min-w-[120px]">
@@ -252,7 +252,7 @@ export default function TeachersPage() {
             className="stat-card"
           >
             <div className={`stat-card-icon bg-gradient-to-br ${kpi.color}`}>
-              <kpi.icon className="w-6 h-6 text-white" />
+              <kpi.icon className="w-6 h-6 text-[#1a1a2e]" />
             </div>
             <div className="stat-card-content">
               <p className="stat-card-label">{kpi.label}</p>

@@ -146,8 +146,8 @@ export default function ClassesPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Class Management</h1>
-            <p className="text-white/60">
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Class Management</h1>
+            <p className="text-[#475569]">
               Manage classes, streams, arms, and teacher assignments across all levels
             </p>
           </div>
@@ -172,11 +172,11 @@ export default function ClassesPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-sm mb-1">{kpi.label}</p>
-                <p className="text-3xl font-bold text-white">{kpi.value}</p>
+                <p className="text-[#64748b] text-sm mb-1">{kpi.label}</p>
+                <p className="text-3xl font-bold text-[#1a1a2e]">{kpi.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center`}>
-                <kpi.icon className="w-6 h-6 text-white" />
+                <kpi.icon className="w-6 h-6 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -191,16 +191,16 @@ export default function ClassesPage() {
           className="lg:col-span-3 card"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white font-semibold text-lg">All Classes</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg">All Classes</h3>
             <div className="flex gap-2">
               <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
                 <input
                   type="text"
                   placeholder="Search classes..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
             </div>
@@ -208,13 +208,13 @@ export default function ClassesPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Class</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Section</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Teacher</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Students</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Capacity</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Actions</th>
+                <tr className="border-b border-[#e2e8f0]">
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Class</th>
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Section</th>
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Teacher</th>
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Students</th>
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Capacity</th>
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -226,7 +226,7 @@ export default function ClassesPage() {
                   ))
                 ) :                   data?.classes?.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-white/40">
+                    <td colSpan={6} className="text-center py-8 text-[#64748b]">
                       No classes found
                     </td>
                   </tr>
@@ -234,15 +234,15 @@ export default function ClassesPage() {
                   sortedClasses.map((cls) => {
                     const usagePercent = Math.round((cls._count.students / cls.capacity) * 100);
                     return (
-                      <tr key={cls.id} className="border-b border-white/5 hover:bg-white/5 transition-all">
-                        <td className="py-3 text-white font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</td>
-                        <td className="py-3 text-white/70">{cls.section || "—"}</td>
-                        <td className="py-3 text-white/70 text-sm">
+                      <tr key={cls.id} className="border-b border-white/5 hover:bg-[#f8fafc] transition-all">
+                        <td className="py-3 text-[#1a1a2e] font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</td>
+                        <td className="py-3 text-[#475569]">{cls.section || "—"}</td>
+                        <td className="py-3 text-[#475569] text-sm">
                           {cls.classTeacher ? cls.classTeacher.name : "Unassigned"}
                         </td>
-                        <td className="py-3 text-white/70">{cls._count.students}/{cls.capacity}</td>
+                        <td className="py-3 text-[#475569]">{cls._count.students}/{cls.capacity}</td>
                         <td className="py-3">
-                          <div className="w-full bg-white/10 rounded-full h-2 max-w-[80px]">
+                          <div className="w-full bg-[#f1f5f9] rounded-full h-2 max-w-[80px]">
                             <div
                               className={`h-2 rounded-full ${
                                 usagePercent >= 90 ? "bg-red-500" : usagePercent >= 70 ? "bg-yellow-500" : "bg-[var(--accent)]"
@@ -255,7 +255,7 @@ export default function ClassesPage() {
                           <div className="relative" ref={dropdownOpen === cls.id ? dropdownRef : undefined}>
                             <button
                               onClick={() => setDropdownOpen(dropdownOpen === cls.id ? null : cls.id)}
-                              className="p-1 rounded-lg hover:bg-white/10 text-white/40"
+                              className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"
                             >
                               <MoreVertical className="w-4 h-4" />
                             </button>
@@ -265,14 +265,14 @@ export default function ClassesPage() {
                                   initial={{ opacity: 0, scale: 0.95, y: -4 }}
                                   animate={{ opacity: 1, scale: 1, y: 0 }}
                                   exit={{ opacity: 0, scale: 0.95, y: -4 }}
-                                  className="absolute right-0 top-full mt-1 w-36 bg-[#0a0f1e] border border-white/[0.08] rounded-xl shadow-xl z-40 overflow-hidden"
+                                  className="absolute right-0 top-full mt-1 w-36 bg-[#0a0f1e] border border-[#e2e8f0] rounded-xl shadow-xl z-40 overflow-hidden"
                                 >
                                   <button
                                     onClick={() => {
                                       setDropdownOpen(null);
                                       setViewClass(cls);
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-white/70 hover:bg-white/[0.06] transition"
+                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-[#475569] hover:bg-white/[0.06] transition"
                                   >
                                     <Eye className="w-3.5 h-3.5" /> View
                                   </button>
@@ -283,7 +283,7 @@ export default function ClassesPage() {
                                       const levelNames: Record<number, string> = { 1: "nursery", 2: "primary", 3: "junior", 4: "secondary" };
                                       setEditForm({ name: cls.name, displayName: cls.displayName, level: levelNames[cls.level] || "primary", capacity: String(cls.capacity) });
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-white/70 hover:bg-white/[0.06] transition"
+                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-[#475569] hover:bg-white/[0.06] transition"
                                   >
                                     <Pencil className="w-3.5 h-3.5" /> Edit
                                   </button>
@@ -307,17 +307,17 @@ export default function ClassesPage() {
           transition={{ delay: 0.5 }}
           className="card"
         >
-          <h3 className="text-white font-semibold text-lg mb-4">Capacity Overview</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Capacity Overview</h3>
           <div className="space-y-3">
             {sortedClasses.slice(0, 6).map((cls) => {
               const pct = Math.round((cls._count.students / cls.capacity) * 100);
               return (
-                <div key={cls.id} className="p-3 rounded-xl bg-white/5">
+                <div key={cls.id} className="p-3 rounded-xl bg-[#f8fafc]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white text-sm font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</span>
-                    <span className="text-white/40 text-sm">{pct}%</span>
+                    <span className="text-[#1a1a2e] text-sm font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</span>
+                    <span className="text-[#64748b] text-sm">{pct}%</span>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-2">
+                  <div className="w-full bg-[#f1f5f9] rounded-full h-2">
                     <div
                       className={`h-2 rounded-full ${
                         pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-yellow-500" : "bg-[var(--accent)]"
@@ -345,53 +345,53 @@ export default function ClassesPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl"
+              className="relative w-full max-w-lg bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Add Class</h3>
-                <button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-white/10 text-white/40">
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Class</h3>
+                <button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]">
                   <X className="w-5 h-5" />
                 </button>
               </div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1.5">Name *</label>
+                  <label className="block text-[#475569] text-[13px] mb-1.5">Name *</label>
                   <input
                     type="text"
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. JSS1"
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1.5">Display Name</label>
+                  <label className="block text-[#475569] text-[13px] mb-1.5">Display Name</label>
                   <input
                     type="text"
                     value={form.displayName}
                     onChange={(e) => setForm({ ...form, displayName: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. Junior Secondary 1A"
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1.5">Arm</label>
+                  <label className="block text-[#475569] text-[13px] mb-1.5">Arm</label>
                   <input
                     type="text"
                     value={form.arm}
                     onChange={(e) => setForm({ ...form, arm: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. A, B, C"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white/60 text-[13px] mb-1.5">Level</label>
+                    <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
                     <select
                       value={form.level}
                       onChange={(e) => setForm({ ...form, level: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}
                     >
                       <option style={{ background: "#0f1b33", color: "#fff" }} value="nursery">Nursery</option>
@@ -401,13 +401,13 @@ export default function ClassesPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-white/60 text-[13px] mb-1.5">Capacity</label>
+                    <label className="block text-[#475569] text-[13px] mb-1.5">Capacity</label>
                     <input
                       type="number"
                       min="1"
                       value={form.capacity}
                       onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -415,7 +415,7 @@ export default function ClassesPage() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
+                    className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
                   >
                     Cancel
                   </button>
@@ -440,33 +440,33 @@ export default function ClassesPage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setViewClass(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Class Details</h3>
-                <button onClick={() => setViewClass(null)} className="p-1 rounded-lg hover:bg-white/10 text-white/40"><X className="w-5 h-5" /></button>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Class Details</h3>
+                <button onClick={() => setViewClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/40 text-[11px] mb-1">Class Name</p>
-                    <p className="text-white font-semibold text-[15px]">{viewClass.displayName}{viewClass.arm ? ` - Arm ${viewClass.arm}` : ""}</p>
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <p className="text-[#64748b] text-[11px] mb-1">Class Name</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.displayName}{viewClass.arm ? ` - Arm ${viewClass.arm}` : ""}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/40 text-[11px] mb-1">Section</p>
-                    <p className="text-white font-semibold text-[15px]">{viewClass.section || "—"}</p>
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <p className="text-[#64748b] text-[11px] mb-1">Section</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.section || "—"}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/40 text-[11px] mb-1">Class Teacher</p>
-                    <p className="text-white font-semibold text-[15px]">{viewClass.classTeacher ? viewClass.classTeacher.name : "Unassigned"}</p>
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <p className="text-[#64748b] text-[11px] mb-1">Class Teacher</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.classTeacher ? viewClass.classTeacher.name : "Unassigned"}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/40 text-[11px] mb-1">Students</p>
-                    <p className="text-white font-semibold text-[15px]">{viewClass._count.students} / {viewClass.capacity}</p>
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <p className="text-[#64748b] text-[11px] mb-1">Students</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass._count.students} / {viewClass.capacity}</p>
                   </div>
                 </div>
               </div>
               <div className="flex justify-end mt-6">
-                <button onClick={() => setViewClass(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all">Close</button>
+                <button onClick={() => setViewClass(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all">Close</button>
               </div>
             </motion.div>
           </motion.div>
@@ -479,10 +479,10 @@ export default function ClassesPage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditClass(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Edit Class</h3>
-                <button onClick={() => setEditClass(null)} className="p-1 rounded-lg hover:bg-white/10 text-white/40"><X className="w-5 h-5" /></button>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Class</h3>
+                <button onClick={() => setEditClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={async (e) => {
                 e.preventDefault();
@@ -515,20 +515,20 @@ export default function ClassesPage() {
                 }
               }} className="space-y-4">
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1.5">Name *</label>
+                  <label className="block text-[#475569] text-[13px] mb-1.5">Name *</label>
                   <input type="text" required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1.5">Display Name</label>
+                  <label className="block text-[#475569] text-[13px] mb-1.5">Display Name</label>
                   <input type="text" value={editForm.displayName} onChange={(e) => setEditForm({ ...editForm, displayName: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white/60 text-[13px] mb-1.5">Level</label>
+                    <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
                     <select value={editForm.level} onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}>
                       <option style={{ background: "#0f1b33", color: "#fff" }} value="nursery">Nursery</option>
                       <option style={{ background: "#0f1b33", color: "#fff" }} value="primary">Primary</option>
@@ -537,13 +537,13 @@ export default function ClassesPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-white/60 text-[13px] mb-1.5">Capacity</label>
+                    <label className="block text-[#475569] text-[13px] mb-1.5">Capacity</label>
                     <input type="number" min="1" value={editForm.capacity} onChange={(e) => setEditForm({ ...editForm, capacity: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 pt-2">
-                  <button type="button" onClick={() => setEditClass(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">Cancel</button>
+                  <button type="button" onClick={() => setEditClass(null)} className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">Cancel</button>
                   <button type="submit" className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all shadow-lg shadow-[var(--primary)]/25">Save Changes</button>
                 </div>
               </form>

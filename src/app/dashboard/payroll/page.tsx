@@ -130,8 +130,8 @@ export default function PayrollPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Payroll Management</h1>
-            <p className="text-white/60">Manage teacher salaries, allowances, deductions, and payments</p>
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Payroll Management</h1>
+            <p className="text-[#475569]">Manage teacher salaries, allowances, deductions, and payments</p>
           </div>
           <div className="flex gap-2">
             <button
@@ -148,7 +148,7 @@ export default function PayrollPage() {
                 })), `payroll_${monthLabel}`);
                 toast.success("Exported successfully");
               }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
@@ -180,11 +180,11 @@ export default function PayrollPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-sm mb-1">{stat.label}</p>
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
+                <p className="text-[#64748b] text-sm mb-1">{stat.label}</p>
+                <p className="text-2xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <Wallet className="w-6 h-6 text-white" />
+                <Wallet className="w-6 h-6 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -199,11 +199,11 @@ export default function PayrollPage() {
       >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <h3 className="text-white font-semibold text-lg">{monthLabel} Payroll</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg">{monthLabel} Payroll</h3>
             <select
               value={currentMonth}
               onChange={(e) => setCurrentMonth(e.target.value)}
-              className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/60 text-xs outline-none"
+              className="px-3 py-1.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-xs outline-none"
               style={{ colorScheme: "dark" }}
             >
               {monthNames.map((m, i) => (
@@ -213,7 +213,7 @@ export default function PayrollPage() {
             <select
               value={currentYear}
               onChange={(e) => setCurrentYear(e.target.value)}
-              className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/60 text-xs outline-none"
+              className="px-3 py-1.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-xs outline-none"
               style={{ colorScheme: "dark" }}
             >
               {[2024, 2025, 2026].map(y => (
@@ -222,13 +222,13 @@ export default function PayrollPage() {
             </select>
           </div>
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
             <input
               type="text"
               placeholder="Search staff..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
             />
           </div>
         </div>
@@ -241,41 +241,41 @@ export default function PayrollPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Staff</th>
-                  <th className="text-right text-white/50 text-sm font-medium pb-3">Basic Salary</th>
-                  <th className="text-right text-white/50 text-sm font-medium pb-3">Allowances</th>
-                  <th className="text-right text-white/50 text-sm font-medium pb-3">Deductions</th>
-                  <th className="text-right text-white/50 text-sm font-medium pb-3">Net Pay</th>
-                  <th className="text-center text-white/50 text-sm font-medium pb-3">Status</th>
-                  <th className="text-right text-white/50 text-sm font-medium pb-3">Actions</th>
+                <tr className="border-b border-[#e2e8f0]">
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Staff</th>
+                  <th className="text-right text-[#64748b] text-sm font-medium pb-3">Basic Salary</th>
+                  <th className="text-right text-[#64748b] text-sm font-medium pb-3">Allowances</th>
+                  <th className="text-right text-[#64748b] text-sm font-medium pb-3">Deductions</th>
+                  <th className="text-right text-[#64748b] text-sm font-medium pb-3">Net Pay</th>
+                  <th className="text-center text-[#64748b] text-sm font-medium pb-3">Status</th>
+                  <th className="text-right text-[#64748b] text-sm font-medium pb-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-16 text-center text-white/30 text-sm">No payroll entries for this period</td>
+                    <td colSpan={7} className="py-16 text-center text-[#94a3b8] text-sm">No payroll entries for this period</td>
                   </tr>
                 ) : filtered.map((p) => (
-                  <tr key={p.id} className="border-b border-white/5 hover:bg-white/5 transition-all">
+                  <tr key={p.id} className="border-b border-white/5 hover:bg-[#f8fafc] transition-all">
                     <td className="py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white font-semibold text-xs">
                           {p.teacher.firstName[0]}{p.teacher.lastName[0]}
                         </div>
                         <div>
-                          <p className="text-white text-sm font-medium">{p.teacher.firstName} {p.teacher.lastName}</p>
-                          <p className="text-white/40 text-xs">{p.teacher.employeeId}</p>
+                          <p className="text-[#1a1a2e] text-sm font-medium">{p.teacher.firstName} {p.teacher.lastName}</p>
+                          <p className="text-[#64748b] text-xs">{p.teacher.employeeId}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 text-white/70 text-sm text-right">{fmt(p.basicSalary)}</td>
-                    <td className="py-3 text-emerald-400 text-sm text-right">{fmt(p.allowances || 0)}</td>
-                    <td className="py-3 text-red-400 text-sm text-right">{fmt(p.deductions || 0)}</td>
-                    <td className="py-3 text-white font-medium text-sm text-right">{fmt(p.netSalary)}</td>
+                    <td className="py-3 text-[#475569] text-sm text-right">{fmt(p.basicSalary)}</td>
+                    <td className="py-3 text-[#16a34a] text-sm text-right">{fmt(p.allowances || 0)}</td>
+                    <td className="py-3 text-[#dc2626] text-sm text-right">{fmt(p.deductions || 0)}</td>
+                    <td className="py-3 text-[#1a1a2e] font-medium text-sm text-right">{fmt(p.netSalary)}</td>
                     <td className="py-3 text-center">
                       <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                        p.status === "paid" ? "bg-emerald-500/20 text-emerald-400" : "bg-orange-500/20 text-orange-400"
+                        p.status === "paid" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-orange-500/20 text-orange-400"
                       }`}>
                         {p.status}
                       </span>
@@ -284,7 +284,7 @@ export default function PayrollPage() {
                       {p.status === "pending" && (
                         <button
                           onClick={() => handleMarkPaid(p.id)}
-                          className="px-3 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 text-[11px] font-medium hover:bg-emerald-500/25 transition"
+                          className="px-3 py-1.5 rounded-lg bg-[#dcfce7] text-[#16a34a] text-[11px] font-medium hover:bg-emerald-500/25 transition"
                         >
                           Mark Paid
                         </button>
@@ -313,17 +313,17 @@ export default function PayrollPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl"
+              className="w-full max-w-xl bg-[var(--sidebar)]/95 backdrop-blur-2xl rounded-2xl border border-[#e2e8f0] shadow-2xl"
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
-                <h3 className="text-white font-semibold">Add Payroll Entry</h3>
-                <button onClick={() => setShowModal(false)} className="text-white/40 hover:text-white/70 transition"><X className="w-5 h-5" /></button>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#e2e8f0]">
+                <h3 className="text-[#1a1a2e] font-semibold">Add Payroll Entry</h3>
+                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#475569] transition"><X className="w-5 h-5" /></button>
               </div>
               <div className="px-6 py-5 space-y-4">
                 <div>
-                  <label className="block text-white/50 text-[12px] mb-1.5">Teacher *</label>
+                  <label className="block text-[#64748b] text-[12px] mb-1.5">Teacher *</label>
                   <select value={form.teacherId} onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] outline-none focus:border-[var(--primary)]/50"
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     style={{ colorScheme: "dark" }}>
                     <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select Teacher</option>
                     {teachers.map(t => (
@@ -332,25 +332,25 @@ export default function PayrollPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-white/50 text-[12px] mb-1.5">Basic Salary *</label>
+                  <label className="block text-[#64748b] text-[12px] mb-1.5">Basic Salary *</label>
                   <input type="number" value={form.basicSalary} onChange={(e) => setForm({ ...form, basicSalary: e.target.value })}
-                    placeholder="e.g. 300000" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                    placeholder="e.g. 300000" className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-white/50 text-[12px] mb-1.5">Allowances</label>
+                    <label className="block text-[#64748b] text-[12px] mb-1.5">Allowances</label>
                     <input type="number" value={form.allowances} onChange={(e) => setForm({ ...form, allowances: e.target.value })}
-                      placeholder="0" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="0" className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
                   </div>
                   <div>
-                    <label className="block text-white/50 text-[12px] mb-1.5">Deductions</label>
+                    <label className="block text-[#64748b] text-[12px] mb-1.5">Deductions</label>
                     <input type="number" value={form.deductions} onChange={(e) => setForm({ ...form, deductions: e.target.value })}
-                      placeholder="0" className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="0" className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/[0.06]">
-                <button onClick={() => setShowModal(false)} className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">Cancel</button>
+              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#e2e8f0]">
+                <button onClick={() => setShowModal(false)} className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">Cancel</button>
                 <button onClick={handleCreate} disabled={submitting}
                   className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-[var(--primary)]/25">
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}

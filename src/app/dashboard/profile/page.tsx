@@ -187,8 +187,8 @@ export default function ProfilePage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">My Profile</h1>
-            <p className="text-white/60 text-[13px]">
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">My Profile</h1>
+            <p className="text-[#475569] text-[13px]">
               Manage your account settings, preferences, and personal information
             </p>
           </div>
@@ -223,7 +223,7 @@ export default function ProfilePage() {
                 </div>
               )}
               <label className="absolute bottom-0 right-0 w-9 h-9 rounded-xl bg-[var(--primary)] flex items-center justify-center cursor-pointer hover:brightness-110 transition-all shadow-lg">
-                <Camera className="w-4 h-4 text-white" />
+                <Camera className="w-4 h-4 text-[#1a1a2e]" />
                 <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
@@ -245,30 +245,30 @@ export default function ProfilePage() {
                 }} />
               </label>
             </div>
-            <h3 className="text-white text-xl font-bold">{userName}</h3>
-            <p className="text-white/60 text-[13px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</p>
+            <h3 className="text-[#1a1a2e] text-xl font-bold">{userName}</h3>
+            <p className="text-[#475569] text-[13px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</p>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-white/[0.08] space-y-3">
+          <div className="mt-6 pt-6 border-t border-[#e2e8f0] space-y-3">
             <div className="flex items-center gap-3">
-              <Mail className="w-4 h-4 text-white/40" />
-              <span className="text-white/70 text-[13px]">{userEmail || "No email"}</span>
+              <Mail className="w-4 h-4 text-[#64748b]" />
+              <span className="text-[#475569] text-[13px]">{userEmail || "No email"}</span>
             </div>
             <div className="flex items-center gap-3">
-              <Phone className="w-4 h-4 text-white/40" />
-              <span className="text-white/70 text-[13px]">+234 801 234 5678</span>
+              <Phone className="w-4 h-4 text-[#64748b]" />
+              <span className="text-[#475569] text-[13px]">+234 801 234 5678</span>
             </div>
             <div className="flex items-center gap-3">
-              <MapPin className="w-4 h-4 text-white/40" />
-              <span className="text-white/70 text-[13px]">12 Education Lane, Victoria Island, Lagos</span>
+              <MapPin className="w-4 h-4 text-[#64748b]" />
+              <span className="text-[#475569] text-[13px]">12 Education Lane, Victoria Island, Lagos</span>
             </div>
             <div className="flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-white/40" />
-              <span className="text-white/70 text-[13px]">Joined September 2018</span>
+              <Calendar className="w-4 h-4 text-[#64748b]" />
+              <span className="text-[#475569] text-[13px]">Joined September 2018</span>
             </div>
             <div className="flex items-center gap-3">
-              <Briefcase className="w-4 h-4 text-white/40" />
-              <span className="text-white/70 text-[13px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</span>
+              <Briefcase className="w-4 h-4 text-[#64748b]" />
+              <span className="text-[#475569] text-[13px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</span>
             </div>
           </div>
         </motion.div>
@@ -280,46 +280,46 @@ export default function ProfilePage() {
           className="lg:col-span-2 space-y-6"
         >
           <div className="card">
-            <h3 className="text-white font-semibold text-lg mb-6">Personal Information</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-6">Personal Information</h3>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-white/60 text-[13px] mb-2 block">Full Name</label>
+                <label className="text-[#475569] text-[13px] mb-2 block">Full Name</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   readOnly={!editing}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
               <div>
-                <label className="text-white/60 text-[13px] mb-2 block">Email</label>
+                <label className="text-[#475569] text-[13px] mb-2 block">Email</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   readOnly={!editing}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
               <div>
-                <label className="text-white/60 text-[13px] mb-2 block">Phone</label>
+                <label className="text-[#475569] text-[13px] mb-2 block">Phone</label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   readOnly={!editing}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
               <div>
-                <label className="text-white/60 text-[13px] mb-2 block">Address</label>
+                <label className="text-[#475569] text-[13px] mb-2 block">Address</label>
                 <input
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   readOnly={!editing}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
             </div>
@@ -334,7 +334,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="card">
-            <h3 className="text-white font-semibold text-lg mb-4">Recent Activity</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Recent Activity</h3>
             <div className="space-y-3">
               {activityLoading ? (
                 <div className="flex items-center justify-center py-8">
@@ -344,20 +344,20 @@ export default function ProfilePage() {
                 recentActivity.map((activity, i) => {
                   const Icon = getActivityIcon(activity.action);
                   return (
-                    <div key={activity.id || i} className="flex items-center gap-4 p-3 rounded-xl bg-white/[0.04]">
-                      <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                        <Icon className="w-4 h-4 text-white/40" />
+                    <div key={activity.id || i} className="flex items-center gap-4 p-3 rounded-xl bg-[#f8fafc]">
+                      <div className="w-8 h-8 rounded-lg bg-[#f1f5f9] flex items-center justify-center">
+                        <Icon className="w-4 h-4 text-[#64748b]" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-white text-[13px]">{activity.action}</p>
+                        <p className="text-[#1a1a2e] text-[13px]">{activity.action}</p>
                       </div>
-                      <span className="text-white/30 text-[12px]">{getTimeAgo(activity.timestamp)}</span>
+                      <span className="text-[#94a3b8] text-[12px]">{getTimeAgo(activity.timestamp)}</span>
                     </div>
                   );
                 })
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-white/40 text-[13px]">No recent activity</p>
+                  <p className="text-[#64748b] text-[13px]">No recent activity</p>
                 </div>
               )}
             </div>
@@ -365,41 +365,41 @@ export default function ProfilePage() {
 
           <div className="grid sm:grid-cols-2 gap-6">
             <div className="card">
-              <h3 className="text-white font-semibold text-lg mb-4">Security</h3>
+              <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Security</h3>
               <div className="space-y-3">
                 <button
                   onClick={() => setShowPasswordModal(true)}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all text-left"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all text-left"
                 >
-                  <Key className="w-5 h-5 text-white/40" />
+                  <Key className="w-5 h-5 text-[#64748b]" />
                   <div>
-                    <p className="text-white text-[13px] font-medium">Change Password</p>
-                    <p className="text-white/40 text-[12px]">Last changed 3 days ago</p>
+                    <p className="text-[#1a1a2e] text-[13px] font-medium">Change Password</p>
+                    <p className="text-[#64748b] text-[12px]">Last changed 3 days ago</p>
                   </div>
                 </button>
                 <button
                   onClick={() => setShow2FAModal(true)}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all text-left"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all text-left"
                 >
-                  <Shield className="w-5 h-5 text-white/40" />
+                  <Shield className="w-5 h-5 text-[#64748b]" />
                   <div>
-                    <p className="text-white text-[13px] font-medium">Two-Factor Auth</p>
-                    <p className="text-white/40 text-[12px]">Enabled</p>
+                    <p className="text-[#1a1a2e] text-[13px] font-medium">Two-Factor Auth</p>
+                    <p className="text-[#64748b] text-[12px]">Enabled</p>
                   </div>
                 </button>
               </div>
             </div>
 
             <div className="card">
-              <h3 className="text-white font-semibold text-lg mb-4">Notifications</h3>
+              <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Notifications</h3>
               <div className="space-y-3">
                 {[
                   { key: "email" as const, label: "Email Notifications" },
                   { key: "sms" as const, label: "SMS Notifications" },
                   { key: "push" as const, label: "Push Notifications" },
                 ].map((notif) => (
-                  <div key={notif.key} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
-                    <span className="text-white text-[13px]">{notif.label}</span>
+                  <div key={notif.key} className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
+                    <span className="text-[#1a1a2e] text-[13px]">{notif.label}</span>
                     <button
                       type="button"
                       onClick={() => {
@@ -433,50 +433,50 @@ export default function ProfilePage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl mx-4 p-6 rounded-2xl bg-[#0d1425] border border-white/[0.08] shadow-2xl"
+              className="w-full max-w-xl mx-4 p-6 rounded-2xl bg-[#0d1425] border border-[#e2e8f0] shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Change Password</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Change Password</h3>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.1] transition-all"
+                  className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-white hover:bg-white/[0.1] transition-all"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-white/60 text-[13px] mb-2 block">Current Password</label>
+                  <label className="text-[#475569] text-[13px] mb-2 block">Current Password</label>
                   <input
                     type="password"
                     value={passwordData.currentPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   />
                 </div>
                 <div>
-                  <label className="text-white/60 text-[13px] mb-2 block">New Password</label>
+                  <label className="text-[#475569] text-[13px] mb-2 block">New Password</label>
                   <input
                     type="password"
                     value={passwordData.newPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   />
                 </div>
                 <div>
-                  <label className="text-white/60 text-[13px] mb-2 block">Confirm New Password</label>
+                  <label className="text-[#475569] text-[13px] mb-2 block">Confirm New Password</label>
                   <input
                     type="password"
                     value={passwordData.confirmPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   />
                 </div>
               </div>
               <div className="flex justify-end gap-3 mt-6">
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="px-4 py-2 rounded-xl bg-white/[0.06] text-white/70 text-sm font-medium hover:bg-white/[0.1] transition-all"
+                  className="px-4 py-2 rounded-xl bg-white/[0.06] text-[#475569] text-sm font-medium hover:bg-white/[0.1] transition-all"
                 >
                   Cancel
                 </button>
@@ -498,16 +498,16 @@ export default function ProfilePage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShow2FAModal(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md mx-4 p-6 rounded-2xl bg-[#0d1425] border border-white/[0.08] shadow-2xl">
+            className="w-full max-w-md mx-4 p-6 rounded-2xl bg-[#0d1425] border border-[#e2e8f0] shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-white font-semibold text-lg">Two-Factor Authentication</h3>
-              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.1] transition-all">
+              <h3 className="text-[#1a1a2e] font-semibold text-lg">Two-Factor Authentication</h3>
+              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-white hover:bg-white/[0.1] transition-all">
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
-                <span className="text-white text-[13px]">Enable 2FA</span>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
+                <span className="text-[#1a1a2e] text-[13px]">Enable 2FA</span>
                 <button
                   type="button"
                   onClick={() => {
@@ -520,11 +520,11 @@ export default function ProfilePage() {
                 </button>
               </div>
               {twoFAEnabled && (
-                <p className="text-white/50 text-[12px] text-center">2FA setup link will be sent to your email address</p>
+                <p className="text-[#64748b] text-[12px] text-center">2FA setup link will be sent to your email address</p>
               )}
               <div className="flex gap-3 pt-2">
                 <button onClick={() => setShow2FAModal(false)}
-                  className="flex-1 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">
+                  className="flex-1 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">
                   Close
                 </button>
               </div>

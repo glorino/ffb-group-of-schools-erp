@@ -335,11 +335,11 @@ export default function TranscriptPage() {
   };
 
   const getGradeColor = (grade: string) => {
-    if (grade?.startsWith("A")) return "text-emerald-400 bg-emerald-500/15 border-emerald-500/25";
-    if (grade?.startsWith("B")) return "text-blue-400 bg-blue-500/15 border-blue-500/25";
-    if (grade?.startsWith("C")) return "text-yellow-400 bg-yellow-500/15 border-yellow-500/25";
+    if (grade?.startsWith("A")) return "text-[#16a34a] bg-[#dcfce7] border-emerald-500/25";
+    if (grade?.startsWith("B")) return "text-[#2563eb] bg-[#dbeafe] border-blue-500/25";
+    if (grade?.startsWith("C")) return "text-[#ca8a04] bg-yellow-500/15 border-yellow-500/25";
     if (grade?.startsWith("D")) return "text-orange-400 bg-orange-500/15 border-orange-500/25";
-    return "text-red-400 bg-red-500/15 border-red-500/25";
+    return "text-[#dc2626] bg-[#fee2e2] border-red-500/25";
   };
 
   return (
@@ -348,17 +348,17 @@ export default function TranscriptPage() {
         <div>
           <h1 className="text-[22px] font-bold text-white/95 font-display tracking-tight flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center">
-              <GraduationCap className="w-[18px] h-[18px] text-white" />
+              <GraduationCap className="w-[18px] h-[18px] text-[#1a1a2e]" />
             </div>
             Academic Transcript
           </h1>
-          <p className="text-white/30 text-[12px] mt-1 ml-[46px]">Cumulative student transcript with term-by-term breakdown</p>
+          <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">Cumulative student transcript with term-by-term breakdown</p>
         </div>
         {selectedStudent && termGradesData.length > 0 && (
           <div className="flex gap-2">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/60 text-[12px] font-medium hover:bg-white/[0.08] transition"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
             >
               <Printer className="w-4 h-4" /> Print
             </button>
@@ -373,29 +373,29 @@ export default function TranscriptPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <p className="text-white/40 text-[12px]">Terms Recorded</p>
-          <p className="text-[28px] font-bold text-white mt-1">{termGradesData.length}</p>
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+          <p className="text-[#64748b] text-[12px]">Terms Recorded</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{termGradesData.length}</p>
         </div>
-        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <p className="text-white/40 text-[12px]">Subjects</p>
-          <p className="text-[28px] font-bold text-white mt-1">{totalSubjects}</p>
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+          <p className="text-[#64748b] text-[12px]">Subjects</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{totalSubjects}</p>
         </div>
-        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <p className="text-white/40 text-[12px]">Cumulative GPA</p>
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+          <p className="text-[#64748b] text-[12px]">Cumulative GPA</p>
           <p className="text-[28px] font-bold text-[var(--accent)] mt-1">{cumulativeGPA.toFixed(2)}</p>
         </div>
-        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <p className="text-white/40 text-[12px]">Overall Average</p>
-          <p className="text-[28px] font-bold text-white mt-1">{overallAvg}%</p>
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+          <p className="text-[#64748b] text-[12px]">Overall Average</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{overallAvg}%</p>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-5 gap-5">
-        <div className="lg:col-span-2 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
-          <h3 className="text-white/90 font-semibold text-[14px] mb-3">Select Student</h3>
+        <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+          <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">Select Student</h3>
           <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
             <input
               type="text"
               placeholder="Search students..."
@@ -405,16 +405,16 @@ export default function TranscriptPage() {
                 setShowDropdown(true);
               }}
               onFocus={() => setShowDropdown(true)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[12px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50"
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50"
             />
           </div>
           <div className="space-y-1 max-h-[400px] overflow-y-auto">
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-12 rounded-xl bg-white/[0.04] animate-pulse" />
+                <div key={i} className="h-12 rounded-xl bg-[#f8fafc] animate-pulse" />
               ))
             ) : filteredStudents.length === 0 ? (
-              <p className="text-white/30 text-[12px] text-center py-8">No students found</p>
+              <p className="text-[#94a3b8] text-[12px] text-center py-8">No students found</p>
             ) : (
               filteredStudents.map((s) => (
                 <button
@@ -427,15 +427,15 @@ export default function TranscriptPage() {
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition ${
                     selectedStudentId === s.id
                       ? "bg-[var(--primary)]/20 border border-[var(--primary)]/40"
-                      : "hover:bg-white/[0.04] border border-transparent"
+                      : "hover:bg-[#f8fafc] border border-transparent"
                   }`}
                 >
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
                     {s.firstName?.[0]}{s.lastName?.[0]}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-white/80 text-[12px] font-medium truncate">{s.firstName} {s.lastName}</p>
-                    <p className="text-white/30 text-[10px]">{s.class?.displayName || s.class?.name || "—"} · {s.admissionNumber}</p>
+                    <p className="text-[#1a1a2e] text-[12px] font-medium truncate">{s.firstName} {s.lastName}</p>
+                    <p className="text-[#94a3b8] text-[10px]">{s.class?.displayName || s.class?.name || "—"} · {s.admissionNumber}</p>
                   </div>
                 </button>
               ))
@@ -446,51 +446,51 @@ export default function TranscriptPage() {
         <div className="lg:col-span-3 space-y-4">
           {selectedStudent && termGradesData.length > 0 ? (
             <>
-              <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
+              <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center text-white text-[18px] font-bold">
                     {selectedStudent.firstName?.[0]}{selectedStudent.lastName?.[0]}
                   </div>
                   <div>
                     <h3 className="text-white/95 font-bold text-[16px]">{selectedStudent.firstName} {selectedStudent.lastName}</h3>
-                    <p className="text-white/40 text-[12px]">
+                    <p className="text-[#64748b] text-[12px]">
                       {selectedStudent.admissionNumber} · {selectedStudent.class?.displayName || selectedStudent.class?.name || "—"}
                     </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="p-3 rounded-xl bg-white/[0.04] text-center">
-                    <p className="text-white/40 text-[10px]">CGPA</p>
+                  <div className="p-3 rounded-xl bg-[#f8fafc] text-center">
+                    <p className="text-[#64748b] text-[10px]">CGPA</p>
                     <p className="text-[20px] font-bold text-[var(--accent)]">{cumulativeGPA.toFixed(2)}</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/[0.04] text-center">
-                    <p className="text-white/40 text-[10px]">Overall Avg</p>
-                    <p className="text-[20px] font-bold text-white">{overallAvg}%</p>
+                  <div className="p-3 rounded-xl bg-[#f8fafc] text-center">
+                    <p className="text-[#64748b] text-[10px]">Overall Avg</p>
+                    <p className="text-[20px] font-bold text-[#1a1a2e]">{overallAvg}%</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/[0.04] text-center">
-                    <p className="text-white/40 text-[10px]">Terms</p>
-                    <p className="text-[20px] font-bold text-white">{termGradesData.length}</p>
+                  <div className="p-3 rounded-xl bg-[#f8fafc] text-center">
+                    <p className="text-[#64748b] text-[10px]">Terms</p>
+                    <p className="text-[20px] font-bold text-[#1a1a2e]">{termGradesData.length}</p>
                   </div>
                 </div>
               </div>
 
               {termGradesData.map((tg) => (
-                <div key={tg.term.id} className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5">
+                <div key={tg.term.id} className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="text-white/90 font-semibold text-[14px] flex items-center gap-2">
+                      <h3 className="text-[#1a1a2e] font-semibold text-[14px] flex items-center gap-2">
                         <BookOpen className="w-4 h-4 text-[var(--primary)]" />
                         {tg.term.name}
                       </h3>
-                      <p className="text-white/30 text-[11px] ml-6">{tg.term.academicYear}</p>
+                      <p className="text-[#94a3b8] text-[11px] ml-6">{tg.term.academicYear}</p>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <p className="text-white/40 text-[10px]">Term Avg</p>
-                        <p className="text-white/80 text-[13px] font-bold">{tg.avgScore}%</p>
+                        <p className="text-[#64748b] text-[10px]">Term Avg</p>
+                        <p className="text-[#1a1a2e] text-[13px] font-bold">{tg.avgScore}%</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-white/40 text-[10px]">GPA</p>
+                        <p className="text-[#64748b] text-[10px]">GPA</p>
                         <p className="text-[var(--accent)] text-[13px] font-bold">{tg.termGPA.toFixed(2)}</p>
                       </div>
                     </div>
@@ -499,15 +499,15 @@ export default function TranscriptPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="border-b border-white/[0.08]">
-                          <th className="text-left text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider w-8">#</th>
-                          <th className="text-left text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">Subject</th>
-                          <th className="text-center text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">CA1</th>
-                          <th className="text-center text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">CA2</th>
-                          <th className="text-center text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">Exam</th>
-                          <th className="text-center text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">Total</th>
-                          <th className="text-center text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">Grade</th>
-                          <th className="text-left text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">Remark</th>
+                        <tr className="border-b border-[#e2e8f0]">
+                          <th className="text-left text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider w-8">#</th>
+                          <th className="text-left text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Subject</th>
+                          <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">CA1</th>
+                          <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">CA2</th>
+                          <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Exam</th>
+                          <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Total</th>
+                          <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Grade</th>
+                          <th className="text-left text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Remark</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -515,19 +515,19 @@ export default function TranscriptPage() {
                           const total = g.total ?? g.score ?? 0;
                           const gradeStr = g.grade || getGradeFromScore(total);
                           return (
-                            <tr key={g.id || i} className="border-b border-white/[0.04] hover:bg-white/[0.03] transition">
-                              <td className="py-2.5 text-white/40 text-[11px]">{i + 1}</td>
-                              <td className="py-2.5 text-white/80 text-[12px] font-medium">{g.subject?.name || "—"}</td>
-                              <td className="py-2.5 text-white/60 text-[12px] text-center">{g.ca1 ?? "—"}</td>
-                              <td className="py-2.5 text-white/60 text-[12px] text-center">{g.ca2 ?? "—"}</td>
-                              <td className="py-2.5 text-white/60 text-[12px] text-center">{g.exam ?? "—"}</td>
-                              <td className="py-2.5 text-white/90 text-[12px] font-bold text-center">{total}</td>
+                            <tr key={g.id || i} className="border-b border-[#e2e8f0] hover:bg-[#f1f5f9] transition">
+                              <td className="py-2.5 text-[#64748b] text-[11px]">{i + 1}</td>
+                              <td className="py-2.5 text-[#1a1a2e] text-[12px] font-medium">{g.subject?.name || "—"}</td>
+                              <td className="py-2.5 text-[#475569] text-[12px] text-center">{g.ca1 ?? "—"}</td>
+                              <td className="py-2.5 text-[#475569] text-[12px] text-center">{g.ca2 ?? "—"}</td>
+                              <td className="py-2.5 text-[#475569] text-[12px] text-center">{g.exam ?? "—"}</td>
+                              <td className="py-2.5 text-[#1a1a2e] text-[12px] font-bold text-center">{total}</td>
                               <td className="py-2.5 text-center">
                                 <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${getGradeColor(gradeStr)}`}>
                                   {gradeStr}
                                 </span>
                               </td>
-                              <td className="py-2.5 text-white/40 text-[11px]">{g.remark || "—"}</td>
+                              <td className="py-2.5 text-[#64748b] text-[11px]">{g.remark || "—"}</td>
                             </tr>
                           );
                         })}
@@ -537,29 +537,29 @@ export default function TranscriptPage() {
                 </div>
               ))}
 
-              <div className="bg-gradient-to-br from-white/[0.05] to-white/[0.02] backdrop-blur-xl rounded-2xl border border-white/[0.1] p-6">
-                <h3 className="text-white/90 font-semibold text-[15px] mb-4 flex items-center gap-2">
+              <div className="bg-gradient-to-br from-white/[0.05] to-white/[0.02] rounded-2xl border border-[#e2e8f0] p-6">
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4 flex items-center gap-2">
                   <Award className="w-5 h-5 text-[var(--accent)]" />
                   Cumulative Summary
                 </h3>
                 <div className="overflow-x-auto">
                   <table className="w-full mb-4">
                     <thead>
-                      <tr className="border-b border-white/[0.1]">
-                        <th className="text-left text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">Term</th>
-                        <th className="text-center text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">Session</th>
-                        <th className="text-center text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">Subjects</th>
-                        <th className="text-center text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">Average</th>
-                        <th className="text-center text-white/50 text-[10px] font-medium pb-2 uppercase tracking-wider">GPA</th>
+                      <tr className="border-b border-[#e2e8f0]">
+                        <th className="text-left text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Term</th>
+                        <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Session</th>
+                        <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Subjects</th>
+                        <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Average</th>
+                        <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">GPA</th>
                       </tr>
                     </thead>
                     <tbody>
                       {termGradesData.map((tg) => (
-                        <tr key={tg.term.id} className="border-b border-white/[0.04]">
-                          <td className="py-2.5 text-white/80 text-[12px] font-medium">{tg.term.name}</td>
-                          <td className="py-2.5 text-white/50 text-[12px] text-center">{tg.term.academicYear}</td>
-                          <td className="py-2.5 text-white/50 text-[12px] text-center">{tg.grades.length}</td>
-                          <td className="py-2.5 text-white/80 text-[12px] font-bold text-center">{tg.avgScore}%</td>
+                        <tr key={tg.term.id} className="border-b border-[#e2e8f0]">
+                          <td className="py-2.5 text-[#1a1a2e] text-[12px] font-medium">{tg.term.name}</td>
+                          <td className="py-2.5 text-[#64748b] text-[12px] text-center">{tg.term.academicYear}</td>
+                          <td className="py-2.5 text-[#64748b] text-[12px] text-center">{tg.grades.length}</td>
+                          <td className="py-2.5 text-[#1a1a2e] text-[12px] font-bold text-center">{tg.avgScore}%</td>
                           <td className="py-2.5 text-[var(--accent)] text-[12px] font-bold text-center">{tg.termGPA.toFixed(2)}</td>
                         </tr>
                       ))}
@@ -567,62 +567,62 @@ export default function TranscriptPage() {
                   </table>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/[0.08]">
-                  <div className="text-center p-4 rounded-xl bg-white/[0.04]">
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">Cumulative GPA</p>
+                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[#e2e8f0]">
+                  <div className="text-center p-4 rounded-xl bg-[#f8fafc]">
+                    <p className="text-[#64748b] text-[10px] uppercase tracking-wider">Cumulative GPA</p>
                     <p className="text-[28px] font-bold text-[var(--accent)] mt-1">{cumulativeGPA.toFixed(2)}</p>
                   </div>
-                  <div className="text-center p-4 rounded-xl bg-white/[0.04]">
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">Overall Average</p>
-                    <p className="text-[28px] font-bold text-white mt-1">{overallAvg}%</p>
+                  <div className="text-center p-4 rounded-xl bg-[#f8fafc]">
+                    <p className="text-[#64748b] text-[10px] uppercase tracking-wider">Overall Average</p>
+                    <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{overallAvg}%</p>
                   </div>
-                  <div className="text-center p-4 rounded-xl bg-white/[0.04]">
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">Total Subjects</p>
-                    <p className="text-[28px] font-bold text-white mt-1">{totalSubjects}</p>
+                  <div className="text-center p-4 rounded-xl bg-[#f8fafc]">
+                    <p className="text-[#64748b] text-[10px] uppercase tracking-wider">Total Subjects</p>
+                    <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{totalSubjects}</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 mt-8 pt-6 border-t border-white/[0.08]">
+                <div className="grid grid-cols-2 gap-6 mt-8 pt-6 border-t border-[#e2e8f0]">
                   <div className="text-center">
                     <div className="w-48 mx-auto border-b border-white/30 mb-2" />
-                    <PenLine className="w-4 h-4 text-white/20 mx-auto mb-1" />
-                    <p className="text-white/60 text-[12px] font-medium">Dean of Faculty</p>
-                    <p className="text-white/30 text-[10px]">Date: _______________</p>
+                    <PenLine className="w-4 h-4 text-[#94a3b8] mx-auto mb-1" />
+                    <p className="text-[#475569] text-[12px] font-medium">Dean of Faculty</p>
+                    <p className="text-[#94a3b8] text-[10px]">Date: _______________</p>
                   </div>
                   <div className="text-center">
                     <div className="w-48 mx-auto border-b border-white/30 mb-2" />
-                    <PenLine className="w-4 h-4 text-white/20 mx-auto mb-1" />
-                    <p className="text-white/60 text-[12px] font-medium">School Principal</p>
-                    <p className="text-white/30 text-[10px]">Date: _______________</p>
+                    <PenLine className="w-4 h-4 text-[#94a3b8] mx-auto mb-1" />
+                    <p className="text-[#475569] text-[12px] font-medium">School Principal</p>
+                    <p className="text-[#94a3b8] text-[10px]">Date: _______________</p>
                   </div>
                 </div>
 
-                <div className="mt-6 p-4 border-2 border-dashed border-white/10 rounded-xl text-center">
-                  <Stamp className="w-6 h-6 text-white/10 mx-auto mb-1" />
-                  <p className="text-white/20 text-[11px]">Official School Stamp</p>
+                <div className="mt-6 p-4 border-2 border-dashed border-[#e2e8f0] rounded-xl text-center">
+                  <Stamp className="w-6 h-6 text-[#94a3b8] mx-auto mb-1" />
+                  <p className="text-[#94a3b8] text-[11px]">Official School Stamp</p>
                 </div>
 
-                <p className="text-center text-white/20 text-[9px] mt-4">
+                <p className="text-center text-[#94a3b8] text-[9px] mt-4">
                   This is an official academic transcript issued by FFB Group of Schools. Any alteration or forgery is strictly prohibited.
                 </p>
               </div>
             </>
           ) : fetchingGrades ? (
-            <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-12 text-center">
-              <Loader2 className="w-12 h-12 text-white/20 mx-auto mb-4 animate-spin" />
-              <p className="text-white/30 text-[14px]">Loading transcript data...</p>
+            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center">
+              <Loader2 className="w-12 h-12 text-[#94a3b8] mx-auto mb-4 animate-spin" />
+              <p className="text-[#94a3b8] text-[14px]">Loading transcript data...</p>
             </div>
           ) : selectedStudent ? (
-            <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-12 text-center">
-              <FileText className="w-16 h-16 text-white/10 mx-auto mb-4" />
-              <p className="text-white/30 text-[14px]">No grade records found for {selectedStudent.firstName}</p>
-              <p className="text-white/20 text-[11px] mt-1">Grades must be entered across terms to generate a transcript</p>
+            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center">
+              <FileText className="w-16 h-16 text-[#94a3b8] mx-auto mb-4" />
+              <p className="text-[#94a3b8] text-[14px]">No grade records found for {selectedStudent.firstName}</p>
+              <p className="text-[#94a3b8] text-[11px] mt-1">Grades must be entered across terms to generate a transcript</p>
             </div>
           ) : (
-            <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-12 text-center">
-              <GraduationCap className="w-16 h-16 text-white/10 mx-auto mb-4" />
-              <p className="text-white/30 text-[14px]">Select a student to view their academic transcript</p>
-              <p className="text-white/20 text-[11px] mt-1">The transcript displays cumulative performance across all terms</p>
+            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center">
+              <GraduationCap className="w-16 h-16 text-[#94a3b8] mx-auto mb-4" />
+              <p className="text-[#94a3b8] text-[14px]">Select a student to view their academic transcript</p>
+              <p className="text-[#94a3b8] text-[11px] mt-1">The transcript displays cumulative performance across all terms</p>
             </div>
           )}
         </div>

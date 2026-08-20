@@ -276,15 +276,15 @@ export default function AIPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">AI Insights</h1>
-            <p className="text-white/60 text-[13px]">
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">AI Insights</h1>
+            <p className="text-[#475569] text-[13px]">
               Predictions, recommendations, and risk engine powered by AI
             </p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={fetchData}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-white/20 text-white text-sm font-medium hover:bg-white/[0.08] transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-[#f1f5f9] transition-all"
             >
               <RefreshCw className="w-4 h-4" />
               Refresh
@@ -308,11 +308,11 @@ export default function AIPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
+                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -326,18 +326,18 @@ export default function AIPage() {
           transition={{ delay: 0.4 }}
           className="card"
         >
-          <h3 className="text-white font-semibold text-lg mb-4">Predictions</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Predictions</h3>
           <div className="space-y-3">
             {predictions.map((pred, i) => (
-              <div key={i} className="p-3 rounded-xl bg-white/[0.04]">
+              <div key={i} className="p-3 rounded-xl bg-[#f8fafc]">
                 <div className="flex items-center gap-2 mb-2">
-                  <pred.icon className={`w-4 h-4 ${pred.type === "risk" ? "text-orange-400" : "text-emerald-400"}`} />
-                  <span className="text-white text-[13px] font-medium">{pred.title}</span>
+                  <pred.icon className={`w-4 h-4 ${pred.type === "risk" ? "text-orange-400" : "text-[#16a34a]"}`} />
+                  <span className="text-[#1a1a2e] text-[13px] font-medium">{pred.title}</span>
                 </div>
-                <p className="text-white/40 text-[12px] mb-2">{pred.description}</p>
+                <p className="text-[#64748b] text-[12px] mb-2">{pred.description}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-white/30 text-[12px]">Confidence: {pred.confidence}%</span>
-                  <div className="w-16 bg-white/10 rounded-full h-1.5">
+                  <span className="text-[#94a3b8] text-[12px]">Confidence: {pred.confidence}%</span>
+                  <div className="w-16 bg-[#f1f5f9] rounded-full h-1.5">
                     <div
                       className={`h-1.5 rounded-full ${pred.confidence > 85 ? "bg-emerald-500" : "bg-orange-500"}`}
                       style={{ width: `${pred.confidence}%` }}
@@ -355,22 +355,22 @@ export default function AIPage() {
           transition={{ delay: 0.5 }}
           className="card"
         >
-          <h3 className="text-white font-semibold text-lg mb-4">Recommendations</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Recommendations</h3>
           <div className="space-y-3">
             {recommendations.map((rec, i) => (
-              <div key={i} className="p-3 rounded-xl bg-white/[0.04]">
+              <div key={i} className="p-3 rounded-xl bg-[#f8fafc]">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-white text-[13px] font-medium">{rec.title}</span>
+                  <span className="text-[#1a1a2e] text-[13px] font-medium">{rec.title}</span>
                   <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                    rec.priority === "high" ? "bg-red-500/20 text-red-400" :
+                    rec.priority === "high" ? "bg-[#fee2e2] text-[#dc2626]" :
                     rec.priority === "medium" ? "bg-orange-500/20 text-orange-400" :
-                    "bg-white/10 text-white/40"
+                    "bg-[#f1f5f9] text-[#64748b]"
                   }`}>
                     {rec.priority}
                   </span>
                 </div>
-                <p className="text-white/40 text-[12px]">{rec.description}</p>
-                <p className="text-white/30 text-[12px] mt-2">Impact: {rec.impact}</p>
+                <p className="text-[#64748b] text-[12px]">{rec.description}</p>
+                <p className="text-[#94a3b8] text-[12px] mt-2">Impact: {rec.impact}</p>
               </div>
             ))}
           </div>
@@ -382,17 +382,17 @@ export default function AIPage() {
           transition={{ delay: 0.6 }}
           className="card"
         >
-          <h3 className="text-white font-semibold text-lg mb-4">Risk Engine</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Risk Engine</h3>
           <div className="space-y-3">
             {riskFactors.map((risk, i) => (
-              <div key={i} className="p-3 rounded-xl bg-white/[0.04]">
+              <div key={i} className="p-3 rounded-xl bg-[#f8fafc]">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-white text-[13px] font-medium">{risk.factor}</span>
-                  <span className={`text-sm font-bold ${risk.status === "good" ? "text-emerald-400" : "text-orange-400"}`}>
+                  <span className="text-[#1a1a2e] text-[13px] font-medium">{risk.factor}</span>
+                  <span className={`text-sm font-bold ${risk.status === "good" ? "text-[#16a34a]" : "text-orange-400"}`}>
                     {risk.score}%
                   </span>
                 </div>
-                <div className="w-full bg-white/10 rounded-full h-2">
+                <div className="w-full bg-[#f1f5f9] rounded-full h-2">
                   <div
                     className={`h-2 rounded-full ${risk.status === "good" ? "bg-emerald-500" : "bg-orange-500"}`}
                     style={{ width: `${risk.score}%` }}
@@ -402,9 +402,9 @@ export default function AIPage() {
             ))}
           </div>
           <div className="mt-4 p-3 rounded-xl bg-[var(--primary)]/20 border border-[var(--primary)]/30">
-            <p className="text-white text-[13px] font-medium">Overall Risk Score</p>
+            <p className="text-[#1a1a2e] text-[13px] font-medium">Overall Risk Score</p>
             <p className="text-2xl font-bold text-[var(--accent)]">{overallRiskScore}%</p>
-            <p className="text-white/40 text-[12px]">{overallRiskLabel}</p>
+            <p className="text-[#64748b] text-[12px]">{overallRiskLabel}</p>
           </div>
         </motion.div>
       </div>

@@ -39,10 +39,10 @@ export default function DashboardLayout({
 
   if (!mounted || status === "loading") {
     return (
-      <div className="min-h-screen bg-animated flex items-center justify-center">
+      <div className="min-h-screen bg-[#f5f7fa] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-white/20 border-t-[var(--accent)] rounded-full animate-spin" />
-          <p className="text-white/40 text-[12px]">Loading...</p>
+          <div className="w-10 h-10 border-2 border-[#e2e8f0] border-t-[var(--primary)] rounded-full animate-spin" />
+          <p className="text-[#64748b] text-[12px]">Loading...</p>
         </div>
       </div>
     );
@@ -51,12 +51,11 @@ export default function DashboardLayout({
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-animated">
-      <ParticleBackground />
+    <div className="min-h-screen bg-[#f5f7fa]">
       <Sidebar />
       <div className="dashboard-main min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 p-5 sm:p-6 lg:p-8 overflow-x-hidden">{children}</main>
+        <main className="flex-1 overflow-x-hidden">{children}</main>
       </div>
     </div>
   );

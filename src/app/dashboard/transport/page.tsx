@@ -156,22 +156,22 @@ export default function TransportPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Transport Management</h1>
-            <p className="text-white/60 text-[13px]">
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Transport Management</h1>
+            <p className="text-[#475569] text-[13px]">
               Manage vehicles, routes, drivers, and GPS tracking
             </p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowGPS(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Navigation className="w-4 h-4" />
               GPS Tracking
@@ -198,11 +198,11 @@ export default function TransportPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
+                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -217,53 +217,53 @@ export default function TransportPage() {
           className="lg:col-span-2 card"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white font-semibold text-lg">Vehicle Fleet</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg">Vehicle Fleet</h3>
             <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
               <input
                 type="text"
                 placeholder="Search vehicles..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
               />
             </div>
           </div>
           <div className="space-y-3">
             {filteredVehicles.map((vehicle) => (
-              <div key={vehicle.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all">
+              <div key={vehicle.id} className="flex items-center gap-4 p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  vehicle.status === "active" ? "bg-emerald-500/20 text-emerald-400" : "bg-orange-500/20 text-orange-400"
+                  vehicle.status === "active" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-orange-500/20 text-orange-400"
                 }`}>
                   <Bus className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="text-white text-[13px] font-medium">{vehicle.name}</p>
-                    <span className="text-white/30 text-[12px]">{vehicle.plateNumber}</span>
+                    <p className="text-[#1a1a2e] text-[13px] font-medium">{vehicle.name}</p>
+                    <span className="text-[#94a3b8] text-[12px]">{vehicle.plateNumber}</span>
                   </div>
-                  <p className="text-white/40 text-[12px]">{vehicle.driverName} • {vehicle.type}</p>
+                  <p className="text-[#64748b] text-[12px]">{vehicle.driverName} • {vehicle.type}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-white text-[13px] font-medium">{vehicle.capacity} seats</p>
+                  <p className="text-[#1a1a2e] text-[13px] font-medium">{vehicle.capacity} seats</p>
                   <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                    vehicle.status === "active" ? "bg-emerald-500/20 text-emerald-400" : "bg-orange-500/20 text-orange-400"
+                    vehicle.status === "active" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-orange-500/20 text-orange-400"
                   }`}>
                     {vehicle.status}
                   </span>
                 </div>
                 <div className="flex gap-1">
-                  <button title="View vehicle details" onClick={() => alert(`Vehicle: ${vehicle.name}\nPlate: ${vehicle.plateNumber}\nDriver: ${vehicle.driverName}\nCapacity: ${vehicle.capacity} seats\nStatus: ${vehicle.status}`)} className="p-2 rounded-lg hover:bg-white/[0.08] text-white/40">
+                  <button title="View vehicle details" onClick={() => alert(`Vehicle: ${vehicle.name}\nPlate: ${vehicle.plateNumber}\nDriver: ${vehicle.driverName}\nCapacity: ${vehicle.capacity} seats\nStatus: ${vehicle.status}`)} className="p-2 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]">
                     <Eye className="w-4 h-4" />
                   </button>
-                  <button title="Edit vehicle" onClick={() => { setForm({ name: vehicle.name, plateNumber: vehicle.plateNumber, type: vehicle.type, capacity: String(vehicle.capacity), driverName: vehicle.driverName, driverPhone: vehicle.driverPhone }); setShowModal(true); }} className="p-2 rounded-lg hover:bg-white/[0.08] text-white/40">
+                  <button title="Edit vehicle" onClick={() => { setForm({ name: vehicle.name, plateNumber: vehicle.plateNumber, type: vehicle.type, capacity: String(vehicle.capacity), driverName: vehicle.driverName, driverPhone: vehicle.driverPhone }); setShowModal(true); }} className="p-2 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]">
                     <Edit className="w-4 h-4" />
                   </button>
                 </div>
               </div>
             ))}
             {filteredVehicles.length === 0 && (
-              <div className="text-center py-8 text-white/40 text-[13px]">No vehicles found</div>
+              <div className="text-center py-8 text-[#64748b] text-[13px]">No vehicles found</div>
             )}
           </div>
         </motion.div>
@@ -275,29 +275,29 @@ export default function TransportPage() {
           className="space-y-6"
         >
           <div className="card">
-            <h3 className="text-white font-semibold text-lg mb-4">Routes</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Routes</h3>
             <div className="space-y-3">
               {routes.map((route) => (
-                <div key={route.id} className="p-3 rounded-xl bg-white/[0.04]">
+                <div key={route.id} className="p-3 rounded-xl bg-[#f8fafc]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white text-[13px] font-medium">{route.name}</span>
+                    <span className="text-[#1a1a2e] text-[13px] font-medium">{route.name}</span>
                     <span className="text-[var(--accent)] text-[12px]">{route.students} students</span>
                   </div>
                   <div className="flex items-center justify-between text-[12px]">
-                    <span className="text-white/40">{route.stops} stops • {route.time}</span>
-                    <span className="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-400">{route.status}</span>
+                    <span className="text-[#64748b]">{route.stops} stops • {route.time}</span>
+                    <span className="px-2 py-1 rounded-lg bg-[#dcfce7] text-[#16a34a]">{route.status}</span>
                   </div>
                 </div>
               ))}
               {routes.length === 0 && (
-                <p className="text-center py-4 text-white/40 text-[13px]">No routes yet</p>
+                <p className="text-center py-4 text-[#64748b] text-[13px]">No routes yet</p>
               )}
             </div>
           </div>
 
           <div className="card">
-            <h3 className="text-white font-semibold text-lg mb-4">GPS Live Map</h3>
-            <div className="aspect-video rounded-xl overflow-hidden border border-white/[0.08]">
+            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">GPS Live Map</h3>
+            <div className="aspect-video rounded-xl overflow-hidden border border-[#e2e8f0]">
               <iframe
                 src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || ""}&q=Lagos,Nigeria&zoom=12`}
                 width="100%"
@@ -307,7 +307,7 @@ export default function TransportPage() {
                 loading="lazy"
               />
             </div>
-            <p className="text-white/40 text-[12px] mt-2">{stats.active} vehicles online</p>
+            <p className="text-[#64748b] text-[12px] mt-2">{stats.active} vehicles online</p>
           </div>
         </motion.div>
       </div>
@@ -317,43 +317,43 @@ export default function TransportPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-lg font-semibold">Add Vehicle</h2>
-              <button onClick={() => setShowModal(false)} className="text-white/40 hover:text-white">
+              <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Vehicle</h2>
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Vehicle Name</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Vehicle Name</label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. Bus A1"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1">Plate Number</label>
+                  <label className="block text-[#475569] text-[13px] mb-1">Plate Number</label>
                   <input
                     type="text"
                     value={form.plateNumber}
                     onChange={(e) => setForm({ ...form, plateNumber: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="LAG-123-AB"
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1">Type</label>
+                  <label className="block text-[#475569] text-[13px] mb-1">Type</label>
                   <select
                     value={form.type}
                     onChange={(e) => setForm({ ...form, type: e.target.value })}
                     style={{ colorScheme: "dark" }}
-                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   >
                     <option style={{ background: "#0f1b33", color: "#fff" }}>Bus</option>
                     <option style={{ background: "#0f1b33", color: "#fff" }}>Van</option>
@@ -362,32 +362,32 @@ export default function TransportPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Capacity</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Capacity</label>
                 <input
                   type="number"
                   value={form.capacity}
                   onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. 45"
                 />
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Driver Name</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Driver Name</label>
                 <input
                   type="text"
                   value={form.driverName}
                   onChange={(e) => setForm({ ...form, driverName: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. Mr. Chukwuemeka"
                 />
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Driver Phone</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Driver Phone</label>
                 <input
                   type="text"
                   value={form.driverPhone}
                   onChange={(e) => setForm({ ...form, driverPhone: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. 08012345678"
                 />
               </div>
@@ -395,7 +395,7 @@ export default function TransportPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
+                  className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
                 >
                   Cancel
                 </button>
@@ -416,12 +416,12 @@ export default function TransportPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowGPS(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6">
+            className="w-full max-w-2xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-lg font-semibold">GPS Tracking</h2>
-              <button onClick={() => setShowGPS(false)} className="text-white/40 hover:text-white"><X className="w-5 h-5" /></button>
+              <h2 className="text-[#1a1a2e] text-lg font-semibold">GPS Tracking</h2>
+              <button onClick={() => setShowGPS(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
             </div>
-            <div className="aspect-video rounded-xl overflow-hidden border border-white/[0.08] mb-4">
+            <div className="aspect-video rounded-xl overflow-hidden border border-[#e2e8f0] mb-4">
               <iframe
                 src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || ""}&q=Lagos,Nigeria&zoom=11`}
                 width="100%"
@@ -433,15 +433,15 @@ export default function TransportPage() {
             </div>
             <div className="space-y-2">
               {vehicles.filter(v => v.status === "active").map((v) => (
-                <div key={v.id} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
+                <div key={v.id} className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full" />
                     <div>
-                      <p className="text-white text-[13px] font-medium">{v.name}</p>
-                      <p className="text-white/40 text-[12px]">{v.plateNumber}</p>
+                      <p className="text-[#1a1a2e] text-[13px] font-medium">{v.name}</p>
+                      <p className="text-[#64748b] text-[12px]">{v.plateNumber}</p>
                     </div>
                   </div>
-                  <span className="text-white/40 text-[12px]">Last seen: 2 min ago</span>
+                  <span className="text-[#64748b] text-[12px]">Last seen: 2 min ago</span>
                 </div>
               ))}
             </div>

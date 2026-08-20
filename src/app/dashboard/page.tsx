@@ -387,7 +387,7 @@ function StudentDashboard() {
                 <p className="text-[#475569] text-[12px]">{g.subject?.name || "—"}</p>
                 <div className="flex items-center gap-2">
                   <p className="text-[#1a1a2e] text-[12px] font-semibold">{g.score}%</p>
-                  {g.grade && <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[10px] font-bold">{g.grade}</span>}
+                  {g.grade && <span className="px-2 py-0.5 rounded bg-[#dcfce7] text-[#16a34a] text-[10px] font-bold">{g.grade}</span>}
                 </div>
               </div>
             ))}
@@ -493,7 +493,7 @@ function VicePrincipalDashboard() {
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Discipline Cases</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{discipline.totalIncidents}</p><p className="text-amber-400 text-[11px] mt-1">{discipline.pending} pending</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Discipline Cases</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{discipline.totalIncidents}</p><p className="text-[#d97706] text-[11px] mt-1">{discipline.pending} pending</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalTeachers}</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Resolution Rate</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{discipline.totalIncidents ? Math.round((discipline.resolved / discipline.totalIncidents) * 100) : 0}%</p></DashboardCard>
       </div>
@@ -578,7 +578,7 @@ function PrincipalDashboard() {
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Avg. Performance</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.classPerformance?.length ? Math.round(stats.classPerformance.reduce((s: number, c: any) => s + (c.performance || c.students || 0), 0) / stats.classPerformance.length) : 0}%</p></DashboardCard>
       </div>
       <div className="grid grid-cols-3 gap-4 mt-4">
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Pending Admissions</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.pendingAdmissions}</p><p className="text-amber-400 text-[11px] mt-1">Needs review</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Pending Admissions</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.pendingAdmissions}</p><p className="text-[#d97706] text-[11px] mt-1">Needs review</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.attendance?.rate || 0}%</p></DashboardCard>
       </div>
@@ -1037,7 +1037,7 @@ function PorterDashboard() {
                     <p className="text-[#1a1a2e] text-[12px] font-medium">{v.visitorName}</p>
                     <p className="text-[#94a3b8] text-[10px]">{v.purpose} - {v.student?.firstName} {v.student?.lastName}</p>
                   </div>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${v.status === "checked_in" ? "bg-green-500/20 text-green-400" : v.status === "checked_out" ? "bg-[#f1f5f9] text-[#64748b]" : "bg-amber-500/20 text-amber-400"}`}>{v.status}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${v.status === "checked_in" ? "bg-[#dcfce7] text-[#16a34a]" : v.status === "checked_out" ? "bg-[#f1f5f9] text-[#64748b]" : "bg-[#fef3c7] text-[#d97706]"}`}>{v.status}</span>
                 </div>
               )) : (
                 <div className="text-center py-8 text-[#94a3b8] text-[12px]">No visitors found</div>
@@ -1079,38 +1079,38 @@ function PorterDashboard() {
 
       {showVisitorLog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[var(--sidebar)] border border-white/[0.08] rounded-2xl p-6 w-full max-w-md mx-4">
+          <div className="bg-[var(--sidebar)] border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-white/90 font-semibold text-[16px]">Log Visitor</h3>
-              <button onClick={() => setShowVisitorLog(false)} className="text-[#64748b] hover:text-white/70"><X className="w-5 h-5" /></button>
+              <h3 className="text-[#1a1a2e] font-semibold text-[16px]">Log Visitor</h3>
+              <button onClick={() => setShowVisitorLog(false)} className="text-[#64748b] hover:text-[#475569]"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-3">
               <div>
-                <label className="text-white/50 text-[11px] mb-1 block">Visitor Name</label>
-                <input type="text" value={visitorForm.visitorName} onChange={e => setVisitorForm({ ...visitorForm, visitorName: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/90 text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter visitor name" />
+                <label className="text-[#64748b] text-[11px] mb-1 block">Visitor Name</label>
+                <input type="text" value={visitorForm.visitorName} onChange={e => setVisitorForm({ ...visitorForm, visitorName: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter visitor name" />
               </div>
               <div>
-                <label className="text-white/50 text-[11px] mb-1 block">Phone</label>
-                <input type="text" value={visitorForm.visitorPhone} onChange={e => setVisitorForm({ ...visitorForm, visitorPhone: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/90 text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter phone number" />
+                <label className="text-[#64748b] text-[11px] mb-1 block">Phone</label>
+                <input type="text" value={visitorForm.visitorPhone} onChange={e => setVisitorForm({ ...visitorForm, visitorPhone: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter phone number" />
               </div>
               <div>
-                <label className="text-white/50 text-[11px] mb-1 block">Student ID</label>
-                <input type="text" value={visitorForm.studentId} onChange={e => setVisitorForm({ ...visitorForm, studentId: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/90 text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter student ID" />
+                <label className="text-[#64748b] text-[11px] mb-1 block">Student ID</label>
+                <input type="text" value={visitorForm.studentId} onChange={e => setVisitorForm({ ...visitorForm, studentId: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter student ID" />
               </div>
               <div>
-                <label className="text-white/50 text-[11px] mb-1 block">Purpose</label>
-                <input type="text" value={visitorForm.purpose} onChange={e => setVisitorForm({ ...visitorForm, purpose: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/90 text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Reason for visit" />
+                <label className="text-[#64748b] text-[11px] mb-1 block">Purpose</label>
+                <input type="text" value={visitorForm.purpose} onChange={e => setVisitorForm({ ...visitorForm, purpose: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Reason for visit" />
               </div>
               <div>
-                <label className="text-white/50 text-[11px] mb-1 block">Hostel</label>
-                <select value={visitorForm.hostelId} onChange={e => setVisitorForm({ ...visitorForm, hostelId: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/90 text-[13px] outline-none focus:border-[var(--primary)]/50">
+                <label className="text-[#64748b] text-[11px] mb-1 block">Hostel</label>
+                <select value={visitorForm.hostelId} onChange={e => setVisitorForm({ ...visitorForm, hostelId: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50">
                   <option value="">Select hostel</option>
                   {hostels.map((h: any) => <option key={h.id} value={h.id}>{h.name}</option>)}
                 </select>
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <button onClick={() => setShowVisitorLog(false)} className="flex-1 px-4 py-2.5 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white/60 text-[13px] hover:bg-[#f1f5f9] transition-colors">Cancel</button>
+              <button onClick={() => setShowVisitorLog(false)} className="flex-1 px-4 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] hover:bg-[#f1f5f9] transition-colors">Cancel</button>
               <button onClick={handleLogVisitor} disabled={submitting} className="flex-1 px-4 py-2.5 rounded-lg bg-[var(--primary)] text-white text-[13px] font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                 Log Visitor
@@ -1234,11 +1234,11 @@ function AlumniDashboard() {
 
       {showDonateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowDonateModal(false)}>
-          <div className="bg-[#1a1a2e] border border-white/10 rounded-2xl p-6 w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
+          <div className="bg-[#1a1a2e] border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-purple-400" />
-                <h3 className="text-white font-semibold text-[16px]">Make a Donation</h3>
+                <DollarSign className="w-5 h-5 text-[#7c3aed]" />
+                <h3 className="text-[#1a1a2e] font-semibold text-[16px]">Make a Donation</h3>
               </div>
               <button onClick={() => setShowDonateModal(false)} className="text-[#64748b] hover:text-white transition-colors">
                 <X className="w-5 h-5" />
@@ -1246,7 +1246,7 @@ function AlumniDashboard() {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="text-white/50 text-[12px] font-medium mb-1 block">Amount *</label>
+                <label className="text-[#64748b] text-[12px] font-medium mb-1 block">Amount *</label>
                 <input
                   type="number"
                   min="1"
@@ -1254,17 +1254,17 @@ function AlumniDashboard() {
                   placeholder="Enter amount"
                   value={donateForm.amount}
                   onChange={e => setDonateForm(p => ({ ...p, amount: e.target.value }))}
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/[0.05] border border-white/[0.1] text-white text-[14px] placeholder:text-white/30 focus:outline-none focus:border-purple-500/50 transition-colors"
+                  className="w-full px-3 py-2.5 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[14px] placeholder:text-[#94a3b8] focus:outline-none focus:border-purple-500/50 transition-colors"
                 />
               </div>
               <div>
-                <label className="text-white/50 text-[12px] font-medium mb-1 block">Purpose (optional)</label>
+                <label className="text-[#64748b] text-[12px] font-medium mb-1 block">Purpose (optional)</label>
                 <textarea
                   rows={3}
                   placeholder="e.g. Library fund, Scholarship support..."
                   value={donateForm.purpose}
                   onChange={e => setDonateForm(p => ({ ...p, purpose: e.target.value }))}
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/[0.05] border border-white/[0.1] text-white text-[14px] placeholder:text-white/30 focus:outline-none focus:border-purple-500/50 transition-colors resize-none"
+                  className="w-full px-3 py-2.5 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[14px] placeholder:text-[#94a3b8] focus:outline-none focus:border-purple-500/50 transition-colors resize-none"
                 />
               </div>
               <button
@@ -1331,7 +1331,7 @@ function ParentDashboard() {
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Child</p><p className="text-[18px] font-bold text-[#1a1a2e] mt-1">{child.firstName} {child.lastName}</p><p className="text-[#94a3b8] text-[11px] mt-1">{child.class?.name || "\u2014"}</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Attendance</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{attendancePct}%</p><p className="text-[#94a3b8] text-[11px] mt-1">{presentDays} of {totalDays} days</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Current Average</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{avgScore}%</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrency(unpaidAmount)}</p>{unpaidAmount > 0 && <p className="text-amber-400 text-[11px] mt-1">Outstanding</p>}</DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrency(unpaidAmount)}</p>{unpaidAmount > 0 && <p className="text-[#d97706] text-[11px] mt-1">Outstanding</p>}</DashboardCard>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
@@ -1346,7 +1346,7 @@ function ParentDashboard() {
                 </div>
                 <div className="flex items-center gap-3">
                   <p className="text-[#1a1a2e] text-[13px] font-bold">{g.score}/{g.maxScore}</p>
-                  {g.grade && <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${g.grade === "A" ? "bg-[#dcfce7] text-[#16a34a]" : g.grade === "B" ? "bg-[#dbeafe] text-[#2563eb]" : g.grade === "C" ? "bg-yellow-500/15 text-yellow-400" : g.grade === "F" ? "bg-[#fee2e2] text-[#dc2626]" : "bg-white/10 text-white/50"}`}>{g.grade}</span>}
+                  {g.grade && <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${g.grade === "A" ? "bg-[#dcfce7] text-[#16a34a]" : g.grade === "B" ? "bg-[#dbeafe] text-[#2563eb]" : g.grade === "C" ? "bg-yellow-500/15 text-[#ca8a04]" : g.grade === "F" ? "bg-[#fee2e2] text-[#dc2626]" : "bg-[#f1f5f9] text-[#64748b]"}`}>{g.grade}</span>}
                 </div>
               </div>
             ))}

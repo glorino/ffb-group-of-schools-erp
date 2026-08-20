@@ -87,14 +87,14 @@ export default function StudentPaymentHistoryPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard/students"
-            className="p-2 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white/60 hover:text-white hover:bg-white/[0.1] transition-all"
+            className="p-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e]/60 hover:text-white hover:bg-white/[0.1] transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
             <h1 className="text-[22px] font-bold text-white/95 tracking-tight flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-                <Receipt className="w-[18px] h-[18px] text-white" />
+                <Receipt className="w-[18px] h-[18px] text-[#1a1a2e]" />
               </div>
               Payment History
             </h1>
@@ -108,7 +108,7 @@ export default function StudentPaymentHistoryPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
           >
             <Printer className="w-4 h-4" /> Print
           </button>
@@ -148,22 +148,22 @@ export default function StudentPaymentHistoryPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] p-5"
+              className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div
                   className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}
                 >
-                  <stat.icon className="w-5 h-5 text-white" />
+                  <stat.icon className="w-5 h-5 text-[#1a1a2e]" />
                 </div>
                 <p className="text-white/30 text-[11px]">{stat.label}</p>
               </div>
-              <p className="text-white text-xl font-bold">{stat.value}</p>
+              <p className="text-[#1a1a2e] text-xl font-bold">{stat.value}</p>
             </motion.div>
           ))}
         </div>
 
-        <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.07] overflow-hidden mt-4">
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden mt-4">
           {loading ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-6 h-6 text-white/30 animate-spin" />
@@ -177,7 +177,7 @@ export default function StudentPaymentHistoryPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
+                  <tr className="border-b border-[#e2e8f0]">
                     {["Date", "Amount", "Method", "Status", "Reference", "Invoice Number"].map(
                       (h) => (
                         <th
@@ -197,7 +197,7 @@ export default function StudentPaymentHistoryPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: i * 0.03 }}
-                      className="border-b border-white/[0.03] hover:bg-white/[0.02] transition"
+                      className="border-b border-white/[0.03] hover:bg-[#f8fafc] transition"
                     >
                       <td className="px-5 py-3.5 text-white/70 text-[13px]">
                         {p.paidAt

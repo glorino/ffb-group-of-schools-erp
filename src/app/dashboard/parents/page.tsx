@@ -79,8 +79,8 @@ export default function ParentsPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Parents & Guardians</h1>
-            <p className="text-white/60">
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Parents & Guardians</h1>
+            <p className="text-[#475569]">
               View all guardians and their linked students
             </p>
           </div>
@@ -102,11 +102,11 @@ export default function ParentsPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-[13px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                <p className="text-[#64748b] text-[13px] mb-1">{stat.label}</p>
+                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -120,25 +120,25 @@ export default function ParentsPage() {
         className="card"
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-white font-semibold text-lg">All Guardians</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-lg">All Guardians</h3>
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
             <input
               type="text"
               placeholder="Search guardians..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
             />
           </div>
         </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
+            <Loader2 className="w-8 h-8 text-[#64748b] animate-spin" />
           </div>
         ) : guardians.length === 0 ? (
-          <div className="text-center py-20 text-white/40">
+          <div className="text-center py-20 text-[#64748b]">
             <Users className="w-12 h-12 mx-auto mb-3 opacity-40" />
             <p className="text-[13px]">No guardians found</p>
           </div>
@@ -146,43 +146,43 @@ export default function ParentsPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Guardian</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Relationship</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Student</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Class</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Contact</th>
-                  <th className="text-left text-white/50 text-sm font-medium pb-3">Actions</th>
+                <tr className="border-b border-[#e2e8f0]">
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Guardian</th>
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Relationship</th>
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Student</th>
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Class</th>
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Contact</th>
+                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {guardians.map((g) => (
-                  <tr key={g.id} className="border-b border-white/5 hover:bg-white/5 transition-all">
+                  <tr key={g.id} className="border-b border-white/5 hover:bg-[#f8fafc] transition-all">
                     <td className="py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--primary)]/30 to-[var(--accent)]/30 flex items-center justify-center text-white text-[13px] font-bold">
                           {g.firstName[0]}{g.lastName[0]}
                         </div>
                         <div>
-                          <p className="text-white font-medium text-[13px]">{g.firstName} {g.lastName}</p>
+                          <p className="text-[#1a1a2e] font-medium text-[13px]">{g.firstName} {g.lastName}</p>
                           {g.isPrimary && (
                             <span className="px-1.5 py-0.5 rounded text-[10px] bg-[var(--accent)]/20 text-[var(--accent)]">Primary</span>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 text-white/70 text-[13px]">{g.relationship}</td>
-                    <td className="py-3 text-white/70 text-[13px]">{g.student.firstName} {g.student.lastName}</td>
-                    <td className="py-3 text-white/70 text-[13px]">{g.student.class?.displayName || g.student.class?.name || "—"}</td>
+                    <td className="py-3 text-[#475569] text-[13px]">{g.relationship}</td>
+                    <td className="py-3 text-[#475569] text-[13px]">{g.student.firstName} {g.student.lastName}</td>
+                    <td className="py-3 text-[#475569] text-[13px]">{g.student.class?.displayName || g.student.class?.name || "—"}</td>
                     <td className="py-3">
                       <div className="flex items-center gap-2 text-[13px]">
                         {g.phone && (
-                          <span className="flex items-center gap-1 text-white/50">
+                          <span className="flex items-center gap-1 text-[#64748b]">
                             <Phone className="w-3 h-3" /> {g.phone}
                           </span>
                         )}
                         {g.email && (
-                          <span className="flex items-center gap-1 text-white/50">
+                          <span className="flex items-center gap-1 text-[#64748b]">
                             <Mail className="w-3 h-3" /> {g.email}
                           </span>
                         )}
@@ -191,7 +191,7 @@ export default function ParentsPage() {
                     <td className="py-3">
                       <button
                         onClick={() => setViewGuardian(g)}
-                        className="p-1 rounded-lg hover:bg-white/10 text-white/40"
+                        className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
@@ -210,42 +210,42 @@ export default function ParentsPage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setViewGuardian(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Guardian Details</h3>
-                <button onClick={() => setViewGuardian(null)} className="p-1 rounded-lg hover:bg-white/10 text-white/40"><X className="w-5 h-5" /></button>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Guardian Details</h3>
+                <button onClick={() => setViewGuardian(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/40 text-[11px] mb-1">Full Name</p>
-                    <p className="text-white font-semibold text-[15px]">{viewGuardian.firstName} {viewGuardian.lastName}</p>
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <p className="text-[#64748b] text-[11px] mb-1">Full Name</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.firstName} {viewGuardian.lastName}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/40 text-[11px] mb-1">Relationship</p>
-                    <p className="text-white font-semibold text-[15px]">{viewGuardian.relationship}</p>
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <p className="text-[#64748b] text-[11px] mb-1">Relationship</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.relationship}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/40 text-[11px] mb-1">Phone</p>
-                    <p className="text-white font-semibold text-[15px]">{viewGuardian.phone}</p>
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <p className="text-[#64748b] text-[11px] mb-1">Phone</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.phone}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/40 text-[11px] mb-1">Email</p>
-                    <p className="text-white font-semibold text-[15px]">{viewGuardian.email || "—"}</p>
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <p className="text-[#64748b] text-[11px] mb-1">Email</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.email || "—"}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/40 text-[11px] mb-1">Occupation</p>
-                    <p className="text-white font-semibold text-[15px]">{viewGuardian.occupation || "—"}</p>
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <p className="text-[#64748b] text-[11px] mb-1">Occupation</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.occupation || "—"}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                    <p className="text-white/40 text-[11px] mb-1">Linked Student</p>
-                    <p className="text-white font-semibold text-[15px]">{viewGuardian.student.firstName} {viewGuardian.student.lastName}</p>
-                    <p className="text-white/40 text-[11px] mt-0.5">{viewGuardian.student.admissionNumber} &middot; {viewGuardian.student.class?.displayName || "—"}</p>
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <p className="text-[#64748b] text-[11px] mb-1">Linked Student</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.student.firstName} {viewGuardian.student.lastName}</p>
+                    <p className="text-[#64748b] text-[11px] mt-0.5">{viewGuardian.student.admissionNumber} &middot; {viewGuardian.student.class?.displayName || "—"}</p>
                   </div>
                 </div>
               </div>
               <div className="flex justify-end mt-6">
-                <button onClick={() => setViewGuardian(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all">Close</button>
+                <button onClick={() => setViewGuardian(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all">Close</button>
               </div>
             </motion.div>
           </motion.div>

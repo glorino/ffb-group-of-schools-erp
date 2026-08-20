@@ -45,24 +45,24 @@ export default function ChangePasswordPage() {
             <div className="w-16 h-16 rounded-2xl bg-[var(--primary)]/20 flex items-center justify-center mx-auto mb-4">
               <Lock className="w-8 h-8 text-[var(--primary)]" />
             </div>
-            <h1 className="text-xl font-bold text-white">Change Your Password</h1>
-            <p className="text-white/50 text-[13px] mt-1">You must change your default password before continuing</p>
+            <h1 className="text-xl font-bold text-[#1a1a2e]">Change Your Password</h1>
+            <p className="text-[#64748b] text-[13px] mt-1">You must change your default password before continuing</p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-white/60 text-[12px] mb-1 block">New Password</label>
+              <label className="text-[#475569] text-[12px] mb-1 block">New Password</label>
               <div className="relative">
                 <input type={show ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)] pr-10" placeholder="Enter new password" />
-                <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60">
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] pr-10" placeholder="Enter new password" />
+                <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#475569]">
                   {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
             <div>
-              <label className="text-white/60 text-[12px] mb-1 block">Confirm Password</label>
+              <label className="text-[#475569] text-[12px] mb-1 block">Confirm Password</label>
               <input type={show ? "text" : "password"} value={confirm} onChange={e => setConfirm(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Confirm new password" />
+                className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Confirm new password" />
             </div>
             <button type="submit" disabled={loading}
               className="w-full py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2">

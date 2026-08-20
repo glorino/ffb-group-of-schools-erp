@@ -222,15 +222,15 @@ export default function LibraryPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Library Management</h1>
-            <p className="text-white/60 text-[13px]">
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Library Management</h1>
+            <p className="text-[#475569] text-[13px]">
               Manage books, borrowing, reservations, and penalties
             </p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
@@ -268,11 +268,11 @@ export default function LibraryPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
+                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -287,19 +287,19 @@ export default function LibraryPage() {
           className="lg:col-span-2 card"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white font-semibold text-lg">Book Catalog</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg">Book Catalog</h3>
             <div className="flex gap-2">
               <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
                 <input
                   type="text"
                   placeholder="Search books..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
-              <button title="Filter using search above" className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]">
+              <button title="Filter using search above" className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]">
                 <Filter className="w-4 h-4" />
               </button>
             </div>
@@ -307,30 +307,30 @@ export default function LibraryPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/[0.08]">
-                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Title</th>
-                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Author</th>
-                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Category</th>
-                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Copies</th>
-                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Available</th>
-                  <th className="text-left text-white/50 text-[13px] font-medium pb-3">Actions</th>
+                <tr className="border-b border-[#e2e8f0]">
+                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Title</th>
+                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Author</th>
+                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Category</th>
+                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Copies</th>
+                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Available</th>
+                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredBooks.map((book) => (
-                  <tr key={book.id} className="border-b border-white/5 hover:bg-white/[0.04] transition-all">
-                    <td className="py-3 text-white font-medium text-[13px]">{book.title}</td>
-                    <td className="py-3 text-white/70 text-[13px]">{book.author}</td>
+                  <tr key={book.id} className="border-b border-white/5 hover:bg-[#f8fafc] transition-all">
+                    <td className="py-3 text-[#1a1a2e] font-medium text-[13px]">{book.title}</td>
+                    <td className="py-3 text-[#475569] text-[13px]">{book.author}</td>
                     <td className="py-3">
-                      <span className="px-2 py-1 rounded-lg bg-white/[0.08] text-white/70 text-[12px]">{book.category}</span>
+                      <span className="px-2 py-1 rounded-lg bg-[#f1f5f9] text-[#475569] text-[12px]">{book.category}</span>
                     </td>
-                    <td className="py-3 text-white/70 text-[13px]">{book.copies}</td>
-                    <td className="py-3 text-white/70 text-[13px]">{book.available}</td>
+                    <td className="py-3 text-[#475569] text-[13px]">{book.copies}</td>
+                    <td className="py-3 text-[#475569] text-[13px]">{book.available}</td>
                     <td className="py-3">
                       <div className="flex gap-1">
                         <button
                           onClick={() => setViewBook(book)}
-                          className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                          className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -344,7 +344,7 @@ export default function LibraryPage() {
                                 available: String(book.available ?? ""), location: "",
                               });
                             }}
-                            className="p-1 rounded-lg hover:bg-white/[0.08] text-white/40"
+                            className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"
                           >
                             <Edit className="w-4 h-4" />
                           </button>
@@ -355,7 +355,7 @@ export default function LibraryPage() {
                 ))}
                 {filteredBooks.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-white/40 text-[13px]">No books found</td>
+                    <td colSpan={6} className="text-center py-8 text-[#64748b] text-[13px]">No books found</td>
                   </tr>
                 )}
               </tbody>
@@ -370,28 +370,28 @@ export default function LibraryPage() {
           className="space-y-6"
         >
           <div className="card">
-            <h3 className="text-white font-semibold text-lg mb-4">Recent Borrowings</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Recent Borrowings</h3>
             <div className="space-y-3">
               {borrowings.map((borrow) => (
-                <div key={borrow.id} className="p-3 rounded-xl bg-white/[0.04]">
+                <div key={borrow.id} className="p-3 rounded-xl bg-[#f8fafc]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white text-[13px] font-medium">{borrow.student.firstName} {borrow.student.lastName}</span>
+                    <span className="text-[#1a1a2e] text-[13px] font-medium">{borrow.student.firstName} {borrow.student.lastName}</span>
                     <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                      borrow.status === "active" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
+                      borrow.status === "active" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#fee2e2] text-[#dc2626]"
                     }`}>
                       {borrow.status}
                     </span>
                   </div>
-                  <p className="text-white/40 text-[12px]">{borrow.book.title}</p>
+                  <p className="text-[#64748b] text-[12px]">{borrow.book.title}</p>
                   <div className="flex items-center justify-between gap-1 mt-1">
                     <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-white/30" />
-                      <span className="text-white/30 text-[12px]">Due: {new Date(borrow.dueDate).toLocaleDateString()}</span>
+                      <Clock className="w-3 h-3 text-[#94a3b8]" />
+                      <span className="text-[#94a3b8] text-[12px]">Due: {new Date(borrow.dueDate).toLocaleDateString()}</span>
                     </div>
                     {borrow.status === "active" && !isReadOnly && (
                       <button
                         onClick={() => handleReturnBook(borrow.id)}
-                        className="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 text-[11px] font-medium hover:bg-emerald-500/30 transition-all"
+                        className="px-2 py-1 rounded-lg bg-[#dcfce7] text-[#16a34a] text-[11px] font-medium hover:bg-emerald-500/30 transition-all"
                       >
                         Return
                       </button>
@@ -400,22 +400,22 @@ export default function LibraryPage() {
                 </div>
               ))}
               {borrowings.length === 0 && (
-                <p className="text-center py-4 text-white/40 text-[13px]">No borrowings yet</p>
+                <p className="text-center py-4 text-[#64748b] text-[13px]">No borrowings yet</p>
               )}
             </div>
           </div>
 
           <div className="card">
-            <h3 className="text-white font-semibold text-lg mb-4">Penalties</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Penalties</h3>
             <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
               <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="w-4 h-4 text-red-400" />
-                <span className="text-red-400 text-[13px] font-medium">{borrowings.filter((b) => b.status === "overdue").length} Overdue Books</span>
+                <AlertCircle className="w-4 h-4 text-[#dc2626]" />
+                <span className="text-[#dc2626] text-[13px] font-medium">{borrowings.filter((b) => b.status === "overdue").length} Overdue Books</span>
               </div>
-              <p className="text-white/40 text-[12px]">Total penalties: {formatCurrency(borrowings.filter((b) => b.status === "overdue").length * 500)}</p>
+              <p className="text-[#64748b] text-[12px]">Total penalties: {formatCurrency(borrowings.filter((b) => b.status === "overdue").length * 500)}</p>
               <button
                 onClick={() => setShowPenalties(true)}
-                className="mt-3 w-full py-2 rounded-lg bg-red-500/20 text-red-400 text-[13px] hover:bg-red-500/30 transition-all"
+                className="mt-3 w-full py-2 rounded-lg bg-[#fee2e2] text-[#dc2626] text-[13px] hover:bg-red-500/30 transition-all"
               >
                 View Details
               </button>
@@ -429,64 +429,64 @@ export default function LibraryPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-lg font-semibold">Add Book</h2>
-              <button onClick={() => setShowModal(false)} className="text-white/40 hover:text-white">
+              <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Book</h2>
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Title</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Title</label>
                 <input
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. Mathematics for Junior Secondary"
                 />
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Author</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Author</label>
                 <input
                   type="text"
                   value={form.author}
                   onChange={(e) => setForm({ ...form, author: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. A.O. Adesoji"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1">ISBN</label>
+                  <label className="block text-[#475569] text-[13px] mb-1">ISBN</label>
                   <input
                     type="text"
                     value={form.isbn}
                     onChange={(e) => setForm({ ...form, isbn: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="978-0123456789"
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1">Copies</label>
+                  <label className="block text-[#475569] text-[13px] mb-1">Copies</label>
                   <input
                     type="number"
                     value={form.copies}
                     onChange={(e) => setForm({ ...form, copies: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. 50"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Category</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Category</label>
                 <select
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                   style={{ colorScheme: "dark" }}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
                   <option style={{ background: "#0f1b33", color: "#fff" }}>Textbook</option>
                   <option style={{ background: "#0f1b33", color: "#fff" }}>Literature</option>
@@ -496,12 +496,12 @@ export default function LibraryPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Publisher</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Publisher</label>
                 <input
                   type="text"
                   value={form.publisher}
                   onChange={(e) => setForm({ ...form, publisher: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. Heinemann"
                 />
               </div>
@@ -509,7 +509,7 @@ export default function LibraryPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
+                  className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
                 >
                   Cancel
                 </button>
@@ -531,33 +531,33 @@ export default function LibraryPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            className="w-full max-w-xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-lg font-semibold">Issue Book</h2>
-              <button onClick={() => setShowIssueModal(false)} className="text-white/40 hover:text-white">
+              <h2 className="text-[#1a1a2e] text-lg font-semibold">Issue Book</h2>
+              <button onClick={() => setShowIssueModal(false)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <form onSubmit={handleIssueBook} className="space-y-4">
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Student ID *</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Student ID *</label>
                 <input
                   type="text"
                   value={issueForm.studentId}
                   onChange={(e) => setIssueForm({ ...issueForm, studentId: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. STU-2024-001"
                   required
                 />
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Book *</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Book *</label>
                 <select
                   value={issueForm.bookId}
                   onChange={(e) => setIssueForm({ ...issueForm, bookId: e.target.value })}
                   style={{ colorScheme: "dark" }}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   required
                 >
                   <option style={{ background: "#0f1b33", color: "#fff" }} value="">Select a book</option>
@@ -569,13 +569,13 @@ export default function LibraryPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-white/60 text-[13px] mb-1">Due Date *</label>
+                <label className="block text-[#475569] text-[13px] mb-1">Due Date *</label>
                 <input
                   type="date"
                   value={issueForm.dueDate}
                   onChange={(e) => setIssueForm({ ...issueForm, dueDate: e.target.value })}
                   style={{ colorScheme: "dark" }}
-                  className="w-full px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   required
                 />
               </div>
@@ -583,7 +583,7 @@ export default function LibraryPage() {
                 <button
                   type="button"
                   onClick={() => setShowIssueModal(false)}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
+                  className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
                 >
                   Cancel
                 </button>
@@ -605,39 +605,39 @@ export default function LibraryPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6"
+            className="w-full max-w-lg rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-lg font-semibold">{viewBook.title}</h2>
-              <button onClick={() => setViewBook(null)} className="text-white/40 hover:text-white">
+              <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewBook.title}</h2>
+              <button onClick={() => setViewBook(null)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 rounded-xl bg-white/[0.04]">
-                  <p className="text-white/40 text-[12px] mb-1">Author</p>
-                  <p className="text-white text-[13px] font-medium">{viewBook.author}</p>
+                <div className="p-3 rounded-xl bg-[#f8fafc]">
+                  <p className="text-[#64748b] text-[12px] mb-1">Author</p>
+                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewBook.author}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-white/[0.04]">
-                  <p className="text-white/40 text-[12px] mb-1">ISBN</p>
-                  <p className="text-white text-[13px] font-medium">{viewBook.isbn}</p>
+                <div className="p-3 rounded-xl bg-[#f8fafc]">
+                  <p className="text-[#64748b] text-[12px] mb-1">ISBN</p>
+                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewBook.isbn}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-white/[0.04]">
-                  <p className="text-white/40 text-[12px] mb-1">Category</p>
-                  <p className="text-white text-[13px] font-medium">{viewBook.category}</p>
+                <div className="p-3 rounded-xl bg-[#f8fafc]">
+                  <p className="text-[#64748b] text-[12px] mb-1">Category</p>
+                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewBook.category}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-white/[0.04]">
-                  <p className="text-white/40 text-[12px] mb-1">Copies</p>
-                  <p className="text-white text-[13px] font-medium">{viewBook.copies}</p>
+                <div className="p-3 rounded-xl bg-[#f8fafc]">
+                  <p className="text-[#64748b] text-[12px] mb-1">Copies</p>
+                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewBook.copies}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-white/[0.04]">
-                  <p className="text-white/40 text-[12px] mb-1">Available</p>
-                  <p className="text-white text-[13px] font-medium">{viewBook.available}</p>
+                <div className="p-3 rounded-xl bg-[#f8fafc]">
+                  <p className="text-[#64748b] text-[12px] mb-1">Available</p>
+                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewBook.available}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-white/[0.04]">
-                  <p className="text-white/40 text-[12px] mb-1">Status</p>
-                  <p className={`text-[13px] font-medium ${viewBook.status === "available" ? "text-emerald-400" : "text-red-400"}`}>{viewBook.status}</p>
+                <div className="p-3 rounded-xl bg-[#f8fafc]">
+                  <p className="text-[#64748b] text-[12px] mb-1">Status</p>
+                  <p className={`text-[13px] font-medium ${viewBook.status === "available" ? "text-[#16a34a]" : "text-[#dc2626]"}`}>{viewBook.status}</p>
                 </div>
               </div>
             </div>
@@ -652,10 +652,10 @@ export default function LibraryPage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditBook(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0a0f1e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-[#0a0f1e] border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Edit Book</h3>
-                <button onClick={() => setEditBook(null)} className="p-1 rounded-lg hover:bg-white/10 text-white/40"><X className="w-5 h-5" /></button>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Book</h3>
+                <button onClick={() => setEditBook(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={async (e) => {
                 e.preventDefault();
@@ -672,39 +672,39 @@ export default function LibraryPage() {
                 } catch { toast.error("Failed to update"); }
               }} className="space-y-4">
                 <div>
-                  <label className="block text-white/60 text-[13px] mb-1.5">Title *</label>
+                  <label className="block text-[#475569] text-[13px] mb-1.5">Title *</label>
                   <input type="text" required value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white/60 text-[13px] mb-1.5">Author</label>
+                    <label className="block text-[#475569] text-[13px] mb-1.5">Author</label>
                     <input type="text" value={editForm.author} onChange={(e) => setEditForm({ ...editForm, author: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
-                    <label className="block text-white/60 text-[13px] mb-1.5">ISBN</label>
+                    <label className="block text-[#475569] text-[13px] mb-1.5">ISBN</label>
                     <input type="text" value={editForm.isbn} onChange={(e) => setEditForm({ ...editForm, isbn: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
-                    <label className="block text-white/60 text-[13px] mb-1.5">Category</label>
+                    <label className="block text-[#475569] text-[13px] mb-1.5">Category</label>
                     <input type="text" value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
-                    <label className="block text-white/60 text-[13px] mb-1.5">Copies</label>
+                    <label className="block text-[#475569] text-[13px] mb-1.5">Copies</label>
                     <input type="number" min="0" value={editForm.copies} onChange={(e) => setEditForm({ ...editForm, copies: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
-                    <label className="block text-white/60 text-[13px] mb-1.5">Available</label>
+                    <label className="block text-[#475569] text-[13px] mb-1.5">Available</label>
                     <input type="number" min="0" value={editForm.available} onChange={(e) => setEditForm({ ...editForm, available: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 pt-2">
-                  <button type="button" onClick={() => setEditBook(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">Cancel</button>
+                  <button type="button" onClick={() => setEditBook(null)} className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">Cancel</button>
                   <button type="submit" className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all shadow-lg shadow-[var(--primary)]/25">Save Changes</button>
                 </div>
               </form>
@@ -717,20 +717,20 @@ export default function LibraryPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowPenalties(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl rounded-2xl bg-[#0f1b33] border border-white/[0.08] p-6">
+            className="w-full max-w-2xl rounded-2xl bg-[#0f1b33] border border-[#e2e8f0] p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-lg font-semibold">Penalty Details</h2>
-              <button onClick={() => setShowPenalties(false)} className="text-white/40 hover:text-white"><X className="w-5 h-5" /></button>
+              <h2 className="text-[#1a1a2e] text-lg font-semibold">Penalty Details</h2>
+              <button onClick={() => setShowPenalties(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/[0.08]">
-                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Student</th>
-                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Book</th>
-                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Due Date</th>
-                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Days Overdue</th>
-                    <th className="text-left text-white/50 text-[13px] font-medium pb-3">Penalty</th>
+                  <tr className="border-b border-[#e2e8f0]">
+                    <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Student</th>
+                    <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Book</th>
+                    <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Due Date</th>
+                    <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Days Overdue</th>
+                    <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Penalty</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -739,18 +739,18 @@ export default function LibraryPage() {
                     const penalty = daysOverdue * 100;
                     return (
                       <tr key={borrow.id} className="border-b border-white/5">
-                        <td className="py-3 text-white text-[13px]">{borrow.student.firstName} {borrow.student.lastName}</td>
-                        <td className="py-3 text-white/70 text-[13px]">{borrow.book.title}</td>
-                        <td className="py-3 text-white/70 text-[13px]">{new Date(borrow.dueDate).toLocaleDateString()}</td>
-                        <td className="py-3 text-red-400 text-[13px]">{daysOverdue}</td>
-                        <td className="py-3 text-red-400 font-medium text-[13px]">{formatCurrency(penalty)}</td>
+                        <td className="py-3 text-[#1a1a2e] text-[13px]">{borrow.student.firstName} {borrow.student.lastName}</td>
+                        <td className="py-3 text-[#475569] text-[13px]">{borrow.book.title}</td>
+                        <td className="py-3 text-[#475569] text-[13px]">{new Date(borrow.dueDate).toLocaleDateString()}</td>
+                        <td className="py-3 text-[#dc2626] text-[13px]">{daysOverdue}</td>
+                        <td className="py-3 text-[#dc2626] font-medium text-[13px]">{formatCurrency(penalty)}</td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
               {borrowings.filter(b => b.status === "overdue").length === 0 && (
-                <p className="text-center py-8 text-white/40 text-[13px]">No overdue books</p>
+                <p className="text-center py-8 text-[#64748b] text-[13px]">No overdue books</p>
               )}
             </div>
           </motion.div>

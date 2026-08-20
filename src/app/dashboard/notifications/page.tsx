@@ -37,9 +37,9 @@ const iconMap: Record<string, typeof GraduationCap> = {
 };
 
 const colorMap: Record<string, string> = {
-  academic: "text-blue-400 bg-blue-500/20",
-  finance: "text-emerald-400 bg-emerald-500/20",
-  system: "text-purple-400 bg-purple-500/20",
+  academic: "text-[#2563eb] bg-[#dbeafe]",
+  finance: "text-[#16a34a] bg-[#dcfce7]",
+  system: "text-[#7c3aed] bg-[#f3e8ff]",
   warning: "text-orange-400 bg-orange-500/20",
 };
 
@@ -156,8 +156,8 @@ export default function NotificationsPage() {
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Notifications</h1>
-          <p className="text-white/50 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-[#1a1a2e]">Notifications</h1>
+          <p className="text-[#64748b] text-sm mt-1">
             {unreadCount > 0
               ? `You have ${unreadCount} unread notification${unreadCount > 1 ? "s" : ""}`
               : "All caught up!"}
@@ -181,8 +181,8 @@ export default function NotificationsPage() {
             onClick={() => setFilter(f.value)}
             className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
               filter === f.value
-                ? "bg-[var(--primary)] text-white"
-                : "bg-white/[0.04] text-white/50 hover:text-white hover:bg-white/[0.08]"
+                ? "bg-[var(--primary)] text-[#1a1a2e]"
+                : "bg-[#f8fafc] text-[#64748b] hover:text-white hover:bg-[#f1f5f9]"
             }`}
           >
             {f.label}
@@ -197,7 +197,7 @@ export default function NotificationsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
+          <Loader2 className="w-6 h-6 text-[#64748b] animate-spin" />
         </div>
       ) : filteredNotifications.length === 0 ? (
         <EmptyState
@@ -213,7 +213,7 @@ export default function NotificationsPage() {
         <div className="space-y-6">
           {Object.entries(grouped).map(([date, items]) => (
             <div key={date}>
-              <h3 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-3">
+              <h3 className="text-[#64748b] text-xs font-semibold uppercase tracking-wider mb-3">
                 {date}
               </h3>
               <div className="space-y-2">
@@ -227,7 +227,7 @@ export default function NotificationsPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        className={`bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.08] flex items-start gap-4 py-4 px-4 ${
+                        className={`bg-[#f8fafc] rounded-xl border border-[#e2e8f0] flex items-start gap-4 py-4 px-4 ${
                           !n.read
                             ? "border-l-2 border-l-[var(--accent)]"
                             : ""
@@ -241,14 +241,14 @@ export default function NotificationsPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <p className="text-white font-medium text-[13px]">
+                              <p className="text-[#1a1a2e] font-medium text-[13px]">
                                 {n.title}
                               </p>
-                              <p className="text-white/60 text-[13px] mt-0.5">
+                              <p className="text-[#475569] text-[13px] mt-0.5">
                                 {n.message}
                               </p>
                             </div>
-                            <span className="text-white/30 text-[12px] whitespace-nowrap">
+                            <span className="text-[#94a3b8] text-[12px] whitespace-nowrap">
                               {timeAgo(n.createdAt)}
                             </span>
                           </div>
@@ -264,7 +264,7 @@ export default function NotificationsPage() {
                             )}
                             <button
                               onClick={() => deleteNotification(n.id)}
-                              className="flex items-center gap-1 text-white/30 text-[12px] hover:text-red-400 transition-colors"
+                              className="flex items-center gap-1 text-[#94a3b8] text-[12px] hover:text-[#dc2626] transition-colors"
                             >
                               <Trash2 className="w-3 h-3" />
                               Delete

@@ -41,7 +41,7 @@ function ReadOnlyTimetable({ entries, loading }: { entries: TimetableEntry[]; lo
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 text-white/30 animate-spin" />
+        <Loader2 className="w-6 h-6 text-[#94a3b8] animate-spin" />
       </div>
     );
   }
@@ -51,31 +51,31 @@ function ReadOnlyTimetable({ entries, loading }: { entries: TimetableEntry[]; lo
       <table className="w-full border-collapse">
         <thead>
           <tr>
-            <th className="p-2 text-left text-white/40 text-[11px] font-medium w-[90px]">Time</th>
+            <th className="p-2 text-left text-[#64748b] text-[11px] font-medium w-[90px]">Time</th>
             {dayLabels.map((day, i) => (
-              <th key={day} className="p-2 text-center text-white/60 text-[12px] font-semibold">{day}</th>
+              <th key={day} className="p-2 text-center text-[#475569] text-[12px] font-semibold">{day}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {timeSlots.map((time, ti) => (
-            <tr key={time} className="border-t border-white/[0.04]">
-              <td className="p-2 text-white/30 text-[11px] font-medium whitespace-nowrap">{time}</td>
+            <tr key={time} className="border-t border-[#e2e8f0]">
+              <td className="p-2 text-[#94a3b8] text-[11px] font-medium whitespace-nowrap">{time}</td>
               {dayLabels.map((_, di) => {
                 const entry = getEntry(di + 1, time);
                 return (
                   <td key={di} className="p-1.5">
                     <div className={`min-h-[52px] rounded-lg p-2 flex items-center justify-center text-center ${
-                      entry ? "bg-white/[0.06] border border-white/[0.08]" : "bg-white/[0.02]"
+                      entry ? "bg-white/[0.06] border border-[#e2e8f0]" : "bg-[#f8fafc]"
                     }`}>
                       {entry ? (
                         <div>
                           <p className="text-[var(--accent)] text-[11px] font-bold leading-tight">{entry.subject || "Lesson"}</p>
-                          <p className="text-white/50 text-[9px] mt-0.5">{entry.teacher.firstName} {entry.teacher.lastName[0]}.</p>
-                          {entry.room && <p className="text-white/25 text-[8px]">{entry.room}</p>}
+                          <p className="text-[#64748b] text-[9px] mt-0.5">{entry.teacher.firstName} {entry.teacher.lastName[0]}.</p>
+                          {entry.room && <p className="text-[#94a3b8] text-[8px]">{entry.room}</p>}
                         </div>
                       ) : (
-                        <span className="text-white/10 text-[10px]">—</span>
+                        <span className="text-[#94a3b8] text-[10px]">—</span>
                       )}
                     </div>
                   </td>
@@ -163,7 +163,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
         <select
           value={selectedClass}
           onChange={(e) => setSelectedClass(e.target.value)}
-          className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+          className="px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
           style={{ colorScheme: "dark" }}
         >
           {classes.map(c => (
@@ -183,11 +183,11 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {stats.map((stat, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-            className="bg-white/[0.04] border border-white/[0.06] rounded-xl p-4">
+            className="bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-4">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-[12px] mb-1">{stat.label}</p>
-                <p className="text-[28px] font-bold text-white">{stat.value}</p>
+                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
+                <p className="text-[28px] font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${stat.color}15` }}>
                 <stat.icon className="w-5 h-5" style={{ color: stat.color }} />
@@ -197,27 +197,27 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
         ))}
       </div>
 
-      <p className="text-white/40 text-[12px] mb-3 font-medium uppercase tracking-wider">Weekly Timetable</p>
+      <p className="text-[#64748b] text-[12px] mb-3 font-medium uppercase tracking-wider">Weekly Timetable</p>
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 text-white/30 animate-spin" />
+          <Loader2 className="w-6 h-6 text-[#94a3b8] animate-spin" />
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="p-2 text-left text-white/40 text-[11px] font-medium w-[90px]">Time</th>
+                <th className="p-2 text-left text-[#64748b] text-[11px] font-medium w-[90px]">Time</th>
                 {dayLabels.map((day) => (
-                  <th key={day} className="p-2 text-center text-white/60 text-[12px] font-semibold">{day}</th>
+                  <th key={day} className="p-2 text-center text-[#475569] text-[12px] font-semibold">{day}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {timeSlots.map((time) => (
-                <tr key={time} className="border-t border-white/[0.04]">
-                  <td className="p-2 text-white/30 text-[11px] font-medium whitespace-nowrap">{time}</td>
+                <tr key={time} className="border-t border-[#e2e8f0]">
+                  <td className="p-2 text-[#94a3b8] text-[11px] font-medium whitespace-nowrap">{time}</td>
                   {dayLabels.map((_, di) => {
                     const entry = getEntry(di + 1, time);
                     return (
@@ -226,25 +226,25 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                           onClick={() => entry && setDetailSlot(entry)}
                           className={`min-h-[52px] rounded-lg p-2 flex items-center justify-center text-center transition-all ${
                             entry
-                              ? "bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] cursor-pointer group relative"
-                              : "bg-white/[0.02] hover:bg-white/[0.04] cursor-pointer"
+                              ? "bg-white/[0.06] border border-[#e2e8f0] hover:bg-white/[0.1] cursor-pointer group relative"
+                              : "bg-[#f8fafc] hover:bg-[#f8fafc] cursor-pointer"
                           }`}
                         >
                           {entry ? (
                             <>
                               <div>
-                                <p className="text-white text-[11px] font-medium">{entry.teacher.firstName} {entry.teacher.lastName}</p>
-                                <p className="text-white/30 text-[9px]">{entry.room || "—"}</p>
+                                <p className="text-[#1a1a2e] text-[11px] font-medium">{entry.teacher.firstName} {entry.teacher.lastName}</p>
+                                <p className="text-[#94a3b8] text-[9px]">{entry.room || "—"}</p>
                               </div>
                               <button
                                 onClick={(e) => { e.stopPropagation(); handleDelete(entry.id); }}
-                                className="absolute top-1 right-1 p-1 rounded-md bg-red-500/20 text-red-400 opacity-0 group-hover:opacity-100 hover:bg-red-500/30 transition"
+                                className="absolute top-1 right-1 p-1 rounded-md bg-[#fee2e2] text-[#dc2626] opacity-0 group-hover:opacity-100 hover:bg-red-500/30 transition"
                               >
                                 <Trash2 className="w-3 h-3" />
                               </button>
                             </>
                           ) : (
-                            <GripVertical className="w-4 h-4 text-white/10" />
+                            <GripVertical className="w-4 h-4 text-[#94a3b8]" />
                           )}
                         </div>
                       </td>
@@ -262,64 +262,64 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#0a0f1e] rounded-2xl border border-white/[0.08] p-6 w-full max-w-md shadow-2xl">
+              className="bg-[#0a0f1e] rounded-2xl border border-[#e2e8f0] p-6 w-full max-w-md shadow-2xl">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-white font-semibold text-lg">Add Timetable Slot</h3>
-                <button onClick={() => setShowModal(false)} className="text-white/30 hover:text-white/60"><X className="w-5 h-5" /></button>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Timetable Slot</h3>
+                <button onClick={() => setShowModal(false)} className="text-[#94a3b8] hover:text-[#475569]"><X className="w-5 h-5" /></button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-white/50 text-[12px] mb-1 block">Day of Week</label>
+                  <label className="text-[#64748b] text-[12px] mb-1 block">Day of Week</label>
                   <select value={form.dayOfWeek} onChange={e => setForm({ ...form, dayOfWeek: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     style={{ colorScheme: "dark" }}>
                     {dayLabels.map((d, i) => <option key={i} value={i + 1} style={{ background: "#0f1b33", color: "#fff" }}>{d}</option>)}
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-white/50 text-[12px] mb-1 block">Start Time</label>
+                    <label className="text-[#64748b] text-[12px] mb-1 block">Start Time</label>
                     <select value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })}
-                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}>
                       {timeSlots.map(t => <option key={t} value={t} style={{ background: "#0f1b33", color: "#fff" }}>{t}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="text-white/50 text-[12px] mb-1 block">End Time</label>
+                    <label className="text-[#64748b] text-[12px] mb-1 block">End Time</label>
                     <select value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })}
-                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}>
                       {timeSlots.map(t => <option key={t} value={t} style={{ background: "#0f1b33", color: "#fff" }}>{t}</option>)}
                     </select>
                   </div>
                 </div>
                 <div>
-                  <label className="text-white/50 text-[12px] mb-1 block">Teacher</label>
+                  <label className="text-[#64748b] text-[12px] mb-1 block">Teacher</label>
                   <select value={form.teacherId} onChange={e => setForm({ ...form, teacherId: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     style={{ colorScheme: "dark" }}>
                     <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select Teacher</option>
                     {teachers.map(t => <option key={t.id} value={t.id} style={{ background: "#0f1b33", color: "#fff" }}>{t.firstName} {t.lastName}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-white/50 text-[12px] mb-1 block">Subject</label>
+                  <label className="text-[#64748b] text-[12px] mb-1 block">Subject</label>
                   <input type="text" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })}
                     placeholder="e.g. Mathematics"
-                    className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] placeholder-white/20 focus:outline-none focus:border-[var(--primary)]" />
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-white/50 text-[12px] mb-1 block">Room</label>
+                    <label className="text-[#64748b] text-[12px] mb-1 block">Room</label>
                     <input type="text" value={form.room} onChange={e => setForm({ ...form, room: e.target.value })}
                       placeholder="e.g. Room 101"
-                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] placeholder-white/20 focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
-                    <label className="text-white/50 text-[12px] mb-1 block">Type</label>
+                    <label className="text-[#64748b] text-[12px] mb-1 block">Type</label>
                     <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
-                      className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "dark" }}>
                       <option value="lesson" style={{ background: "#0f1b33", color: "#fff" }}>Lesson</option>
                       <option value="break" style={{ background: "#0f1b33", color: "#fff" }}>Break</option>
@@ -331,7 +331,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
               </div>
               <div className="flex items-center justify-end gap-3 mt-6">
                 <button onClick={() => setShowModal(false)}
-                  className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors">
+                  className="px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">
                   Cancel
                 </button>
                 <button onClick={handleCreate} disabled={submitting || !form.teacherId}
@@ -350,30 +350,30 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#0a0f1e] rounded-2xl border border-white/[0.08] p-6 w-full max-w-md shadow-2xl">
+              className="bg-[#0a0f1e] rounded-2xl border border-[#e2e8f0] p-6 w-full max-w-md shadow-2xl">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-white font-semibold text-lg">Timetable Slot Details</h3>
-                <button onClick={() => setDetailSlot(null)} className="text-white/30 hover:text-white/60"><X className="w-5 h-5" /></button>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Timetable Slot Details</h3>
+                <button onClick={() => setDetailSlot(null)} className="text-[#94a3b8] hover:text-[#475569]"><X className="w-5 h-5" /></button>
               </div>
               <div className="space-y-3">
-                <div className="flex justify-between"><span className="text-white/40 text-[13px]">Day</span><span className="text-white text-[13px] font-medium">{dayLabels[detailSlot.dayOfWeek - 1]}</span></div>
-                <div className="flex justify-between"><span className="text-white/40 text-[13px]">Time</span><span className="text-white text-[13px] font-medium">{detailSlot.startTime} — {detailSlot.endTime}</span></div>
-                <div className="flex justify-between"><span className="text-white/40 text-[13px]">Subject</span><span className="text-white text-[13px] font-medium">{detailSlot.subject || "—"}</span></div>
-                <div className="flex justify-between"><span className="text-white/40 text-[13px]">Teacher</span><span className="text-white text-[13px] font-medium">{detailSlot.teacher.firstName} {detailSlot.teacher.lastName}</span></div>
-                <div className="flex justify-between"><span className="text-white/40 text-[13px]">Class</span><span className="text-white text-[13px] font-medium">{detailSlot.class.displayName || detailSlot.class.name}</span></div>
-                <div className="flex justify-between"><span className="text-white/40 text-[13px]">Room</span><span className="text-white text-[13px] font-medium">{detailSlot.room || "—"}</span></div>
-                <div className="flex justify-between"><span className="text-white/40 text-[13px]">Type</span>
+                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Day</span><span className="text-[#1a1a2e] text-[13px] font-medium">{dayLabels[detailSlot.dayOfWeek - 1]}</span></div>
+                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Time</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.startTime} — {detailSlot.endTime}</span></div>
+                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Subject</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.subject || "—"}</span></div>
+                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Teacher</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.teacher.firstName} {detailSlot.teacher.lastName}</span></div>
+                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Class</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.class.displayName || detailSlot.class.name}</span></div>
+                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Room</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.room || "—"}</span></div>
+                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Type</span>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
-                    detailSlot.type === "lesson" ? "bg-blue-500/15 text-blue-400" :
-                    detailSlot.type === "break" ? "bg-amber-500/15 text-amber-400" :
-                    detailSlot.type === "lab" ? "bg-purple-500/15 text-purple-400" :
-                    "bg-white/[0.06] text-white/40"
+                    detailSlot.type === "lesson" ? "bg-[#dbeafe] text-[#2563eb]" :
+                    detailSlot.type === "break" ? "bg-[#fef3c7] text-[#d97706]" :
+                    detailSlot.type === "lab" ? "bg-[#f3e8ff] text-[#7c3aed]" :
+                    "bg-white/[0.06] text-[#64748b]"
                   }`}>{detailSlot.type}</span>
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-3 px-0 pt-4 mt-4 border-t border-white/[0.06]">
+              <div className="flex items-center justify-end gap-3 px-0 pt-4 mt-4 border-t border-[#e2e8f0]">
                 <button onClick={() => { setDetailSlot(null); handleDelete(detailSlot.id); }}
-                  className="px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[13px] font-medium hover:bg-red-500/20 transition-colors">
+                  className="px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-[#dc2626] text-[13px] font-medium hover:bg-[#fee2e2] transition-colors">
                   Delete
                 </button>
                 <button onClick={() => setDetailSlot(null)}
@@ -445,10 +445,10 @@ export default function TimetablePage() {
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-1">
+          <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">
             {isReadOnly ? "My Timetable" : "Timetable Management"}
           </h1>
-          <p className="text-white/60">
+          <p className="text-[#475569]">
             {isReadOnly
               ? `${className?.displayName || className?.name || "Your class"} schedule`
               : "Schedule classes, assign teachers, and manage rooms"
@@ -456,8 +456,8 @@ export default function TimetablePage() {
           </p>
         </div>
         {isReadOnly && (
-          <div className="px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06]">
-            <span className="text-white/40 text-[12px]">{className?.displayName || className?.name || "—"}</span>
+          <div className="px-3 py-1.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+            <span className="text-[#64748b] text-[12px]">{className?.displayName || className?.name || "—"}</span>
           </div>
         )}
       </div>

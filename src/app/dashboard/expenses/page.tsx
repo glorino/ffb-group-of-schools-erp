@@ -212,15 +212,15 @@ export default function ExpensesPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Expense Management</h1>
-            <p className="text-white/60">
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Expense Management</h1>
+            <p className="text-[#475569]">
               Track and manage all school expenses, approvals, and budgets
             </p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-white text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-white/[0.1] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
@@ -247,11 +247,11 @@ export default function ExpensesPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/50 text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
+                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
               </div>
             </div>
           </motion.div>
@@ -266,30 +266,30 @@ export default function ExpensesPage() {
           className="lg:col-span-2 card"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white font-semibold text-lg">Recent Expenses</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg">Recent Expenses</h3>
             <div className="flex gap-2">
               <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
                 <input
                   type="text"
                   placeholder="Search expenses..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
                 style={{ colorScheme: "dark" }}
-                className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                className="px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
               >
                 <option value="" style={{ background: "#0f1b33", color: "#fff" }}>All Status</option>
                 <option value="pending" style={{ background: "#0f1b33", color: "#fff" }}>Pending</option>
                 <option value="approved" style={{ background: "#0f1b33", color: "#fff" }}>Approved</option>
                 <option value="rejected" style={{ background: "#0f1b33", color: "#fff" }}>Rejected</option>
               </select>
-              <button title="Filter using dropdowns above" className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 hover:bg-white/[0.08]">
+              <button title="Filter using dropdowns above" className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]">
                 <Filter className="w-4 h-4" />
               </button>
             </div>
@@ -299,41 +299,41 @@ export default function ExpensesPage() {
               <Loader2 className="w-8 h-8 text-[var(--primary)] animate-spin" />
             </div>
           ) : filteredExpenses.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-white/40">
-              <Receipt className="w-12 h-12 mb-3 text-white/20" />
+            <div className="flex flex-col items-center justify-center py-20 text-[#64748b]">
+              <Receipt className="w-12 h-12 mb-3 text-[#94a3b8]" />
               <p className="text-[13px]">No expenses found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/[0.08]">
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Description</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Amount</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Category</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Date</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Status</th>
-                    <th className="text-left text-white/50 text-[12px] font-medium pb-3 px-4">Actions</th>
+                  <tr className="border-b border-[#e2e8f0]">
+                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Description</th>
+                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Amount</th>
+                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Category</th>
+                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Date</th>
+                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Status</th>
+                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredExpenses.map((expense) => (
-                    <tr key={expense.id} className="border-b border-white/[0.04] hover:bg-white/[0.04] transition-all">
+                    <tr key={expense.id} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
                       <td className="py-3 px-4">
-                        <p className="text-white/80 font-medium text-[13px]">{expense.title}</p>
+                        <p className="text-[#1a1a2e] font-medium text-[13px]">{expense.title}</p>
                         {expense.vendor && (
-                          <p className="text-white/40 text-[12px]">{expense.vendor}</p>
+                          <p className="text-[#64748b] text-[12px]">{expense.vendor}</p>
                         )}
                       </td>
-                      <td className="py-3 px-4 text-white/80 font-medium text-[13px]">{formatNaira(expense.amount)}</td>
+                      <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{formatNaira(expense.amount)}</td>
                       <td className="py-3 px-4">
-                        <span className="px-2 py-1 rounded-lg bg-white/[0.04] text-white/70 text-[12px]">{expense.category}</span>
+                        <span className="px-2 py-1 rounded-lg bg-[#f8fafc] text-[#475569] text-[12px]">{expense.category}</span>
                       </td>
-                      <td className="py-3 px-4 text-white/60 text-[13px]">{new Date(expense.date).toLocaleDateString("en-NG")}</td>
+                      <td className="py-3 px-4 text-[#475569] text-[13px]">{new Date(expense.date).toLocaleDateString("en-NG")}</td>
                       <td className="py-3 px-4">
                         <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                          expense.status === "approved" ? "bg-emerald-500/20 text-emerald-400" :
-                          expense.status === "rejected" ? "bg-red-500/20 text-red-400" :
+                          expense.status === "approved" ? "bg-[#dcfce7] text-[#16a34a]" :
+                          expense.status === "rejected" ? "bg-[#fee2e2] text-[#dc2626]" :
                           "bg-orange-500/20 text-orange-400"
                         }`}>
                           {expense.status}
@@ -345,7 +345,7 @@ export default function ExpensesPage() {
                             <button
                               onClick={() => handleStatusUpdate(expense.id, "approved")}
                               disabled={processingId === expense.id}
-                              className="px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-[11px] font-semibold hover:bg-emerald-500/20 transition flex items-center gap-1"
+                              className="px-2 py-1 rounded-lg bg-emerald-500/10 text-[#16a34a] text-[11px] font-semibold hover:bg-[#dcfce7] transition flex items-center gap-1"
                             >
                               {processingId === expense.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
                               Approve
@@ -353,7 +353,7 @@ export default function ExpensesPage() {
                             <button
                               onClick={() => handleStatusUpdate(expense.id, "rejected")}
                               disabled={processingId === expense.id}
-                              className="px-2 py-1 rounded-lg bg-red-500/10 text-red-400 text-[11px] font-semibold hover:bg-red-500/20 transition flex items-center gap-1"
+                              className="px-2 py-1 rounded-lg bg-red-500/10 text-[#dc2626] text-[11px] font-semibold hover:bg-[#fee2e2] transition flex items-center gap-1"
                             >
                               <X className="w-3 h-3" />
                               Reject
@@ -376,7 +376,7 @@ export default function ExpensesPage() {
           className="space-y-6"
         >
           <div className="card">
-            <h3 className="text-white font-semibold text-lg mb-6">Expense Categories</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-6">Expense Categories</h3>
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="w-6 h-6 text-[var(--primary)] animate-spin" />
@@ -384,21 +384,21 @@ export default function ExpensesPage() {
             ) : (
               <div className="space-y-3">
                 {categoryBreakdown.length === 0 ? (
-                  <p className="text-white/40 text-[13px] text-center py-6">No approved expenses yet</p>
+                  <p className="text-[#64748b] text-[13px] text-center py-6">No approved expenses yet</p>
                 ) : (
                   categoryBreakdown.map((item, i) => (
                     <div key={i}>
                       <div className="flex items-center justify-between text-[13px] mb-1">
                         <div className="flex items-center gap-2">
                           <div className={`w-2 h-2 rounded-full ${item.color}`} />
-                          <span className="text-white/60">{item.label}</span>
+                          <span className="text-[#475569]">{item.label}</span>
                         </div>
-                        <span className="text-white/40 text-[12px]">{formatNaira(item.amount)}</span>
+                        <span className="text-[#64748b] text-[12px]">{formatNaira(item.amount)}</span>
                       </div>
-                      <div className="w-full bg-white/[0.04] rounded-full h-1.5">
+                      <div className="w-full bg-[#f8fafc] rounded-full h-1.5">
                         <div className={`${item.color} h-1.5 rounded-full transition-all duration-500`} style={{ width: `${item.percent}%` }} />
                       </div>
-                      <span className="text-white/30 text-[11px]">{item.percent}%</span>
+                      <span className="text-[#94a3b8] text-[11px]">{item.percent}%</span>
                     </div>
                   ))
                 )}
@@ -407,32 +407,32 @@ export default function ExpensesPage() {
           </div>
 
           <div className="card">
-            <h3 className="text-white font-semibold text-lg mb-4">Quick Summary</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Quick Summary</h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-400" />
-                  <span className="text-white/60 text-[13px]">Approved</span>
+                  <CheckCircle className="w-4 h-4 text-[#16a34a]" />
+                  <span className="text-[#475569] text-[13px]">Approved</span>
                 </div>
-                <span className="text-white/80 text-[13px] font-medium">
+                <span className="text-[#1a1a2e] text-[13px] font-medium">
                   {expenses.filter((e) => e.status === "approved").length}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-orange-400" />
-                  <span className="text-white/60 text-[13px]">Pending</span>
+                  <span className="text-[#475569] text-[13px]">Pending</span>
                 </div>
-                <span className="text-white/80 text-[13px] font-medium">
+                <span className="text-[#1a1a2e] text-[13px] font-medium">
                   {expenses.filter((e) => e.status === "pending").length}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04]">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
                 <div className="flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-red-400" />
-                  <span className="text-white/60 text-[13px]">Rejected</span>
+                  <AlertCircle className="w-4 h-4 text-[#dc2626]" />
+                  <span className="text-[#475569] text-[13px]">Rejected</span>
                 </div>
-                <span className="text-white/80 text-[13px] font-medium">
+                <span className="text-[#1a1a2e] text-[13px] font-medium">
                   {expenses.filter((e) => e.status === "rejected").length}
                 </span>
               </div>
@@ -456,46 +456,46 @@ export default function ExpensesPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg bg-[#0a1628] border border-white/10 rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
+              className="w-full max-w-lg bg-[#0a1628] border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-white font-bold text-lg">Record New Expense</h3>
+                <h3 className="text-[#1a1a2e] font-bold text-lg">Record New Expense</h3>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/10 transition"
+                  className="p-1.5 rounded-lg text-[#94a3b8] hover:text-white hover:bg-[#f1f5f9] transition"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-white/40 text-[12px] mb-1.5">Title *</label>
+                  <label className="block text-[#64748b] text-[12px] mb-1.5">Title *</label>
                   <input
                     type="text"
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
                     placeholder="e.g. Teacher Salaries"
-                    className="w-full p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] outline-none focus:border-[var(--primary)]/50"
+                    className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white/40 text-[12px] mb-1.5">Amount *</label>
+                    <label className="block text-[#64748b] text-[12px] mb-1.5">Amount *</label>
                     <input
                       type="number"
                       value={formAmount}
                       onChange={(e) => setFormAmount(e.target.value)}
                       placeholder="0.00"
-                      className="w-full p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] outline-none focus:border-[var(--primary)]/50"
+                      className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     />
                   </div>
                   <div>
-                    <label className="block text-white/40 text-[12px] mb-1.5">Category *</label>
+                    <label className="block text-[#64748b] text-[12px] mb-1.5">Category *</label>
                     <select
                       value={formCategory}
                       onChange={(e) => setFormCategory(e.target.value)}
                       style={{ colorScheme: "dark" }}
-                      className="w-full p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] outline-none focus:border-[var(--primary)]/50"
+                      className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     >
                       <option value="" style={{ background: "#0f1b33", color: "#fff" }}>Select category</option>
                       {categories.map((cat) => (
@@ -506,40 +506,40 @@ export default function ExpensesPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white/40 text-[12px] mb-1.5">Date</label>
+                    <label className="block text-[#64748b] text-[12px] mb-1.5">Date</label>
                     <input
                       type="date"
                       value={formDate}
                       onChange={(e) => setFormDate(e.target.value)}
                       style={{ colorScheme: "dark" }}
-                      className="w-full p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] outline-none focus:border-[var(--primary)]/50"
+                      className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     />
                   </div>
                   <div>
-                    <label className="block text-white/40 text-[12px] mb-1.5">Vendor</label>
+                    <label className="block text-[#64748b] text-[12px] mb-1.5">Vendor</label>
                     <input
                       type="text"
                       value={formVendor}
                       onChange={(e) => setFormVendor(e.target.value)}
                       placeholder="Vendor name"
-                      className="w-full p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] outline-none focus:border-[var(--primary)]/50"
+                      className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-white/40 text-[12px] mb-1.5">Notes</label>
+                  <label className="block text-[#64748b] text-[12px] mb-1.5">Notes</label>
                   <textarea
                     value={formNotes}
                     onChange={(e) => setFormNotes(e.target.value)}
                     placeholder="Additional notes..."
                     rows={3}
-                    className="w-full p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none"
+                    className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none"
                   />
                 </div>
                 <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => setShowAddModal(false)}
-                    className="flex-1 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-colors"
+                    className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
                   >
                     Cancel
                   </button>

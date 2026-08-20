@@ -53,12 +53,12 @@ interface Applicant {
 }
 
 const statusColors: Record<string, string> = {
-  pending: "bg-yellow-500/20 text-yellow-400",
-  under_review: "bg-blue-500/20 text-blue-400",
-  exam: "bg-purple-500/20 text-purple-400",
-  interview: "bg-cyan-500/20 text-cyan-400",
-  admitted: "bg-emerald-500/20 text-emerald-400",
-  rejected: "bg-red-500/20 text-red-400",
+  pending: "bg-yellow-500/20 text-[#ca8a04]",
+  under_review: "bg-[#dbeafe] text-[#2563eb]",
+  exam: "bg-[#f3e8ff] text-[#7c3aed]",
+  interview: "bg-[#cffafe] text-[#0891b2]",
+  admitted: "bg-[#dcfce7] text-[#16a34a]",
+  rejected: "bg-[#fee2e2] text-[#dc2626]",
 };
 
 const statusLabels: Record<string, string> = {
@@ -156,29 +156,29 @@ export default function AdmissionsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Admissions Management</h2>
-          <p className="text-white/50 text-sm">Review applications, approve or reject, and manage admission decisions</p>
+          <h2 className="text-2xl font-bold text-[#1a1a2e]">Admissions Management</h2>
+          <p className="text-[#64748b] text-sm">Review applications, approve or reject, and manage admission decisions</p>
         </div>
         <button
           onClick={handleExport}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] font-medium hover:bg-white/[0.08] transition-all"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all"
         >
           Export CSV
         </button>
       </div>
 
       {/* Pipeline */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.08] p-5">
-        <h3 className="text-white font-semibold mb-4">Admission Pipeline</h3>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5">
+        <h3 className="text-[#1a1a2e] font-semibold mb-4">Admission Pipeline</h3>
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           {workflowSteps.map((step, i) => (
             <div key={i} className="flex items-center gap-2">
-              <button onClick={() => setStatusFilter(statusFilter === step.step ? "" : step.step)} className={`flex-1 min-w-[100px] p-3 rounded-xl text-center transition-all ${statusFilter === step.step ? "bg-white/[0.15] ring-2 ring-white/20" : "bg-white/[0.04] hover:bg-white/[0.08]"}`}>
+              <button onClick={() => setStatusFilter(statusFilter === step.step ? "" : step.step)} className={`flex-1 min-w-[100px] p-3 rounded-xl text-center transition-all ${statusFilter === step.step ? "bg-white/[0.15] ring-2 ring-white/20" : "bg-[#f8fafc] hover:bg-[#f1f5f9]"}`}>
                 <div className={`w-2.5 h-2.5 rounded-full ${step.color} mx-auto mb-1.5`} />
-                <p className="text-white font-bold text-lg">{step.count}</p>
-                <p className="text-white/40 text-[10px]">{step.label}</p>
+                <p className="text-[#1a1a2e] font-bold text-lg">{step.count}</p>
+                <p className="text-[#64748b] text-[10px]">{step.label}</p>
               </button>
-              {i < workflowSteps.length - 1 && <ArrowRight className="w-4 h-4 text-white/15 flex-shrink-0" />}
+              {i < workflowSteps.length - 1 && <ArrowRight className="w-4 h-4 text-[#94a3b8] flex-shrink-0" />}
             </div>
           ))}
         </div>
@@ -187,14 +187,14 @@ export default function AdmissionsPage() {
       {/* Filters */}
       <div className="flex gap-3">
         <div className="flex-1 relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
-          <input type="text" placeholder="Search by name or application number..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/90 text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition-all" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
+          <input type="text" placeholder="Search by name or application number..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition-all" />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           style={{ colorScheme: "dark" }}
-          className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
+          className="px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
         >
           <option value="" style={{ background: "#0f1b33", color: "#fff" }}>All Status</option>
           {Object.entries(statusLabels).map(([val, label]) => (
@@ -207,42 +207,42 @@ export default function AdmissionsPage() {
       <div className="space-y-3">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
+            <Loader2 className="w-6 h-6 text-[#64748b] animate-spin" />
           </div>
         ) : applicants.length === 0 ? (
-          <div className="text-center py-16"><FileText className="w-10 h-10 text-white/10 mx-auto mb-3" /><p className="text-white/30 text-[13px]">No applications found</p></div>
+          <div className="text-center py-16"><FileText className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" /><p className="text-[#94a3b8] text-[13px]">No applications found</p></div>
         ) : (
           applicants.map((a, i) => (
-            <motion.div key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.08] p-5 hover:border-white/[0.12] transition-all">
+            <motion.div key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5 hover:border-white/[0.12] transition-all">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-sm font-bold border border-white/10 flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-sm font-bold border border-[#e2e8f0] flex-shrink-0">
                     {a.firstName[0]}{a.lastName[0]}
                   </div>
                   <div>
-                    <p className="text-white/90 font-semibold text-[15px]">{a.firstName} {a.lastName}</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{a.firstName} {a.lastName}</p>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="text-white/30 text-[11px]">{a.applicationNumber}</span>
-                      <span className="text-white/20">·</span>
-                      <span className="text-white/30 text-[11px]">{a.classAppliedFor}</span>
-                      <span className="text-white/20">·</span>
-                      <span className="text-white/30 text-[11px]">{new Date(a.submittedAt).toLocaleDateString("en-NG")}</span>
+                      <span className="text-[#94a3b8] text-[11px]">{a.applicationNumber}</span>
+                      <span className="text-[#94a3b8]">·</span>
+                      <span className="text-[#94a3b8] text-[11px]">{a.classAppliedFor}</span>
+                      <span className="text-[#94a3b8]">·</span>
+                      <span className="text-[#94a3b8] text-[11px]">{new Date(a.submittedAt).toLocaleDateString("en-NG")}</span>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusColors[a.status] || "bg-white/10 text-white/60"}`}>
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusColors[a.status] || "bg-[#f1f5f9] text-[#475569]"}`}>
                     {statusLabels[a.status] || a.status}
                   </span>
-                  <button onClick={() => setSelectedApplicant(a)} className="p-2 rounded-lg bg-white/[0.04] text-white/40 hover:text-white hover:bg-white/[0.08] transition">
+                  <button onClick={() => setSelectedApplicant(a)} className="p-2 rounded-lg bg-[#f8fafc] text-[#64748b] hover:text-white hover:bg-[#f1f5f9] transition">
                     <Eye className="w-4 h-4" />
                   </button>
                   {a.status === "pending" && (
                     <>
-                      <button onClick={() => setShowActionModal(a.id)} className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-[11px] font-semibold hover:bg-emerald-500/20 transition flex items-center gap-1">
+                      <button onClick={() => setShowActionModal(a.id)} className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-[#16a34a] text-[11px] font-semibold hover:bg-[#dcfce7] transition flex items-center gap-1">
                         <CheckCircle className="w-3 h-3" /> Approve
                       </button>
-                      <button onClick={() => { setShowActionModal(a.id); setActionNote(""); }} className="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 text-[11px] font-semibold hover:bg-red-500/20 transition flex items-center gap-1">
+                      <button onClick={() => { setShowActionModal(a.id); setActionNote(""); }} className="px-3 py-1.5 rounded-lg bg-red-500/10 text-[#dc2626] text-[11px] font-semibold hover:bg-[#fee2e2] transition flex items-center gap-1">
                         <XCircle className="w-3 h-3" /> Reject
                       </button>
                     </>
@@ -258,25 +258,25 @@ export default function AdmissionsPage() {
       <AnimatePresence>
         {selectedApplicant && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => setSelectedApplicant(null)}>
-             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-[#0a1628] border border-white/10 rounded-3xl p-6 max-h-[85vh] overflow-y-auto">
+             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-[#0a1628] border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto">
                <div className="flex items-center justify-between mb-5">
-                 <h3 className="text-white font-bold text-lg">Application Details</h3>
-                 <button onClick={() => setSelectedApplicant(null)} className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/10 transition"><X className="w-5 h-5" /></button>
+                 <h3 className="text-[#1a1a2e] font-bold text-lg">Application Details</h3>
+                 <button onClick={() => setSelectedApplicant(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-white hover:bg-[#f1f5f9] transition"><X className="w-5 h-5" /></button>
                </div>
                <div className="space-y-4">
                  <div className="flex items-center gap-4 mb-4">
                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-xl font-bold">{selectedApplicant.firstName[0]}{selectedApplicant.lastName[0]}</div>
                    <div>
-                     <p className="text-white font-bold text-lg">{selectedApplicant.firstName} {selectedApplicant.lastName}</p>
-                     <p className="text-white/30 text-[12px]">{selectedApplicant.applicationNumber}</p>
-                     <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusColors[selectedApplicant.status] || "bg-white/10 text-white/60"}`}>
+                     <p className="text-[#1a1a2e] font-bold text-lg">{selectedApplicant.firstName} {selectedApplicant.lastName}</p>
+                     <p className="text-[#94a3b8] text-[12px]">{selectedApplicant.applicationNumber}</p>
+                     <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusColors[selectedApplicant.status] || "bg-[#f1f5f9] text-[#475569]"}`}>
                        {statusLabels[selectedApplicant.status] || selectedApplicant.status}
                      </span>
                    </div>
                  </div>
 
                  <div>
-                   <h4 className="text-white/60 text-[11px] uppercase font-semibold mb-2">Personal Information</h4>
+                   <h4 className="text-[#475569] text-[11px] uppercase font-semibold mb-2">Personal Information</h4>
                    <div className="grid grid-cols-2 gap-2">
                      {[
                        { label: "Class Applied", value: selectedApplicant.classAppliedFor },
@@ -287,15 +287,15 @@ export default function AdmissionsPage() {
                        { label: "Blood Group", value: selectedApplicant.bloodGroup || "—" },
                      ].map((item, i) => (
                        <div key={i} className="flex justify-between py-2 border-b border-white/5">
-                         <span className="text-white/40 text-[13px]">{item.label}</span>
-                         <span className="text-white/80 text-[13px] font-medium text-right">{item.value}</span>
+                         <span className="text-[#64748b] text-[13px]">{item.label}</span>
+                         <span className="text-[#1a1a2e] text-[13px] font-medium text-right">{item.value}</span>
                        </div>
                      ))}
                    </div>
                  </div>
 
                  <div>
-                   <h4 className="text-white/60 text-[11px] uppercase font-semibold mb-2">Contact Information</h4>
+                   <h4 className="text-[#475569] text-[11px] uppercase font-semibold mb-2">Contact Information</h4>
                    <div className="grid grid-cols-2 gap-2">
                      {[
                        { label: "Email", value: selectedApplicant.email || "—" },
@@ -304,15 +304,15 @@ export default function AdmissionsPage() {
                        { label: "Previous School", value: selectedApplicant.previousSchool || "—" },
                      ].map((item, i) => (
                        <div key={i} className="flex justify-between py-2 border-b border-white/5">
-                         <span className="text-white/40 text-[13px]">{item.label}</span>
-                         <span className="text-white/80 text-[13px] font-medium text-right">{item.value}</span>
+                         <span className="text-[#64748b] text-[13px]">{item.label}</span>
+                         <span className="text-[#1a1a2e] text-[13px] font-medium text-right">{item.value}</span>
                        </div>
                      ))}
                    </div>
                  </div>
 
                  <div>
-                   <h4 className="text-white/60 text-[11px] uppercase font-semibold mb-2">Guardian Information</h4>
+                   <h4 className="text-[#475569] text-[11px] uppercase font-semibold mb-2">Guardian Information</h4>
                    <div className="grid grid-cols-2 gap-2">
                      {[
                        { label: "Guardian Name", value: selectedApplicant.guardianName || "—" },
@@ -321,8 +321,8 @@ export default function AdmissionsPage() {
                        { label: "Guardian Email", value: selectedApplicant.guardianEmail || "—" },
                      ].map((item, i) => (
                        <div key={i} className="flex justify-between py-2 border-b border-white/5">
-                         <span className="text-white/40 text-[13px]">{item.label}</span>
-                         <span className="text-white/80 text-[13px] font-medium text-right">{item.value}</span>
+                         <span className="text-[#64748b] text-[13px]">{item.label}</span>
+                         <span className="text-[#1a1a2e] text-[13px] font-medium text-right">{item.value}</span>
                        </div>
                      ))}
                    </div>
@@ -330,24 +330,24 @@ export default function AdmissionsPage() {
 
                   {selectedApplicant.documents && selectedApplicant.documents.length > 0 && (
                     <div>
-                      <h4 className="text-white/60 text-[11px] uppercase font-semibold mb-2">Uploaded Documents</h4>
+                      <h4 className="text-[#475569] text-[11px] uppercase font-semibold mb-2">Uploaded Documents</h4>
                       <div className="space-y-2">
                         {selectedApplicant.documents.map((doc, i) => (
-                          <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition">
+                          <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] hover:border-[#e2e8f0] transition">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                                <FileText className="w-4 h-4 text-blue-400" />
+                                <FileText className="w-4 h-4 text-[#2563eb]" />
                               </div>
                               <div>
-                                <p className="text-white/80 text-[13px] font-medium">{doc.name}</p>
-                                <p className="text-white/25 text-[10px]">{doc.type} · {doc.size ? `${(doc.size / 1024).toFixed(1)} KB` : "—"}</p>
+                                <p className="text-[#1a1a2e] text-[13px] font-medium">{doc.name}</p>
+                                <p className="text-[#94a3b8] text-[10px]">{doc.type} · {doc.size ? `${(doc.size / 1024).toFixed(1)} KB` : "—"}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-1">
-                              <a href={doc.url} target="_blank" rel="noopener noreferrer" title="View document" className="p-1.5 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                              <a href={doc.url} target="_blank" rel="noopener noreferrer" title="View document" className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-white/[0.06] transition">
                                 <Eye className="w-4 h-4" />
                               </a>
-                              <a href={doc.url} download title="Download document" className="p-1.5 rounded-lg text-white/25 hover:text-white/60 hover:bg-white/[0.06] transition">
+                              <a href={doc.url} download title="Download document" className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-white/[0.06] transition">
                                 <Download className="w-4 h-4" />
                               </a>
                             </div>
@@ -362,15 +362,15 @@ export default function AdmissionsPage() {
                    selectedApplicant.reviewedAt ? { label: "Reviewed At", value: new Date(selectedApplicant.reviewedAt).toLocaleDateString("en-NG") } : null,
                  ].filter(Boolean).map((item, i) => (
                    <div key={i} className="flex justify-between py-2 border-b border-white/5">
-                     <span className="text-white/40 text-[13px]">{item!.label}</span>
-                     <span className="text-white/80 text-[13px] font-medium text-right">{item!.value}</span>
+                     <span className="text-[#64748b] text-[13px]">{item!.label}</span>
+                     <span className="text-[#1a1a2e] text-[13px] font-medium text-right">{item!.value}</span>
                    </div>
                  ))}
 
                  {selectedApplicant.decisionNote && (
-                   <div className="mt-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-                     <p className="text-white/30 text-[11px] uppercase mb-1">Decision Note</p>
-                     <p className="text-white/70 text-[13px]">{selectedApplicant.decisionNote}</p>
+                   <div className="mt-3 p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                     <p className="text-[#94a3b8] text-[11px] uppercase mb-1">Decision Note</p>
+                     <p className="text-[#475569] text-[13px]">{selectedApplicant.decisionNote}</p>
                    </div>
                  )}
                  {selectedApplicant.rejectionReason && (
@@ -381,10 +381,10 @@ export default function AdmissionsPage() {
                  )}
                  {selectedApplicant.status === "pending" && (
                    <div className="flex gap-2 mt-4">
-                     <button onClick={() => { setShowActionModal(selectedApplicant.id); }} className="flex-1 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 text-[13px] font-semibold hover:bg-emerald-500/25 transition flex items-center justify-center gap-2">
+                     <button onClick={() => { setShowActionModal(selectedApplicant.id); }} className="flex-1 py-2.5 rounded-xl bg-[#dcfce7] text-[#16a34a] text-[13px] font-semibold hover:bg-emerald-500/25 transition flex items-center justify-center gap-2">
                        <CheckCircle className="w-4 h-4" /> Approve
                      </button>
-                     <button onClick={() => { setShowActionModal(selectedApplicant.id); }} className="flex-1 py-2.5 rounded-xl bg-red-500/15 text-red-400 text-[13px] font-semibold hover:bg-red-500/25 transition flex items-center justify-center gap-2">
+                     <button onClick={() => { setShowActionModal(selectedApplicant.id); }} className="flex-1 py-2.5 rounded-xl bg-[#fee2e2] text-[#dc2626] text-[13px] font-semibold hover:bg-red-500/25 transition flex items-center justify-center gap-2">
                        <XCircle className="w-4 h-4" /> Reject
                      </button>
                    </div>
@@ -399,29 +399,29 @@ export default function AdmissionsPage() {
       <AnimatePresence>
         {showActionModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => { setShowActionModal(null); setActionNote(""); }}>
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-xl bg-[#0a1628] border border-white/10 rounded-3xl p-6">
-              <h3 className="text-white font-bold text-lg mb-2">Review Application</h3>
-              <p className="text-white/40 text-[13px] mb-4">Add a note for the applicant (optional)</p>
-              <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder="Enter notes, instructions or reason..." rows={4} className="w-full p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-xl bg-[#0a1628] border border-[#e2e8f0] rounded-3xl p-6">
+              <h3 className="text-[#1a1a2e] font-bold text-lg mb-2">Review Application</h3>
+              <p className="text-[#64748b] text-[13px] mb-4">Add a note for the applicant (optional)</p>
+              <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder="Enter notes, instructions or reason..." rows={4} className="w-full p-3 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />
               <div className="flex gap-2 mt-4">
-                <button onClick={() => handleStatusUpdate(showActionModal, "admitted")} disabled={actionLoading} className="flex-1 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 text-[13px] font-semibold hover:bg-emerald-500/25 transition flex items-center justify-center gap-2">
+                <button onClick={() => handleStatusUpdate(showActionModal, "admitted")} disabled={actionLoading} className="flex-1 py-2.5 rounded-xl bg-[#dcfce7] text-[#16a34a] text-[13px] font-semibold hover:bg-emerald-500/25 transition flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4" /> {actionLoading ? "Processing..." : "Approve & Admit"}
                 </button>
-                <button onClick={() => handleStatusUpdate(showActionModal, "rejected")} disabled={actionLoading} className="flex-1 py-2.5 rounded-xl bg-red-500/15 text-red-400 text-[13px] font-semibold hover:bg-red-500/25 transition flex items-center justify-center gap-2">
+                <button onClick={() => handleStatusUpdate(showActionModal, "rejected")} disabled={actionLoading} className="flex-1 py-2.5 rounded-xl bg-[#fee2e2] text-[#dc2626] text-[13px] font-semibold hover:bg-red-500/25 transition flex items-center justify-center gap-2">
                   <XCircle className="w-4 h-4" /> {actionLoading ? "Processing..." : "Reject"}
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-2 mt-2">
-                <button onClick={() => handleStatusUpdate(showActionModal, "under_review")} disabled={actionLoading} className="py-2 rounded-xl bg-blue-500/15 text-blue-400 text-[12px] font-semibold hover:bg-blue-500/25 transition flex items-center justify-center gap-1">
+                <button onClick={() => handleStatusUpdate(showActionModal, "under_review")} disabled={actionLoading} className="py-2 rounded-xl bg-[#dbeafe] text-[#2563eb] text-[12px] font-semibold hover:bg-blue-500/25 transition flex items-center justify-center gap-1">
                   <Clock className="w-3 h-3" /> Under Review
                 </button>
-                <button onClick={() => handleStatusUpdate(showActionModal, "exam")} disabled={actionLoading} className="py-2 rounded-xl bg-purple-500/15 text-purple-400 text-[12px] font-semibold hover:bg-purple-500/25 transition flex items-center justify-center gap-1">
+                <button onClick={() => handleStatusUpdate(showActionModal, "exam")} disabled={actionLoading} className="py-2 rounded-xl bg-[#f3e8ff] text-[#7c3aed] text-[12px] font-semibold hover:bg-purple-500/25 transition flex items-center justify-center gap-1">
                   <Calendar className="w-3 h-3" /> Schedule Exam
                 </button>
-                <button onClick={() => handleStatusUpdate(showActionModal, "interview")} disabled={actionLoading} className="py-2 rounded-xl bg-cyan-500/15 text-cyan-400 text-[12px] font-semibold hover:bg-cyan-500/25 transition flex items-center justify-center gap-1">
+                <button onClick={() => handleStatusUpdate(showActionModal, "interview")} disabled={actionLoading} className="py-2 rounded-xl bg-[#cffafe] text-[#0891b2] text-[12px] font-semibold hover:bg-cyan-500/25 transition flex items-center justify-center gap-1">
                   <UserCheck className="w-3 h-3" /> Schedule Interview
                 </button>
-                <button onClick={() => setShowActionModal(null)} disabled={actionLoading} className="py-2 rounded-xl bg-white/5 text-white/50 text-[12px] font-medium hover:bg-white/10 transition">
+                <button onClick={() => setShowActionModal(null)} disabled={actionLoading} className="py-2 rounded-xl bg-[#f8fafc] text-[#64748b] text-[12px] font-medium hover:bg-[#f1f5f9] transition">
                   Cancel
                 </button>
               </div>
