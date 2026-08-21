@@ -461,7 +461,7 @@ export default function ExpensesPage() {
                 <h3 className="text-[#1a1a2e] font-bold text-lg">Record New Expense</h3>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="p-1.5 rounded-lg text-[#94a3b8] hover:text-white hover:bg-[#f1f5f9] transition"
+                  className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition"
                 >
                   <X className="w-5 h-5" />
                 </button>

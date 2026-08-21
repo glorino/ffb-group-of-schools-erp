@@ -35,7 +35,7 @@ function DashboardCard({ children, className = "" }: { children: React.ReactNode
 function CardTitle({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div className="mb-4">
-      <h3 className="text-white font-semibold text-[14px]">{title}</h3>
+      <h3 className="text-[#1a1a2e] font-semibold text-[14px]">{title}</h3>
       {subtitle && <p className="text-[#64748b] text-[11px] mt-0.5">{subtitle}</p>}
     </div>
   );
@@ -47,7 +47,7 @@ function CustomTooltip({ active, payload, label }: any) {
     <div className="bg-white border border-[#e2e8f0] rounded-lg px-3 py-2 shadow-lg">
       <p className="text-[#64748b] text-[10px] font-medium mb-1">{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} className="text-white text-[12px] font-semibold">
+        <p key={i} className="text-[#1a1a2e] text-[12px] font-semibold">
           {p.name}: {typeof p.value === "number" && p.value > 10000 ? formatCurrencyCompact(p.value) : p.value}
         </p>
       ))}
@@ -66,35 +66,35 @@ function AdminDashboard() {
       <div className="stats-grid-4">
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Total Students</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.totalTeachers}</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalTeachers}</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Total Revenue</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
+          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Active Classes</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.totalClasses}</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p>
         </DashboardCard>
       </div>
       <div className="stats-grid-3">
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Pending Admissions</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.pendingAdmissions}</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.pendingAdmissions}</p>
           <p className="text-[#d97706] text-[11px] mt-1">Needs review</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.attendance?.rate || 0}%</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.attendance?.rate || 0}%</p>
           <p className="text-[#16a34a] text-[11px] mt-1">{stats.attendance?.present || 0} present</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Fee Collection</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
+          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
           <p className="text-[#16a34a] text-[11px] mt-1">Total collected</p>
         </DashboardCard>
       </div>
@@ -233,19 +233,19 @@ function TeacherDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Total Students</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Active Classes</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.totalClasses}</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p>
-          <p className="text-[28px] font-bold text-white mt-1">{stats.attendance?.rate || 0}%</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.attendance?.rate || 0}%</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Collected Revenue</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
+          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
@@ -363,19 +363,19 @@ function StudentDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">My Class</p>
-          <p className="text-[22px] font-bold text-white mt-1">{child?.class?.name || "—"}</p>
+          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{child?.class?.name || "—"}</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Attendance</p>
-          <p className="text-[28px] font-bold text-white mt-1">{attendance.length ? Math.round((presentDays / attendance.length) * 100) : 0}%</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{attendance.length ? Math.round((presentDays / attendance.length) * 100) : 0}%</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Current Average</p>
-          <p className="text-[28px] font-bold text-white mt-1">{avgScore}%</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{avgScore}%</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Fee Balance</p>
-          <p className="text-[22px] font-bold text-white mt-1">{formatCurrency(unpaidAmount)}</p>
+          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrency(unpaidAmount)}</p>
         </DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
@@ -386,7 +386,7 @@ function StudentDashboard() {
               <div key={i} className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
                 <p className="text-[#475569] text-[12px]">{g.subject?.name || "—"}</p>
                 <div className="flex items-center gap-3">
-                  <p className="text-white text-[12px] font-semibold">{g.score}%</p>
+                  <p className="text-[#1a1a2e] text-[12px] font-semibold">{g.score}%</p>
                   {g.grade && <span className="px-2 py-0.5 rounded bg-[#dcfce7] text-[#16a34a] text-[10px] font-bold">{g.grade}</span>}
                 </div>
               </div>
@@ -492,10 +492,10 @@ function VicePrincipalDashboard() {
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Discipline Cases</p><p className="text-[28px] font-bold text-white mt-1">{discipline.totalIncidents}</p><p className="text-[#d97706] text-[11px] mt-1">{discipline.pending} pending</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalTeachers}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Resolution Rate</p><p className="text-[28px] font-bold text-white mt-1">{discipline.totalIncidents ? Math.round((discipline.resolved / discipline.totalIncidents) * 100) : 0}%</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Discipline Cases</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{discipline.totalIncidents}</p><p className="text-[#d97706] text-[11px] mt-1">{discipline.pending} pending</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalTeachers}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Resolution Rate</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{discipline.totalIncidents ? Math.round((discipline.resolved / discipline.totalIncidents) * 100) : 0}%</p></DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
         <DashboardCard>
@@ -572,15 +572,15 @@ function PrincipalDashboard() {
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalTeachers}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">School Revenue</p><p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Avg. Performance</p><p className="text-[28px] font-bold text-white mt-1">{stats.classPerformance?.length ? Math.round(stats.classPerformance.reduce((s: number, c: any) => s + (c.performance || c.students || 0), 0) / stats.classPerformance.length) : 0}%</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalTeachers}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">School Revenue</p><p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Avg. Performance</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.classPerformance?.length ? Math.round(stats.classPerformance.reduce((s: number, c: any) => s + (c.performance || c.students || 0), 0) / stats.classPerformance.length) : 0}%</p></DashboardCard>
       </div>
       <div className="grid grid-cols-3 gap-4 mt-4">
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Pending Admissions</p><p className="text-[28px] font-bold text-white mt-1">{stats.pendingAdmissions}</p><p className="text-[#d97706] text-[11px] mt-1">Needs review</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalClasses}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p><p className="text-[28px] font-bold text-white mt-1">{stats.attendance?.rate || 0}%</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Pending Admissions</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.pendingAdmissions}</p><p className="text-[#d97706] text-[11px] mt-1">Needs review</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.attendance?.rate || 0}%</p></DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <DashboardCard>
@@ -638,10 +638,10 @@ function OwnerDashboard() {
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalStudents}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalTeachers}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Revenue</p><p className="text-[22px] font-bold text-white mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-white mt-1">{stats.totalClasses}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Students</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalTeachers}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Total Revenue</p><p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p></DashboardCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <DashboardCard>
@@ -897,7 +897,7 @@ function LibrarianDashboard() {
           <div className="space-y-2">
             {booksByCategory.slice(0, 5).map((item: any, i: number) => (
               <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
-                <p className="text-white text-[13px] font-medium">{item.category}</p>
+                <p className="text-[#1a1a2e] text-[13px] font-medium">{item.category}</p>
                 <span className="text-[#64748b] text-[12px]">{item.count} books</span>
               </div>
             ))}
@@ -1329,9 +1329,9 @@ function ParentDashboard() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Child</p><p className="text-[18px] font-bold text-white mt-1">{child.firstName} {child.lastName}</p><p className="text-[#94a3b8] text-[11px] mt-1">{child.class?.name || "\u2014"}</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Attendance</p><p className="text-[28px] font-bold text-white mt-1">{attendancePct}%</p><p className="text-[#94a3b8] text-[11px] mt-1">{presentDays} of {totalDays} days</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Current Average</p><p className="text-[28px] font-bold text-white mt-1">{avgScore}%</p></DashboardCard>
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-white mt-1">{formatCurrency(unpaidAmount)}</p>{unpaidAmount > 0 && <p className="text-[#d97706] text-[11px] mt-1">Outstanding</p>}</DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Attendance</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{attendancePct}%</p><p className="text-[#94a3b8] text-[11px] mt-1">{presentDays} of {totalDays} days</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Current Average</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{avgScore}%</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrency(unpaidAmount)}</p>{unpaidAmount > 0 && <p className="text-[#d97706] text-[11px] mt-1">Outstanding</p>}</DashboardCard>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
@@ -1345,7 +1345,7 @@ function ParentDashboard() {
                   <p className="text-[#94a3b8] text-[10px]">{g.type} {g.term ? `\u00B7 ${g.term}` : ""}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <p className="text-white text-[13px] font-bold">{g.score}/{g.maxScore}</p>
+                  <p className="text-[#1a1a2e] text-[13px] font-bold">{g.score}/{g.maxScore}</p>
                   {g.grade && <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${g.grade === "A" ? "bg-[#dcfce7] text-[#16a34a]" : g.grade === "B" ? "bg-[#dbeafe] text-[#2563eb]" : g.grade === "C" ? "bg-yellow-500/15 text-[#ca8a04]" : g.grade === "F" ? "bg-[#fee2e2] text-[#dc2626]" : "bg-[#f1f5f9] text-[#64748b]"}`}>{g.grade}</span>}
                 </div>
               </div>

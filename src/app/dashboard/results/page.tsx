@@ -505,7 +505,7 @@ export default function ResultsPage() {
                       {!isReadOnly && (
                         <button
                           onClick={() => openEditModal(g)}
-                          className="p-1.5 rounded-lg bg-white/[0.06] border border-[#e2e8f0] text-[#64748b] hover:text-white hover:bg-[#f1f5f9] transition-all"
+                          className="p-1.5 rounded-lg bg-white/[0.06] border border-[#e2e8f0] text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
@@ -783,7 +783,7 @@ export default function ResultsPage() {
               <div className="p-6 space-y-4">
                 <div>
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">Type</label>
-                  <p className="text-white text-sm font-medium">{typeLabel[editingGrade.type] || editingGrade.type}</p>
+                  <p className="text-[#1a1a2e] text-sm font-medium">{typeLabel[editingGrade.type] || editingGrade.type}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>

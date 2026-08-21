@@ -87,7 +87,7 @@ export default function StudentPaymentHistoryPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard/students"
-            className="p-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-white/60 hover:text-white hover:bg-[#f1f5f9] transition-all"
+            className="p-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-white/60 hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>

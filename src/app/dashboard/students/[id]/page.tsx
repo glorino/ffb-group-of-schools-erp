@@ -599,7 +599,7 @@ export default function StudentDetailPage() {
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
                 <div className="p-6 border-b border-[#e2e8f0] flex items-center justify-between">
                   <div>
-                    <h3 className="text-white font-semibold text-[15px]">Academic Results</h3>
+                    <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Academic Results</h3>
                     <p className="text-[#94a3b8] text-[11px] mt-0.5">All recorded grades</p>
                   </div>
                   <button onClick={() => router.push(`/dashboard/report-cards?studentId=${student.id}`)} className="px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white/40 text-[12px] font-medium hover:bg-[#f1f5f9] transition flex items-center gap-2">
@@ -687,7 +687,7 @@ export default function StudentDetailPage() {
               {/* Attendance Table */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
                 <div className="p-5 border-b border-[#e2e8f0]">
-                  <h3 className="text-white font-semibold text-[15px]">Attendance Records</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Attendance Records</h3>
                 </div>
                 {attendanceRecords.length === 0 ? (
                   <div className="text-center py-16">
@@ -766,7 +766,7 @@ export default function StudentDetailPage() {
               {/* Invoices */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
                 <div className="p-5 border-b border-[#e2e8f0]">
-                  <h3 className="text-white font-semibold text-[15px]">Invoices</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Invoices</h3>
                 </div>
                 {feeRecords.length === 0 ? (
                   <div className="text-center py-16">
@@ -820,7 +820,7 @@ export default function StudentDetailPage() {
               {feeRecords.some((f) => f.payments.length > 0) && (
                 <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
                    <div className="p-6 border-b border-[#e2e8f0]">
-                    <h3 className="text-white font-semibold text-[15px]">Payment History</h3>
+                    <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Payment History</h3>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -996,7 +996,7 @@ export default function StudentDetailPage() {
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="modal-content">
             <div className="modal-header">
               <div>
-                <h3 className="text-white font-semibold text-lg">Send Message</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Send Message</h3>
                 <p className="text-[#64748b] text-[13px]">To: {student.firstName} {student.lastName}</p>
               </div>
               <button onClick={() => setShowMessageModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b]">

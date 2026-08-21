@@ -211,7 +211,7 @@ export default function AttendancePage() {
                       const rate = total > 0 ? Math.round((s.present / total) * 100) : 0;
                       return (
                         <tr key={className} className="border-b border-[#e2e8f0]">
-                          <td className="text-white font-medium">{className}</td>
+                          <td className="text-[#1a1a2e] font-medium">{className}</td>
                           <td className="text-[#16a34a]">{s.present}</td>
                           <td className="text-[#dc2626]">{s.absent}</td>
                           <td className="text-[#ca8a04]">{s.late}</td>
@@ -243,11 +243,11 @@ export default function AttendancePage() {
           transition={{ delay: 0.5 }}
           className="dashboard-card"
         >
-          <h3 className="text-white font-semibold text-[16px] mb-5">Today&apos;s Summary</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Today&apos;s Summary</h3>
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white text-[13px] font-medium">Present</span>
+                <span className="text-[#1a1a2e] text-[13px] font-medium">Present</span>
                 <span className="text-[#16a34a] text-[13px] font-bold">
                   {stats.total ? ((stats.present / stats.total) * 100).toFixed(1) : 0}%
                 </span>
@@ -258,7 +258,7 @@ export default function AttendancePage() {
             </div>
             <div className="p-4 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white text-[13px] font-medium">Absent</span>
+                <span className="text-[#1a1a2e] text-[13px] font-medium">Absent</span>
                 <span className="text-[#dc2626] text-[13px] font-bold">
                   {stats.total ? ((stats.absent / stats.total) * 100).toFixed(1) : 0}%
                 </span>
@@ -269,7 +269,7 @@ export default function AttendancePage() {
             </div>
             <div className="p-4 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white text-[13px] font-medium">Late</span>
+                <span className="text-[#1a1a2e] text-[13px] font-medium">Late</span>
                 <span className="text-[#ca8a04] text-[13px] font-bold">
                   {stats.total ? ((stats.late / stats.total) * 100).toFixed(1) : 0}%
                 </span>
@@ -352,7 +352,7 @@ export default function AttendancePage() {
                 ) : (
                   records.filter(r => r.status === "absent").map((student, i) => (
                     <tr key={i} className="border-b border-[#e2e8f0]">
-                      <td className="text-white font-medium">{student.student?.firstName} {student.student?.lastName}</td>
+                      <td className="text-[#1a1a2e] font-medium">{student.student?.firstName} {student.student?.lastName}</td>
                       <td className="text-[#475569]">{student.class?.name || student.class?.displayName}</td>
                       <td className="text-[#475569]">{student.notes || "—"}</td>
                       <td>
@@ -374,7 +374,7 @@ export default function AttendancePage() {
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4">
                 <UserCheck className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-white font-semibold text-xl">Mark Attendance</h3>
+              <h3 className="text-[#1a1a2e] font-semibold text-xl">Mark Attendance</h3>
               <p className="text-[#94a3b8] text-sm mt-1">Enter student admission number to mark present</p>
             </div>
             <input

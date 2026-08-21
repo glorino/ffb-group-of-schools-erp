@@ -439,7 +439,7 @@ export default function ProfilePage() {
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Change Password</h3>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-white hover:bg-[#f1f5f9] transition-all"
+                  className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -501,7 +501,7 @@ export default function ProfilePage() {
             className="w-full max-w-md mx-4 p-6 rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-semibold text-lg">Two-Factor Authentication</h3>
-              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-white hover:bg-[#f1f5f9] transition-all">
+              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all">
                 <X className="w-4 h-4" />
               </button>
             </div>

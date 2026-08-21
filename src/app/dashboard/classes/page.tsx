@@ -191,7 +191,7 @@ export default function ClassesPage() {
           className="lg:col-span-3 card"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white font-semibold text-lg">All Classes</h3>
+            <h3 className="text-[#1a1a2e] font-semibold text-lg">All Classes</h3>
             <div className="flex gap-3">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
@@ -307,14 +307,14 @@ export default function ClassesPage() {
           transition={{ delay: 0.5 }}
           className="card shadow-sm"
         >
-          <h3 className="text-white font-semibold text-lg mb-4">Capacity Overview</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Capacity Overview</h3>
           <div className="space-y-3">
             {sortedClasses.slice(0, 6).map((cls) => {
               const pct = Math.round((cls._count.students / cls.capacity) * 100);
               return (
                 <div key={cls.id} className="p-3 rounded-xl bg-[#f8fafc] hover:bg-white transition">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white text-sm font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</span>
+                    <span className="text-[#1a1a2e] text-sm font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</span>
                     <span className="text-[#64748b] text-sm">{pct}%</span>
                   </div>
                   <div className="w-full bg-[#f1f5f9] rounded-full h-2">
@@ -347,7 +347,7 @@ export default function ClassesPage() {
               className="relative w-full max-w-lg bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Add Class</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Class</h3>
                 <button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]">
                   <X className="w-5 h-5" />
                 </button>
@@ -441,26 +441,26 @@ export default function ClassesPage() {
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Class Details</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Class Details</h3>
                 <button onClick={() => setViewClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Class Name</p>
-                    <p className="text-white font-semibold text-[15px]">{viewClass.displayName}{viewClass.arm ? ` - Arm ${viewClass.arm}` : ""}</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.displayName}{viewClass.arm ? ` - Arm ${viewClass.arm}` : ""}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Section</p>
-                    <p className="text-white font-semibold text-[15px]">{viewClass.section || "—"}</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.section || "—"}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Class Teacher</p>
-                    <p className="text-white font-semibold text-[15px]">{viewClass.classTeacher ? viewClass.classTeacher.name : "Unassigned"}</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.classTeacher ? viewClass.classTeacher.name : "Unassigned"}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Students</p>
-                    <p className="text-white font-semibold text-[15px]">{viewClass._count.students} / {viewClass.capacity}</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass._count.students} / {viewClass.capacity}</p>
                   </div>
                 </div>
               </div>
@@ -480,7 +480,7 @@ export default function ClassesPage() {
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg">Edit Class</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Class</h3>
                 <button onClick={() => setEditClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={async (e) => {

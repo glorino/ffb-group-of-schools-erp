@@ -159,7 +159,7 @@ export default function TeachersPage() {
             {row.firstName[0]}{row.lastName[0]}
           </div>
           <div>
-            <p className="text-white text-sm font-medium">{row.firstName} {row.lastName}</p>
+            <p className="text-[#1a1a2e] text-sm font-medium">{row.firstName} {row.lastName}</p>
             <p className="text-[#64748b] text-xs">{row.employeeId}</p>
           </div>
         </button>

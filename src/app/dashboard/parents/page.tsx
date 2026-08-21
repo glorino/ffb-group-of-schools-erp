@@ -148,7 +148,7 @@ export default function ParentsPage() {
         className="card"
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-white font-semibold text-lg">All Guardians</h3>
+          <h3 className="text-[#1a1a2e] font-semibold text-lg">All Guardians</h3>
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
             <input
@@ -192,7 +192,7 @@ export default function ParentsPage() {
                           {g.firstName[0]}{g.lastName[0]}
                         </div>
                         <div>
-                          <p className="text-white font-medium text-[13px]">{g.firstName} {g.lastName}</p>
+                          <p className="text-[#1a1a2e] font-medium text-[13px]">{g.firstName} {g.lastName}</p>
                           {g.isPrimary && (
                             <span className="px-1.5 py-0.5 rounded text-[10px] bg-[var(--accent)]/20 text-[var(--accent)]">Primary</span>
                           )}
@@ -287,7 +287,7 @@ export default function ParentsPage() {
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-lg font-bold">
                     {viewGuardian.firstName[0]}{viewGuardian.lastName[0]}
                   </div>
-                  <h3 className="text-white font-semibold text-lg">Guardian Details</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-lg">Guardian Details</h3>
                 </div>
                 <button onClick={() => setViewGuardian(null)} className="btn btn-secondary"><X className="w-5 h-5" /></button>
               </div>
@@ -296,16 +296,16 @@ export default function ParentsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Full Name</p>
-                    <p className="text-white font-semibold text-[15px]">{viewGuardian.firstName} {viewGuardian.lastName}</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.firstName} {viewGuardian.lastName}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Relationship</p>
-                    <p className="text-white font-semibold text-[15px]">{viewGuardian.relationship}</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.relationship}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Phone</p>
                     <div className="flex items-center justify-between">
-                      <p className="text-white font-semibold text-[15px]">{viewGuardian.phone}</p>
+                      <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.phone}</p>
                       <a href={`tel:${viewGuardian.phone}`} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 text-[11px] font-medium hover:bg-blue-100 transition-all">
                         <Phone className="w-3 h-3" /> Call
                       </a>
@@ -314,7 +314,7 @@ export default function ParentsPage() {
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Email</p>
                     <div className="flex items-center justify-between">
-                      <p className="text-white font-semibold text-[15px] truncate">{viewGuardian.email || "—"}</p>
+                      <p className="text-[#1a1a2e] font-semibold text-[15px] truncate">{viewGuardian.email || "—"}</p>
                       {viewGuardian.email && (
                         <a href={`mailto:${viewGuardian.email}`} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-medium hover:bg-emerald-100 transition-all">
                           <Mail className="w-3 h-3" /> Email
@@ -324,14 +324,14 @@ export default function ParentsPage() {
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Occupation</p>
-                    <p className="text-white font-semibold text-[15px]">{viewGuardian.occupation || "—"}</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.occupation || "—"}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <div className="flex items-center gap-1.5 mb-1">
                       <Link className="w-3 h-3 text-[#64748b]" />
                       <p className="text-[#64748b] text-[11px]">Linked Student</p>
                     </div>
-                    <p className="text-white font-semibold text-[15px]">{viewGuardian.student.firstName} {viewGuardian.student.lastName}</p>
+                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.student.firstName} {viewGuardian.student.lastName}</p>
                     <p className="text-[#64748b] text-[11px] mt-0.5">{viewGuardian.student.admissionNumber} &middot; {viewGuardian.student.class?.displayName || "—"}</p>
                   </div>
                 </div>

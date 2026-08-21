@@ -315,7 +315,7 @@ export default function StudentsPage() {
                               {initials}
                             </div>
                             <div>
-                              <p className="text-white text-[13px] font-medium">{student.lastName} {student.firstName}</p>
+                              <p className="text-[#1a1a2e] text-[13px] font-medium">{student.lastName} {student.firstName}</p>
                               <p className="text-[#94a3b8] text-[11px]">{student.admissionNumber}</p>
                             </div>
                           </div>
@@ -361,7 +361,7 @@ export default function StudentsPage() {
                               <div className="absolute right-0 top-8 w-36 rounded-xl bg-white/95 backdrop-blur-2xl border border-[#e2e8f0] shadow-2xl z-[60] overflow-hidden">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/students/${student.id}`); setOpenMenu(null); }}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-[#64748b] hover:text-white hover:bg-[#f1f5f9] text-[12px]"
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] text-[12px]"
                                 >
                                   <Eye className="w-3.5 h-3.5" /> View Profile
                                 </button>
@@ -382,7 +382,7 @@ export default function StudentsPage() {
                                     setShowModal(true);
                                     setOpenMenu(null);
                                   }}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-[#64748b] hover:text-white hover:bg-[#f1f5f9] text-[12px]"
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] text-[12px]"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" /> Edit
                                 </button>
@@ -480,7 +480,7 @@ export default function StudentsPage() {
                     {initials}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-white text-[14px] font-medium truncate">{student.lastName} {student.firstName}</p>
+                    <p className="text-[#1a1a2e] text-[14px] font-medium truncate">{student.lastName} {student.firstName}</p>
                     <p className="text-[#94a3b8] text-[11px]">{student.admissionNumber}</p>
                   </div>
                 </div>
