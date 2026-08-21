@@ -42,8 +42,8 @@ function CountdownTimer({ date }: { date: string }) {
   return (
     <div style={{ display: "flex", gap: "8px", justifyContent: "center", marginTop: "12px" }}>
       {[{ val: t.days, label: "D" }, { val: t.hours, label: "H" }, { val: t.minutes, label: "M" }, { val: t.seconds, label: "S" }].map((u) => (
-        <div key={u.label} style={{ textAlign: "center" }}>
-          <div style={{ background: "rgba(40,255,156,0.15)", border: "1px solid rgba(40,255,156,0.3)", borderRadius: "10px", padding: "6px 10px", minWidth: "42px" }}>
+          <div key={u.label} style={{ textAlign: "center" }}>
+            <div style={{ background: "rgba(40,255,156,0.1)", border: "1px solid rgba(40,255,156,0.25)", borderRadius: "12px", padding: "8px 12px", minWidth: "46px", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
             <span style={{ fontSize: "18px", fontWeight: 800, color: "#28ff9c" }}>{String(u.val).padStart(2, "0")}</span>
           </div>
           <span style={{ fontSize: "9px", color: "rgba(255,255,255,0.4)", marginTop: "3px", display: "block" }}>{u.label}</span>
@@ -155,7 +155,7 @@ export default function LandingPage() {
         </video>
         <div className="hero-overlay"></div>
         <div className="hero-content container">
-          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} style={{ textShadow: "0 2px 40px rgba(0,0,0,0.3)" }}>
             Building Leaders<br />For The <span className="accent">Future</span>
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
@@ -181,7 +181,7 @@ export default function LandingPage() {
             { icon: "⭐", title: "Core Values", desc: "Integrity, Discipline, Excellence, Innovation and Respect for all members of the school community." },
           ].map((f, i) => (
             <motion.div key={i} className="feature-card" variants={item} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "40px", marginBottom: "15px" }}>{f.icon}</div>
+              <div style={{ width: "80px", height: "80px", margin: "0 auto 15px", borderRadius: "50%", background: "rgba(40,255,156,0.1)", border: "1px solid rgba(40,255,156,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>{f.icon}</div>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
             </motion.div>
@@ -268,7 +268,10 @@ export default function LandingPage() {
         <div style={{ textAlign: "center", minHeight: "120px" }}>
           {testimonials.map((t, i) => (
             <motion.div key={i} style={{ display: i === testimonialIdx ? "block" : "none" }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <p style={{ fontStyle: "italic", fontSize: "20px", lineHeight: 1.7 }}>&ldquo;{t.text}&rdquo;</p>
+              <div style={{ position: "relative", padding: "0 30px" }}>
+                <span style={{ position: "absolute", top: "-20px", left: "50%", transform: "translateX(-50%)", fontSize: "60px", color: "rgba(40,255,156,0.2)", lineHeight: 1, fontFamily: "Georgia, serif" }}>"</span>
+                <p style={{ fontStyle: "italic", fontSize: "22px", lineHeight: 1.8 }}>{t.text}</p>
+              </div>
               <h4 style={{ marginTop: "15px", color: "#28ff9c", fontSize: "16px" }}>— {t.name}</h4>
             </motion.div>
           ))}

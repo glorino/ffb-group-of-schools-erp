@@ -223,7 +223,7 @@ export default function ProfilePage() {
                 </div>
               )}
               <label className="absolute bottom-0 right-0 w-9 h-9 rounded-xl bg-[var(--primary)] flex items-center justify-center cursor-pointer hover:brightness-110 transition-all shadow-lg">
-                <Camera className="w-4 h-4 text-[#1a1a2e]" />
+                <Camera className="w-4 h-4 text-white" />
                 <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
@@ -425,7 +425,7 @@ export default function ProfilePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="modal-overlay" onClick={() => setShowPasswordModal(false)}
+            className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowPasswordModal(false)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -433,12 +433,13 @@ export default function ProfilePage() {
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
               className="w-full max-w-xl mx-4 p-6 rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl"
+          
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Change Password</h3>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all"
+                  className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-white hover:bg-[#f1f5f9] transition-all"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -494,13 +495,13 @@ export default function ProfilePage() {
       </AnimatePresence>
 
       {show2FAModal && (
-        <div className="modal-overlay" onClick={() => setShow2FAModal(false)}>
+        <div className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShow2FAModal(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-md mx-4 p-6 rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-semibold text-lg">Two-Factor Authentication</h3>
-              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all">
+              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-white hover:bg-[#f1f5f9] transition-all">
                 <X className="w-4 h-4" />
               </button>
             </div>

@@ -146,14 +146,14 @@ export default function ClassesPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Class Management</h1>
+            <h1 className="text-2xl font-bold text-white mb-1">Class Management</h1>
             <p className="text-[#475569]">
               Manage classes, streams, arms, and teacher assignments across all levels
             </p>
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+            className="btn btn-primary"
           >
             <Plus className="w-4 h-4" />
             Add Class
@@ -173,10 +173,10 @@ export default function ClassesPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[#64748b] text-sm mb-1">{kpi.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{kpi.value}</p>
+                <p className="text-3xl font-bold text-white">{kpi.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center`}>
-                <kpi.icon className="w-6 h-6 text-[#1a1a2e]" />
+                <kpi.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -191,7 +191,7 @@ export default function ClassesPage() {
           className="lg:col-span-3 card"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg">All Classes</h3>
+            <h3 className="text-white font-semibold text-lg">All Classes</h3>
             <div className="flex gap-3">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
@@ -200,7 +200,7 @@ export default function ClassesPage() {
                   placeholder="Search classes..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
             </div>
@@ -220,7 +220,7 @@ export default function ClassesPage() {
               <tbody>
                 {loading ? (
                   Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i} className="border-b border-white/5">
+                    <tr key={i} className="border-b border-[#e2e8f0]">
                       <td colSpan={6} className="py-3"><div className="skeleton h-4 w-full" /></td>
                     </tr>
                   ))
@@ -234,8 +234,8 @@ export default function ClassesPage() {
                   sortedClasses.map((cls) => {
                     const usagePercent = Math.round((cls._count.students / cls.capacity) * 100);
                     return (
-                      <tr key={cls.id} className="border-b border-white/5 hover:bg-[#f8fafc] transition-all">
-                        <td className="py-3 text-[#1a1a2e] font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</td>
+                      <tr key={cls.id} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
+                        <td className="py-3 text-white font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</td>
                         <td className="py-3 text-[#475569]">{cls.section || "—"}</td>
                         <td className="py-3 text-[#475569] text-sm">
                           {cls.classTeacher ? cls.classTeacher.name : "Unassigned"}
@@ -244,7 +244,7 @@ export default function ClassesPage() {
                         <td className="py-3">
                           <div className="w-full bg-[#f1f5f9] rounded-full h-2 max-w-[80px]">
                             <div
-                              className={`h-2 rounded-full ${
+                              className={`h-2 rounded-full progress-bar-fill ${
                                 usagePercent >= 90 ? "bg-red-500" : usagePercent >= 70 ? "bg-yellow-500" : "bg-[var(--accent)]"
                               }`}
                               style={{ width: `${Math.min(usagePercent, 100)}%` }}
@@ -305,21 +305,21 @@ export default function ClassesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="card"
+          className="card shadow-sm"
         >
-          <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Capacity Overview</h3>
+          <h3 className="text-white font-semibold text-lg mb-4">Capacity Overview</h3>
           <div className="space-y-3">
             {sortedClasses.slice(0, 6).map((cls) => {
               const pct = Math.round((cls._count.students / cls.capacity) * 100);
               return (
-                <div key={cls.id} className="p-3 rounded-xl bg-[#f8fafc]">
+                <div key={cls.id} className="p-3 rounded-xl bg-[#f8fafc] hover:bg-white transition">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[#1a1a2e] text-sm font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</span>
+                    <span className="text-white text-sm font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</span>
                     <span className="text-[#64748b] text-sm">{pct}%</span>
                   </div>
                   <div className="w-full bg-[#f1f5f9] rounded-full h-2">
                     <div
-                      className={`h-2 rounded-full ${
+                      className={`h-2 rounded-full progress-bar-fill ${
                         pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-yellow-500" : "bg-[var(--accent)]"
                       }`}
                       style={{ width: `${Math.min(pct, 100)}%` }}
@@ -347,7 +347,7 @@ export default function ClassesPage() {
               className="relative w-full max-w-lg bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Class</h3>
+                <h3 className="text-white font-semibold text-lg">Add Class</h3>
                 <button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]">
                   <X className="w-5 h-5" />
                 </button>
@@ -360,7 +360,7 @@ export default function ClassesPage() {
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. JSS1"
                   />
                 </div>
@@ -370,7 +370,7 @@ export default function ClassesPage() {
                     type="text"
                     value={form.displayName}
                     onChange={(e) => setForm({ ...form, displayName: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. Junior Secondary 1A"
                   />
                 </div>
@@ -380,7 +380,7 @@ export default function ClassesPage() {
                     type="text"
                     value={form.arm}
                     onChange={(e) => setForm({ ...form, arm: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. A, B, C"
                   />
                 </div>
@@ -390,7 +390,7 @@ export default function ClassesPage() {
                     <select
                       value={form.level}
                       onChange={(e) => setForm({ ...form, level: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "light" }}
                     >
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="nursery">Nursery</option>
@@ -406,7 +406,7 @@ export default function ClassesPage() {
                       min="1"
                       value={form.capacity}
                       onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -441,31 +441,31 @@ export default function ClassesPage() {
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Class Details</h3>
+                <h3 className="text-white font-semibold text-lg">Class Details</h3>
                 <button onClick={() => setViewClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Class Name</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.displayName}{viewClass.arm ? ` - Arm ${viewClass.arm}` : ""}</p>
+                    <p className="text-white font-semibold text-[15px]">{viewClass.displayName}{viewClass.arm ? ` - Arm ${viewClass.arm}` : ""}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Section</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.section || "—"}</p>
+                    <p className="text-white font-semibold text-[15px]">{viewClass.section || "—"}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Class Teacher</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.classTeacher ? viewClass.classTeacher.name : "Unassigned"}</p>
+                    <p className="text-white font-semibold text-[15px]">{viewClass.classTeacher ? viewClass.classTeacher.name : "Unassigned"}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Students</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass._count.students} / {viewClass.capacity}</p>
+                    <p className="text-white font-semibold text-[15px]">{viewClass._count.students} / {viewClass.capacity}</p>
                   </div>
                 </div>
               </div>
               <div className="flex justify-end mt-6">
-                <button onClick={() => setViewClass(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all">Close</button>
+                <button onClick={() => setViewClass(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-white text-[13px] font-medium hover:bg-[#f1f5f9] transition-all">Close</button>
               </div>
             </motion.div>
           </motion.div>
@@ -480,7 +480,7 @@ export default function ClassesPage() {
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Class</h3>
+                <h3 className="text-white font-semibold text-lg">Edit Class</h3>
                 <button onClick={() => setEditClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={async (e) => {
@@ -516,18 +516,18 @@ export default function ClassesPage() {
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Name *</label>
                   <input type="text" required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Display Name</label>
                   <input type="text" value={editForm.displayName} onChange={(e) => setEditForm({ ...editForm, displayName: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
                     <select value={editForm.level} onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "light" }}>
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="nursery">Nursery</option>
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="primary">Primary</option>
@@ -538,7 +538,7 @@ export default function ClassesPage() {
                   <div>
                     <label className="block text-[#475569] text-[13px] mb-1.5">Capacity</label>
                     <input type="number" min="1" value={editForm.capacity} onChange={(e) => setEditForm({ ...editForm, capacity: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 pt-2">

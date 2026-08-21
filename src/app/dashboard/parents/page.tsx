@@ -11,6 +11,7 @@ import {
   X,
   Loader2,
   GraduationCap,
+  Link,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -106,7 +107,7 @@ export default function ParentsPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Parents & Guardians</h1>
+            <h1 className="text-2xl font-bold text-white mb-1">Parents & Guardians</h1>
             <p className="text-[#475569]">
               View all guardians and their linked students
             </p>
@@ -130,10 +131,10 @@ export default function ParentsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[#64748b] text-[13px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
+                <p className="text-3xl font-bold text-white">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
+                <stat.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -147,7 +148,7 @@ export default function ParentsPage() {
         className="card"
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-[#1a1a2e] font-semibold text-lg">All Guardians</h3>
+          <h3 className="text-white font-semibold text-lg">All Guardians</h3>
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
             <input
@@ -155,7 +156,7 @@ export default function ParentsPage() {
               placeholder="Search guardians..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
             />
           </div>
         </div>
@@ -184,14 +185,14 @@ export default function ParentsPage() {
               </thead>
               <tbody>
                 {displayedGuardians.map((g) => (
-                  <tr key={g.id} className="border-b border-white/5 hover:bg-[#f8fafc] transition-all">
+                  <tr key={g.id} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
                     <td className="py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--primary)]/30 to-[var(--accent)]/30 flex items-center justify-center text-white text-[13px] font-bold">
                           {g.firstName[0]}{g.lastName[0]}
                         </div>
                         <div>
-                          <p className="text-[#1a1a2e] font-medium text-[13px]">{g.firstName} {g.lastName}</p>
+                          <p className="text-white font-medium text-[13px]">{g.firstName} {g.lastName}</p>
                           {g.isPrimary && (
                             <span className="px-1.5 py-0.5 rounded text-[10px] bg-[var(--accent)]/20 text-[var(--accent)]">Primary</span>
                           )}
@@ -239,7 +240,7 @@ export default function ParentsPage() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-[#1a1a2e] hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-white hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -254,8 +255,8 @@ export default function ParentsPage() {
                     onClick={() => setCurrentPage(page as number)}
                     className={`w-8 h-8 text-[13px] rounded-lg border transition-all ${
                       currentPage === page
-                        ? "bg-white text-white border-[#1a1a2e]"
-                        : "bg-white text-[#1a1a2e] border-[#e2e8f0] hover:bg-[#f8fafc]"
+                        ? "bg-[var(--primary)] text-white border-[var(--primary)]"
+                        : "bg-white text-white border-[#e2e8f0] hover:bg-[#f8fafc]"
                     }`}
                   >
                     {page}
@@ -265,7 +266,7 @@ export default function ParentsPage() {
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-[#1a1a2e] hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-white hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>
@@ -280,42 +281,63 @@ export default function ParentsPage() {
             className="modal-overlay">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setViewGuardian(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Guardian Details</h3>
-                <button onClick={() => setViewGuardian(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-lg font-bold">
+                    {viewGuardian.firstName[0]}{viewGuardian.lastName[0]}
+                  </div>
+                  <h3 className="text-white font-semibold text-lg">Guardian Details</h3>
+                </div>
+                <button onClick={() => setViewGuardian(null)} className="btn btn-secondary"><X className="w-5 h-5" /></button>
               </div>
+              <div className="border-t border-[#e2e8f0] mb-6"></div>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Full Name</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.firstName} {viewGuardian.lastName}</p>
+                    <p className="text-white font-semibold text-[15px]">{viewGuardian.firstName} {viewGuardian.lastName}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Relationship</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.relationship}</p>
+                    <p className="text-white font-semibold text-[15px]">{viewGuardian.relationship}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Phone</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.phone}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-white font-semibold text-[15px]">{viewGuardian.phone}</p>
+                      <a href={`tel:${viewGuardian.phone}`} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 text-[11px] font-medium hover:bg-blue-100 transition-all">
+                        <Phone className="w-3 h-3" /> Call
+                      </a>
+                    </div>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Email</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.email || "—"}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-white font-semibold text-[15px] truncate">{viewGuardian.email || "—"}</p>
+                      {viewGuardian.email && (
+                        <a href={`mailto:${viewGuardian.email}`} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-medium hover:bg-emerald-100 transition-all">
+                          <Mail className="w-3 h-3" /> Email
+                        </a>
+                      )}
+                    </div>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                     <p className="text-[#64748b] text-[11px] mb-1">Occupation</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.occupation || "—"}</p>
+                    <p className="text-white font-semibold text-[15px]">{viewGuardian.occupation || "—"}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <p className="text-[#64748b] text-[11px] mb-1">Linked Student</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.student.firstName} {viewGuardian.student.lastName}</p>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Link className="w-3 h-3 text-[#64748b]" />
+                      <p className="text-[#64748b] text-[11px]">Linked Student</p>
+                    </div>
+                    <p className="text-white font-semibold text-[15px]">{viewGuardian.student.firstName} {viewGuardian.student.lastName}</p>
                     <p className="text-[#64748b] text-[11px] mt-0.5">{viewGuardian.student.admissionNumber} &middot; {viewGuardian.student.class?.displayName || "—"}</p>
                   </div>
                 </div>
               </div>
               <div className="flex justify-end mt-6">
-                <button onClick={() => setViewGuardian(null)} className="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all">Close</button>
+                <button onClick={() => setViewGuardian(null)} className="btn btn-secondary px-5 py-2.5 text-[13px] font-medium">Close</button>
               </div>
             </motion.div>
           </motion.div>

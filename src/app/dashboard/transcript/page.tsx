@@ -346,13 +346,13 @@ export default function TranscriptPage() {
     <motion.div {...fadeIn} className={`space-y-5 ${printMode ? "hidden" : ""}`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[22px] font-bold text-[#1a1a2e] font-display tracking-tight flex items-center gap-2.5">
+          <h1 className="text-[22px] font-bold text-white font-display tracking-tight flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center">
-              <GraduationCap className="w-[18px] h-[18px] text-[#1a1a2e]" />
+              <GraduationCap className="w-[18px] h-[18px] text-white" />
             </div>
             Academic Transcript
           </h1>
-          <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">Cumulative student transcript with term-by-term breakdown</p>
+          <p className="text-[#64748b] text-[12px] mt-1 ml-[46px]">Cumulative student transcript with term-by-term breakdown</p>
         </div>
         {selectedStudent && termGradesData.length > 0 && (
           <div className="flex gap-3">
@@ -387,7 +387,7 @@ export default function TranscriptPage() {
         </div>
         <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
           <p className="text-[#64748b] text-[12px]">Overall Average</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{overallAvg}%</p>
+                    <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{overallAvg}%</p>
         </div>
       </div>
 
@@ -517,11 +517,11 @@ export default function TranscriptPage() {
                           return (
                             <tr key={g.id || i} className="border-b border-[#e2e8f0] hover:bg-[#f1f5f9] transition">
                               <td className="py-2.5 text-[#64748b] text-[11px]">{i + 1}</td>
-                              <td className="py-2.5 text-[#1a1a2e] text-[12px] font-medium">{g.subject?.name || "—"}</td>
+                               <td className="py-2.5 text-[#1a1a2e] text-[12px] font-medium">{g.subject?.name || "—"}</td>
                               <td className="py-2.5 text-[#475569] text-[12px] text-center">{g.ca1 ?? "—"}</td>
                               <td className="py-2.5 text-[#475569] text-[12px] text-center">{g.ca2 ?? "—"}</td>
                               <td className="py-2.5 text-[#475569] text-[12px] text-center">{g.exam ?? "—"}</td>
-                              <td className="py-2.5 text-[#1a1a2e] text-[12px] font-bold text-center">{total}</td>
+                               <td className="py-2.5 text-[#1a1a2e] text-[12px] font-bold text-center">{total}</td>
                               <td className="py-2.5 text-center">
                                 <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${getGradeColor(gradeStr)}`}>
                                   {gradeStr}
@@ -556,10 +556,10 @@ export default function TranscriptPage() {
                     <tbody>
                       {termGradesData.map((tg) => (
                         <tr key={tg.term.id} className="border-b border-[#e2e8f0]">
-                          <td className="py-2.5 text-[#1a1a2e] text-[12px] font-medium">{tg.term.name}</td>
+                           <td className="py-2.5 text-[#1a1a2e] text-[12px] font-medium">{tg.term.name}</td>
                           <td className="py-2.5 text-[#64748b] text-[12px] text-center">{tg.term.academicYear}</td>
                           <td className="py-2.5 text-[#64748b] text-[12px] text-center">{tg.grades.length}</td>
-                          <td className="py-2.5 text-[#1a1a2e] text-[12px] font-bold text-center">{tg.avgScore}%</td>
+                           <td className="py-2.5 text-[#1a1a2e] text-[12px] font-bold text-center">{tg.avgScore}%</td>
                           <td className="py-2.5 text-[var(--accent)] text-[12px] font-bold text-center">{tg.termGPA.toFixed(2)}</td>
                         </tr>
                       ))}
@@ -574,7 +574,7 @@ export default function TranscriptPage() {
                   </div>
                   <div className="text-center p-4 rounded-xl bg-[#f8fafc]">
                     <p className="text-[#64748b] text-[10px] uppercase tracking-wider">Overall Average</p>
-                    <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{overallAvg}%</p>
+          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{overallAvg}%</p>
                   </div>
                   <div className="text-center p-4 rounded-xl bg-[#f8fafc]">
                     <p className="text-[#64748b] text-[10px] uppercase tracking-wider">Total Subjects</p>

@@ -139,7 +139,7 @@ export default function PaymentsPage() {
           <div className="flex gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-[#f1f5f9] transition-all"
+              className="btn btn-secondary"
             >
               <Download className="w-4 h-4" />
               Export
@@ -163,7 +163,7 @@ export default function PaymentsPage() {
                 <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
+                <stat.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -244,12 +244,12 @@ export default function PaymentsPage() {
               {payments.map((payment, idx) => (
                 <tr key={payment.id} className={`border-b border-[#e2e8f0] hover:bg-[#f1f5f9] transition-all ${idx % 2 === 1 ? "bg-[#f8fafc]" : ""}`}>
                  <td className="py-3 px-4">
-                   <p className="text-[#1a1a2e] font-medium text-[13px]">
-                     {payment.student.firstName} {payment.student.lastName}
-                   </p>
+                    <p className="text-[#1a1a2e] font-medium text-[13px]">
+                      {payment.student.firstName} {payment.student.lastName}
+                    </p>
                    <p className="text-[#64748b] text-[12px]">{payment.student.admissionNumber}</p>
                  </td>
-                 <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{formatNaira(payment.amount)}</td>
+                  <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{formatNaira(payment.amount)}</td>
                  <td className="py-3 px-4">
                    <span className="px-2 py-1 rounded-lg bg-[#f8fafc] text-[#475569] text-[12px] capitalize">
                      {payment.method?.replace("_", " ") || "—"}
@@ -302,8 +302,8 @@ export default function PaymentsPage() {
                     onClick={() => fetchPayments(pageNum)}
                     className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition ${
                       pagination.page === pageNum
-                        ? "bg-[var(--primary)] text-[#1a1a2e]"
-                        : "bg-[#f8fafc] text-[#64748b] hover:bg-[#f1f5f9]"
+                        ? "bg-[var(--primary)] text-white"
+                        : "bg-[#f8fafc] text-[#64748b] hover:bg-[#f1f5f9] border border-[#e2e8f0]"
                     }`}
                   >
                     {pageNum}

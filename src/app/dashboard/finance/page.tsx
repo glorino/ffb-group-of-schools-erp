@@ -241,9 +241,9 @@ export default function FinancePage() {
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[22px] font-bold text-white/95 tracking-tight flex items-center gap-2.5">
+          <h1 className="text-[22px] font-bold text-[#1a1a2e] tracking-tight flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-              <CreditCard className="w-[18px] h-[18px] text-[#1a1a2e]" />
+              <CreditCard className="w-[18px] h-[18px] text-white" />
             </div>
             Finance
           </h1>
@@ -277,7 +277,7 @@ export default function FinancePage() {
 
       <div className="flex gap-1 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-1.5">
         {tabs.map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium capitalize transition-all duration-200 ${tab === t ? "bg-white text-[#1a1a2e] shadow-sm border border-[#e2e8f0]" : "text-[#94a3b8] hover:text-[#475569] hover:bg-white/50"}`}>
+          <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium capitalize transition-all duration-200 ${tab === t ? "bg-white text-white shadow-sm border border-[#e2e8f0]" : "text-[#94a3b8] hover:text-[#475569] hover:bg-white/50"}`}>
             {t}
           </button>
         ))}
@@ -295,7 +295,7 @@ export default function FinancePage() {
               <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
                 <div className="flex items-center justify-between mb-3">
                   <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                    <stat.icon className="w-5 h-5 text-[#1a1a2e]" />
+                    <stat.icon className="w-5 h-5 text-white" />
                   </div>
                   <span className={`flex items-center gap-1 text-[11px] font-semibold ${stat.up ? "text-[#16a34a]" : "text-[#dc2626]"}`}>
                     {stat.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
@@ -378,7 +378,7 @@ export default function FinancePage() {
           <div className="p-4 border-b border-[#e2e8f0]">
             <div className="relative max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
-              <input type="text" placeholder="Search payments..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition" />
+              <input type="text" placeholder="Search payments..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50 transition" />
             </div>
           </div>
           {loading ? (
@@ -426,7 +426,7 @@ export default function FinancePage() {
             <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Invoices</h3>
             <div className="relative max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
-              <input type="text" placeholder="Search invoices..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition" />
+              <input type="text" placeholder="Search invoices..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50 transition" />
             </div>
           </div>
           {loading ? (
@@ -485,7 +485,7 @@ export default function FinancePage() {
                     <h3 className="text-[#1a1a2e] font-semibold text-lg">Create Invoice</h3>
                     <p className="text-[#64748b] text-xs mt-0.5">Generate a new fee invoice for a student</p>
                   </div>
-                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-colors">
+                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-colors">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -493,7 +493,7 @@ export default function FinancePage() {
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div className="relative">
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">Student *</label>
-                  <button type="button" onClick={() => setShowStudentDropdown(!showStudentDropdown)} className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between">
+                  <button type="button" onClick={() => setShowStudentDropdown(!showStudentDropdown)} className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-[13px] focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between">
                     <span className={selectedStudentName ? "text-[#1a1a2e]" : "text-[#64748b]"}>{selectedStudentName || "Select a student..."}</span>
                     <ChevronDown className={`w-4 h-4 text-[#64748b] transition-transform ${showStudentDropdown ? "rotate-180" : ""}`} />
                   </button>
@@ -507,7 +507,7 @@ export default function FinancePage() {
                           <p className="text-[#64748b] text-xs text-center py-4">No students found</p>
                         ) : (
                           filteredStudents.map(s => (
-                            <button key={s.id} type="button" onClick={() => { setForm({ ...form, studentId: s.id }); setSelectedStudentName(`${s.firstName} ${s.lastName} (${s.admissionNumber})`); setShowStudentDropdown(false); setStudentSearch(""); }} className={`w-full px-3 py-2 text-left text-sm hover:bg-[#f1f5f9] transition-colors flex items-center justify-between ${form.studentId === s.id ? "bg-emerald-500/10 text-[#1a1a2e]" : "text-[#1a1a2e]"}`}>
+                            <button key={s.id} type="button" onClick={() => { setForm({ ...form, studentId: s.id }); setSelectedStudentName(`${s.firstName} ${s.lastName} (${s.admissionNumber})`); setShowStudentDropdown(false); setStudentSearch(""); }} className={`w-full px-3 py-2 text-left text-[13px] hover:bg-[#f1f5f9] transition-colors flex items-center justify-between ${form.studentId === s.id ? "bg-emerald-500/10 text-[#1a1a2e]" : "text-[#1a1a2e]"}`}>
                               <div><p className="font-medium text-xs">{s.firstName} {s.lastName}</p><p className="text-[#64748b] text-[10px]">{s.admissionNumber} · {s.class?.name || "—"}</p></div>
                               {form.studentId === s.id && <div className="w-2 h-2 rounded-full bg-[var(--accent)]" />}
                             </button>
@@ -522,29 +522,29 @@ export default function FinancePage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Amount *</label>
-                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" placeholder="0" />
+                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="0" />
                   </div>
                   <div>
                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Due Date *</label>
-                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
+                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
                   </div>
                 </div>
                 ) : (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Instalment Amount *</label>
-                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" placeholder="Enter instalment amount" />
+                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Enter instalment amount" />
                   </div>
                   <div>
                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Due Date *</label>
-                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
+                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
                   </div>
                 </div>
                 )}
 
                 <div>
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">School Fee *</label>
-                  <select value={form.schoolFeeId} onChange={(e) => { setForm({ ...form, schoolFeeId: e.target.value }); const f = fees.find(fe => fe.id === e.target.value); setSelectedFeeName(f ? `${f.name} (${f.type})` : ""); }} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer" style={{ colorScheme: "light" }}>
+                  <select value={form.schoolFeeId} onChange={(e) => { setForm({ ...form, schoolFeeId: e.target.value }); const f = fees.find(fe => fe.id === e.target.value); setSelectedFeeName(f ? `${f.name} (${f.type})` : ""); }} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer" style={{ colorScheme: "light" }}>
                     <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select fee type</option>
                     {fees.map(f => (
                       <option key={f.id} value={f.id} style={{ background: "#ffffff", color: "#1a1a2e" }}>{f.name} — {formatCurrency(f.amount)}</option>
@@ -556,11 +556,11 @@ export default function FinancePage() {
                   <label className="block text-[#475569] text-[13px] mb-1.5">Payment Type</label>
                   <div className="flex gap-3">
                     <button type="button" onClick={() => setForm({ ...form, paymentType: "full" })}
-                      className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium transition-all ${form.paymentType === "full" ? "bg-[var(--primary)] text-[#1a1a2e]" : "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b]"}`}>
+                      className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium transition-all ${form.paymentType === "full" ? "bg-[var(--primary)] text-white" : "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b]"}`}>
                       Full Payment
                     </button>
                     <button type="button" onClick={() => setForm({ ...form, paymentType: "instalment" })}
-                      className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium transition-all ${form.paymentType === "instalment" ? "bg-[var(--primary)] text-[#1a1a2e]" : "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b]"}`}>
+                      className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium transition-all ${form.paymentType === "instalment" ? "bg-[var(--primary)] text-white" : "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b]"}`}>
                       Instalment
                     </button>
                   </div>
@@ -568,7 +568,7 @@ export default function FinancePage() {
 
                 <div>
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">Description</label>
-                  <input type="text" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" placeholder="Optional notes..." />
+                  <input type="text" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Optional notes..." />
                 </div>
 
                 <div className="flex justify-end gap-3 pt-2 border-t border-[#e2e8f0]">

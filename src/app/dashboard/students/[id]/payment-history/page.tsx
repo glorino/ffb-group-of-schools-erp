@@ -87,14 +87,14 @@ export default function StudentPaymentHistoryPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard/students"
-            className="p-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e]/60 hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all"
+            className="p-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-white/60 hover:text-white hover:bg-[#f1f5f9] transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
             <h1 className="text-[22px] font-bold text-white/95 tracking-tight flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-                <Receipt className="w-[18px] h-[18px] text-[#1a1a2e]" />
+                <Receipt className="w-[18px] h-[18px] text-white" />
               </div>
               Payment History
             </h1>
@@ -154,11 +154,11 @@ export default function StudentPaymentHistoryPage() {
                 <div
                   className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}
                 >
-                  <stat.icon className="w-5 h-5 text-[#1a1a2e]" />
+                  <stat.icon className="w-5 h-5 text-white" />
                 </div>
                 <p className="text-[#94a3b8] text-[11px]">{stat.label}</p>
               </div>
-              <p className="text-[#1a1a2e] text-xl font-bold">{stat.value}</p>
+              <p className="text-white text-xl font-bold">{stat.value}</p>
             </motion.div>
           ))}
         </div>
@@ -204,7 +204,7 @@ export default function StudentPaymentHistoryPage() {
                           ? new Date(p.paidAt).toLocaleDateString()
                           : "—"}
                       </td>
-                      <td className="px-5 py-3.5 text-[#1a1a2e] text-[13px] font-semibold">
+                      <td className="px-5 py-3.5 text-white text-[13px] font-semibold">
                         {"\u20A6"}
                         {(p.amount || 0).toLocaleString()}
                       </td>

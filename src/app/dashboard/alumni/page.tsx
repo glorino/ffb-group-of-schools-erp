@@ -172,7 +172,7 @@ export default function AlumniPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Alumni Portal</h1>
+            <h1 className="text-2xl font-bold text-white mb-1">Alumni Portal</h1>
             <p className="text-[#475569] text-[13px]">
               Connect with alumni, manage networking, donations, and mentorship
             </p>
@@ -180,13 +180,13 @@ export default function AlumniPage() {
           <div className="flex gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all"
+              className="btn btn-secondary"
             >
               Export CSV
             </button>
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-medium hover:opacity-90 transition-all"
+              className="btn btn-primary"
             >
               <Plus className="w-4 h-4" />
               Add Alumni
@@ -210,7 +210,7 @@ export default function AlumniPage() {
                 <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
+                <stat.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -396,7 +396,7 @@ export default function AlumniPage() {
                   value={form.graduationYear}
                   onChange={(e) => setForm({ ...form, graduationYear: e.target.value })}
                   placeholder="e.g. 2015"
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
               <div>
@@ -406,7 +406,7 @@ export default function AlumniPage() {
                   value={form.university}
                   onChange={(e) => setForm({ ...form, university: e.target.value })}
                   placeholder="University name"
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
               <div>
@@ -416,7 +416,7 @@ export default function AlumniPage() {
                   value={form.degree}
                   onChange={(e) => setForm({ ...form, degree: e.target.value })}
                   placeholder="e.g. B.Sc Computer Science"
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
               <div>
@@ -426,7 +426,7 @@ export default function AlumniPage() {
                   value={form.industry}
                   onChange={(e) => setForm({ ...form, industry: e.target.value })}
                   placeholder="e.g. Technology"
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -437,7 +437,7 @@ export default function AlumniPage() {
                     value={form.currentEmployer}
                     onChange={(e) => setForm({ ...form, currentEmployer: e.target.value })}
                     placeholder="Company name"
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   />
                 </div>
                 <div>
@@ -447,7 +447,7 @@ export default function AlumniPage() {
                     value={form.currentPosition}
                     onChange={(e) => setForm({ ...form, currentPosition: e.target.value })}
                     placeholder="Job title"
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   />
                 </div>
               </div>
@@ -458,14 +458,14 @@ export default function AlumniPage() {
                   onChange={(e) => setForm({ ...form, biography: e.target.value })}
                   placeholder="Brief bio..."
                   rows={3}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
                 />
               </div>
               <div className="flex gap-2 mt-4">
                 <button
                   onClick={handleAddAlumni}
                   disabled={submitting}
-                  className="flex-1 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:opacity-90 transition flex items-center justify-center gap-2"
+                  className="flex-1 btn btn-primary"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   {submitting ? "Creating..." : "Add Alumni"}
@@ -507,21 +507,21 @@ export default function AlumniPage() {
                 <input type="text" value={messageModal.subject}
                   onChange={(e) => setMessageModal({ ...messageModal, subject: e.target.value })}
                   placeholder="e.g. Mentorship Inquiry"
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" />
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
               </div>
               <div>
                 <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Message</label>
                 <textarea rows={4} value={messageModal.body}
                   onChange={(e) => setMessageModal({ ...messageModal, body: e.target.value })}
                   placeholder="Type your message..."
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none" />
               </div>
               <div className="flex gap-2 mt-4">
                 <button onClick={() => {
                   toast.success(`Message sent to ${messageModal.alumni.user?.name || "alumni"}`);
                   setMessageModal(null);
                 }} disabled={!messageModal.subject || !messageModal.body}
-                  className="flex-1 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:opacity-90 transition disabled:opacity-50">
+                  className="flex-1 btn btn-primary disabled:opacity-50">
                   Send Message
                 </button>
                 <button onClick={() => setMessageModal(null)}

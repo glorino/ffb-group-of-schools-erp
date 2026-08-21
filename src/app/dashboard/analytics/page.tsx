@@ -338,7 +338,7 @@ export default function AnalyticsPage() {
             className="stat-card"
           >
             <div className={`stat-card-icon bg-gradient-to-br ${kpi.color}`}>
-              <kpi.icon className="w-6 h-6 text-[#1a1a2e]" />
+              <kpi.icon className="w-6 h-6 text-white" />
             </div>
             <div className="stat-card-content">
               <p className="stat-card-label">{kpi.label}</p>

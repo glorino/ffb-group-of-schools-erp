@@ -272,7 +272,7 @@ export default function LibraryPage() {
                 <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
+                <stat.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -425,7 +425,7 @@ export default function LibraryPage() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay bg-black/60 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -433,7 +433,7 @@ export default function LibraryPage() {
           >
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Book</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -444,7 +444,7 @@ export default function LibraryPage() {
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. Mathematics for Junior Secondary"
                 />
               </div>
@@ -454,7 +454,7 @@ export default function LibraryPage() {
                   type="text"
                   value={form.author}
                   onChange={(e) => setForm({ ...form, author: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. A.O. Adesoji"
                 />
               </div>
@@ -465,7 +465,7 @@ export default function LibraryPage() {
                     type="text"
                     value={form.isbn}
                     onChange={(e) => setForm({ ...form, isbn: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="978-0123456789"
                   />
                 </div>
@@ -475,7 +475,7 @@ export default function LibraryPage() {
                     type="number"
                     value={form.copies}
                     onChange={(e) => setForm({ ...form, copies: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. 50"
                   />
                 </div>
@@ -486,7 +486,7 @@ export default function LibraryPage() {
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                   style={{ colorScheme: "light" }}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Textbook</option>
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Literature</option>
@@ -501,7 +501,7 @@ export default function LibraryPage() {
                   type="text"
                   value={form.publisher}
                   onChange={(e) => setForm({ ...form, publisher: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. Heinemann"
                 />
               </div>
@@ -509,14 +509,14 @@ export default function LibraryPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
+                  className="flex-1 btn btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[var(--primary)]/25"
+                  className="flex-1 btn btn-primary"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Add Book"}
                 </button>
@@ -527,7 +527,7 @@ export default function LibraryPage() {
       )}
 
       {showIssueModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay bg-black/60 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -535,7 +535,7 @@ export default function LibraryPage() {
           >
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Issue Book</h2>
-              <button onClick={() => setShowIssueModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
+              <button onClick={() => setShowIssueModal(false)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -546,7 +546,7 @@ export default function LibraryPage() {
                   type="text"
                   value={issueForm.studentId}
                   onChange={(e) => setIssueForm({ ...issueForm, studentId: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. STU-2024-001"
                   required
                 />
@@ -557,7 +557,7 @@ export default function LibraryPage() {
                   value={issueForm.bookId}
                   onChange={(e) => setIssueForm({ ...issueForm, bookId: e.target.value })}
                   style={{ colorScheme: "light" }}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   required
                 >
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">Select a book</option>
@@ -575,7 +575,7 @@ export default function LibraryPage() {
                   value={issueForm.dueDate}
                   onChange={(e) => setIssueForm({ ...issueForm, dueDate: e.target.value })}
                   style={{ colorScheme: "light" }}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   required
                 />
               </div>
@@ -583,14 +583,14 @@ export default function LibraryPage() {
                 <button
                   type="button"
                   onClick={() => setShowIssueModal(false)}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
+                  className="flex-1 btn btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25"
+                  className="flex-1 btn btn-primary"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Issue Book"}
                 </button>
@@ -609,7 +609,7 @@ export default function LibraryPage() {
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewBook.title}</h2>
-              <button onClick={() => setViewBook(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
+              <button onClick={() => setViewBook(null)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -704,8 +704,8 @@ export default function LibraryPage() {
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 pt-2">
-                  <button type="button" onClick={() => setEditBook(null)} className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">Cancel</button>
-                  <button type="submit" className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all shadow-lg shadow-[var(--primary)]/25">Save Changes</button>
+                  <button type="button" onClick={() => setEditBook(null)} className="btn btn-secondary">Cancel</button>
+                  <button type="submit" className="btn btn-primary">Save Changes</button>
                 </div>
               </form>
             </motion.div>
@@ -714,13 +714,13 @@ export default function LibraryPage() {
       </AnimatePresence>
 
       {showPenalties && (
-        <div className="modal-overlay" onClick={() => setShowPenalties(false)}>
+        <div className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowPenalties(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
             className="modal-content">
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Penalty Details</h2>
-              <button onClick={() => setShowPenalties(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowPenalties(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">

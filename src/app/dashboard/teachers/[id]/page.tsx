@@ -148,7 +148,7 @@ export default function TeacherDetailPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <button
           onClick={() => router.push("/dashboard/teachers")}
-          className="flex items-center gap-2 text-[#64748b] hover:text-[#1a1a2e] text-sm mb-4 transition-colors"
+          className="flex items-center gap-2 text-[#64748b] hover:text-white text-sm mb-4 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Teachers
@@ -158,7 +158,7 @@ export default function TeacherDetailPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20"
+        className="card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20 shadow-sm"
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-2xl font-bold shrink-0">
@@ -166,10 +166,10 @@ export default function TeacherDetailPage() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-bold text-[#1a1a2e]">
+              <h1 className="text-xl sm:text-2xl font-bold text-white">
                 {teacher.firstName} {teacher.middleName ? teacher.middleName + " " : ""}{teacher.lastName}
               </h1>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${teacher.status === "active" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${teacher.status === "active" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
                 {teacher.status}
               </span>
             </div>
@@ -183,15 +183,15 @@ export default function TeacherDetailPage() {
           <div className="flex gap-2 shrink-0">
             {editing ? (
               <>
-                <button onClick={handleSave} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent)] text-black text-sm font-semibold hover:brightness-110 transition-all">
+                <button onClick={handleSave} className="flex items-center gap-2 btn btn-primary">
                   <Save className="w-4 h-4" /> Save
                 </button>
-                <button onClick={() => setEditing(false)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e]/60 text-sm hover:bg-[#f1f5f9] transition-all">
+                <button onClick={() => setEditing(false)} className="flex items-center gap-2 btn btn-secondary">
                   <X className="w-4 h-4" /> Cancel
                 </button>
               </>
             ) : (
-              <button onClick={startEdit} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-[#f1f5f9] transition-all">
+              <button onClick={startEdit} className="flex items-center gap-2 btn btn-secondary">
                 <Edit className="w-4 h-4" /> Edit Profile
               </button>
             )}
@@ -209,10 +209,10 @@ export default function TeacherDetailPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[#64748b] text-[12px] mb-1">{s.label}</p>
-                <p className="text-2xl sm:text-3xl font-bold text-[#1a1a2e]">{s.value}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-white">{s.value}</p>
               </div>
               <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center`}>
-                <s.icon className="w-5 h-5 text-[#1a1a2e]" />
+                <s.icon className="w-5 h-5 text-white" />
               </div>
             </div>
           </motion.div>
@@ -225,7 +225,7 @@ export default function TeacherDetailPage() {
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === t.id ? "bg-[var(--primary)] text-[#1a1a2e]" : "text-[#64748b] hover:text-[#1a1a2e]"
+              tab === t.id ? "bg-[var(--primary)] text-white shadow-sm" : "text-[#64748b] hover:text-white"
             }`}
           >
             <t.icon className="w-4 h-4" />
@@ -237,7 +237,7 @@ export default function TeacherDetailPage() {
       {tab === "overview" && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Personal Information</h3>
+            <h3 className="text-white font-semibold text-lg mb-4">Personal Information</h3>
             {editing ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
@@ -254,7 +254,7 @@ export default function TeacherDetailPage() {
                       type="text"
                       value={editForm[f.key] || ""}
                       onChange={(e) => setEditForm({ ...editForm, [f.key]: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 ))}
@@ -275,24 +275,26 @@ export default function TeacherDetailPage() {
                 ].map((item, i) => (
                   <div key={i} className="flex flex-col">
                     <span className="text-[#64748b] text-[12px] mb-1">{item.label}</span>
-                    <span className="text-[#1a1a2e] text-sm font-medium">{item.value}</span>
+                    <span className="text-white text-sm font-medium">{item.value}</span>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
+          <hr className="border-[#e2e8f0]" />
+
           {teacher.user && (
             <div className="card">
-              <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Account Details</h3>
+              <h3 className="text-white font-semibold text-lg mb-4">Account Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col">
                   <span className="text-[#64748b] text-[12px] mb-1">Account Email</span>
-                  <span className="text-[#1a1a2e] text-sm font-medium">{teacher.user.email}</span>
+                  <span className="text-white text-sm font-medium">{teacher.user.email}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[#64748b] text-[12px] mb-1">Last Login</span>
-                  <span className="text-[#1a1a2e] text-sm font-medium">
+                  <span className="text-white text-sm font-medium">
                     {teacher.user.lastLoginAt ? new Date(teacher.user.lastLoginAt).toLocaleString() : "Never"}
                   </span>
                 </div>
@@ -300,9 +302,11 @@ export default function TeacherDetailPage() {
             </div>
           )}
 
+          <hr className="border-[#e2e8f0]" />
+
           {teacher.user?.image && (
             <div className="card">
-              <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Profile Photo</h3>
+              <h3 className="text-white font-semibold text-lg mb-4">Profile Photo</h3>
               <img src={teacher.user.image} alt={teacher.firstName} className="w-24 h-24 rounded-xl object-cover" />
             </div>
           )}
@@ -313,7 +317,7 @@ export default function TeacherDetailPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
           {groupedTimetable.map(({ day, entries }) => (
             <div key={day} className="card">
-              <h4 className="text-[#1a1a2e] font-semibold text-sm mb-3 capitalize">{day.toLowerCase()}</h4>
+              <h4 className="text-white font-semibold text-sm mb-3 capitalize">{day.toLowerCase()}</h4>
               {entries.length === 0 ? (
                 <p className="text-[#94a3b8] text-[13px]">No classes scheduled</p>
               ) : (
@@ -321,12 +325,12 @@ export default function TeacherDetailPage() {
                   {entries.map((e) => (
                     <div key={e.id} className="flex items-center gap-4 p-3 rounded-xl bg-[#f8fafc]">
                       <div className="text-center shrink-0 w-16">
-                        <p className="text-[#1a1a2e] text-[13px] font-medium">{e.startTime}</p>
+                        <p className="text-white text-[13px] font-medium">{e.startTime}</p>
                         <p className="text-[#64748b] text-[11px]">{e.endTime}</p>
                       </div>
                       <div className="w-px h-8 bg-white/10" />
                       <div className="flex-1">
-                        <p className="text-[#1a1a2e] text-[13px] font-medium">{e.subject || "General"}</p>
+                        <p className="text-white text-[13px] font-medium">{e.subject || "General"}</p>
                         <p className="text-[#64748b] text-[12px]">{e.class.displayName || e.class.name}{e.room ? ` • ${e.room}` : ""}</p>
                       </div>
                       <span className="px-2 py-1 rounded-lg text-[11px] bg-[var(--primary)]/20 text-[var(--primary)]">Lesson</span>
@@ -348,7 +352,7 @@ export default function TeacherDetailPage() {
       {tab === "subjects" && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
           <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Assigned Subjects</h3>
+            <h3 className="text-white font-semibold text-lg mb-4">Assigned Subjects</h3>
             {teacher.teacherSubjects.length === 0 ? (
               <p className="text-[#64748b] text-sm">No subjects assigned</p>
             ) : (
@@ -360,7 +364,7 @@ export default function TeacherDetailPage() {
                         <BookOpen className="w-5 h-5 text-[var(--accent)]" />
                       </div>
                       <div>
-                        <p className="text-[#1a1a2e] text-[13px] font-medium">{ts.subject.name}</p>
+                        <p className="text-white text-[13px] font-medium">{ts.subject.name}</p>
                         <p className="text-[#64748b] text-[11px]">Assigned Subject</p>
                       </div>
                     </div>
@@ -371,7 +375,7 @@ export default function TeacherDetailPage() {
           </div>
 
           <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Assigned Classes</h3>
+            <h3 className="text-white font-semibold text-lg mb-4">Assigned Classes</h3>
             {assignedClasses.length === 0 ? (
               <p className="text-[#64748b] text-sm">No classes assigned</p>
             ) : (
@@ -383,7 +387,7 @@ export default function TeacherDetailPage() {
                         <MapPin className="w-5 h-5 text-emerald-400" />
                       </div>
                       <div>
-                        <p className="text-[#1a1a2e] text-[13px] font-medium">{c.displayName || c.name}</p>
+                        <p className="text-white text-[13px] font-medium">{c.displayName || c.name}</p>
                         <p className="text-[#64748b] text-[11px]">Class</p>
                       </div>
                     </div>

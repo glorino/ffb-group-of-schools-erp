@@ -197,7 +197,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
         ))}
       </div>
 
-      <p className="text-[#64748b] text-[12px] mb-3 font-medium uppercase tracking-wider">Weekly Timetable</p>
+      <p className="text-[#1a1a2e] text-[12px] mb-3 font-medium uppercase tracking-wider">Weekly Timetable</p>
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
@@ -233,7 +233,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                           {entry ? (
                             <>
                               <div>
-                                <p className="text-[#1a1a2e] text-[11px] font-medium">{entry.teacher.firstName} {entry.teacher.lastName}</p>
+                                <p className="text-[#1a1a2e] text-[13px] font-medium">{entry.teacher.firstName} {entry.teacher.lastName}</p>
                                 <p className="text-[#94a3b8] text-[9px]">{entry.room || "—"}</p>
                               </div>
                               <button
@@ -260,7 +260,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
       <AnimatePresence>
         {showModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="modal-overlay">
+            className="modal-overlay bg-black/60 backdrop-blur-sm">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
               className="bg-white rounded-2xl border border-[#e2e8f0] p-6 w-full max-w-md shadow-2xl">
               <div className="flex items-center justify-between mb-6">
@@ -307,14 +307,14 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                   <label className="text-[#64748b] text-[12px] mb-1 block">Subject</label>
                   <input type="text" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })}
                     placeholder="e.g. Mathematics"
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 focus:outline-none focus:border-[var(--primary)]" />
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-[#64748b] text-[12px] mb-1 block">Room</label>
                     <input type="text" value={form.room} onChange={e => setForm({ ...form, room: e.target.value })}
                       placeholder="e.g. Room 101"
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
                     <label className="text-[#64748b] text-[12px] mb-1 block">Type</label>
@@ -348,7 +348,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
       <AnimatePresence>
         {detailSlot && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="modal-overlay">
+            className="modal-overlay bg-black/60 backdrop-blur-sm">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
               className="bg-white rounded-2xl border border-[#e2e8f0] p-6 w-full max-w-md shadow-2xl">
               <div className="flex items-center justify-between mb-4">
@@ -363,11 +363,11 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                 <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Class</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.class.displayName || detailSlot.class.name}</span></div>
                 <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Room</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.room || "—"}</span></div>
                 <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Type</span>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
-                    detailSlot.type === "lesson" ? "bg-[#dbeafe] text-[#2563eb]" :
-                    detailSlot.type === "break" ? "bg-[#fef3c7] text-[#d97706]" :
-                    detailSlot.type === "lab" ? "bg-[#f3e8ff] text-[#7c3aed]" :
-                    "bg-white/[0.06] text-[#64748b]"
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
+                      detailSlot.type === "lesson" ? "bg-[#dbeafe] text-[#2563eb]" :
+                      detailSlot.type === "break" ? "bg-[#fef3c7] text-[#d97706]" :
+                      detailSlot.type === "lab" ? "bg-[#f3e8ff] text-[#7c3aed]" :
+                      "bg-[#f1f5f9] text-[#64748b]"
                   }`}>{detailSlot.type}</span>
                 </div>
               </div>

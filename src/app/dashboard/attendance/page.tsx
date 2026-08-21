@@ -13,6 +13,7 @@ import {
   Download,
   Search,
   AlertTriangle,
+  UserCheck,
 } from "lucide-react";
 import { downloadCSV } from "@/lib/exports";
 import { toast } from "sonner";
@@ -31,6 +32,8 @@ export default function AttendancePage() {
   const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showQRScanner, setShowQRScanner] = useState(false);
+  const [notifying, setNotifying] = useState(false);
+  const [admissionInput, setAdmissionInput] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -56,6 +59,24 @@ export default function AttendancePage() {
     { label: "Absent", value: stats.absent, icon: XCircle, color: "from-red-500 to-red-600" },
     { label: "Late", value: stats.late, icon: Clock, color: "from-yellow-500 to-yellow-600" },
   ];
+
+  const markPresent = async (admissionNumber: string) => {
+    if (!admissionNumber.trim()) { toast.error("Please enter an admission number"); return; }
+    try {
+      const res = await fetch(`/api/students?search=${admissionNumber}`);
+      const data = await res.json();
+      const student = data.students?.[0];
+      if (student) {
+        await fetch("/api/attendance", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ studentId: student.id, date: selectedDate, session: selectedSession, status: "present", classId: student.classId }),
+        });
+        toast.success(`${student.firstName} ${student.lastName} marked present`);
+        setAdmissionInput("");
+      } else { toast.error("Student not found"); }
+    } catch { toast.error("Failed"); }
+  };
 
   return (
     <div className="space-y-5">
@@ -130,7 +151,7 @@ export default function AttendancePage() {
             className="stat-card"
           >
             <div className={`stat-card-icon bg-gradient-to-br ${stat.color}`}>
-              <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
+              <stat.icon className="w-6 h-6 text-white" />
             </div>
             <div className="stat-card-content">
               <p className="stat-card-value">{Number(stat.value).toLocaleString()}</p>
@@ -189,8 +210,8 @@ export default function AttendancePage() {
                       const total = s.present + s.absent + s.late;
                       const rate = total > 0 ? Math.round((s.present / total) * 100) : 0;
                       return (
-                        <tr key={className}>
-                          <td className="text-[#1a1a2e] font-medium">{className}</td>
+                        <tr key={className} className="border-b border-[#e2e8f0]">
+                          <td className="text-white font-medium">{className}</td>
                           <td className="text-[#16a34a]">{s.present}</td>
                           <td className="text-[#dc2626]">{s.absent}</td>
                           <td className="text-[#ca8a04]">{s.late}</td>
@@ -222,11 +243,11 @@ export default function AttendancePage() {
           transition={{ delay: 0.5 }}
           className="dashboard-card"
         >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Today&apos;s Summary</h3>
+          <h3 className="text-white font-semibold text-[16px] mb-5">Today&apos;s Summary</h3>
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[#1a1a2e] text-[13px] font-medium">Present</span>
+                <span className="text-white text-[13px] font-medium">Present</span>
                 <span className="text-[#16a34a] text-[13px] font-bold">
                   {stats.total ? ((stats.present / stats.total) * 100).toFixed(1) : 0}%
                 </span>
@@ -237,7 +258,7 @@ export default function AttendancePage() {
             </div>
             <div className="p-4 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[#1a1a2e] text-[13px] font-medium">Absent</span>
+                <span className="text-white text-[13px] font-medium">Absent</span>
                 <span className="text-[#dc2626] text-[13px] font-bold">
                   {stats.total ? ((stats.absent / stats.total) * 100).toFixed(1) : 0}%
                 </span>
@@ -248,7 +269,7 @@ export default function AttendancePage() {
             </div>
             <div className="p-4 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[#1a1a2e] text-[13px] font-medium">Late</span>
+                <span className="text-white text-[13px] font-medium">Late</span>
                 <span className="text-[#ca8a04] text-[13px] font-bold">
                   {stats.total ? ((stats.late / stats.total) * 100).toFixed(1) : 0}%
                 </span>
@@ -275,10 +296,32 @@ export default function AttendancePage() {
           </div>
           {!isReadOnly && (
             <button
-              onClick={() => toast.success("Notifications sent to parents of absent students")}
+              onClick={async () => {
+                const absentCount = records.filter(r => r.status === "absent").length;
+                if (absentCount === 0) {
+                  toast.error("No absent students to notify");
+                  return;
+                }
+                setNotifying(true);
+                try {
+                  const res = await fetch("/api/attendance/notify-parents", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ date: selectedDate, session: selectedSession }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error || "Failed");
+                  toast.success(`Notifications sent to ${data.notified} parent(s)`);
+                } catch {
+                  toast.error("Failed to send notifications");
+                } finally {
+                  setNotifying(false);
+                }
+              }}
+              disabled={notifying}
               className="btn btn-primary"
             >
-              Notify Parents
+              {notifying ? "Sending..." : "Notify Parents"}
             </button>
           )}
         </div>
@@ -308,8 +351,8 @@ export default function AttendancePage() {
                   </tr>
                 ) : (
                   records.filter(r => r.status === "absent").map((student, i) => (
-                    <tr key={i}>
-                      <td className="text-[#1a1a2e] font-medium">{student.student?.firstName} {student.student?.lastName}</td>
+                    <tr key={i} className="border-b border-[#e2e8f0]">
+                      <td className="text-white font-medium">{student.student?.firstName} {student.student?.lastName}</td>
                       <td className="text-[#475569]">{student.class?.name || student.class?.displayName}</td>
                       <td className="text-[#475569]">{student.notes || "—"}</td>
                       <td>
@@ -326,32 +369,35 @@ export default function AttendancePage() {
       {showQRScanner && (
         <div className="modal-overlay">
           <div className="absolute inset-0 bg-black/60" onClick={() => setShowQRScanner(false)} />
-          <div className="relative bg-white rounded-2xl p-6 w-full max-w-md border border-[#e2e8f0]">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">QR Scanner / Admission Number</h3>
-            <input type="text" placeholder="Scan QR or type admission number..." autoFocus
+          <div className="relative bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl border border-[#e2e8f0]">
+            <div className="flex flex-col items-center text-center mb-6">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4">
+                <UserCheck className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-white font-semibold text-xl">Mark Attendance</h3>
+              <p className="text-[#94a3b8] text-sm mt-1">Enter student admission number to mark present</p>
+            </div>
+            <input
+              type="text"
+              placeholder="Type admission number..."
+              autoFocus
+              value={admissionInput}
+              onChange={(e) => setAdmissionInput(e.target.value)}
               onKeyDown={async (e) => {
                 if (e.key === "Enter") {
-                  const admissionNumber = (e.target as HTMLInputElement).value;
-                  try {
-                    const res = await fetch(`/api/students?search=${admissionNumber}`);
-                    const data = await res.json();
-                    const student = data.students?.[0];
-                    if (student) {
-                      await fetch("/api/attendance", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ studentId: student.id, date: selectedDate, session: selectedSession, status: "present", classId: student.classId }),
-                      });
-                      toast.success(`${student.firstName} ${student.lastName} marked present`);
-                      (e.target as HTMLInputElement).value = "";
-                    } else { toast.error("Student not found"); }
-                  } catch { toast.error("Failed"); }
+                  await markPresent(admissionInput);
                 }
               }}
-              className="w-full px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[15px] focus:outline-none focus:border-[var(--primary)]"
+              className="w-full px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-white text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
             />
-            <p className="text-[#94a3b8] text-[12px] mt-2">Enter student admission number and press Enter</p>
-            <button onClick={() => setShowQRScanner(false)} className="mt-4 w-full py-2.5 rounded-xl bg-white/[0.06] text-[#475569] text-[13px]">Close</button>
+            <div className="flex gap-3 mt-5">
+              <button onClick={() => setShowQRScanner(false)} className="btn btn-secondary flex-1">
+                Close
+              </button>
+              <button onClick={() => markPresent(admissionInput)} className="btn btn-primary flex-1">
+                Mark Present
+              </button>
+            </div>
           </div>
         </div>
       )}

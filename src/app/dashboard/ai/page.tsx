@@ -276,23 +276,23 @@ export default function AIPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">AI Insights</h1>
+            <h1 className="text-2xl font-bold text-white mb-1">AI Insights</h1>
             <p className="text-[#475569] text-[13px]">
               Predictions, recommendations, and risk engine powered by AI
             </p>
           </div>
           <div className="flex gap-3">
-            <button
-              onClick={fetchData}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-[#f1f5f9] transition-all"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Refresh
-            </button>
-            <button onClick={() => window.location.href = "/dashboard/settings"} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all">
-              <Settings className="w-4 h-4" />
-              Configure
-            </button>
+              <button
+                onClick={fetchData}
+                className="btn btn-secondary"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Refresh
+              </button>
+              <button onClick={() => window.location.href = "/dashboard/settings"} className="btn btn-primary">
+                <Settings className="w-4 h-4" />
+                Configure
+              </button>
           </div>
         </div>
       </motion.div>
@@ -312,7 +312,7 @@ export default function AIPage() {
                 <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
+                <stat.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>

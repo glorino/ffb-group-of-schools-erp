@@ -99,7 +99,7 @@ export default function DisciplinePage() {
           <h1 className="text-2xl font-bold text-[#1a1a2e]">Discipline Management</h1>
           <p className="text-[#64748b] text-sm">Track and manage student discipline records</p>
         </div>
-        <button onClick={() => { setShowModal(true); setEditingRecord(null); setForm({ studentId: "", type: "behavior", title: "", details: "", date: new Date().toISOString().split("T")[0], action: "pending" }); }} className="px-4 py-2 bg-gradient-to-r from-[#0039a6] to-[#0055ff] rounded-lg text-white font-medium hover:opacity-90 transition">+ New Record</button>
+        <button onClick={() => { setShowModal(true); setEditingRecord(null); setForm({ studentId: "", type: "behavior", title: "", details: "", date: new Date().toISOString().split("T")[0], action: "pending" }); }} className="btn btn-primary">+ New Record</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -118,15 +118,15 @@ export default function DisciplinePage() {
 
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
         <div className="flex flex-wrap gap-3">
-          <input type="text" placeholder="Search student or title..." value={filter.search} onChange={e => setFilter({ ...filter, search: e.target.value })} className="input-glass flex-1 min-w-[200px]" />
-          <select value={filter.type} onChange={e => setFilter({ ...filter, type: e.target.value })} className="input-glass" style={{ colorScheme: "light" }}>
+          <input type="text" placeholder="Search student or title..." value={filter.search} onChange={e => setFilter({ ...filter, search: e.target.value })} className="px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] flex-1 min-w-[200px] focus:outline-none focus:border-[var(--primary)]" />
+          <select value={filter.type} onChange={e => setFilter({ ...filter, type: e.target.value })} className="px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
             <option value="">All Types</option>
             <option value="behavior">Behavior</option>
             <option value="academic">Academic</option>
             <option value="attendance">Attendance</option>
             <option value="safety">Safety</option>
           </select>
-          <select value={filter.status} onChange={e => setFilter({ ...filter, status: e.target.value })} className="input-glass" style={{ colorScheme: "light" }}>
+          <select value={filter.status} onChange={e => setFilter({ ...filter, status: e.target.value })} className="px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
             <option value="">All Status</option>
             <option value="pending">Pending</option>
             <option value="warning">Warning</option>
@@ -171,13 +171,13 @@ export default function DisciplinePage() {
 
       <AnimatePresence>
         {showModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay" onClick={() => setShowModal(false)}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={e => e.stopPropagation()} className="modal-content">
               <h2 className="text-xl font-bold text-[#1a1a2e] mb-4">{editingRecord ? "Edit Record" : "New Discipline Record"}</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-[#64748b] text-sm mb-1">Student</label>
-                  <select required value={form.studentId} onChange={e => setForm({ ...form, studentId: e.target.value })} className="input-glass w-full" style={{ colorScheme: "light" }}>
+                  <select required value={form.studentId} onChange={e => setForm({ ...form, studentId: e.target.value })} className="px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] w-full focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
                     <option value="">Select student</option>
                     {students.map(s => <option key={s.id} value={s.id}>{s.firstName} {s.lastName} ({s.admissionNumber})</option>)}
                   </select>
@@ -185,7 +185,7 @@ export default function DisciplinePage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[#64748b] text-sm mb-1">Type</label>
-                    <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className="input-glass w-full" style={{ colorScheme: "light" }}>
+                    <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className="px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] w-full focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
                       <option value="behavior">Behavior</option>
                       <option value="academic">Academic</option>
                       <option value="attendance">Attendance</option>
@@ -194,7 +194,7 @@ export default function DisciplinePage() {
                   </div>
                   <div>
                     <label className="block text-[#64748b] text-sm mb-1">Action</label>
-                    <select value={form.action} onChange={e => setForm({ ...form, action: e.target.value })} className="input-glass w-full" style={{ colorScheme: "light" }}>
+                    <select value={form.action} onChange={e => setForm({ ...form, action: e.target.value })} className="px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] w-full focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
                       <option value="pending">Pending</option>
                       <option value="warning">Warning</option>
                       <option value="suspension">Suspension</option>
@@ -205,19 +205,19 @@ export default function DisciplinePage() {
                 </div>
                 <div>
                   <label className="block text-[#64748b] text-sm mb-1">Title</label>
-                  <input required value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input-glass w-full" placeholder="Brief title" />
+                  <input required value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] w-full focus:outline-none focus:border-[var(--primary)]" placeholder="Brief title" />
                 </div>
                 <div>
                   <label className="block text-[#64748b] text-sm mb-1">Details</label>
-                  <textarea value={form.details} onChange={e => setForm({ ...form, details: e.target.value })} className="input-glass w-full" rows={3} placeholder="Detailed description..." />
+                  <textarea value={form.details} onChange={e => setForm({ ...form, details: e.target.value })} className="px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] w-full focus:outline-none focus:border-[var(--primary)]" rows={3} placeholder="Detailed description..." />
                 </div>
                 <div>
                   <label className="block text-[#64748b] text-sm mb-1">Date</label>
-                  <input type="date" required value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="input-glass w-full" style={{ colorScheme: "light" }} />
+                  <input type="date" required value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] w-full focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
                 </div>
                 <div className="modal-footer">
-                  <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-2 border border-[#e2e8f0] rounded-lg text-[#475569] hover:bg-[#f8fafc]">Cancel</button>
-                  <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-[#0039a6] to-[#0055ff] rounded-lg text-white font-medium">{editingRecord ? "Update" : "Create"}</button>
+                  <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary flex-1 py-2">Cancel</button>
+                  <button type="submit" className="btn btn-primary flex-1 py-2">{editingRecord ? "Update" : "Create"}</button>
                 </div>
               </form>
             </motion.div>

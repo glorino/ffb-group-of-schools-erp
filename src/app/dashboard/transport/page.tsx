@@ -202,7 +202,7 @@ export default function TransportPage() {
                 <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
+                <stat.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -313,7 +313,7 @@ export default function TransportPage() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay bg-black/60 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -321,7 +321,7 @@ export default function TransportPage() {
           >
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Vehicle</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -332,7 +332,7 @@ export default function TransportPage() {
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. Bus A1"
                 />
               </div>
@@ -343,7 +343,7 @@ export default function TransportPage() {
                     type="text"
                     value={form.plateNumber}
                     onChange={(e) => setForm({ ...form, plateNumber: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="LAG-123-AB"
                   />
                 </div>
@@ -353,7 +353,7 @@ export default function TransportPage() {
                     value={form.type}
                     onChange={(e) => setForm({ ...form, type: e.target.value })}
                     style={{ colorScheme: "light" }}
-                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   >
                     <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Bus</option>
                     <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Van</option>
@@ -367,7 +367,7 @@ export default function TransportPage() {
                   type="number"
                   value={form.capacity}
                   onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. 45"
                 />
               </div>
@@ -377,7 +377,7 @@ export default function TransportPage() {
                   type="text"
                   value={form.driverName}
                   onChange={(e) => setForm({ ...form, driverName: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. Mr. Chukwuemeka"
                 />
               </div>
@@ -387,7 +387,7 @@ export default function TransportPage() {
                   type="text"
                   value={form.driverPhone}
                   onChange={(e) => setForm({ ...form, driverPhone: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   placeholder="e.g. 08012345678"
                 />
               </div>
@@ -395,14 +395,14 @@ export default function TransportPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
+                  className="flex-1 btn btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[var(--primary)]/25"
+                  className="flex-1 btn btn-primary"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Add Vehicle"}
                 </button>
@@ -413,13 +413,13 @@ export default function TransportPage() {
       )}
 
       {showGPS && (
-        <div className="modal-overlay" onClick={() => setShowGPS(false)}>
+        <div className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowGPS(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
             className="modal-content">
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">GPS Tracking</h2>
-              <button onClick={() => setShowGPS(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowGPS(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
             </div>
             <div className="aspect-video rounded-xl overflow-hidden border border-[#e2e8f0] mb-4">
               <iframe

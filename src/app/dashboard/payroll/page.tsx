@@ -184,7 +184,7 @@ export default function PayrollPage() {
                 <p className="text-2xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <Wallet className="w-6 h-6 text-[#1a1a2e]" />
+                <Wallet className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -257,7 +257,7 @@ export default function PayrollPage() {
                     <td colSpan={7} className="py-16 text-center text-[#94a3b8] text-sm">No payroll entries for this period</td>
                   </tr>
                 ) : filtered.map((p) => (
-                  <tr key={p.id} className="border-b border-white/5 hover:bg-[#f8fafc] transition-all">
+                  <tr key={p.id} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
                     <td className="py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white font-semibold text-xs">
@@ -305,7 +305,7 @@ export default function PayrollPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="modal-overlay" onClick={() => setShowModal(false)}
+            className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -322,7 +322,7 @@ export default function PayrollPage() {
                 <div>
                   <label className="block text-[#64748b] text-[12px] mb-1.5">Teacher *</label>
                   <select value={form.teacherId} onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     style={{ colorScheme: "light" }}>
                     <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select Teacher</option>
                     {teachers.map(t => (
@@ -333,25 +333,25 @@ export default function PayrollPage() {
                 <div>
                   <label className="block text-[#64748b] text-[12px] mb-1.5">Basic Salary *</label>
                   <input type="number" value={form.basicSalary} onChange={(e) => setForm({ ...form, basicSalary: e.target.value })}
-                    placeholder="e.g. 300000" className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                    placeholder="e.g. 300000" className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[#64748b] text-[12px] mb-1.5">Allowances</label>
                     <input type="number" value={form.allowances} onChange={(e) => setForm({ ...form, allowances: e.target.value })}
-                      placeholder="0" className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="0" className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
                     <label className="block text-[#64748b] text-[12px] mb-1.5">Deductions</label>
                     <input type="number" value={form.deductions} onChange={(e) => setForm({ ...form, deductions: e.target.value })}
-                      placeholder="0" className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="0" className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                 </div>
               </div>
               <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#e2e8f0]">
-                <button onClick={() => setShowModal(false)} className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">Cancel</button>
+                <button onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
                 <button onClick={handleCreate} disabled={submitting}
-                  className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-[var(--primary)]/25">
+                  className="btn btn-primary">
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   Create Entry
                 </button>

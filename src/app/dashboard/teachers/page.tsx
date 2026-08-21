@@ -159,7 +159,7 @@ export default function TeachersPage() {
             {row.firstName[0]}{row.lastName[0]}
           </div>
           <div>
-            <p className="text-[#1a1a2e] text-sm font-medium">{row.firstName} {row.lastName}</p>
+            <p className="text-white text-sm font-medium">{row.firstName} {row.lastName}</p>
             <p className="text-[#64748b] text-xs">{row.employeeId}</p>
           </div>
         </button>
@@ -252,7 +252,7 @@ export default function TeachersPage() {
             className="stat-card"
           >
             <div className={`stat-card-icon bg-gradient-to-br ${kpi.color}`}>
-              <kpi.icon className="w-6 h-6 text-[#1a1a2e]" />
+              <kpi.icon className="w-6 h-6 text-white" />
             </div>
             <div className="stat-card-content">
               <p className="stat-card-label">{kpi.label}</p>
@@ -342,7 +342,7 @@ export default function TeachersPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h3>Add New Teacher</h3>
-                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e] transition">
+                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white transition">
                   <X className="w-5 h-5" />
                 </button>
               </div>

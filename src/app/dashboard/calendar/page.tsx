@@ -185,7 +185,7 @@ export default function CalendarPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Calendar</h1>
+            <h1 className="text-2xl font-bold text-white mb-1">Calendar</h1>
             <p className="text-[#475569]">
               View and manage school events, exams, and activities
             </p>
@@ -271,7 +271,7 @@ export default function CalendarPage() {
                       isToday
                         ? "bg-[var(--primary)] text-white font-bold border-[var(--primary)]"
                         : dayEvents.length > 0
-                        ? "bg-[#f8fafc] text-[#1a1a2e] hover:bg-[#f1f5f9] border-[#e2e8f0]"
+                        ? "bg-[#f8fafc] text-white hover:bg-[#f1f5f9] border-[#e2e8f0]"
                         : "text-[#475569] hover:bg-[#f8fafc] hover:border-[#f1f5f9]"
                     }`}
                   >
@@ -382,7 +382,10 @@ export default function CalendarPage() {
             >
               <div className="modal-header">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Event</h3>
-                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-[#64748b] hover:text-[#1a1a2e]"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -394,7 +397,7 @@ export default function CalendarPage() {
                     required
                     value={form.title}
                     onChange={(e) => setForm({ ...form, title: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. Parent-Teacher Meeting"
                   />
                 </div>
@@ -407,7 +410,7 @@ export default function CalendarPage() {
                       value={form.start}
                       onChange={(e) => setForm({ ...form, start: e.target.value })}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -417,7 +420,7 @@ export default function CalendarPage() {
                       value={form.end}
                       onChange={(e) => setForm({ ...form, end: e.target.value })}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -428,7 +431,7 @@ export default function CalendarPage() {
                       value={form.type}
                       onChange={(e) => setForm({ ...form, type: e.target.value })}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     >
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="event">Event</option>
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="exam">Exam</option>
@@ -465,7 +468,7 @@ export default function CalendarPage() {
                     rows={2}
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
                     placeholder="Optional description..."
                   />
                 </div>
@@ -473,14 +476,14 @@ export default function CalendarPage() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
+                    className="flex-1 btn btn-secondary"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex-1 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[var(--primary)]/25"
+                    className="flex-1 btn btn-primary"
                   >
                     {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                     Add Event

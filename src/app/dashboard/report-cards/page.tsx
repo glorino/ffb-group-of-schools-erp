@@ -133,13 +133,13 @@ export default function ReportCardsPage() {
     <motion.div {...fadeIn} className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[22px] font-bold text-[#1a1a2e] font-display tracking-tight flex items-center gap-2.5">
+          <h1 className="text-[22px] font-bold text-white font-display tracking-tight flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-              <FileText className="w-[18px] h-[18px] text-[#1a1a2e]" />
+              <FileText className="w-[18px] h-[18px] text-white" />
             </div>
             Report Cards
           </h1>
-          <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">Generate, preview, and download report cards with QR verification</p>
+          <p className="text-[#64748b] text-[12px] mt-1 ml-[46px]">Generate, preview, and download report cards with QR verification</p>
         </div>
       </div>
 

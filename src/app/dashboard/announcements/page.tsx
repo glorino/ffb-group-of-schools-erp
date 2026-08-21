@@ -170,7 +170,7 @@ function AnnouncementsPageInner() {
           <p className="text-[#64748b] text-sm mt-1">View and manage school announcements</p>
         </div>
         {canManage && (
-          <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all">
+          <button onClick={openCreate} className="btn btn-primary">
             <Plus className="w-4 h-4" />
             New Announcement
           </button>
@@ -191,7 +191,7 @@ function AnnouncementsPageInner() {
                 <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
+                <stat.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -298,7 +298,7 @@ function AnnouncementsPageInner() {
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="modal-content">
             <div className="modal-header">
               <h3 className="text-[#1a1a2e] font-semibold text-lg">{editAnnouncement ? "Edit Announcement" : "New Announcement"}</h3>
-              <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b]">
+              <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -363,8 +363,8 @@ function AnnouncementsPageInner() {
             </div>
 
             <div className="modal-footer">
-              <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-sm hover:bg-[#f1f5f9]">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 flex items-center gap-2">
+              <button onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
+              <button onClick={handleSave} disabled={saving} className="btn btn-primary disabled:opacity-50 flex items-center gap-2">
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                 {editAnnouncement ? "Update" : "Create"}
               </button>

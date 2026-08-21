@@ -216,7 +216,7 @@ export default function IncomePage() {
                 <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-[#1a1a2e]" />
+                <stat.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -327,7 +327,7 @@ export default function IncomePage() {
                 )}
               </div>
               <div className="mt-6 pt-4 border-t border-[#e2e8f0]">
-                <h4 className="text-[#475569] text-[12px] mb-3 uppercase tracking-wide">Quick Stats</h4>
+                <h4 className="text-[#1a1a2e] text-[12px] mb-3 uppercase tracking-wide">Quick Stats</h4>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between p-2 rounded-lg bg-[#f8fafc]">
                     <span className="text-[#475569] text-[13px]">Total Income</span>
@@ -354,8 +354,7 @@ export default function IncomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="modal-overlay"
-            style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }}
+            className="modal-overlay bg-black/60 backdrop-blur-sm"
             onClick={() => setShowAddModal(false)}
           >
             <motion.div
@@ -369,7 +368,7 @@ export default function IncomePage() {
                 <h3 className="text-[#1a1a2e] font-bold text-lg">Record New Income</h3>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition"
+                  className="p-1.5 rounded-lg text-[#94a3b8] hover:text-white hover:bg-[#f1f5f9] transition"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -382,7 +381,7 @@ export default function IncomePage() {
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
                     placeholder="e.g. School Fees - JSS"
-                    className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -393,7 +392,7 @@ export default function IncomePage() {
                       value={formAmount}
                       onChange={(e) => setFormAmount(e.target.value)}
                       placeholder="0.00"
-                      className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -402,7 +401,7 @@ export default function IncomePage() {
                       value={formCategoryId}
                       onChange={(e) => setFormCategoryId(e.target.value)}
                       style={{ colorScheme: "light" }}
-                      className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     >
                       <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select category</option>
                       {incomeCategories.map((cat) => (
@@ -419,7 +418,7 @@ export default function IncomePage() {
                       value={formDate}
                       onChange={(e) => setFormDate(e.target.value)}
                       style={{ colorScheme: "light" }}
-                      className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -429,7 +428,7 @@ export default function IncomePage() {
                       value={formReference}
                       onChange={(e) => setFormReference(e.target.value)}
                       placeholder="e.g. REF-001"
-                      className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -440,20 +439,20 @@ export default function IncomePage() {
                     onChange={(e) => setFormNotes(e.target.value)}
                     placeholder="Additional notes..."
                     rows={3}
-                    className="w-full p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
                   />
                 </div>
                 <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => setShowAddModal(false)}
-                    className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
+                    className="flex-1 btn btn-secondary"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleAddIncome}
                     disabled={submitting}
-                    className="flex-1 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[var(--primary)]/25"
+                    className="flex-1 btn btn-primary"
                   >
                     {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                     {submitting ? "Saving..." : "Record Income"}

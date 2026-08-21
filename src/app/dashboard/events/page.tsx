@@ -192,7 +192,7 @@ export default function EventsPage() {
           <p className="text-[#64748b] text-sm mt-1">Create and manage school events and activities</p>
         </div>
         {canManage && (
-          <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-emerald-500/25 transition-all">
+          <button onClick={openCreate} className="btn btn-primary">
             <Plus className="w-4 h-4" />
             New Event
           </button>
@@ -212,7 +212,7 @@ export default function EventsPage() {
                 <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <Calendar className="w-6 h-6 text-[#1a1a2e]" />
+                <Calendar className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -229,7 +229,7 @@ export default function EventsPage() {
               placeholder="Search events..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-emerald-500"
+              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
             />
           </div>
         </div>
@@ -297,7 +297,7 @@ export default function EventsPage() {
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="modal-content">
             <div className="modal-header">
               <h3 className="text-[#1a1a2e] font-semibold text-lg">{editItem ? "Edit Event" : "New Event"}</h3>
-              <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b]">
+              <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -305,20 +305,20 @@ export default function EventsPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-[#475569] text-[13px] mb-1.5">Title *</label>
-                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-emerald-500" placeholder="Enter event title" />
+                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Enter event title" />
               </div>
               <div>
                 <label className="block text-[#475569] text-[13px] mb-1.5">Content *</label>
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={3} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-emerald-500 resize-none" placeholder="Write event description..." />
+                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={3} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none" placeholder="Write event description..." />
               </div>
               <div>
                 <label className="block text-[#475569] text-[13px] mb-1.5">Event Date *</label>
-                <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-emerald-500" style={{ colorScheme: "light" }} />
+                <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
               </div>
               <div>
                 <label className="block text-[#475569] text-[13px] mb-1.5">Event Image</label>
                 <div className="flex gap-3">
-                  <input type="text" value={imageUrl} onChange={(e) => { setImageUrl(e.target.value); setImageFile(""); }} placeholder="Image URL" className="flex-1 px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-emerald-500" />
+                  <input type="text" value={imageUrl} onChange={(e) => { setImageUrl(e.target.value); setImageFile(""); }} placeholder="Image URL" className="flex-1 px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   <label className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-dashed border-[#e2e8f0] text-[#64748b] text-[13px] cursor-pointer hover:bg-[#f1f5f9]">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                     Upload
@@ -328,7 +328,7 @@ export default function EventsPage() {
                 {(imageFile || imageUrl) && (
                   <div className="mt-2 relative inline-block">
                     <img src={imageFile || imageUrl} alt="Preview" className="h-20 rounded-lg object-cover" />
-                    <button onClick={() => { setImageFile(""); setImageUrl(""); }} className="absolute -top-1 -right-1 p-1 rounded-full bg-red-500 text-[#1a1a2e]">
+                    <button onClick={() => { setImageFile(""); setImageUrl(""); }} className="absolute -top-1 -right-1 p-1 rounded-full bg-red-500 text-white">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
@@ -341,8 +341,8 @@ export default function EventsPage() {
             </div>
 
             <div className="modal-footer">
-              <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-sm hover:bg-[#f1f5f9]">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 flex items-center gap-2">
+              <button onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
+              <button onClick={handleSave} disabled={saving} className="btn btn-primary disabled:opacity-50 flex items-center gap-2">
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                 {editItem ? "Update" : "Create"}
               </button>

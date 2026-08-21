@@ -298,6 +298,64 @@ export async function sendAdmissionLetter(
   return sendEmail(email, "Admission Letter - FFB Group of Schools", html);
 }
 
+export async function sendAbsenceNotification(
+  parentName: string,
+  parentEmail: string,
+  studentName: string,
+  date: string
+): Promise<EmailResponse> {
+  const schoolName = process.env.SCHOOL_NAME || "FFB Group of Schools";
+  const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
+  const schoolPhone = process.env.SCHOOL_PHONE || "+234 905 998 0991";
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7fa; margin: 0; padding: 40px 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); padding: 40px 30px; text-align: center; }
+        .header h1 { color: white; margin: 0; font-size: 24px; font-weight: 600; }
+        .content { padding: 30px; }
+        .content h2 { color: #1e293b; margin: 0 0 16px; font-size: 20px; }
+        .content p { color: #475569; line-height: 1.6; margin: 0 0 16px; }
+        .alert-box { background: #fef2f2; border-left: 4px solid #dc2626; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+        .alert-box p { margin: 4px 0; color: #7f1d1d; }
+        .alert-box strong { color: #991b1b; }
+        .footer { background: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0; }
+        .footer p { color: #94a3b8; margin: 0; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>${schoolName}</h1>
+        </div>
+        <div class="content">
+          <h2>Attendance Alert</h2>
+          <p>Dear ${parentName},</p>
+          <p>We wish to inform you that <strong>${studentName}</strong> was marked <strong>absent</strong> from school on <strong>${date}</strong>.</p>
+          <div class="alert-box">
+            <p><strong>Student:</strong> ${studentName}</p>
+            <p><strong>Date:</strong> ${date}</p>
+            <p><strong>Status:</strong> Absent</p>
+          </div>
+          <p>If this absence was excused or due to a valid reason, please contact the school administration to update the record.</p>
+          <p>For enquiries, contact us at <a href="mailto:${schoolEmail}" style="color: #dc2626;">${schoolEmail}</a> or call <strong>${schoolPhone}</strong>.</p>
+        </div>
+        <div class="footer">
+          <p>&copy; ${new Date().getFullYear()} ${schoolName}. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail(parentEmail, `Absence Notification - ${studentName} (${date})`, html);
+}
+
 export interface ApplicantForEmail {
   firstName: string;
   lastName: string;

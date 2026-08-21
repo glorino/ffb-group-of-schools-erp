@@ -118,9 +118,9 @@ export default function LessonPlansPage() {
     <motion.div {...fadeIn} className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[22px] font-bold text-white/95 font-display tracking-tight flex items-center gap-2.5">
+          <h1 className="text-[22px] font-bold text-[#1a1a2e] font-display tracking-tight flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-              <BookOpen className="w-[18px] h-[18px] text-[#1a1a2e]" />
+              <BookOpen className="w-[18px] h-[18px] text-white" />
             </div>
             Lesson Plans
           </h1>
@@ -231,7 +231,7 @@ export default function LessonPlansPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="modal-overlay" onClick={() => setShowModal(false)}
+            className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -313,7 +313,7 @@ export default function LessonPlansPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="modal-overlay" onClick={() => setShowDetail(null)}
+            className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowDetail(null)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}

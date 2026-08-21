@@ -163,7 +163,7 @@ export default function ExamsPage() {
           <div className="flex gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-white text-sm font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
@@ -201,7 +201,7 @@ export default function ExamsPage() {
                 <p className="text-3xl font-bold text-[#1a1a2e]">{kpi.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center`}>
-                <kpi.icon className="w-6 h-6 text-[#1a1a2e]" />
+                <kpi.icon className="w-6 h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -316,7 +316,7 @@ export default function ExamsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="modal-overlay" onClick={() => setShowModal(false)}
+            className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -327,7 +327,7 @@ export default function ExamsPage() {
             >
               <div className="modal-header">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Create Exam</h3>
-                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
+                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -406,13 +406,13 @@ export default function ExamsPage() {
       <AnimatePresence>
         {showSubjects && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="modal-overlay" onClick={() => setShowSubjects(false)}>
+            className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowSubjects(false)}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
               className="modal-content">
               <div className="modal-header">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">All Subjects</h3>
-                <button onClick={() => setShowSubjects(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
+                <button onClick={() => setShowSubjects(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
               </div>
               <div className="relative mb-4">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />

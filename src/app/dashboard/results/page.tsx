@@ -318,7 +318,7 @@ export default function ResultsPage() {
             )}
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-white text-sm font-medium hover:bg-[#f1f5f9] transition-all duration-200"
             >
               <Download className="w-4 h-4" />
               Export
@@ -356,7 +356,7 @@ export default function ResultsPage() {
                 <p className="text-2xl font-bold text-[#1a1a2e]">{kpi.value}</p>
               </div>
               <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center`}>
-                <kpi.icon className="w-5 h-5 text-[#1a1a2e]" />
+                <kpi.icon className="w-5 h-5 text-white" />
               </div>
             </div>
           </motion.div>
@@ -505,7 +505,7 @@ export default function ResultsPage() {
                       {!isReadOnly && (
                         <button
                           onClick={() => openEditModal(g)}
-                          className="p-1.5 rounded-lg bg-white/[0.06] border border-[#e2e8f0] text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all"
+                          className="p-1.5 rounded-lg bg-white/[0.06] border border-[#e2e8f0] text-[#64748b] hover:text-white hover:bg-[#f1f5f9] transition-all"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
@@ -543,7 +543,7 @@ export default function ResultsPage() {
                     <h3 className="text-[#1a1a2e] font-semibold text-lg">Enter Results</h3>
                     <p className="text-[#64748b] text-xs mt-0.5">Add or update student grades</p>
                   </div>
-                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-colors">
+                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-colors">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -570,7 +570,7 @@ export default function ResultsPage() {
                           placeholder="Search students..."
                           value={studentSearch}
                           onChange={(e) => setStudentSearch(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-xs focus:outline-none focus:border-[var(--primary)]"
+                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-white text-xs focus:outline-none focus:border-[var(--primary)]"
                           autoFocus
                         />
                       </div>
@@ -623,7 +623,7 @@ export default function ResultsPage() {
                           placeholder="Search subjects..."
                           value={subjectSearch}
                           onChange={(e) => setSubjectSearch(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-xs focus:outline-none focus:border-[var(--primary)]"
+                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-white text-xs focus:outline-none focus:border-[var(--primary)]"
                           autoFocus
                         />
                       </div>
@@ -662,7 +662,7 @@ export default function ResultsPage() {
                     <select
                       value={form.type}
                       onChange={(e) => setForm({ ...form, type: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer"
                       style={{ colorScheme: "light" }}
                     >
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="ca1">1st CA</option>
@@ -678,7 +678,7 @@ export default function ResultsPage() {
                       min="0"
                       value={form.score}
                       onChange={(e) => setForm({ ...form, score: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="0"
                     />
                   </div>
@@ -692,7 +692,7 @@ export default function ResultsPage() {
                       min="1"
                       value={form.maxScore}
                       onChange={(e) => setForm({ ...form, maxScore: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -701,7 +701,7 @@ export default function ResultsPage() {
                       type="text"
                       value={form.term}
                       onChange={(e) => setForm({ ...form, term: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="e.g. 2nd Term"
                     />
                   </div>
@@ -714,7 +714,7 @@ export default function ResultsPage() {
                       type="text"
                       value={form.session}
                       onChange={(e) => setForm({ ...form, session: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="e.g. 2024/2025"
                     />
                   </div>
@@ -724,7 +724,7 @@ export default function ResultsPage() {
                       type="text"
                       value={form.comments}
                       onChange={(e) => setForm({ ...form, comments: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="Optional"
                     />
                   </div>
@@ -775,7 +775,7 @@ export default function ResultsPage() {
                       {editingGrade.student?.firstName} {editingGrade.student?.lastName} — {editingGrade.subject?.name}
                     </p>
                   </div>
-                  <button onClick={() => setEditingGrade(null)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-colors">
+                  <button onClick={() => setEditingGrade(null)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-colors">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -783,7 +783,7 @@ export default function ResultsPage() {
               <div className="p-6 space-y-4">
                 <div>
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">Type</label>
-                  <p className="text-[#1a1a2e] text-sm font-medium">{typeLabel[editingGrade.type] || editingGrade.type}</p>
+                  <p className="text-white text-sm font-medium">{typeLabel[editingGrade.type] || editingGrade.type}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -793,7 +793,7 @@ export default function ResultsPage() {
                       min="0"
                       value={editForm.score}
                       onChange={(e) => setEditForm({ ...editForm, score: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -803,7 +803,7 @@ export default function ResultsPage() {
                       min="1"
                       value={editForm.maxScore}
                       onChange={(e) => setEditForm({ ...editForm, maxScore: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
