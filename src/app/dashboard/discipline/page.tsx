@@ -104,12 +104,12 @@ export default function DisciplinePage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total Incidents", value: stats.totalIncidents, color: "from-blue-500 to-blue-600" },
-          { label: "Resolved", value: stats.resolved, color: "from-green-500 to-green-600" },
-          { label: "Pending", value: stats.pending, color: "from-amber-500 to-amber-600" },
-          { label: "Types Tracked", value: stats.byType.length, color: "from-purple-500 to-purple-600" },
+          { label: "Total Incidents", value: stats.totalIncidents, icon: "from-blue-500 to-blue-600" },
+          { label: "Resolved", value: stats.resolved, icon: "from-green-500 to-green-600" },
+          { label: "Pending", value: stats.pending, icon: "from-amber-500 to-amber-600" },
+          { label: "Types Tracked", value: stats.byType.length, icon: "from-purple-500 to-purple-600" },
         ].map((s, i) => (
-          <div key={i} className={`bg-gradient-to-br ${s.color} rounded-xl p-4`}>
+          <div key={i} className={`card bg-gradient-to-br ${s.icon} shadow-sm`}>
             <p className="text-[#475569] text-sm">{s.label}</p>
             <p className="text-2xl font-bold text-[#1a1a2e] mt-1">{s.value}</p>
           </div>
@@ -156,8 +156,8 @@ export default function DisciplinePage() {
                   <td className="py-3 px-4 text-[#64748b]">{new Date(r.date).toLocaleDateString()}</td>
                   <td className="py-3 px-4"><span className={`px-2 py-1 rounded-full text-xs ${actionColors[r.action || "pending"] || "bg-gray-500/20 text-gray-400"}`}>{r.action || "pending"}</span></td>
                   <td className="py-3 px-4 text-right">
-                    <button onClick={() => { setEditingRecord(r); setForm({ studentId: r.studentId, type: r.type, title: r.title, details: r.details || "", date: new Date(r.date).toISOString().split("T")[0], action: r.action || "pending" }); setShowModal(true); }} className="text-[#2563eb] hover:text-blue-300 mr-3">Edit</button>
-                    <button onClick={() => handleDelete(r.id)} className="text-[#dc2626] hover:text-red-300">Delete</button>
+                    <button onClick={() => { setEditingRecord(r); setForm({ studentId: r.studentId, type: r.type, title: r.title, details: r.details || "", date: new Date(r.date).toISOString().split("T")[0], action: r.action || "pending" }); setShowModal(true); }} className="text-[#2563eb] hover:text-blue-700 mr-3">Edit</button>
+                    <button onClick={() => handleDelete(r.id)} className="text-[#dc2626] hover:text-red-700">Delete</button>
                   </td>
                 </tr>
               ))}

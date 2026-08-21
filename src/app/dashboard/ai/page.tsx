@@ -272,11 +272,11 @@ export default function AIPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20"
+        className="card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20 shadow-sm"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">AI Insights</h1>
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">AI Insights</h1>
             <p className="text-[#475569] text-[13px]">
               Predictions, recommendations, and risk engine powered by AI
             </p>
@@ -304,7 +304,7 @@ export default function AIPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="card"
+            className="card shadow-sm"
           >
             <div className="flex items-start justify-between">
               <div>
@@ -324,7 +324,7 @@ export default function AIPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="card"
+          className="card shadow-sm"
         >
           <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Predictions</h3>
           <div className="space-y-3">
@@ -353,7 +353,7 @@ export default function AIPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="card"
+          className="card shadow-sm"
         >
           <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Recommendations</h3>
           <div className="space-y-3">
@@ -380,7 +380,7 @@ export default function AIPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="card"
+          className="card shadow-sm"
         >
           <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Risk Engine</h3>
           <div className="space-y-3">

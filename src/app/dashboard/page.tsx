@@ -186,19 +186,19 @@ function AdminDashboard() {
         </DashboardCard>
       </div>
       <div className="stats-grid-4">
-        <Link href="/dashboard/admissions" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/admissions" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">New admissions</p></div>
         </Link>
-        <Link href="/dashboard/classes" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/classes" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Organize classes</p></div>
         </Link>
-        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Fee records</p></div>
         </Link>
-        <Link href="/dashboard/announcements" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/announcements" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Broadcast to all</p></div>
         </Link>
@@ -321,19 +321,19 @@ function TeacherDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/attendance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/attendance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Take Attendance</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Mark today's roll</p></div>
         </Link>
-        <Link href="/dashboard/results" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/results" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📝</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Enter Grades</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Record student scores</p></div>
         </Link>
-        <Link href="/dashboard/timetable" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/timetable" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📅</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Schedule</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Your class timetable</p></div>
         </Link>
-        <Link href="/dashboard/lesson-plans" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/lesson-plans" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Create Lesson Plan</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Plan your lessons</p></div>
         </Link>
@@ -443,19 +443,19 @@ function StudentDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/timetable" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/timetable" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📅</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Timetable</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Your class schedule</p></div>
         </Link>
-        <Link href="/dashboard/exams" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/exams" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📝</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">My Exams</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">View upcoming exams</p></div>
         </Link>
-        <Link href="/dashboard/results" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/results" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Results</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Check your grades</p></div>
         </Link>
-        <Link href="/dashboard/finance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/finance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Pay Fees</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">View & pay fees</p></div>
         </Link>
@@ -529,7 +529,7 @@ function VicePrincipalDashboard() {
             {teacherSupervision.map((item) => (
               <div key={item.label} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
                 <p className="text-[#475569] text-[12px]">{item.label}</p>
-                <p className="text-white text-[14px] font-bold">{item.value}</p>
+                <p className="text-[#1a1a2e] text-[14px] font-bold">{item.value}</p>
               </div>
             ))}
           </div>
@@ -544,19 +544,19 @@ function VicePrincipalDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/discipline" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/discipline" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Discipline Records</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Incident logs</p></div>
         </Link>
-        <Link href="/dashboard/students" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/students" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👥</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Student Affairs</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Manage students</p></div>
         </Link>
-        <Link href="/dashboard/teachers" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/teachers" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👩‍🏫</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Teacher Supervision</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Staff oversight</p></div>
         </Link>
-        <Link href="/dashboard/analytics" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/analytics" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Generate Report</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Analytics & insights</p></div>
         </Link>
@@ -610,19 +610,19 @@ function PrincipalDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/admissions" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/admissions" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">New admissions</p></div>
         </Link>
-        <Link href="/dashboard/classes" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/classes" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Organize classes</p></div>
         </Link>
-        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Fee records</p></div>
         </Link>
-        <Link href="/dashboard/announcements" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/announcements" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Broadcast to all</p></div>
         </Link>
@@ -672,19 +672,19 @@ function OwnerDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/analytics" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/analytics" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Reports</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">School analytics</p></div>
         </Link>
-        <Link href="/dashboard/teachers" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/teachers" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👩‍🏫</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Staff</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Teacher & staff</p></div>
         </Link>
-        <Link href="/dashboard/finance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/finance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Financial Summary</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Revenue & expenses</p></div>
         </Link>
-        <Link href="/dashboard/settings" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/settings" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">⚙️</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">School Settings</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Configure school</p></div>
         </Link>
@@ -755,19 +755,19 @@ function AccountantDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💳</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Record Payment</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Log a payment</p></div>
         </Link>
-        <Link href="/dashboard/expenses" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/expenses" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🧾</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Expenses</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Expense records</p></div>
         </Link>
-        <Link href="/dashboard/analytics" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/analytics" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Generate Report</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Financial reports</p></div>
         </Link>
-        <Link href="/dashboard/finance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/finance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📑</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Fees</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Fee structures</p></div>
         </Link>
@@ -831,19 +831,19 @@ function AuditorDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/analytics" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/analytics" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Analytics Overview</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Charts & trends</p></div>
         </Link>
-        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔍</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Transactions</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">All transactions</p></div>
         </Link>
-        <Link href="/dashboard/activity-log" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/activity-log" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">✅</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Activity Log</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">User actions audit</p></div>
         </Link>
-        <Link href="/dashboard/expenses" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/expenses" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📤</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Expense Reports</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Review expenses</p></div>
         </Link>
@@ -905,19 +905,19 @@ function LibrarianDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/library" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/library" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📚</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Book</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">New inventory</p></div>
         </Link>
-        <Link href="/dashboard/library" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/library" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📖</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Issue Book</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Lend to students</p></div>
         </Link>
-        <Link href="/dashboard/library" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/library" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔄</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Return Book</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Process returns</p></div>
         </Link>
-        <Link href="/dashboard/library" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/library" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔎</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Search Catalog</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Find books</p></div>
         </Link>
@@ -1026,7 +1026,7 @@ function PorterDashboard() {
           <div className="flex items-center justify-between mb-4">
             <CardTitle title={visitorFilter ? `Visitors (${visitorFilter})` : "Recent Visitors"} />
             {visitorFilter && (
-              <button onClick={() => { setVisitorFilter(""); setVisitors([]); }} className="text-[#64748b] hover:text-white text-[11px]">Clear filter</button>
+              <button onClick={() => { setVisitorFilter(""); setVisitors([]); }} className="text-[#64748b] hover:text-[#1a1a2e] text-[11px]">Clear filter</button>
             )}
           </div>
           <div className="space-y-2">
@@ -1034,7 +1034,7 @@ function PorterDashboard() {
               visitors.length > 0 ? visitors.slice(0, 10).map((v: any, i: number) => (
                 <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
                   <div>
-                    <p className="text-white text-[12px] font-medium">{v.visitorName}</p>
+                    <p className="text-[#1a1a2e] text-[12px] font-medium">{v.visitorName}</p>
                     <p className="text-[#94a3b8] text-[10px]">{v.purpose} - {v.student?.firstName} {v.student?.lastName}</p>
                   </div>
                   <span className={`text-[10px] px-2 py-0.5 rounded-full ${v.status === "checked_in" ? "bg-[#dcfce7] text-[#16a34a]" : v.status === "checked_out" ? "bg-[#f1f5f9] text-[#64748b]" : "bg-[#fef3c7] text-[#d97706]"}`}>{v.status}</span>
@@ -1046,7 +1046,7 @@ function PorterDashboard() {
               displayVisitors.length > 0 ? displayVisitors.slice(0, 5).map((v: any, i: number) => (
                 <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
                   <div>
-                    <p className="text-white text-[12px] font-medium">{v.name || v.visitorName || "Visitor"}</p>
+                    <p className="text-[#1a1a2e] text-[12px] font-medium">{v.name || v.visitorName || "Visitor"}</p>
                     <p className="text-[#94a3b8] text-[10px]">{v.purpose || "Visit"}</p>
                   </div>
                   <span className="text-[#64748b] text-[11px]">{v.time || "Today"}</span>
@@ -1059,19 +1059,19 @@ function PorterDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <button onClick={() => setShowVisitorLog(true)} className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <button onClick={() => setShowVisitorLog(true)} className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🚶</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Log Visitor</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Visitor check-in</p></div>
         </button>
-        <Link href="/dashboard/hostel" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/hostel" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🛏️</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Assign Room</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Room allocation</p></div>
         </Link>
-        <Link href="/dashboard/hostel" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/hostel" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🔧</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Report Maintenance</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Request repairs</p></div>
         </Link>
-        <button onClick={() => { setVisitorFilter("checked_in"); fetchVisitors("checked_in"); }} className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <button onClick={() => { setVisitorFilter("checked_in"); fetchVisitors("checked_in"); }} className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📋</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Check-in/out</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Movement logs</p></div>
         </button>
@@ -1081,29 +1081,29 @@ function PorterDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="bg-white border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-white font-semibold text-[16px]">Log Visitor</h3>
+              <h3 className="text-[#1a1a2e] font-semibold text-[16px]">Log Visitor</h3>
               <button onClick={() => setShowVisitorLog(false)} className="text-[#64748b] hover:text-[#475569]"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-3">
               <div>
                 <label className="text-[#64748b] text-[11px] mb-1 block">Visitor Name</label>
-                <input type="text" value={visitorForm.visitorName} onChange={e => setVisitorForm({ ...visitorForm, visitorName: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-white text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter visitor name" />
+                <input type="text" value={visitorForm.visitorName} onChange={e => setVisitorForm({ ...visitorForm, visitorName: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter visitor name" />
               </div>
               <div>
                 <label className="text-[#64748b] text-[11px] mb-1 block">Phone</label>
-                <input type="text" value={visitorForm.visitorPhone} onChange={e => setVisitorForm({ ...visitorForm, visitorPhone: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-white text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter phone number" />
+                <input type="text" value={visitorForm.visitorPhone} onChange={e => setVisitorForm({ ...visitorForm, visitorPhone: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter phone number" />
               </div>
               <div>
                 <label className="text-[#64748b] text-[11px] mb-1 block">Student ID</label>
-                <input type="text" value={visitorForm.studentId} onChange={e => setVisitorForm({ ...visitorForm, studentId: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-white text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter student ID" />
+                <input type="text" value={visitorForm.studentId} onChange={e => setVisitorForm({ ...visitorForm, studentId: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Enter student ID" />
               </div>
               <div>
                 <label className="text-[#64748b] text-[11px] mb-1 block">Purpose</label>
-                <input type="text" value={visitorForm.purpose} onChange={e => setVisitorForm({ ...visitorForm, purpose: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-white text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Reason for visit" />
+                <input type="text" value={visitorForm.purpose} onChange={e => setVisitorForm({ ...visitorForm, purpose: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" placeholder="Reason for visit" />
               </div>
               <div>
                 <label className="text-[#64748b] text-[11px] mb-1 block">Hostel</label>
-                <select value={visitorForm.hostelId} onChange={e => setVisitorForm({ ...visitorForm, hostelId: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-white text-[13px] outline-none focus:border-[var(--primary)]/50">
+                <select value={visitorForm.hostelId} onChange={e => setVisitorForm({ ...visitorForm, hostelId: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50">
                   <option value="">Select hostel</option>
                   {hostels.map((h: any) => <option key={h.id} value={h.id}>{h.name}</option>)}
                 </select>
@@ -1202,7 +1202,7 @@ function AlumniDashboard() {
             {alumniData.upcomingEvents?.length > 0 ? alumniData.upcomingEvents.slice(0, 3).map((e: any, i: number) => (
               <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
                 <div>
-                  <p className="text-white text-[12px] font-medium">{e.name || e.title}</p>
+                  <p className="text-[#1a1a2e] text-[12px] font-medium">{e.name || e.title}</p>
                   <p className="text-[#94a3b8] text-[10px]">{e.date ? new Date(e.date).toLocaleDateString() : "TBA"}</p>
                 </div>
                 <span className="text-[#64748b] text-[11px]">{e.attendees || ""} {e.attendees ? "attending" : ""}</span>
@@ -1214,19 +1214,19 @@ function AlumniDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/alumni" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/alumni" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🎉</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Events</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Alumni gatherings</p></div>
         </Link>
-        <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group cursor-pointer">
+        <button onClick={() => setShowDonateModal(true)} className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group cursor-pointer">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">❤️</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Make Donation</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Support your school</p></div>
         </button>
-        <Link href="/dashboard/alumni" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/alumni" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🤝</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Find Mentor</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Mentorship program</p></div>
         </Link>
-        <Link href="/dashboard/profile" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/profile" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">👤</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Update Profile</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Your information</p></div>
         </Link>
@@ -1238,9 +1238,9 @@ function AlumniDashboard() {
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
                 <DollarSign className="w-5 h-5 text-[#7c3aed]" />
-                <h3 className="text-white font-semibold text-[16px]">Make a Donation</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-[16px]">Make a Donation</h3>
               </div>
-              <button onClick={() => setShowDonateModal(false)} className="text-[#64748b] hover:text-white transition-colors">
+              <button onClick={() => setShowDonateModal(false)} className="text-[#64748b] hover:text-[#1a1a2e] transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1254,7 +1254,7 @@ function AlumniDashboard() {
                   placeholder="Enter amount"
                   value={donateForm.amount}
                   onChange={e => setDonateForm(p => ({ ...p, amount: e.target.value }))}
-                  className="w-full px-3 py-2.5 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-white text-[14px] placeholder:text-[#94a3b8] focus:outline-none focus:border-purple-500/50 transition-colors"
+                  className="w-full px-3 py-2.5 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[14px] placeholder:text-[#94a3b8] focus:outline-none focus:border-purple-500/50 transition-colors"
                 />
               </div>
               <div>
@@ -1264,7 +1264,7 @@ function AlumniDashboard() {
                   placeholder="e.g. Library fund, Scholarship support..."
                   value={donateForm.purpose}
                   onChange={e => setDonateForm(p => ({ ...p, purpose: e.target.value }))}
-                  className="w-full px-3 py-2.5 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-white text-[14px] placeholder:text-[#94a3b8] focus:outline-none focus:border-purple-500/50 transition-colors resize-none"
+                  className="w-full px-3 py-2.5 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[14px] placeholder:text-[#94a3b8] focus:outline-none focus:border-purple-500/50 transition-colors resize-none"
                 />
               </div>
               <button
@@ -1319,7 +1319,7 @@ function ParentDashboard() {
       {children.length > 1 && (
         <div className="flex items-center gap-2 mb-4 p-1 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] inline-flex">
           {children.map((c: any, i: number) => (
-            <button key={c.id} onClick={() => setSelectedIdx(i)} className={`px-5 py-2.5 rounded-lg text-[13px] font-medium transition-all ${selectedIdx === i ? "bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)]/20" : "text-[#64748b] hover:text-white hover:bg-white"}`}>
+            <button key={c.id} onClick={() => setSelectedIdx(i)} className={`px-5 py-2.5 rounded-lg text-[13px] font-medium transition-all ${selectedIdx === i ? "bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)]/20" : "text-[#64748b] hover:text-[#1a1a2e] hover:bg-white"}`}>
               {c.firstName} {c.lastName}
               {c.class?.name && <span className="ml-1.5 text-[11px] opacity-60">{c.class.name}</span>}
             </button>
@@ -1328,7 +1328,7 @@ function ParentDashboard() {
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Child</p><p className="text-[18px] font-bold text-white mt-1">{child.firstName} {child.lastName}</p><p className="text-[#94a3b8] text-[11px] mt-1">{child.class?.name || "\u2014"}</p></DashboardCard>
+        <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Child</p><p className="text-[18px] font-bold text-[#1a1a2e] mt-1">{child.firstName} {child.lastName}</p><p className="text-[#94a3b8] text-[11px] mt-1">{child.class?.name || "\u2014"}</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Attendance</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{attendancePct}%</p><p className="text-[#94a3b8] text-[11px] mt-1">{presentDays} of {totalDays} days</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Current Average</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{avgScore}%</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Fee Balance</p><p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrency(unpaidAmount)}</p>{unpaidAmount > 0 && <p className="text-[#d97706] text-[11px] mt-1">Outstanding</p>}</DashboardCard>
@@ -1397,19 +1397,19 @@ function ParentDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/finance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-white hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/finance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Pay Fees</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">View & pay fees</p></div>
         </Link>
-        <Link href="/dashboard/timetable" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-white hover:bg-[#e9d5ff] transition-all group">
+        <Link href="/dashboard/timetable" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📅</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Timetable</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Child's schedule</p></div>
         </Link>
-        <Link href="/dashboard/results" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-white hover:bg-[#bbf7d0] transition-all group">
+        <Link href="/dashboard/results" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📊</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Results</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Check grades</p></div>
         </Link>
-        <Link href="/dashboard/calendar" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-white hover:bg-[#fde68a] transition-all group">
+        <Link href="/dashboard/calendar" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📆</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Calendar</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">School events</p></div>
         </Link>

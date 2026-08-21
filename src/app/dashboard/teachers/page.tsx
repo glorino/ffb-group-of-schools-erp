@@ -342,7 +342,7 @@ export default function TeachersPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h3>Add New Teacher</h3>
-                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white transition">
+                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e] transition">
                   <X className="w-5 h-5" />
                 </button>
               </div>

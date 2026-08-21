@@ -107,7 +107,7 @@ export default function ParentsPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Parents & Guardians</h1>
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Parents & Guardians</h1>
             <p className="text-[#475569]">
               View all guardians and their linked students
             </p>
@@ -131,7 +131,7 @@ export default function ParentsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[#64748b] text-[13px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
                 <stat.icon className="w-6 h-6 text-white" />
@@ -156,7 +156,7 @@ export default function ParentsPage() {
               placeholder="Search guardians..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-sm focus:outline-none focus:border-[var(--primary)]"
+              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
             />
           </div>
         </div>
@@ -175,12 +175,12 @@ export default function ParentsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#e2e8f0]">
-                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Guardian</th>
-                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Relationship</th>
-                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Student</th>
-                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Class</th>
-                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Contact</th>
-                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Actions</th>
+                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Guardian</th>
+                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Relationship</th>
+                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Student</th>
+                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Class</th>
+                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Contact</th>
+                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -199,9 +199,9 @@ export default function ParentsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 text-[#475569] text-[13px]">{g.relationship}</td>
-                    <td className="py-3 text-[#475569] text-[13px]">{g.student.firstName} {g.student.lastName}</td>
-                    <td className="py-3 text-[#475569] text-[13px]">{g.student.class?.displayName || g.student.class?.name || "—"}</td>
+                    <td className="py-3 text-[#1a1a2e] text-[13px]">{g.relationship}</td>
+                    <td className="py-3 text-[#1a1a2e] text-[13px]">{g.student.firstName} {g.student.lastName}</td>
+                    <td className="py-3 text-[#1a1a2e] text-[13px]">{g.student.class?.displayName || g.student.class?.name || "—"}</td>
                     <td className="py-3">
                       <div className="flex items-center gap-2 text-[13px]">
                         {g.phone && (
@@ -240,7 +240,7 @@ export default function ParentsPage() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-white hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-[#1a1a2e] hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -256,7 +256,7 @@ export default function ParentsPage() {
                     className={`w-8 h-8 text-[13px] rounded-lg border transition-all ${
                       currentPage === page
                         ? "bg-[var(--primary)] text-white border-[var(--primary)]"
-                        : "bg-white text-white border-[#e2e8f0] hover:bg-[#f8fafc]"
+                        : "bg-white text-[#1a1a2e] border-[#e2e8f0] hover:bg-[#f8fafc]"
                     }`}
                   >
                     {page}
@@ -266,7 +266,7 @@ export default function ParentsPage() {
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-white hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-[#1a1a2e] hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>

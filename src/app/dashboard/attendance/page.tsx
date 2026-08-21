@@ -187,7 +187,7 @@ export default function AttendancePage() {
                 {loading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i}>
-                        <td colSpan={5} className="p-4"><div className="h-4 w-full rounded bg-white/[0.06] animate-pulse" /></td>
+                        <td colSpan={5} className="p-4"><div className="h-4 w-full rounded bg-[#f1f5f9] animate-pulse" /></td>
                     </tr>
                   ))
                 ) : records.length === 0 ? (
@@ -339,7 +339,7 @@ export default function AttendancePage() {
               {loading ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <tr key={i}>
-                        <td colSpan={4} className="p-4"><div className="h-4 w-full rounded bg-white/[0.06] animate-pulse" /></td>
+                        <td colSpan={4} className="p-4"><div className="h-4 w-full rounded bg-[#f1f5f9] animate-pulse" /></td>
                   </tr>
                 ))
               ) : (
@@ -388,7 +388,7 @@ export default function AttendancePage() {
                   await markPresent(admissionInput);
                 }
               }}
-              className="w-full px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-white text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
             />
             <div className="flex gap-3 mt-5">
               <button onClick={() => setShowQRScanner(false)} className="btn btn-secondary flex-1">

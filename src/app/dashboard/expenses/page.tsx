@@ -308,12 +308,12 @@ export default function ExpensesPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-[#e2e8f0]">
-                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Description</th>
-                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Amount</th>
-                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Category</th>
-                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Date</th>
-                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Status</th>
-                    <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Actions</th>
+                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Description</th>
+                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Amount</th>
+                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Category</th>
+                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Date</th>
+                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Status</th>
+                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody>

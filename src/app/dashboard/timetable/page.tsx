@@ -66,7 +66,7 @@ function ReadOnlyTimetable({ entries, loading }: { entries: TimetableEntry[]; lo
                 return (
                   <td key={di} className="p-1.5">
                     <div className={`min-h-[52px] rounded-lg p-2 flex items-center justify-center text-center ${
-                      entry ? "bg-white/[0.06] border border-[#e2e8f0]" : "bg-[#f8fafc]"
+                      entry ? "bg-[#f8fafc] border border-[#e2e8f0]" : "bg-[#f8fafc]"
                     }`}>
                       {entry ? (
                         <div>
@@ -226,7 +226,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
                           onClick={() => entry && setDetailSlot(entry)}
                           className={`min-h-[52px] rounded-lg p-2 flex items-center justify-center text-center transition-all ${
                             entry
-                              ? "bg-white/[0.06] border border-[#e2e8f0] hover:bg-[#f1f5f9] cursor-pointer group relative"
+                              ? "bg-[#f8fafc] border border-[#e2e8f0] hover:bg-[#f1f5f9] cursor-pointer group relative"
                               : "bg-[#f8fafc] hover:bg-[#f8fafc] cursor-pointer"
                           }`}
                         >

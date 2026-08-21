@@ -166,7 +166,7 @@ export default function NotificationsPage() {
         {unreadCount > 0 && (
           <button
             onClick={markAllRead}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+            className="btn btn-primary"
           >
             <Check className="w-4 h-4" />
             Mark all as read
@@ -179,10 +179,10 @@ export default function NotificationsPage() {
           <button
             key={f.value}
             onClick={() => setFilter(f.value)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border ${
+            className={`btn text-[13px] whitespace-nowrap transition-all ${
               filter === f.value
-                ? "bg-[var(--primary)] text-white border-[var(--primary)]"
-                : "bg-white text-[#64748b] border-[#e2e8f0] hover:text-[#1a1a2e] hover:bg-[#f8fafc]"
+                ? "btn-primary"
+                : "btn-secondary hover:text-[#1a1a2e]"
             }`}
           >
             {f.label}

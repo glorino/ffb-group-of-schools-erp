@@ -163,7 +163,7 @@ export default function ExamsPage() {
           <div className="flex gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-white text-sm font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="btn btn-secondary"
             >
               <Download className="w-4 h-4" />
               Export
@@ -171,7 +171,7 @@ export default function ExamsPage() {
             {!isReadOnly && (
               <button
                 onClick={() => setShowModal(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+                className="btn btn-primary"
               >
                 <Plus className="w-4 h-4" />
                 Create Exam
@@ -303,7 +303,7 @@ export default function ExamsPage() {
                 setShowSubjects(true);
               }).catch(() => { setAllSubjects(questionBank.map(s => ({ name: s.subject, questions: s.questions }))); setShowSubjects(true); });
             }}
-            className="w-full mt-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
+            className="btn btn-secondary w-full mt-4"
           >
             View All Subjects
           </button>
@@ -327,7 +327,7 @@ export default function ExamsPage() {
             >
               <div className="modal-header">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Create Exam</h3>
-                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
+                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -384,14 +384,14 @@ export default function ExamsPage() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
+                    className="btn btn-secondary flex-1"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex-1 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[var(--primary)]/25"
+                    className="btn btn-primary flex-1"
                   >
                     {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                     Create Exam
@@ -412,7 +412,7 @@ export default function ExamsPage() {
               className="modal-content">
               <div className="modal-header">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">All Subjects</h3>
-                <button onClick={() => setShowSubjects(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
+                <button onClick={() => setShowSubjects(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
               </div>
               <div className="relative mb-4">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />

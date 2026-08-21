@@ -181,11 +181,11 @@ export default function CalendarPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20"
+        className="card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20 shadow-sm"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Calendar</h1>
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Calendar</h1>
             <p className="text-[#475569]">
               View and manage school events, exams, and activities
             </p>
@@ -217,7 +217,7 @@ export default function CalendarPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="lg:col-span-2 card"
+          className="lg:col-span-2 card shadow-sm"
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-[#1a1a2e] font-semibold text-lg">
@@ -271,7 +271,7 @@ export default function CalendarPage() {
                       isToday
                         ? "bg-[var(--primary)] text-white font-bold border-[var(--primary)]"
                         : dayEvents.length > 0
-                        ? "bg-[#f8fafc] text-white hover:bg-[#f1f5f9] border-[#e2e8f0]"
+                        ? "bg-[#f8fafc] text-[#1a1a2e] hover:bg-[#f1f5f9] border-[#e2e8f0]"
                         : "text-[#475569] hover:bg-[#f8fafc] hover:border-[#f1f5f9]"
                     }`}
                   >
@@ -300,7 +300,7 @@ export default function CalendarPage() {
           transition={{ delay: 0.5 }}
           className="space-y-6"
         >
-          <div className="card">
+          <div className="card shadow-sm">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Upcoming Events</h3>
             {loading ? (
               <div className="flex items-center justify-center py-10">
@@ -341,7 +341,7 @@ export default function CalendarPage() {
             )}
           </div>
 
-          <div className="card">
+          <div className="card shadow-sm">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Event Categories</h3>
             <div className="space-y-2">
               {eventCategories.length === 0 ? (
@@ -378,7 +378,7 @@ export default function CalendarPage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="modal-content"
+              className="modal-content shadow-sm"
             >
               <div className="modal-header">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Event</h3>

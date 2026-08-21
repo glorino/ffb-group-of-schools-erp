@@ -231,13 +231,13 @@ export default function PaymentsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#e2e8f0]">
-              <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Student</th>
-              <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Amount</th>
-              <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Method</th>
-              <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Invoice</th>
-              <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Date</th>
-              <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Status</th>
-              <th className="text-left text-[#64748b] text-[12px] font-medium pb-3 px-4">Reference</th>
+              <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Student</th>
+              <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Amount</th>
+              <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Method</th>
+              <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Invoice</th>
+              <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Date</th>
+              <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Status</th>
+              <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Reference</th>
             </tr>
            </thead>
            <tbody>

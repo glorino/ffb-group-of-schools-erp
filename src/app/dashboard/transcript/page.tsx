@@ -346,7 +346,7 @@ export default function TranscriptPage() {
     <motion.div {...fadeIn} className={`space-y-5 ${printMode ? "hidden" : ""}`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[22px] font-bold text-white font-display tracking-tight flex items-center gap-2.5">
+          <h1 className="text-[22px] font-bold text-[#1a1a2e] font-display tracking-tight flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center">
               <GraduationCap className="w-[18px] h-[18px] text-white" />
             </div>
@@ -358,13 +358,13 @@ export default function TranscriptPage() {
           <div className="flex gap-3">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
+              className="btn btn-secondary flex items-center gap-2"
             >
               <Printer className="w-4 h-4" /> Print
             </button>
             <button
               onClick={handleDownloadPDF}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition"
+              className="btn btn-primary flex items-center gap-2"
             >
               <Download className="w-4 h-4" /> Download PDF
             </button>
@@ -373,26 +373,26 @@ export default function TranscriptPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
           <p className="text-[#64748b] text-[12px]">Terms Recorded</p>
           <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{termGradesData.length}</p>
         </div>
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
           <p className="text-[#64748b] text-[12px]">Subjects</p>
           <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{totalSubjects}</p>
         </div>
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
           <p className="text-[#64748b] text-[12px]">Cumulative GPA</p>
           <p className="text-[28px] font-bold text-[var(--accent)] mt-1">{cumulativeGPA.toFixed(2)}</p>
         </div>
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
           <p className="text-[#64748b] text-[12px]">Overall Average</p>
                     <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{overallAvg}%</p>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-5 gap-5">
-        <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+        <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
           <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">Select Student</h3>
           <div className="relative mb-3">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
@@ -446,7 +446,7 @@ export default function TranscriptPage() {
         <div className="lg:col-span-3 space-y-4">
           {selectedStudent && termGradesData.length > 0 ? (
             <>
-              <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+              <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center text-white text-[18px] font-bold">
                     {selectedStudent.firstName?.[0]}{selectedStudent.lastName?.[0]}
@@ -475,7 +475,7 @@ export default function TranscriptPage() {
               </div>
 
               {termGradesData.map((tg) => (
-                <div key={tg.term.id} className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+                <div key={tg.term.id} className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-[#1a1a2e] font-semibold text-[14px] flex items-center gap-2">
@@ -500,14 +500,14 @@ export default function TranscriptPage() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-[#e2e8f0]">
-                          <th className="text-left text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider w-8">#</th>
-                          <th className="text-left text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Subject</th>
-                          <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">CA1</th>
-                          <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">CA2</th>
-                          <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Exam</th>
-                          <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Total</th>
-                          <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Grade</th>
-                          <th className="text-left text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Remark</th>
+                           <th className="text-left text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider w-8">#</th>
+                           <th className="text-left text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Subject</th>
+                           <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">CA1</th>
+                           <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">CA2</th>
+                           <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Exam</th>
+                           <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Total</th>
+                           <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Grade</th>
+                           <th className="text-left text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Remark</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -537,7 +537,7 @@ export default function TranscriptPage() {
                 </div>
               ))}
 
-              <div className="bg-gradient-to-br from-white/[0.05] to-white/[0.02] rounded-2xl border border-[#e2e8f0] p-6">
+              <div className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] p-6 shadow-sm">
                 <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4 flex items-center gap-2">
                   <Award className="w-5 h-5 text-[var(--accent)]" />
                   Cumulative Summary
@@ -546,11 +546,11 @@ export default function TranscriptPage() {
                   <table className="w-full mb-4">
                     <thead>
                       <tr className="border-b border-[#e2e8f0]">
-                        <th className="text-left text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Term</th>
-                        <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Session</th>
-                        <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Subjects</th>
-                        <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">Average</th>
-                        <th className="text-center text-[#64748b] text-[10px] font-medium pb-2 uppercase tracking-wider">GPA</th>
+                        <th className="text-left text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Term</th>
+                        <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Session</th>
+                        <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Subjects</th>
+                        <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Average</th>
+                        <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">GPA</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -608,18 +608,18 @@ export default function TranscriptPage() {
               </div>
             </>
           ) : fetchingGrades ? (
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center">
+            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center shadow-sm">
               <Loader2 className="w-12 h-12 text-[#94a3b8] mx-auto mb-4 animate-spin" />
               <p className="text-[#94a3b8] text-[14px]">Loading transcript data...</p>
             </div>
           ) : selectedStudent ? (
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center">
+            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center shadow-sm">
               <FileText className="w-16 h-16 text-[#94a3b8] mx-auto mb-4" />
               <p className="text-[#94a3b8] text-[14px]">No grade records found for {selectedStudent.firstName}</p>
               <p className="text-[#94a3b8] text-[11px] mt-1">Grades must be entered across terms to generate a transcript</p>
             </div>
           ) : (
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center">
+            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center shadow-sm">
               <GraduationCap className="w-16 h-16 text-[#94a3b8] mx-auto mb-4" />
               <p className="text-[#94a3b8] text-[14px]">Select a student to view their academic transcript</p>
               <p className="text-[#94a3b8] text-[11px] mt-1">The transcript displays cumulative performance across all terms</p>

@@ -184,7 +184,7 @@ function AnnouncementsPageInner() {
           { label: "Drafts", value: stats.draft, icon: Edit, color: "from-orange-500 to-orange-600" },
           { label: "Types", value: stats.types, icon: Users, color: "from-purple-500 to-purple-600" },
         ].map((stat, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="card">
+          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="card shadow-sm">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[#64748b] text-[13px] mb-1">{stat.label}</p>
@@ -198,7 +198,7 @@ function AnnouncementsPageInner() {
         ))}
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="card">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="card shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-[#1a1a2e] font-semibold text-lg">All Announcements</h3>
           <div className="flex gap-3">
@@ -295,7 +295,7 @@ function AnnouncementsPageInner() {
 
       {showModal && (
         <div className="modal-overlay">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="modal-content">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="modal-content shadow-sm">
             <div className="modal-header">
               <h3 className="text-[#1a1a2e] font-semibold text-lg">{editAnnouncement ? "Edit Announcement" : "New Announcement"}</h3>
               <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e]">

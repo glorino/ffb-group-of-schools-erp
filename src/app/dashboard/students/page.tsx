@@ -237,13 +237,13 @@ export default function StudentsPage() {
         <div className="flex items-center gap-1 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-1">
           <button
             onClick={() => setViewMode("table")}
-            className={`p-2 rounded-lg transition ${viewMode === "table" ? "bg-[#f8fafc] text-white" : "text-[#94a3b8] hover:text-[#64748b]"}`}
+            className={`p-2 rounded-lg transition ${viewMode === "table" ? "bg-[#f8fafc] text-[#1a1a2e]" : "text-[#94a3b8] hover:text-[#64748b]"}`}
           >
             <List className="w-4 h-4" />
           </button>
           <button
             onClick={() => setViewMode("grid")}
-            className={`p-2 rounded-lg transition ${viewMode === "grid" ? "bg-[#f8fafc] text-white" : "text-[#94a3b8] hover:text-[#64748b]"}`}
+            className={`p-2 rounded-lg transition ${viewMode === "grid" ? "bg-[#f8fafc] text-[#1a1a2e]" : "text-[#94a3b8] hover:text-[#64748b]"}`}
           >
             <Grid3X3 className="w-4 h-4" />
           </button>
@@ -265,7 +265,7 @@ export default function StudentsPage() {
                     <th
                       key={col.key}
                       onClick={() => toggleSort(col.key)}
-                      className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider cursor-pointer hover:text-[#64748b] transition select-none"
+                      className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#64748b] uppercase tracking-wider cursor-pointer hover:text-[#475569] transition select-none"
                     >
                       <span className="flex items-center gap-1.5">
                         {col.label}
@@ -275,9 +275,9 @@ export default function StudentsPage() {
                       </span>
                     </th>
                   ))}
-                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Guardian</th>
-                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Status</th>
-                  <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Actions</th>
+                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#64748b] uppercase tracking-wider">Guardian</th>
+                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#64748b] uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-[#64748b] uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -325,12 +325,12 @@ export default function StudentsPage() {
                             {student.class?.name || "—"}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 text-[#64748b] text-[12px]">
+                        <td className="px-5 py-3.5 text-[#1a1a2e] text-[13px]">
                           {new Date(student.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                         </td>
                         <td className="px-5 py-3.5">
                           <div>
-                            <p className="text-[#64748b] text-[12px]">{student.guardianName || "—"}</p>
+                            <p className="text-[#1a1a2e] text-[13px]">{student.guardianName || "—"}</p>
                             <p className="text-[#94a3b8] text-[10px]">{student.guardianPhone || ""}</p>
                           </div>
                         </td>
@@ -540,7 +540,7 @@ export default function StudentsPage() {
             >
               <div className="modal-header">
                 <h3>{editingStudent ? "Edit Student" : "Add New Student"}</h3>
-                <button onClick={() => { setShowModal(false); setEditingStudent(null); }} className="text-[#64748b] hover:text-white transition">
+                <button onClick={() => { setShowModal(false); setEditingStudent(null); }} className="text-[#64748b] hover:text-[#1a1a2e] transition">
                   <X className="w-5 h-5" />
                 </button>
               </div>

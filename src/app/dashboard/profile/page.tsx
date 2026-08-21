@@ -194,7 +194,7 @@ export default function ProfilePage() {
           </div>
           <button
             onClick={() => setEditing(!editing)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all"
+            className="btn btn-primary"
           >
             <Edit className="w-4 h-4" />
             {editing ? "Cancel" : "Edit Profile"}
@@ -207,7 +207,7 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="card"
+          className="card shadow-sm"
         >
           <div className="flex flex-col items-center text-center">
             <div className="relative mb-4">
@@ -279,7 +279,7 @@ export default function ProfilePage() {
           transition={{ delay: 0.5 }}
           className="lg:col-span-2 space-y-6"
         >
-          <div className="card">
+          <div className="card shadow-sm">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-6">Personal Information</h3>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
@@ -326,14 +326,14 @@ export default function ProfilePage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="mt-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
+              className="mt-4 btn btn-primary disabled:opacity-50"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
 
-          <div className="card">
+          <div className="card shadow-sm">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Recent Activity</h3>
             <div className="space-y-3">
               {activityLoading ? (
@@ -364,7 +364,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-6">
-            <div className="card">
+            <div className="card shadow-sm">
               <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Security</h3>
               <div className="space-y-3">
                 <button
@@ -390,7 +390,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="card">
+            <div className="card shadow-sm">
               <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Notifications</h3>
               <div className="space-y-3">
                 {[
@@ -406,7 +406,7 @@ export default function ProfilePage() {
                         setNotifications(prev => ({ ...prev, [notif.key]: !prev[notif.key] }));
                         toast.success(`${notif.label} ${notifications[notif.key] ? "disabled" : "enabled"}`);
                       }}
-                      className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${notifications[notif.key] ? "bg-[var(--accent)]" : "bg-white/20"}`}
+                      className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${notifications[notif.key] ? "bg-[var(--accent)]" : "bg-[#e2e8f0]"}`}
                     >
                       <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${notifications[notif.key] ? "left-[22px]" : "left-0.5"}`} />
                     </button>
@@ -439,7 +439,7 @@ export default function ProfilePage() {
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Change Password</h3>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all"
+                  className="w-8 h-8 rounded-lg bg-[#f1f5f9] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#e2e8f0] transition-all"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -476,14 +476,14 @@ export default function ProfilePage() {
               <div className="modal-footer">
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="px-4 py-2 rounded-xl bg-white/[0.06] text-[#475569] text-sm font-medium hover:bg-[#f1f5f9] transition-all"
+                  className="btn btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleChangePassword}
                   disabled={changingPassword}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
+                  className="btn btn-primary disabled:opacity-50"
                 >
                   {changingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
                   {changingPassword ? "Changing..." : "Change Password"}
@@ -501,7 +501,7 @@ export default function ProfilePage() {
             className="w-full max-w-md mx-4 p-6 rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-semibold text-lg">Two-Factor Authentication</h3>
-              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all">
+              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-[#f1f5f9] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#e2e8f0] transition-all">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -514,7 +514,7 @@ export default function ProfilePage() {
                     setTwoFAEnabled(!twoFAEnabled);
                     if (!twoFAEnabled) toast.success("2FA setup link will be sent to your email");
                   }}
-                  className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${twoFAEnabled ? "bg-[var(--accent)]" : "bg-white/20"}`}
+                  className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${twoFAEnabled ? "bg-[var(--accent)]" : "bg-[#e2e8f0]"}`}
                 >
                   <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${twoFAEnabled ? "left-[22px]" : "left-0.5"}`} />
                 </button>
@@ -524,7 +524,7 @@ export default function ProfilePage() {
               )}
               <div className="modal-footer">
                 <button onClick={() => setShow2FAModal(false)}
-                  className="flex-1 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">
+                  className="flex-1 btn btn-secondary">
                   Close
                 </button>
               </div>

@@ -168,11 +168,11 @@ export default function AlumniPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20 p-6"
+        className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20 p-6 shadow-sm"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Alumni Portal</h1>
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Alumni Portal</h1>
             <p className="text-[#475569] text-[13px]">
               Connect with alumni, manage networking, donations, and mentorship
             </p>
@@ -202,7 +202,7 @@ export default function AlumniPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5"
+            className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5 shadow-sm"
           >
             <div className="flex items-start justify-between">
               <div>
@@ -222,7 +222,7 @@ export default function AlumniPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-6"
+          className="lg:col-span-2 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-6 shadow-sm"
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-[#1a1a2e] font-semibold text-lg">Alumni Directory</h3>
@@ -320,7 +320,7 @@ export default function AlumniPage() {
           transition={{ delay: 0.5 }}
           className="space-y-6"
         >
-          <div className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-6">
+          <div className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-6 shadow-sm">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Upcoming Events</h3>
             <div className="space-y-3">
               {events.length === 0 ? (
@@ -344,7 +344,7 @@ export default function AlumniPage() {
             </div>
           </div>
 
-          <div className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-6">
+          <div className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-6 shadow-sm">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Donation Summary</h3>
             <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
               <div className="text-center mb-4">
@@ -380,7 +380,7 @@ export default function AlumniPage() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
+            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto shadow-sm"
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-bold text-lg">Add Alumni Record</h3>
@@ -488,7 +488,7 @@ export default function AlumniPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6"
+            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6 shadow-sm"
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-bold text-lg">Send Message</h3>

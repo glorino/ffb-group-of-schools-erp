@@ -133,7 +133,7 @@ export default function ReportCardsPage() {
     <motion.div {...fadeIn} className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[22px] font-bold text-white font-display tracking-tight flex items-center gap-2.5">
+          <h1 className="text-[22px] font-bold text-[#1a1a2e] font-display tracking-tight flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
               <FileText className="w-[18px] h-[18px] text-white" />
             </div>
@@ -144,15 +144,15 @@ export default function ReportCardsPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
           <p className="text-[#64748b] text-[12px]">Total Students</p>
           <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{students.length}</p>
         </div>
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
           <p className="text-[#64748b] text-[12px]">Selected</p>
           <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{selectedStudent ? "1" : "0"}</p>
         </div>
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
           <p className="text-[#64748b] text-[12px]">Status</p>
           <p className="text-[18px] font-bold text-[#1a1a2e] mt-1">{generating ? "Generating..." : reportData ? "Ready" : "Select student"}</p>
         </div>
@@ -161,7 +161,7 @@ export default function ReportCardsPage() {
       <div className="grid lg:grid-cols-5 gap-5">
         {/* Student List - hidden for students/parents (auto-selected) */}
         {!isReadOnly && (
-          <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+          <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
             <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">Select Student</h3>
             <div className="relative mb-3">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
@@ -212,14 +212,14 @@ export default function ReportCardsPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowPreview(!showPreview)}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
+                  className="btn btn-secondary flex items-center gap-2"
                 >
                   <Eye className="w-4 h-4" /> {showPreview ? "Hide Preview" : "Preview"}
                 </button>
                 <PDFDownloadLink
                   document={<ReportCardPDF {...reportData} />}
                   fileName={`report_card_${reportData.studentData.admissionNumber}.pdf`}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition"
+                  className="btn btn-primary flex items-center gap-2"
                 >
                   {({ loading }) => loading ? "Generating..." : <><Download className="w-4 h-4" /> Download PDF</>}
                 </PDFDownloadLink>
@@ -232,7 +232,7 @@ export default function ReportCardsPage() {
                       }</table><p><strong>Attendance:</strong> ${reportData.attendance.present}/${reportData.attendance.totalDays} days</p>`
                     );
                   }}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
+                  className="btn btn-secondary flex items-center gap-2"
                 >
                   <Printer className="w-4 h-4" /> Print
                 </button>
@@ -247,7 +247,7 @@ export default function ReportCardsPage() {
               )}
 
               {!showPreview && (
-                <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+                <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
                   <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">Report Card Details</h3>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 rounded-xl bg-[#f8fafc]">
@@ -293,7 +293,7 @@ export default function ReportCardsPage() {
               )}
 
               {/* QR Code */}
-              <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+              <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
                 <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">QR Verification</h3>
                 <div className="flex items-center gap-4">
                   <div className="w-24 h-24 rounded-xl bg-white flex items-center justify-center">
@@ -307,7 +307,7 @@ export default function ReportCardsPage() {
               </div>
             </>
           ) : (
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center">
+            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center shadow-sm">
               <FileText className="w-16 h-16 text-[#94a3b8] mx-auto mb-4" />
               <p className="text-[#94a3b8] text-[14px]">Select a student to generate their report card</p>
               <p className="text-[#94a3b8] text-[11px] mt-1">The report card will be generated with real data from the database</p>

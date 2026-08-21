@@ -156,7 +156,7 @@ export default function AdmissionsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Admissions Management</h2>
+          <h2 className="text-2xl font-bold text-[#1a1a2e]">Admissions Management</h2>
           <p className="text-[#64748b] text-sm">Review applications, approve or reject, and manage admission decisions</p>
         </div>
         <button
@@ -168,12 +168,12 @@ export default function AdmissionsPage() {
       </div>
 
       {/* Pipeline */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5 shadow-sm">
         <h3 className="text-[#1a1a2e] font-semibold mb-4">Admission Pipeline</h3>
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           {workflowSteps.map((step, i) => (
             <div key={i} className="flex items-center gap-3">
-              <button onClick={() => setStatusFilter(statusFilter === step.step ? "" : step.step)} className={`flex-1 min-w-[100px] p-3 rounded-xl text-center transition-all ${statusFilter === step.step ? "bg-white/[0.15] ring-2 ring-[var(--primary)]/50" : "bg-[#f8fafc] hover:bg-[#f1f5f9]"}`}>
+              <button onClick={() => setStatusFilter(statusFilter === step.step ? "" : step.step)} className={`flex-1 min-w-[100px] p-3 rounded-xl text-center transition-all ${statusFilter === step.step ? "bg-[#e0e7ff] ring-2 ring-[var(--primary)]/50" : "bg-[#f8fafc] hover:bg-[#f1f5f9]"}`}>
                 <div className={`w-2.5 h-2.5 rounded-full ${step.color} mx-auto mb-1.5`} />
                 <p className="text-[#1a1a2e] font-bold text-lg">{step.count}</p>
                 <p className="text-[#64748b] text-[10px]">{step.label}</p>
@@ -188,7 +188,7 @@ export default function AdmissionsPage() {
       <div className="flex gap-3">
         <div className="flex-1 relative">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
-          <input type="text" placeholder="Search by name or application number..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-white text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition-all" />
+          <input type="text" placeholder="Search by name or application number..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50 transition-all" />
         </div>
         <select
           value={statusFilter}
@@ -213,7 +213,7 @@ export default function AdmissionsPage() {
           <div className="text-center py-16"><FileText className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" /><p className="text-[#94a3b8] text-[13px]">No applications found</p></div>
         ) : (
           applicants.map((a, i) => (
-            <motion.div key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5 hover:border-[#e2e8f0] hover:shadow-sm transition-all">
+            <motion.div key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5 hover:border-[#e2e8f0] hover:shadow-sm transition-all shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-sm font-bold border border-[#e2e8f0] flex-shrink-0">
@@ -258,7 +258,7 @@ export default function AdmissionsPage() {
       <AnimatePresence>
         {selectedApplicant && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay" onClick={() => setSelectedApplicant(null)}>
-             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-white border border-[#e2e8f0] rounded-3xl p-8 max-h-[85vh] overflow-y-auto">
+             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-white border border-[#e2e8f0] rounded-3xl p-8 max-h-[85vh] overflow-y-auto shadow-xl">
                <div className="flex items-center justify-between mb-6">
                    <h3 className="text-[#1a1a2e] font-extrabold text-xl">Application Details</h3>
                  <button onClick={() => setSelectedApplicant(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition"><X className="w-5 h-5" /></button>
@@ -387,8 +387,8 @@ export default function AdmissionsPage() {
                  )}
                  {selectedApplicant.rejectionReason && (
                    <div className="mt-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-                     <p className="text-red-300 text-[11px] uppercase mb-1">Rejection Reason</p>
-                     <p className="text-red-200 text-[13px]">{selectedApplicant.rejectionReason}</p>
+                      <p className="text-[#dc2626] text-[11px] uppercase mb-1">Rejection Reason</p>
+                      <p className="text-[#dc2626] text-[13px]">{selectedApplicant.rejectionReason}</p>
                    </div>
                  )}
                  {selectedApplicant.status === "pending" && (
@@ -411,10 +411,10 @@ export default function AdmissionsPage() {
       <AnimatePresence>
         {showActionModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay" onClick={() => { setShowActionModal(null); setActionNote(""); }}>
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-xl bg-white border border-[#e2e8f0] rounded-3xl p-6">
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-xl bg-white border border-[#e2e8f0] rounded-3xl p-6 shadow-xl">
               <h3 className="text-[#1a1a2e] font-bold text-lg mb-2">Review Application</h3>
               <p className="text-[#64748b] text-[13px] mb-4">Add a note for the applicant (optional)</p>
-              <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder="Enter notes, instructions or reason..." rows={4} className="w-full p-3 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />
+              <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder="Enter notes, instructions or reason..." rows={4} className="w-full p-3 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />
               <div className="flex gap-2 mt-4">
                 <button onClick={() => handleStatusUpdate(showActionModal, "admitted")} disabled={actionLoading} className="flex-1 py-2.5 rounded-xl bg-[#dcfce7] text-[#16a34a] text-[13px] font-semibold hover:bg-emerald-500/25 transition flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4" /> {actionLoading ? "Processing..." : "Approve & Admit"}

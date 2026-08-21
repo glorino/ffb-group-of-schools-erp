@@ -40,7 +40,7 @@ export default function ChangePasswordPage() {
   return (
     <div className="min-h-screen bg-animated flex items-center justify-center p-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <div className="card">
+        <div className="card shadow-sm">
           <div className="text-center mb-6">
             <div className="w-16 h-16 rounded-2xl bg-[var(--primary)]/20 flex items-center justify-center mx-auto mb-4">
               <Lock className="w-8 h-8 text-[var(--primary)]" />
@@ -65,7 +65,7 @@ export default function ChangePasswordPage() {
                 className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Confirm new password" />
             </div>
             <button type="submit" disabled={loading}
-              className="w-full py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+              className="w-full btn btn-primary disabled:opacity-50">
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
               Change Password
             </button>

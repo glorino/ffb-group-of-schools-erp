@@ -242,13 +242,13 @@ export default function PayrollPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#e2e8f0]">
-                  <th className="text-left text-[#64748b] text-sm font-medium pb-3">Staff</th>
-                  <th className="text-right text-[#64748b] text-sm font-medium pb-3">Basic Salary</th>
-                  <th className="text-right text-[#64748b] text-sm font-medium pb-3">Allowances</th>
-                  <th className="text-right text-[#64748b] text-sm font-medium pb-3">Deductions</th>
-                  <th className="text-right text-[#64748b] text-sm font-medium pb-3">Net Pay</th>
-                  <th className="text-center text-[#64748b] text-sm font-medium pb-3">Status</th>
-                  <th className="text-right text-[#64748b] text-sm font-medium pb-3">Actions</th>
+                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Staff</th>
+                  <th className="text-right text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Basic Salary</th>
+                  <th className="text-right text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Allowances</th>
+                  <th className="text-right text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Deductions</th>
+                  <th className="text-right text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Net Pay</th>
+                  <th className="text-center text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Status</th>
+                  <th className="text-right text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Actions</th>
                 </tr>
               </thead>
               <tbody>

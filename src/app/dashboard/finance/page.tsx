@@ -277,7 +277,7 @@ export default function FinancePage() {
 
       <div className="flex gap-1 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-1.5">
         {tabs.map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium capitalize transition-all duration-200 ${tab === t ? "bg-white text-white shadow-sm border border-[#e2e8f0]" : "text-[#94a3b8] hover:text-[#475569] hover:bg-white/50"}`}>
+          <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium capitalize transition-all duration-200 ${tab === t ? "bg-white text-[#1a1a2e] shadow-sm border border-[#e2e8f0]" : "text-[#94a3b8] hover:text-[#475569] hover:bg-white/50"}`}>
             {t}
           </button>
         ))}
@@ -292,7 +292,7 @@ export default function FinancePage() {
               { label: "Total Payments", value: String(payments.length || 8), change: `+${payments.length}`, up: true, icon: TrendingUp, color: "from-blue-500 to-blue-700" },
               { label: "Pending Invoices", value: String(invoices.filter(i => i.status !== "paid").length || 4), change: "+0", up: false, icon: AlertCircle, color: "from-red-500 to-red-700" },
             ].map((stat, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+              <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-3">
                   <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
                     <stat.icon className="w-5 h-5 text-white" />
@@ -309,7 +309,7 @@ export default function FinancePage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+            <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
               <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Recent Payments</h3>
               {loading ? (
                 <div className="flex items-center justify-center py-16"><Loader2 className="w-6 h-6 text-[#94a3b8] animate-spin" /></div>
@@ -337,7 +337,7 @@ export default function FinancePage() {
                 </div>
               )}
             </div>
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5">
+            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
               <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4">Payment Status</h3>
               <div className="space-y-3">
                 {[
@@ -374,7 +374,7 @@ export default function FinancePage() {
       )}
 
       {tab === "payments" && (
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden shadow-sm">
           <div className="p-4 border-b border-[#e2e8f0]">
             <div className="relative max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
@@ -391,7 +391,7 @@ export default function FinancePage() {
                 <thead>
                   <tr className="border-b border-[#e2e8f0]">
                     {["Student", "Class", "Amount", "Method", "Date", "Status"].map(h => (
-                      <th key={h} className="px-5 py-3 text-left text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">{h}</th>
+                      <th key={h} className="px-5 py-3 text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -421,7 +421,7 @@ export default function FinancePage() {
       )}
 
       {tab === "invoices" && (
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
+        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden shadow-sm">
           <div className="p-4 border-b border-[#e2e8f0] flex items-center justify-between">
             <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Invoices</h3>
             <div className="relative max-w-xs">
@@ -485,7 +485,7 @@ export default function FinancePage() {
                     <h3 className="text-[#1a1a2e] font-semibold text-lg">Create Invoice</h3>
                     <p className="text-[#64748b] text-xs mt-0.5">Generate a new fee invoice for a student</p>
                   </div>
-                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-white transition-colors">
+                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-colors">
                     <X className="w-5 h-5" />
                   </button>
                 </div>

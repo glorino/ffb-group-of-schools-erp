@@ -321,7 +321,7 @@ export default function TransportPage() {
           >
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Vehicle</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -419,7 +419,7 @@ export default function TransportPage() {
             className="modal-content">
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">GPS Tracking</h2>
-              <button onClick={() => setShowGPS(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowGPS(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
             </div>
             <div className="aspect-video rounded-xl overflow-hidden border border-[#e2e8f0] mb-4">
               <iframe

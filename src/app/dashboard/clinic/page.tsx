@@ -142,7 +142,7 @@ export default function ClinicPage() {
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Clinic / Medical Records</h1>
+            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Clinic / Medical Records</h1>
             <p className="text-[#475569] text-[13px]">
               Manage student visits, medications, allergies, and health records
             </p>

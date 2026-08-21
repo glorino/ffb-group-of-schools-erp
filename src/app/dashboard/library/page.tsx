@@ -433,7 +433,7 @@ export default function LibraryPage() {
           >
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Book</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -486,7 +486,7 @@ export default function LibraryPage() {
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                   style={{ colorScheme: "light" }}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 >
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Textbook</option>
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Literature</option>
@@ -535,7 +535,7 @@ export default function LibraryPage() {
           >
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Issue Book</h2>
-              <button onClick={() => setShowIssueModal(false)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setShowIssueModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -609,7 +609,7 @@ export default function LibraryPage() {
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewBook.title}</h2>
-              <button onClick={() => setViewBook(null)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setViewBook(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -720,7 +720,7 @@ export default function LibraryPage() {
             className="modal-content">
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Penalty Details</h2>
-              <button onClick={() => setShowPenalties(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowPenalties(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">

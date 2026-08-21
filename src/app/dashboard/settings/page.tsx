@@ -434,7 +434,7 @@ export default function SettingsPage() {
           <button
             onClick={saveAll}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 shadow-lg shadow-[var(--primary)]/25"
+            className="btn btn-primary shadow-lg shadow-[var(--primary)]/25"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {saving ? "Saving..." : "Save Changes"}
@@ -447,7 +447,7 @@ export default function SettingsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="card"
+          className="card shadow-sm"
         >
           <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Settings Menu</h3>
           <div className="space-y-2">
@@ -473,7 +473,7 @@ export default function SettingsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="lg:col-span-2 card"
+          className="lg:col-span-2 card shadow-sm"
         >
           {/* School Profile */}
           {activeSection === 0 && (
@@ -482,7 +482,7 @@ export default function SettingsPage() {
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">School Profile</h3>
                 <button
                   onClick={handleSaveSchoolProfile}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all"
+                  className="btn btn-primary"
                 >
                   <Save className="w-4 h-4" />
                   Save Profile
@@ -549,7 +549,7 @@ export default function SettingsPage() {
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Academic Year</h3>
                 <button
                   onClick={handleSaveAcademicYear}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all"
+                  className="btn btn-primary"
                 >
                   <Save className="w-4 h-4" />
                   Save Schedule
@@ -677,14 +677,14 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={addGradingRow}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.06] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all"
+                    className="btn btn-secondary"
                   >
                     <Plus className="w-4 h-4" />
                     Add Grade
                   </button>
                   <button
                     onClick={handleSaveGrading}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all"
+                    className="btn btn-primary"
                   >
                     <Save className="w-4 h-4" />
                     Save Grades
@@ -760,7 +760,7 @@ export default function SettingsPage() {
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Notification Settings</h3>
                 <button
                   onClick={handleSaveNotifications}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all"
+                  className="btn btn-primary"
                 >
                   <Save className="w-4 h-4" />
                   Save Notifications
@@ -803,7 +803,7 @@ export default function SettingsPage() {
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">User Roles & Permissions</h3>
                 <button
                   onClick={handleSaveRoles}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all"
+                  className="btn btn-primary"
                 >
                   <Save className="w-4 h-4" />
                   Save Roles
@@ -828,7 +828,7 @@ export default function SettingsPage() {
                             type="text"
                             value={perm}
                             onChange={(e) => updateRolePermissions(item.id, j, e.target.value)}
-                            className="px-2 py-0.5 rounded-md bg-white/[0.06] border border-[#e2e8f0] text-[#475569] text-[10px] font-medium focus:outline-none focus:border-[var(--primary)] w-28"
+                            className="px-2 py-0.5 rounded-md bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[10px] font-medium focus:outline-none focus:border-[var(--primary)] w-28"
                           />
                           <button
                             onClick={() => removeRolePermission(item.id, j)}
@@ -983,7 +983,7 @@ export default function SettingsPage() {
                     <button
                       onClick={handleChangePassword}
                       disabled={changingPassword}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all disabled:opacity-50"
+                      className="btn btn-primary disabled:opacity-50"
                     >
                       {changingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
                       {changingPassword ? "Changing..." : "Change Password"}
@@ -994,7 +994,7 @@ export default function SettingsPage() {
                 <div className="flex justify-end">
                   <button
                     onClick={handleSavePasswordPolicy}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)]/80 text-white text-[13px] font-medium hover:bg-[var(--primary)] transition-all"
+                    className="btn btn-primary"
                   >
                     <Save className="w-4 h-4" />
                     Save Security Settings

@@ -339,7 +339,7 @@ export default function HostelPage() {
           >
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Hostel Block</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -407,7 +407,7 @@ export default function HostelPage() {
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewBlock.name} — Rooms</h2>
-              <button onClick={() => setViewBlock(null)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setViewBlock(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -445,7 +445,7 @@ export default function HostelPage() {
           >
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Edit {editBlock.name}</h2>
-              <button onClick={() => setEditBlock(null)} className="text-[#64748b] hover:text-white">
+              <button onClick={() => setEditBlock(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -520,7 +520,7 @@ export default function HostelPage() {
             className="modal-content">
             <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">QR Attendance</h2>
-              <button onClick={() => setShowQRScanner(false)} className="text-[#64748b] hover:text-white"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowQRScanner(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
             </div>
             <p className="text-[#475569] text-[13px] mb-4">Scan or type the student admission number to check in to the hostel.</p>
             <input

@@ -132,13 +132,13 @@ export default function LessonPlansPage() {
               Subject: lp.subject, Class: lp.className, Topic: lp.topic, Teacher: `${lp.teacher.firstName} ${lp.teacher.lastName}`,
               Status: lp.status, Start: lp.startDate, End: lp.endDate,
             })), "lesson_plans")}
-            className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition flex items-center gap-2"
+            className="btn btn-secondary flex items-center gap-2"
           >
             Export
           </button>
           <button
             onClick={() => setShowModal(true)}
-            className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2"
+            className="btn btn-primary flex items-center gap-2"
           >
             <Plus className="w-4 h-4" /> New Plan
           </button>
@@ -207,7 +207,7 @@ export default function LessonPlansPage() {
               <span className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold ${
                 lp.status === "approved" ? "bg-[#dcfce7] text-[#16a34a]" :
                 lp.status === "pending" ? "bg-[#fef3c7] text-[#d97706]" :
-                "bg-white/[0.06] text-[#64748b]"
+                "bg-[#f1f5f9] text-[#64748b]"
               }`}>{lp.status}</span>
               <div className="flex items-center gap-1">
                 <button onClick={() => setShowDetail(lp)} className="p-2 rounded-lg hover:bg-[#f1f5f9] text-[#94a3b8] hover:text-[#475569] transition"><Eye className="w-4 h-4" /></button>
@@ -294,9 +294,9 @@ export default function LessonPlansPage() {
                 </div>
               </div>
               <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#e2e8f0] sticky bottom-0 bg-white/95 backdrop-blur-2xl">
-                <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition">Cancel</button>
+                <button onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
                 <button onClick={handleCreate} disabled={submitting}
-                  className="px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center gap-2">
+                  className="btn btn-primary disabled:opacity-50 flex items-center gap-2">
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   Create Plan
                 </button>
@@ -338,7 +338,7 @@ export default function LessonPlansPage() {
                   <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                     showDetail.status === "approved" ? "bg-[#dcfce7] text-[#16a34a]" :
                     showDetail.status === "pending" ? "bg-[#fef3c7] text-[#d97706]" :
-                    "bg-white/[0.06] text-[#64748b]"
+                    "bg-[#f1f5f9] text-[#64748b]"
                   }`}>{showDetail.status}</span>
                 </div>
                 {showDetail.objectives && (
