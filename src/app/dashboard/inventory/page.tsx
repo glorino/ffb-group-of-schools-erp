@@ -169,24 +169,24 @@ export default function InventoryPage() {
               Manage assets, warehouse, purchases, and barcode scanning
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="btn btn-secondary"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowBarcodeScan(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="btn btn-secondary"
             >
               <Barcode className="w-4 h-4" />
               Scan
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+              className="btn btn-primary"
             >
               <Plus className="w-4 h-4" />
               Add Item
@@ -226,7 +226,7 @@ export default function InventoryPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-[#1a1a2e] font-semibold text-lg">Inventory Items</h3>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
                 <input
@@ -245,36 +245,36 @@ export default function InventoryPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-[#e2e8f0]">
-                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Item</th>
-                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Category</th>
-                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Quantity</th>
-                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Unit Price</th>
-                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Status</th>
-                  <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Actions</th>
+                <tr className="border-b-2 border-[#e2e8f0] bg-[#f8fafc]">
+                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Item</th>
+                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Category</th>
+                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Quantity</th>
+                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Unit Price</th>
+                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Status</th>
+                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredItems.map((item) => (
-                  <tr key={item.id} className="border-b border-white/5 hover:bg-[#f8fafc] transition-all">
-                    <td className="py-3 text-[#1a1a2e] font-medium text-[13px]">{item.name}</td>
-                    <td className="py-3">
+                  <tr key={item.id} className="border-b border-[#f1f5f9] hover:bg-[#f8fafc] transition-colors">
+                    <td className="py-3 px-3 text-[13px] text-[#334155] font-medium">{item.name}</td>
+                    <td className="py-3 px-3">
                       <span className="px-2 py-1 rounded-lg bg-[#f1f5f9] text-[#475569] text-[12px]">{item.category}</span>
                     </td>
-                    <td className="py-3 text-[#475569] text-[13px]">{item.quantity} {item.unit}</td>
-                    <td className="py-3 text-[#475569] text-[13px]">{formatCurrency(item.unitPrice)}</td>
-                    <td className="py-3">
+                    <td className="py-3 px-3 text-[13px] text-[#334155]">{item.quantity} {item.unit}</td>
+                    <td className="py-3 px-3 text-[13px] text-[#334155]">{formatCurrency(item.unitPrice)}</td>
+                    <td className="py-3 px-3">
                       <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
                         item.status === "ok" || item.status === "in_stock" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#fee2e2] text-[#dc2626]"
                       }`}>
                         {item.status === "ok" || item.status === "in_stock" ? "In Stock" : "Low Stock"}
                       </span>
                     </td>
-                    <td className="py-3">
+                    <td className="py-3 px-3">
                       <div className="flex gap-1">
                         <button
                           onClick={() => setViewItem(item)}
-                          className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"
+                          className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#334155] transition-colors"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -288,7 +288,7 @@ export default function InventoryPage() {
                               location: item.location || "", status: item.status || "in_stock",
                             });
                           }}
-                          className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"
+                          className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#334155] transition-colors"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
@@ -359,13 +359,13 @@ export default function InventoryPage() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="modal-overlay">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
+            className="modal-content"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Inventory Item</h2>
               <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
@@ -446,7 +446,7 @@ export default function InventoryPage() {
                   placeholder="e.g. Main Store"
                 />
               </div>
-              <div className="flex gap-3 pt-2">
+              <div className="modal-footer">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
@@ -468,7 +468,7 @@ export default function InventoryPage() {
       )}
 
       {viewItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="modal-overlay">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -528,7 +528,7 @@ export default function InventoryPage() {
       <AnimatePresence>
         {editItem && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            className="modal-overlay">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditItem(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
@@ -553,40 +553,40 @@ export default function InventoryPage() {
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Name *</label>
                   <input type="text" required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[#475569] text-[13px] mb-1.5">Category</label>
                     <input type="text" value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
                     <label className="block text-[#475569] text-[13px] mb-1.5">Quantity *</label>
                     <input type="number" min="0" required value={editForm.quantity} onChange={(e) => setEditForm({ ...editForm, quantity: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
                     <label className="block text-[#475569] text-[13px] mb-1.5">Unit Price</label>
                     <input type="number" min="0" value={editForm.unitPrice} onChange={(e) => setEditForm({ ...editForm, unitPrice: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
                     <label className="block text-[#475569] text-[13px] mb-1.5">Unit</label>
                     <input type="text" value={editForm.unit} onChange={(e) => setEditForm({ ...editForm, unit: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[#475569] text-[13px] mb-1.5">Location</label>
                     <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                   <div>
                     <label className="block text-[#475569] text-[13px] mb-1.5">Status</label>
                     <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "light" }}>
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="in_stock">In Stock</option>
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="low_stock">Low Stock</option>
@@ -605,11 +605,11 @@ export default function InventoryPage() {
       </AnimatePresence>
 
       {showBarcodeScan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }}>
+        <div className="modal-overlay" onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-2xl bg-white border border-[#e2e8f0] p-6">
-            <div className="flex items-center justify-between mb-6">
+            className="modal-content">
+            <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Barcode Scanner</h2>
               <button onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
             </div>

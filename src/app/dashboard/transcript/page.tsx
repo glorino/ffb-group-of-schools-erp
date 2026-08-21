@@ -355,16 +355,16 @@ export default function TranscriptPage() {
           <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">Cumulative student transcript with term-by-term breakdown</p>
         </div>
         {selectedStudent && termGradesData.length > 0 && (
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
             >
               <Printer className="w-4 h-4" /> Print
             </button>
             <button
               onClick={handleDownloadPDF}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition"
             >
               <Download className="w-4 h-4" /> Download PDF
             </button>
@@ -424,7 +424,7 @@ export default function TranscriptPage() {
                     setShowDropdown(false);
                     setStudentSearch("");
                   }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition ${
+                  className={`w-full flex items-center gap-3 px-5 py-2.5 rounded-xl text-left transition ${
                     selectedStudentId === s.id
                       ? "bg-[var(--primary)]/20 border border-[var(--primary)]/40"
                       : "hover:bg-[#f8fafc] border border-transparent"

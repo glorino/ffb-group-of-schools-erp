@@ -172,7 +172,7 @@ export default function AdmissionsPage() {
         <h3 className="text-[#1a1a2e] font-semibold mb-4">Admission Pipeline</h3>
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           {workflowSteps.map((step, i) => (
-            <div key={i} className="flex items-center gap-2">
+            <div key={i} className="flex items-center gap-3">
               <button onClick={() => setStatusFilter(statusFilter === step.step ? "" : step.step)} className={`flex-1 min-w-[100px] p-3 rounded-xl text-center transition-all ${statusFilter === step.step ? "bg-white/[0.15] ring-2 ring-white/20" : "bg-[#f8fafc] hover:bg-[#f1f5f9]"}`}>
                 <div className={`w-2.5 h-2.5 rounded-full ${step.color} mx-auto mb-1.5`} />
                 <p className="text-[#1a1a2e] font-bold text-lg">{step.count}</p>
@@ -194,7 +194,7 @@ export default function AdmissionsPage() {
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           style={{ colorScheme: "light" }}
-          className="px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
+          className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
         >
           <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>All Status</option>
           {Object.entries(statusLabels).map(([val, label]) => (
@@ -230,7 +230,7 @@ export default function AdmissionsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusColors[a.status] || "bg-[#f1f5f9] text-[#475569]"}`}>
                     {statusLabels[a.status] || a.status}
                   </span>
@@ -257,9 +257,9 @@ export default function AdmissionsPage() {
       {/* Detail Modal */}
       <AnimatePresence>
         {selectedApplicant && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => setSelectedApplicant(null)}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay" onClick={() => setSelectedApplicant(null)}>
              <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-white border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto">
-               <div className="flex items-center justify-between mb-5">
+               <div className="flex items-center justify-between mb-6">
                  <h3 className="text-[#1a1a2e] font-bold text-lg">Application Details</h3>
                  <button onClick={() => setSelectedApplicant(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition"><X className="w-5 h-5" /></button>
                </div>
@@ -398,7 +398,7 @@ export default function AdmissionsPage() {
       {/* Action Modal */}
       <AnimatePresence>
         {showActionModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => { setShowActionModal(null); setActionNote(""); }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay" onClick={() => { setShowActionModal(null); setActionNote(""); }}>
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-xl bg-white border border-[#e2e8f0] rounded-3xl p-6">
               <h3 className="text-[#1a1a2e] font-bold text-lg mb-2">Review Application</h3>
               <p className="text-[#64748b] text-[13px] mb-4">Add a note for the applicant (optional)</p>

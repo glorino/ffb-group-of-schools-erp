@@ -133,7 +133,7 @@ export default function PayrollPage() {
             <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Payroll Management</h1>
             <p className="text-[#475569]">Manage teacher salaries, allowances, deductions, and payments</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={() => {
                 downloadCSV(filtered.map(p => ({
@@ -148,14 +148,14 @@ export default function PayrollPage() {
                 })), `payroll_${monthLabel}`);
                 toast.success("Exported successfully");
               }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="btn btn-secondary"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+              className="btn btn-primary"
             >
               <Plus className="w-4 h-4" />
               Add Entry
@@ -305,8 +305,7 @@ export default function PayrollPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-            onClick={() => setShowModal(false)}
+            className="modal-overlay" onClick={() => setShowModal(false)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -323,7 +322,7 @@ export default function PayrollPage() {
                 <div>
                   <label className="block text-[#64748b] text-[12px] mb-1.5">Teacher *</label>
                   <select value={form.teacherId} onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                     style={{ colorScheme: "light" }}>
                     <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select Teacher</option>
                     {teachers.map(t => (
@@ -334,18 +333,18 @@ export default function PayrollPage() {
                 <div>
                   <label className="block text-[#64748b] text-[12px] mb-1.5">Basic Salary *</label>
                   <input type="number" value={form.basicSalary} onChange={(e) => setForm({ ...form, basicSalary: e.target.value })}
-                    placeholder="e.g. 300000" className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                    placeholder="e.g. 300000" className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[#64748b] text-[12px] mb-1.5">Allowances</label>
                     <input type="number" value={form.allowances} onChange={(e) => setForm({ ...form, allowances: e.target.value })}
-                      placeholder="0" className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="0" className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
                   </div>
                   <div>
                     <label className="block text-[#64748b] text-[12px] mb-1.5">Deductions</label>
                     <input type="number" value={form.deductions} onChange={(e) => setForm({ ...form, deductions: e.target.value })}
-                      placeholder="0" className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="0" className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
                   </div>
                 </div>
               </div>

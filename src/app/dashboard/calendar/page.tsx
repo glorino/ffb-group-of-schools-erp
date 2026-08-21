@@ -190,20 +190,20 @@ export default function CalendarPage() {
               View and manage school events, exams, and activities
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={() => {
                 handleExport();
                 toast.success("Exported successfully");
               }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="btn btn-secondary"
             >
               <Filter className="w-4 h-4" />
               Filter
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+              className="btn btn-primary"
             >
               <Plus className="w-4 h-4" />
               Add Event
@@ -223,7 +223,7 @@ export default function CalendarPage() {
             <h3 className="text-[#1a1a2e] font-semibold text-lg">
               {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
             </h3>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <button
                 onClick={prevMonth}
                 className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]"
@@ -267,12 +267,12 @@ export default function CalendarPage() {
                 return (
                   <div
                     key={day}
-                    className={`aspect-square rounded-xl flex flex-col items-center justify-center text-[13px] cursor-pointer transition-all relative ${
+                    className={`aspect-square rounded-xl flex flex-col items-center justify-center text-[13px] cursor-pointer transition-colors relative border border-transparent ${
                       isToday
-                        ? "bg-[var(--primary)] text-white font-bold"
+                        ? "bg-[var(--primary)] text-white font-bold border-[var(--primary)]"
                         : dayEvents.length > 0
-                        ? "bg-[#f1f5f9] text-[#1a1a2e] hover:bg-white/[0.12]"
-                        : "text-[#475569] hover:bg-[#f8fafc]"
+                        ? "bg-[#f8fafc] text-[#1a1a2e] hover:bg-[#f1f5f9] border-[#e2e8f0]"
+                        : "text-[#475569] hover:bg-[#f8fafc] hover:border-[#f1f5f9]"
                     }`}
                   >
                     <span>{day}</span>
@@ -349,7 +349,7 @@ export default function CalendarPage() {
               ) : (
                 eventCategories.map((category, i) => (
                   <div key={i} className="flex items-center justify-between p-2 rounded-xl hover:bg-[#f8fafc]">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <div
                         className="w-3 h-3 rounded-full"
                         style={{ background: category.type === "exam" ? "#ef4444" : category.type === "meeting" ? "#3b82f6" : category.type === "event" ? "#10b981" : "#a855f7" }}
@@ -371,17 +371,16 @@ export default function CalendarPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-            onClick={() => setShowModal(false)}
+            className="modal-overlay" onClick={() => setShowModal(false)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
+              className="modal-content"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="modal-header">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Event</h3>
                 <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                   <X className="w-5 h-5" />
@@ -470,7 +469,7 @@ export default function CalendarPage() {
                     placeholder="Optional description..."
                   />
                 </div>
-                <div className="flex gap-3 pt-2">
+                <div className="modal-footer">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}

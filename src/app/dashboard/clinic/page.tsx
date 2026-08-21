@@ -147,17 +147,17 @@ export default function ClinicPage() {
               Manage student visits, medications, allergies, and health records
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="btn btn-secondary"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+              className="btn btn-primary"
             >
               <Plus className="w-4 h-4" />
               New Visit
@@ -197,7 +197,7 @@ export default function ClinicPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-[#1a1a2e] font-semibold text-lg">Recent Visits</h3>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
                 <input
@@ -287,7 +287,7 @@ export default function ClinicPage() {
                   alert.severity === "medium" ? "bg-orange-500/10 border border-orange-500/20" :
                   "bg-[#f8fafc]"
                 }`}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <AlertTriangle className={`w-4 h-4 ${
                       alert.severity === "high" ? "text-[#dc2626]" :
                       alert.severity === "medium" ? "text-orange-400" : "text-[#64748b]"
@@ -302,13 +302,13 @@ export default function ClinicPage() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="modal-overlay">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
+            className="modal-content"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">New Clinic Visit</h2>
               <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
@@ -365,7 +365,7 @@ export default function ClinicPage() {
                   placeholder="e.g. Paracetamol"
                 />
               </div>
-              <div className="flex gap-3 pt-2">
+              <div className="modal-footer">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}

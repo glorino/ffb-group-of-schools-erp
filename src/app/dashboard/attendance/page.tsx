@@ -195,7 +195,7 @@ export default function AttendancePage() {
                           <td className="text-[#dc2626]">{s.absent}</td>
                           <td className="text-[#ca8a04]">{s.late}</td>
                           <td>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-3">
                               <div className="progress-bar flex-1 max-w-[100px]">
                                 <div
                                   className={`progress-bar-fill ${rate >= 90 ? "bg-emerald-500" : rate >= 80 ? "bg-yellow-500" : "bg-red-500"}`}
@@ -269,7 +269,7 @@ export default function AttendancePage() {
         className="table-container"
       >
         <div className="table-header">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <AlertTriangle className="w-5 h-5 text-orange-400" />
             <h3>Absent Students Today</h3>
           </div>
@@ -324,7 +324,7 @@ export default function AttendancePage() {
         </div>
       </motion.div>
       {showQRScanner && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="modal-overlay">
           <div className="absolute inset-0 bg-black/60" onClick={() => setShowQRScanner(false)} />
           <div className="relative bg-white rounded-2xl p-6 w-full max-w-md border border-[#e2e8f0]">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">QR Scanner / Admission Number</h3>

@@ -177,7 +177,7 @@ export default function AlumniPage() {
               Connect with alumni, manage networking, donations, and mentorship
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all"
@@ -226,7 +226,7 @@ export default function AlumniPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-[#1a1a2e] font-semibold text-lg">Alumni Directory</h3>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
                 <input
@@ -250,7 +250,7 @@ export default function AlumniPage() {
                       <button
                         key={opt}
                         onClick={() => { setFilterCategory(opt); setShowFilter(false); }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-[13px] capitalize transition-all ${filterCategory === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-[#475569] hover:bg-[#f1f5f9]"}`}
+                        className={`w-full text-left px-5 py-2.5 rounded-lg text-[13px] capitalize transition-all ${filterCategory === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-[#475569] hover:bg-[#f1f5f9]"}`}
                       >
                         {opt === "all" ? "All" : opt === "recent" ? "Recent Graduates" : opt === "mentoring" ? "Mentoring" : "Donating"}
                       </button>
@@ -374,7 +374,7 @@ export default function AlumniPage() {
       </div>
 
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => setShowAddModal(false)}>
+        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -382,7 +382,7 @@ export default function AlumniPage() {
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
           >
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-bold text-lg">Add Alumni Record</h3>
               <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition">
                 <X className="w-5 h-5" />
@@ -396,7 +396,7 @@ export default function AlumniPage() {
                   value={form.graduationYear}
                   onChange={(e) => setForm({ ...form, graduationYear: e.target.value })}
                   placeholder="e.g. 2015"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                 />
               </div>
               <div>
@@ -406,7 +406,7 @@ export default function AlumniPage() {
                   value={form.university}
                   onChange={(e) => setForm({ ...form, university: e.target.value })}
                   placeholder="University name"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                 />
               </div>
               <div>
@@ -416,7 +416,7 @@ export default function AlumniPage() {
                   value={form.degree}
                   onChange={(e) => setForm({ ...form, degree: e.target.value })}
                   placeholder="e.g. B.Sc Computer Science"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                 />
               </div>
               <div>
@@ -426,7 +426,7 @@ export default function AlumniPage() {
                   value={form.industry}
                   onChange={(e) => setForm({ ...form, industry: e.target.value })}
                   placeholder="e.g. Technology"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -437,7 +437,7 @@ export default function AlumniPage() {
                     value={form.currentEmployer}
                     onChange={(e) => setForm({ ...form, currentEmployer: e.target.value })}
                     placeholder="Company name"
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                   />
                 </div>
                 <div>
@@ -447,7 +447,7 @@ export default function AlumniPage() {
                     value={form.currentPosition}
                     onChange={(e) => setForm({ ...form, currentPosition: e.target.value })}
                     placeholder="Job title"
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50"
                   />
                 </div>
               </div>
@@ -458,7 +458,7 @@ export default function AlumniPage() {
                   onChange={(e) => setForm({ ...form, biography: e.target.value })}
                   placeholder="Brief bio..."
                   rows={3}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none"
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none"
                 />
               </div>
               <div className="flex gap-2 mt-4">
@@ -472,7 +472,7 @@ export default function AlumniPage() {
                 </button>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2.5 rounded-xl bg-[#f8fafc] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition"
+                  className="px-5 py-2.5 rounded-xl bg-[#f8fafc] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition"
                 >
                   Cancel
                 </button>
@@ -483,14 +483,14 @@ export default function AlumniPage() {
       )}
 
       {messageModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} onClick={() => setMessageModal(null)}>
+        <div className="modal-overlay" onClick={() => setMessageModal(null)}>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6"
           >
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-bold text-lg">Send Message</h3>
               <button onClick={() => setMessageModal(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition">
                 <X className="w-5 h-5" />
@@ -500,21 +500,21 @@ export default function AlumniPage() {
               <div>
                 <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">To</label>
                 <input type="text" readOnly value={messageModal.alumni.user?.name || "Unknown"}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none" />
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none" />
               </div>
               <div>
                 <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Subject</label>
                 <input type="text" value={messageModal.subject}
                   onChange={(e) => setMessageModal({ ...messageModal, subject: e.target.value })}
                   placeholder="e.g. Mentorship Inquiry"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" />
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" />
               </div>
               <div>
                 <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Message</label>
                 <textarea rows={4} value={messageModal.body}
                   onChange={(e) => setMessageModal({ ...messageModal, body: e.target.value })}
                   placeholder="Type your message..."
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />
+                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />
               </div>
               <div className="flex gap-2 mt-4">
                 <button onClick={() => {
@@ -525,7 +525,7 @@ export default function AlumniPage() {
                   Send Message
                 </button>
                 <button onClick={() => setMessageModal(null)}
-                  className="px-4 py-2.5 rounded-xl bg-[#f8fafc] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition">
+                  className="px-5 py-2.5 rounded-xl bg-[#f8fafc] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition">
                   Cancel
                 </button>
               </div>

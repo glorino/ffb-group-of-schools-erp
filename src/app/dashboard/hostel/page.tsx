@@ -156,24 +156,24 @@ export default function HostelPage() {
               Manage blocks, rooms, beds, allocation, and QR attendance
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="btn btn-secondary"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowQRScanner(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="btn btn-secondary"
             >
               <QrCode className="w-4 h-4" />
               QR Attendance
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+              className="btn btn-primary"
             >
               <Plus className="w-4 h-4" />
               Add Block
@@ -249,7 +249,7 @@ export default function HostelPage() {
                       />
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <button
                       onClick={() => setViewBlock(block)}
                       className="flex-1 py-1.5 rounded-lg bg-[#f8fafc] text-[#475569] text-[12px] hover:bg-[#f1f5f9] transition-all"
@@ -331,13 +331,13 @@ export default function HostelPage() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="modal-overlay">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
+            className="modal-content"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Hostel Block</h2>
               <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
@@ -377,7 +377,7 @@ export default function HostelPage() {
                   placeholder="e.g. 80"
                 />
               </div>
-              <div className="flex gap-3 pt-2">
+              <div className="modal-footer">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
@@ -399,7 +399,7 @@ export default function HostelPage() {
       )}
 
       {viewBlock && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="modal-overlay">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -437,13 +437,13 @@ export default function HostelPage() {
       )}
 
       {editBlock && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="modal-overlay">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
+            className="modal-content"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Edit {editBlock.name}</h2>
               <button onClick={() => setEditBlock(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
@@ -481,7 +481,7 @@ export default function HostelPage() {
                   className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
-              <div className="flex gap-3 pt-2">
+              <div className="modal-footer">
                 <button
                   onClick={() => setEditBlock(null)}
                   className="flex-1 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors"
@@ -514,11 +514,11 @@ export default function HostelPage() {
       )}
 
       {showQRScanner && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowQRScanner(false)}>
+        <div className="modal-overlay" onClick={() => setShowQRScanner(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-2xl bg-white border border-[#e2e8f0] p-6">
-            <div className="flex items-center justify-between mb-6">
+            className="modal-content">
+            <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">QR Attendance</h2>
               <button onClick={() => setShowQRScanner(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
             </div>

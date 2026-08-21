@@ -153,7 +153,7 @@ export default function ClassesPage() {
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
           >
             <Plus className="w-4 h-4" />
             Add Class
@@ -192,7 +192,7 @@ export default function ClassesPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-[#1a1a2e] font-semibold text-lg">All Classes</h3>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
                 <input
@@ -338,8 +338,7 @@ export default function ClassesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          >
+            className="modal-overlay">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -361,7 +360,7 @@ export default function ClassesPage() {
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. JSS1"
                   />
                 </div>
@@ -371,7 +370,7 @@ export default function ClassesPage() {
                     type="text"
                     value={form.displayName}
                     onChange={(e) => setForm({ ...form, displayName: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. Junior Secondary 1A"
                   />
                 </div>
@@ -381,7 +380,7 @@ export default function ClassesPage() {
                     type="text"
                     value={form.arm}
                     onChange={(e) => setForm({ ...form, arm: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     placeholder="e.g. A, B, C"
                   />
                 </div>
@@ -391,7 +390,7 @@ export default function ClassesPage() {
                     <select
                       value={form.level}
                       onChange={(e) => setForm({ ...form, level: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "light" }}
                     >
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="nursery">Nursery</option>
@@ -407,7 +406,7 @@ export default function ClassesPage() {
                       min="1"
                       value={form.capacity}
                       onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -437,7 +436,7 @@ export default function ClassesPage() {
       <AnimatePresence>
         {viewClass && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            className="modal-overlay">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setViewClass(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
@@ -476,7 +475,7 @@ export default function ClassesPage() {
       <AnimatePresence>
         {editClass && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            className="modal-overlay">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditClass(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
@@ -517,18 +516,18 @@ export default function ClassesPage() {
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Name *</label>
                   <input type="text" required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Display Name</label>
                   <input type="text" value={editForm.displayName} onChange={(e) => setEditForm({ ...editForm, displayName: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
                     <select value={editForm.level} onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "light" }}>
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="nursery">Nursery</option>
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="primary">Primary</option>
@@ -539,7 +538,7 @@ export default function ClassesPage() {
                   <div>
                     <label className="block text-[#475569] text-[13px] mb-1.5">Capacity</label>
                     <input type="number" min="1" value={editForm.capacity} onChange={(e) => setEditForm({ ...editForm, capacity: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 pt-2">

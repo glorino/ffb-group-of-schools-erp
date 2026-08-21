@@ -185,7 +185,7 @@ export default function ReportCardsPage() {
                   <button
                     key={s.id}
                     onClick={() => setSelectedStudent(s.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition ${
+                    className={`w-full flex items-center gap-3 px-5 py-2.5 rounded-xl text-left transition ${
                       selectedStudent === s.id
                         ? "bg-[var(--primary)]/20 border border-[var(--primary)]/40"
                         : "hover:bg-[#f8fafc] border border-transparent"
@@ -209,17 +209,17 @@ export default function ReportCardsPage() {
         <div className="lg:col-span-3 space-y-4">
           {reportData ? (
             <>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
                   onClick={() => setShowPreview(!showPreview)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
                 >
                   <Eye className="w-4 h-4" /> {showPreview ? "Hide Preview" : "Preview"}
                 </button>
                 <PDFDownloadLink
                   document={<ReportCardPDF {...reportData} />}
                   fileName={`report_card_${reportData.studentData.admissionNumber}.pdf`}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition"
                 >
                   {({ loading }) => loading ? "Generating..." : <><Download className="w-4 h-4" /> Download PDF</>}
                 </PDFDownloadLink>
@@ -232,7 +232,7 @@ export default function ReportCardsPage() {
                       }</table><p><strong>Attendance:</strong> ${reportData.attendance.present}/${reportData.attendance.totalDays} days</p>`
                     );
                   }}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] font-medium hover:bg-[#f1f5f9] transition"
                 >
                   <Printer className="w-4 h-4" /> Print
                 </button>

@@ -160,7 +160,7 @@ export default function ExamsPage() {
               CBT setup, question bank management, and exam scheduling
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-[#f1f5f9] transition-all duration-200"
@@ -316,17 +316,16 @@ export default function ExamsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-            onClick={() => setShowModal(false)}
+            className="modal-overlay" onClick={() => setShowModal(false)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
+              className="modal-content"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="modal-header">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Create Exam</h3>
                 <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                   <X className="w-5 h-5" />
@@ -381,7 +380,7 @@ export default function ExamsPage() {
                     />
                   </div>
                 </div>
-                <div className="flex gap-3 pt-2">
+                <div className="modal-footer">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
@@ -407,12 +406,11 @@ export default function ExamsPage() {
       <AnimatePresence>
         {showSubjects && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-            onClick={() => setShowSubjects(false)}>
+            className="modal-overlay" onClick={() => setShowSubjects(false)}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6">
-              <div className="flex items-center justify-between mb-6">
+              className="modal-content">
+              <div className="modal-header">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">All Subjects</h3>
                 <button onClick={() => setShowSubjects(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
               </div>

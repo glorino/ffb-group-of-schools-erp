@@ -249,8 +249,8 @@ export default function FinancePage() {
           </h1>
           <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">Manage fees, payments, and financial records</p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <select value={filterSession} onChange={(e) => setFilterSession(e.target.value)}
               className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] focus:outline-none focus:border-[var(--primary)]"
               style={{ colorScheme: "light" }}>
@@ -264,11 +264,11 @@ export default function FinancePage() {
               {terms.map((t: any) => <option key={t.id} style={{ background: "#ffffff", color: "#1a1a2e" }} value={t.name}>{t.name}</option>)}
             </select>
           </div>
-          <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200">
+          <button onClick={handleExport} className="btn btn-secondary">
             <Download className="w-4 h-4" /> Export
           </button>
           {!isReadOnly && (
-            <button onClick={() => setShowModal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25">
+            <button onClick={() => setShowModal(true)} className="btn btn-primary">
               <Plus className="w-4 h-4" /> Create Invoice
             </button>
           )}
@@ -456,7 +456,7 @@ export default function FinancePage() {
                         </p>
                       </div>
                       {inv.status !== "paid" && (
-                        <div className="flex gap-2">
+                        <div className="flex gap-3">
                           <button onClick={() => handlePayNow(inv)} className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-[#16a34a] text-[11px] font-medium hover:bg-[#dcfce7] transition">
                             Pay Now
                           </button>
@@ -476,7 +476,7 @@ export default function FinancePage() {
 
       <AnimatePresence>
         {showModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden">
               <div className="bg-gradient-to-r from-emerald-500/20 to-emerald-600/5 px-6 py-4 border-b border-[#e2e8f0]">
@@ -493,7 +493,7 @@ export default function FinancePage() {
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div className="relative">
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">Student *</label>
-                  <button type="button" onClick={() => setShowStudentDropdown(!showStudentDropdown)} className="w-full px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between">
+                  <button type="button" onClick={() => setShowStudentDropdown(!showStudentDropdown)} className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between">
                     <span className={selectedStudentName ? "text-[#1a1a2e]" : "text-[#64748b]"}>{selectedStudentName || "Select a student..."}</span>
                     <ChevronDown className={`w-4 h-4 text-[#64748b] transition-transform ${showStudentDropdown ? "rotate-180" : ""}`} />
                   </button>
@@ -522,29 +522,29 @@ export default function FinancePage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Amount *</label>
-                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" placeholder="0" />
+                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" placeholder="0" />
                   </div>
                   <div>
                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Due Date *</label>
-                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
+                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
                   </div>
                 </div>
                 ) : (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Instalment Amount *</label>
-                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" placeholder="Enter instalment amount" />
+                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" placeholder="Enter instalment amount" />
                   </div>
                   <div>
                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Due Date *</label>
-                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
+                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
                   </div>
                 </div>
                 )}
 
                 <div>
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">School Fee *</label>
-                  <select value={form.schoolFeeId} onChange={(e) => { setForm({ ...form, schoolFeeId: e.target.value }); const f = fees.find(fe => fe.id === e.target.value); setSelectedFeeName(f ? `${f.name} (${f.type})` : ""); }} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer" style={{ colorScheme: "light" }}>
+                  <select value={form.schoolFeeId} onChange={(e) => { setForm({ ...form, schoolFeeId: e.target.value }); const f = fees.find(fe => fe.id === e.target.value); setSelectedFeeName(f ? `${f.name} (${f.type})` : ""); }} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer" style={{ colorScheme: "light" }}>
                     <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select fee type</option>
                     {fees.map(f => (
                       <option key={f.id} value={f.id} style={{ background: "#ffffff", color: "#1a1a2e" }}>{f.name} — {formatCurrency(f.amount)}</option>
@@ -554,7 +554,7 @@ export default function FinancePage() {
 
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Payment Type</label>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <button type="button" onClick={() => setForm({ ...form, paymentType: "full" })}
                       className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium transition-all ${form.paymentType === "full" ? "bg-[var(--primary)] text-[#1a1a2e]" : "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b]"}`}>
                       Full Payment
@@ -568,7 +568,7 @@ export default function FinancePage() {
 
                 <div>
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">Description</label>
-                  <input type="text" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" placeholder="Optional notes..." />
+                  <input type="text" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]" placeholder="Optional notes..." />
                 </div>
 
                 <div className="flex justify-end gap-3 pt-2 border-t border-[#e2e8f0]">

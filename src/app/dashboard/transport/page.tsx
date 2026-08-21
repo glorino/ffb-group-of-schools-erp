@@ -161,24 +161,24 @@ export default function TransportPage() {
               Manage vehicles, routes, drivers, and GPS tracking
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="btn btn-secondary"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowGPS(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="btn btn-secondary"
             >
               <Navigation className="w-4 h-4" />
               GPS Tracking
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-lg shadow-[var(--primary)]/25"
+              className="btn btn-primary"
             >
               <Plus className="w-4 h-4" />
               Add Vehicle
@@ -238,7 +238,7 @@ export default function TransportPage() {
                   <Bus className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <p className="text-[#1a1a2e] text-[13px] font-medium">{vehicle.name}</p>
                     <span className="text-[#94a3b8] text-[12px]">{vehicle.plateNumber}</span>
                   </div>
@@ -313,13 +313,13 @@ export default function TransportPage() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="modal-overlay">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl rounded-2xl bg-white border border-[#e2e8f0] p-6"
+            className="modal-content"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Vehicle</h2>
               <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
                 <X className="w-5 h-5" />
@@ -391,7 +391,7 @@ export default function TransportPage() {
                   placeholder="e.g. 08012345678"
                 />
               </div>
-              <div className="flex gap-3 pt-2">
+              <div className="modal-footer">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
@@ -413,11 +413,11 @@ export default function TransportPage() {
       )}
 
       {showGPS && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowGPS(false)}>
+        <div className="modal-overlay" onClick={() => setShowGPS(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl rounded-2xl bg-white border border-[#e2e8f0] p-6">
-            <div className="flex items-center justify-between mb-6">
+            className="modal-content">
+            <div className="modal-header">
               <h2 className="text-[#1a1a2e] text-lg font-semibold">GPS Tracking</h2>
               <button onClick={() => setShowGPS(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
             </div>

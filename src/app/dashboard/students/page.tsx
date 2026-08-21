@@ -160,7 +160,7 @@ export default function StudentsPage() {
           <h1 className="section-title">Students</h1>
           <p className="section-subtitle">Manage student records and profiles</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={async () => {
               try {

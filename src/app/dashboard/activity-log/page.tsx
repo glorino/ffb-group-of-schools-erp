@@ -49,7 +49,7 @@ export default function ActivityLogPage() {
             <h1 className="text-[#1a1a2e] text-xl font-bold">Activity Log</h1>
             <p className="text-[#64748b] text-[13px] mt-1">Track all system activities and changes</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
               <input

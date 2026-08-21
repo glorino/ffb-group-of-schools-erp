@@ -425,15 +425,14 @@ export default function ProfilePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-            onClick={() => setShowPasswordModal(false)}
+            className="modal-overlay" onClick={() => setShowPasswordModal(false)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl mx-4 p-6 rounded-2xl bg-[#0d1425] border border-[#e2e8f0] shadow-2xl"
+              className="w-full max-w-xl mx-4 p-6 rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Change Password</h3>
@@ -473,7 +472,7 @@ export default function ProfilePage() {
                   />
                 </div>
               </div>
-              <div className="flex justify-end gap-3 mt-6">
+              <div className="modal-footer">
                 <button
                   onClick={() => setShowPasswordModal(false)}
                   className="px-4 py-2 rounded-xl bg-white/[0.06] text-[#475569] text-sm font-medium hover:bg-[#f1f5f9] transition-all"
@@ -495,10 +494,10 @@ export default function ProfilePage() {
       </AnimatePresence>
 
       {show2FAModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShow2FAModal(false)}>
+        <div className="modal-overlay" onClick={() => setShow2FAModal(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md mx-4 p-6 rounded-2xl bg-[#0d1425] border border-[#e2e8f0] shadow-2xl">
+            className="w-full max-w-md mx-4 p-6 rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-semibold text-lg">Two-Factor Authentication</h3>
               <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all">
@@ -522,7 +521,7 @@ export default function ProfilePage() {
               {twoFAEnabled && (
                 <p className="text-[#64748b] text-[12px] text-center">2FA setup link will be sent to your email address</p>
               )}
-              <div className="flex gap-3 pt-2">
+              <div className="modal-footer">
                 <button onClick={() => setShow2FAModal(false)}
                   className="flex-1 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">
                   Close

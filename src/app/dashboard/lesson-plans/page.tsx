@@ -126,19 +126,19 @@ export default function LessonPlansPage() {
           </h1>
           <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">Create and manage lesson plans for your classes</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => downloadCSV(filtered.map(lp => ({
               Subject: lp.subject, Class: lp.className, Topic: lp.topic, Teacher: `${lp.teacher.firstName} ${lp.teacher.lastName}`,
               Status: lp.status, Start: lp.startDate, End: lp.endDate,
             })), "lesson_plans")}
-            className="px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition flex items-center gap-2"
+            className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition flex items-center gap-2"
           >
             Export
           </button>
           <button
             onClick={() => setShowModal(true)}
-            className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2"
+            className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2"
           >
             <Plus className="w-4 h-4" /> New Plan
           </button>
@@ -153,13 +153,13 @@ export default function LessonPlansPage() {
             placeholder="Search by subject, topic, or class..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50 transition-all"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
+          className="px-5 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#475569] text-[13px] outline-none focus:border-[var(--primary)]/50 appearance-none cursor-pointer"
           style={{ colorScheme: "light" }}
         >
           <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>All Status</option>
@@ -176,16 +176,16 @@ export default function LessonPlansPage() {
       ) : (
         <div className="space-y-2">
           {filtered.length === 0 ? (
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-16 text-center">
+            <div className="bg-white rounded-xl border border-[#e2e8f0] shadow-sm p-16 text-center">
               <BookOpen className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" />
               <p className="text-[#94a3b8] text-sm">No lesson plans found</p>
             </div>
           ) : filtered.map((lp) => (
-            <motion.div
+              <motion.div
               key={lp.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-[#f1f5f9] rounded-xl border border-[#e2e8f0] p-4 flex items-center gap-4 hover:bg-[#f8fafc] transition"
+              className="bg-white rounded-xl border border-[#e2e8f0] shadow-sm p-4 flex items-center gap-4 hover:bg-[#f8fafc] transition-colors"
             >
               <div className="w-10 h-10 rounded-xl bg-[#f3e8ff] flex items-center justify-center flex-shrink-0">
                 <BookOpen className="w-5 h-5 text-[#7c3aed]" />
@@ -231,8 +231,7 @@ export default function LessonPlansPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-            onClick={() => setShowModal(false)}
+            className="modal-overlay" onClick={() => setShowModal(false)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -252,45 +251,45 @@ export default function LessonPlansPage() {
                   <div>
                     <label className="block text-[#64748b] text-[12px] mb-1.5">Subject *</label>
                     <input type="text" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      placeholder="e.g. Mathematics" className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="e.g. Mathematics" className="w-full px-5 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50" />
                   </div>
                   <div>
                     <label className="block text-[#64748b] text-[12px] mb-1.5">Class *</label>
                     <input type="text" value={form.className} onChange={(e) => setForm({ ...form, className: e.target.value })}
-                      placeholder="e.g. JSS3A" className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                      placeholder="e.g. JSS3A" className="w-full px-5 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-[#64748b] text-[12px] mb-1.5">Topic *</label>
                   <input type="text" value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })}
-                    placeholder="e.g. Quadratic Equations" className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                    placeholder="e.g. Quadratic Equations" className="w-full px-5 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50" />
                 </div>
                 <div>
                   <label className="block text-[#64748b] text-[12px] mb-1.5">Learning Objectives</label>
                   <input type="text" value={form.objectives} onChange={(e) => setForm({ ...form, objectives: e.target.value })}
-                    placeholder="e.g. Students will be able to solve..." className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                    placeholder="e.g. Students will be able to solve..." className="w-full px-5 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50" />
                 </div>
                 <div>
                   <label className="block text-[#64748b] text-[12px] mb-1.5">Content *</label>
                   <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })}
                     placeholder="Detailed lesson content..." rows={4}
-                    className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50 resize-none" />
+                    className="w-full px-5 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50 resize-none" />
                 </div>
                 <div>
                   <label className="block text-[#64748b] text-[12px] mb-1.5">Resources</label>
                   <input type="text" value={form.resources} onChange={(e) => setForm({ ...form, resources: e.target.value })}
-                    placeholder="Textbooks, links, materials..." className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-white/20 outline-none focus:border-[var(--primary)]/50" />
+                    placeholder="Textbooks, links, materials..." className="w-full px-5 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[#64748b] text-[12px] mb-1.5">Start Date *</label>
                     <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-                      className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" style={{ colorScheme: "light" }} />
+                      className="w-full px-5 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" style={{ colorScheme: "light" }} />
                   </div>
                   <div>
                     <label className="block text-[#64748b] text-[12px] mb-1.5">End Date *</label>
                     <input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-                      className="w-full px-3 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" style={{ colorScheme: "light" }} />
+                      className="w-full px-5 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50" style={{ colorScheme: "light" }} />
                   </div>
                 </div>
               </div>
@@ -314,8 +313,7 @@ export default function LessonPlansPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-            onClick={() => setShowDetail(null)}
+            className="modal-overlay" onClick={() => setShowDetail(null)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}

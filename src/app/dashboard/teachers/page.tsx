@@ -270,7 +270,7 @@ export default function TeachersPage() {
       >
         <div className="table-header">
           <h3>Teacher Directory</h3>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
               <input
@@ -303,7 +303,7 @@ export default function TeachersPage() {
             <p className="text-[#64748b] text-[12px]">
               Showing {((page - 1) * 10) + 1}–{Math.min(page * 10, data.total)} of {data.total}
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
@@ -340,7 +340,7 @@ export default function TeachersPage() {
               onClick={(e) => e.stopPropagation()}
               className="modal-content max-w-2xl"
             >
-              <div className="modal-header">
+              <div className="flex items-center justify-between mb-6">
                 <h3>Add New Teacher</h3>
                 <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e] transition">
                   <X className="w-5 h-5" />

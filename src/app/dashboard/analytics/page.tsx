@@ -301,7 +301,7 @@ export default function AnalyticsPage() {
             <h1 className="section-title">Analytics Dashboard</h1>
             <p className="section-subtitle">Charts, KPIs, heatmaps, and trend analysis for data-driven decisions</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={() => toast.success("Filters applied")}
               className="btn btn-secondary"

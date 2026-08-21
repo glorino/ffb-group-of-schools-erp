@@ -171,8 +171,8 @@ export default function DisciplinePage() {
 
       <AnimatePresence>
         {showModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={() => setShowModal(false)}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={e => e.stopPropagation()} className="bg-white border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay" onClick={() => setShowModal(false)}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={e => e.stopPropagation()} className="modal-content">
               <h2 className="text-xl font-bold text-[#1a1a2e] mb-4">{editingRecord ? "Edit Record" : "New Discipline Record"}</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -215,7 +215,7 @@ export default function DisciplinePage() {
                   <label className="block text-[#64748b] text-sm mb-1">Date</label>
                   <input type="date" required value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="input-glass w-full" style={{ colorScheme: "light" }} />
                 </div>
-                <div className="flex gap-3 pt-2">
+                <div className="modal-footer">
                   <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-2 border border-[#e2e8f0] rounded-lg text-[#475569] hover:bg-[#f8fafc]">Cancel</button>
                   <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-[#0039a6] to-[#0055ff] rounded-lg text-white font-medium">{editingRecord ? "Update" : "Create"}</button>
                 </div>

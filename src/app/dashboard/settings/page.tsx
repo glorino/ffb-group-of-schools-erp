@@ -563,7 +563,7 @@ export default function SettingsPage() {
                       type="text"
                       value={academicYear.session}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, session: e.target.value }))}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -572,7 +572,7 @@ export default function SettingsPage() {
                       value={academicYear.term}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, term: e.target.value }))}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     >
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }}>First Term</option>
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Second Term</option>
@@ -588,7 +588,7 @@ export default function SettingsPage() {
                       value={academicYear.firstTermStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, firstTermStart: e.target.value }))}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -598,7 +598,7 @@ export default function SettingsPage() {
                       value={academicYear.firstTermEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, firstTermEnd: e.target.value }))}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -610,7 +610,7 @@ export default function SettingsPage() {
                       value={academicYear.secondTermStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, secondTermStart: e.target.value }))}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -620,7 +620,7 @@ export default function SettingsPage() {
                       value={academicYear.secondTermEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, secondTermEnd: e.target.value }))}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -632,7 +632,7 @@ export default function SettingsPage() {
                       value={academicYear.thirdTermStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, thirdTermStart: e.target.value }))}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -642,7 +642,7 @@ export default function SettingsPage() {
                       value={academicYear.thirdTermEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, thirdTermEnd: e.target.value }))}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -654,14 +654,14 @@ export default function SettingsPage() {
                       value={academicYear.midTermBreakStart}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, midTermBreakStart: e.target.value }))}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                     <input
                       type="date"
                       value={academicYear.midTermBreakEnd}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, midTermBreakEnd: e.target.value }))}
                       style={{ colorScheme: "light" }}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -674,7 +674,7 @@ export default function SettingsPage() {
             <>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Grading System</h3>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <button
                     onClick={addGradingRow}
                     className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.06] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-all"
@@ -694,18 +694,18 @@ export default function SettingsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-[#e2e8f0]">
-                      <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Grade</th>
-                      <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Min %</th>
-                      <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Max %</th>
-                      <th className="text-left text-[#64748b] text-[13px] font-medium pb-3">Points</th>
-                      <th className="text-left text-[#64748b] text-[13px] font-medium pb-3 w-10"></th>
+                    <tr className="border-b-2 border-[#e2e8f0] bg-[#f8fafc]">
+                      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Grade</th>
+                      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Min %</th>
+                      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Max %</th>
+                      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Points</th>
+                      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3 w-10"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {gradingConfig.map((grade, i) => (
-                      <tr key={i} className="border-b border-white/5">
-                        <td className="py-2">
+                      <tr key={i} className="border-b border-[#f1f5f9] hover:bg-[#f8fafc] transition-colors">
+                        <td className="py-2 px-3">
                           <input
                             type="text"
                             value={grade.grade}

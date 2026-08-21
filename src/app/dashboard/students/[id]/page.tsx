@@ -268,7 +268,7 @@ export default function StudentDetailPage() {
                   <button title="Download student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e]/30 hover:text-[#475569] hover:bg-[#f1f5f9] transition">
                     <Download className="w-4 h-4" />
                   </button>
-                  <button onClick={() => router.push(`/dashboard/students?edit=${student.id}`)} className="px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
+                  <button onClick={() => router.push(`/dashboard/students?edit=${student.id}`)} className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
                     <Edit3 className="w-3.5 h-3.5" /> Edit Profile
                   </button>
                 </div>
@@ -282,7 +282,7 @@ export default function StudentDetailPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all whitespace-nowrap ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-medium transition-all whitespace-nowrap ${
                   activeTab === tab.id
                     ? "bg-[#f1f5f9] text-[#1a1a2e] shadow-lg shadow-black/10"
                     : "text-[#94a3b8] hover:text-[#475569] hover:bg-[#f8fafc]"
@@ -414,7 +414,7 @@ export default function StudentDetailPage() {
                   ) : (
                     <div className="space-y-2">
                       {recentGrades.map((g, i) => (
-                        <div key={i} className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                        <div key={i} className="flex items-center justify-between px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                           <div className="flex items-center gap-3">
                             <span className={`w-2 h-2 rounded-full ${
                               g.grade?.startsWith("A") ? "bg-emerald-400" :
@@ -449,7 +449,7 @@ export default function StudentDetailPage() {
                   ) : (
                     <div className="space-y-2">
                       {recentAttendance.map((a, i) => (
-                        <div key={i} className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                        <div key={i} className="flex items-center justify-between px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
                           <div className="flex items-center gap-3">
                             <span className={`w-2 h-2 rounded-full ${
                               a.status === "present" ? "bg-emerald-400" :
@@ -926,7 +926,7 @@ export default function StudentDetailPage() {
 
           {activeTab === "documents" && (
             <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-              <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-[15px] flex items-center gap-2">
                   <FileText className="w-4 h-4 text-[#64748b]" /> Documents
                 </h3>
@@ -992,9 +992,9 @@ export default function StudentDetailPage() {
       )}
 
       {showMessageModal && student && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl p-6">
-            <div className="flex items-center justify-between mb-6">
+        <div className="modal-overlay">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="modal-content">
+            <div className="modal-header">
               <div>
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Send Message</h3>
                 <p className="text-[#64748b] text-[13px]">To: {student.firstName} {student.lastName}</p>
@@ -1006,14 +1006,14 @@ export default function StudentDetailPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-[#475569] text-[13px] mb-1.5">Subject</label>
-                <input type="text" value={messageSubject} onChange={(e) => setMessageSubject(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-blue-500" placeholder="Enter subject" />
+                <input type="text" value={messageSubject} onChange={(e) => setMessageSubject(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-blue-500" placeholder="Enter subject" />
               </div>
               <div>
                 <label className="block text-[#475569] text-[13px] mb-1.5">Message</label>
-                <textarea value={messageBody} onChange={(e) => setMessageBody(e.target.value)} rows={5} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-blue-500 resize-none" placeholder="Write your message..." />
+                <textarea value={messageBody} onChange={(e) => setMessageBody(e.target.value)} rows={5} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-blue-500 resize-none" placeholder="Write your message..." />
               </div>
             </div>
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="modal-footer">
               <button onClick={() => setShowMessageModal(false)} className="px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e]/60 text-sm hover:bg-[#f1f5f9]">Cancel</button>
               <button
                 onClick={async () => {

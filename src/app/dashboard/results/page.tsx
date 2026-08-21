@@ -418,7 +418,7 @@ export default function ResultsPage() {
                         <td className="py-3 text-[#16a34a] text-sm font-medium">{result.highest}%</td>
                         <td className="py-3 text-[#dc2626] text-sm font-medium">{result.lowest}%</td>
                         <td className="py-3">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-3">
                             <div className="w-16 bg-[#f1f5f9] rounded-full h-1.5">
                               <div
                                 className={`h-1.5 rounded-full ${subjectPassRate >= 50 ? "bg-emerald-400" : "bg-red-400"}`}
@@ -498,7 +498,7 @@ export default function ResultsPage() {
                       </p>
                       <p className="text-[#64748b] text-[10px]">{g.subject?.name} · {typeLabel[g.type] || g.type}</p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <span className={`px-2 py-0.5 rounded text-[9px] font-semibold ${g.published ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#fef3c7] text-[#d97706]"}`}>
                         {g.published ? "Published" : "Draft"}
                       </span>
@@ -529,8 +529,7 @@ export default function ResultsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          >
+            className="modal-overlay">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -556,7 +555,7 @@ export default function ResultsPage() {
                   <button
                     type="button"
                     onClick={() => { setShowStudentDropdown(!showStudentDropdown); setShowSubjectDropdown(false); }}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between"
                   >
                     <span className={selectedStudentName ? "text-[#1a1a2e]" : "text-[#64748b]"}>
                       {selectedStudentName || "Select a student..."}
@@ -609,7 +608,7 @@ export default function ResultsPage() {
                   <button
                     type="button"
                     onClick={() => { setShowSubjectDropdown(!showSubjectDropdown); setShowStudentDropdown(false); }}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between"
+                    className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between"
                   >
                     <span className={selectedSubjectName ? "text-[#1a1a2e]" : "text-[#64748b]"}>
                       {selectedSubjectName || "Select a subject..."}
@@ -663,7 +662,7 @@ export default function ResultsPage() {
                     <select
                       value={form.type}
                       onChange={(e) => setForm({ ...form, type: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer"
                       style={{ colorScheme: "light" }}
                     >
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="ca1">1st CA</option>
@@ -679,7 +678,7 @@ export default function ResultsPage() {
                       min="0"
                       value={form.score}
                       onChange={(e) => setForm({ ...form, score: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="0"
                     />
                   </div>
@@ -693,7 +692,7 @@ export default function ResultsPage() {
                       min="1"
                       value={form.maxScore}
                       onChange={(e) => setForm({ ...form, maxScore: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -702,7 +701,7 @@ export default function ResultsPage() {
                       type="text"
                       value={form.term}
                       onChange={(e) => setForm({ ...form, term: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="e.g. 2nd Term"
                     />
                   </div>
@@ -715,7 +714,7 @@ export default function ResultsPage() {
                       type="text"
                       value={form.session}
                       onChange={(e) => setForm({ ...form, session: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="e.g. 2024/2025"
                     />
                   </div>
@@ -725,7 +724,7 @@ export default function ResultsPage() {
                       type="text"
                       value={form.comments}
                       onChange={(e) => setForm({ ...form, comments: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                       placeholder="Optional"
                     />
                   </div>
@@ -760,8 +759,7 @@ export default function ResultsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          >
+            className="modal-overlay">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditingGrade(null)} />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -795,7 +793,7 @@ export default function ResultsPage() {
                       min="0"
                       value={editForm.score}
                       onChange={(e) => setEditForm({ ...editForm, score: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                   <div>
@@ -805,7 +803,7 @@ export default function ResultsPage() {
                       min="1"
                       value={editForm.maxScore}
                       onChange={(e) => setEditForm({ ...editForm, maxScore: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
+                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>

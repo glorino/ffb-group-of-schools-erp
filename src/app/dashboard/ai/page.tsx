@@ -281,7 +281,7 @@ export default function AIPage() {
               Predictions, recommendations, and risk engine powered by AI
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={fetchData}
               className="flex items-center gap-2 px-4 py-2 rounded-xl glass border border-[#e2e8f0] text-[#1a1a2e] text-sm font-medium hover:bg-[#f1f5f9] transition-all"

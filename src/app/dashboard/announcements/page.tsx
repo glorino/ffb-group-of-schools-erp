@@ -201,7 +201,7 @@ function AnnouncementsPageInner() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="card">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-[#1a1a2e] font-semibold text-lg">All Announcements</h3>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
               <input
@@ -225,7 +225,7 @@ function AnnouncementsPageInner() {
                     <button
                       key={opt}
                       onClick={() => { setFilterStatus(opt); setShowFilter(false); }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-[13px] capitalize transition-all ${filterStatus === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-[#475569] hover:bg-[#f1f5f9]"}`}
+                      className={`w-full text-left px-5 py-2.5 rounded-lg text-[13px] capitalize transition-all ${filterStatus === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-[#475569] hover:bg-[#f1f5f9]"}`}
                     >
                       {opt === "all" ? "All" : opt}
                     </button>
@@ -250,7 +250,7 @@ function AnnouncementsPageInner() {
             {filtered.map((announcement) => (
               <div key={announcement.id} className="p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     {!announcement.published && <Pin className="w-4 h-4 text-[#94a3b8]" />}
                     <h4 className="text-[#1a1a2e] font-medium text-[13px]">{announcement.title}</h4>
                   </div>
@@ -277,7 +277,7 @@ function AnnouncementsPageInner() {
                     </div>
                   </div>
                   {!isReadOnly && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <button onClick={() => openEdit(announcement)} className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-all">
                         <Edit className="w-4 h-4" />
                       </button>
@@ -294,9 +294,9 @@ function AnnouncementsPageInner() {
       </motion.div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl p-6">
-            <div className="flex items-center justify-between mb-6">
+        <div className="modal-overlay">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="modal-content">
+            <div className="modal-header">
               <h3 className="text-[#1a1a2e] font-semibold text-lg">{editAnnouncement ? "Edit Announcement" : "New Announcement"}</h3>
               <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b]">
                 <X className="w-5 h-5" />
@@ -306,16 +306,16 @@ function AnnouncementsPageInner() {
             <div className="space-y-4">
               <div>
                 <label className="block text-[#475569] text-[13px] mb-1.5">Title *</label>
-                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Enter title" />
+                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Enter title" />
               </div>
               <div>
                 <label className="block text-[#475569] text-[13px] mb-1.5">Content *</label>
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none" placeholder="Write content..." />
+                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none" placeholder="Write content..." />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Type</label>
-                  <select value={type} onChange={(e) => setType(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
+                  <select value={type} onChange={(e) => setType(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
                     <option value="general" style={{ background: "#ffffff", color: "#1a1a2e" }}>General</option>
                     <option value="academic" style={{ background: "#ffffff", color: "#1a1a2e" }}>Academic</option>
                     <option value="sports" style={{ background: "#ffffff", color: "#1a1a2e" }}>Sports</option>
@@ -324,7 +324,7 @@ function AnnouncementsPageInner() {
                 </div>
                 <div>
                   <label className="block text-[#475569] text-[13px] mb-1.5">Priority</label>
-                  <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
+                  <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
                     <option value="low" style={{ background: "#ffffff", color: "#1a1a2e" }}>Low</option>
                     <option value="medium" style={{ background: "#ffffff", color: "#1a1a2e" }}>Medium</option>
                     <option value="high" style={{ background: "#ffffff", color: "#1a1a2e" }}>High</option>
@@ -362,7 +362,7 @@ function AnnouncementsPageInner() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="modal-footer">
               <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-sm hover:bg-[#f1f5f9]">Cancel</button>
               <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 flex items-center gap-2">
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}

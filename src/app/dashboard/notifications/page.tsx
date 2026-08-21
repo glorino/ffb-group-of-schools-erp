@@ -179,10 +179,10 @@ export default function NotificationsPage() {
           <button
             key={f.value}
             onClick={() => setFilter(f.value)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
+            className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border ${
               filter === f.value
-                ? "bg-[var(--primary)] text-[#1a1a2e]"
-                : "bg-[#f8fafc] text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9]"
+                ? "bg-[var(--primary)] text-white border-[var(--primary)]"
+                : "bg-white text-[#64748b] border-[#e2e8f0] hover:text-[#1a1a2e] hover:bg-[#f8fafc]"
             }`}
           >
             {f.label}
