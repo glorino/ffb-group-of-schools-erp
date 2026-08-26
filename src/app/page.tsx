@@ -140,7 +140,7 @@ export default function LandingPage() {
             <Link href="/events">Events</Link>
             <Link href="/news">News</Link>
             <Link href="/contact">Contact</Link>
-            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#001f5f" }}>Admissions</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Admissions</Link>
             <Link href="/auth/login" className="menu-btn portal-btn">Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -163,8 +163,8 @@ export default function LandingPage() {
             {SCHOOL_CONFIG.name} provides a world-class learning environment where students develop academic excellence, leadership and innovation.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }} style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/portal/apply" className="hero-btn" style={{ background: "#28ff9c", color: "#001f5f" }}>Apply For Admission</Link>
-            <Link href="/auth/login" className="hero-btn" style={{ background: "rgba(0,0,0,0.6)", border: "1px solid #fff" }}>Portal Login</Link>
+            <Link href="/portal/apply" className="hero-btn" style={{ background: "#28ff9c", color: "#ffffff" }}>Apply For Admission</Link>
+            <Link href="/auth/login" className="hero-btn" style={{ background: "rgba(0,0,0,0.6)", border: "1px solid #fff", color: "#ffffff" }}>Portal Login</Link>
           </motion.div>
         </div>
       </section>

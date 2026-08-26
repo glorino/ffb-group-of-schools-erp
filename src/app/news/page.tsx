@@ -32,7 +32,7 @@ export default function NewsPage() {
   const filtered = filter === "All" ? newsItems : newsItems.filter((n) => n.category === filter);
 
   return (
-    <>
+    <div className="bg-animated" style={{ minHeight: "100vh" }}>
       {particles.map((p) => (
         <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
       ))}
@@ -41,13 +41,13 @@ export default function NewsPage() {
         <div className="nav-inner">
           <Link href="/" className="flex items-center gap-2"><img src="/logo.svg" alt="FFB" style={{ height: "50px" }} /></Link>
           <div className={`nav-links ${mobileMenuOpen ? "active" : ""}`}>
-            <Link href="/">Home</Link>
-            <Link href="/about">About</Link>
-            <Link href="/events">Events</Link>
-            <Link href="/news" className="active">News</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#001f5f" }}>Admissions</Link>
-            <Link href="/auth/login" className="menu-btn portal-btn">Portal</Link>
+            <Link href="/" style={{ color: "#ffffff" }}>Home</Link>
+            <Link href="/about" style={{ color: "#ffffff" }}>About</Link>
+            <Link href="/events" style={{ color: "#ffffff" }}>Events</Link>
+            <Link href="/news" className="active" style={{ color: "#ffffff" }}>News</Link>
+            <Link href="/contact" style={{ color: "#ffffff" }}>Contact</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Admissions</Link>
+            <Link href="/auth/login" className="menu-btn portal-btn" style={{ color: "#ffffff" }}>Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             <span></span><span></span><span></span>
@@ -56,10 +56,10 @@ export default function NewsPage() {
       </div>
 
       <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800 }}>
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#ffffff" }}>
           School <span className="accent">News</span>
         </motion.h1>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.7)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
           Stay updated with the latest happenings, achievements and events at {SCHOOL_CONFIG.name}.
         </motion.p>
       </section>
@@ -82,8 +82,8 @@ export default function NewsPage() {
                   <span style={{ padding: "4px 12px", borderRadius: "8px", background: "rgba(255,255,255,0.08)", fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.5)" }}>{n.category}</span>
                   <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>{n.date}</span>
                 </div>
-                <h3 style={{ fontSize: "17px", fontWeight: 700, marginBottom: "8px" }}>{n.title}</h3>
-                <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", lineHeight: 1.6, marginBottom: "12px" }}>{n.desc}</p>
+                <h3 style={{ fontSize: "17px", fontWeight: 700, marginBottom: "8px", color: "#ffffff" }}>{n.title}</h3>
+                <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)", lineHeight: 1.6, marginBottom: "12px" }}>{n.desc}</p>
                 <span style={{ color: "#28ff9c", fontSize: "13px", fontWeight: 600 }}>Read More →</span>
               </div>
             </motion.div>
@@ -101,7 +101,7 @@ export default function NewsPage() {
                 <span style={{ padding: "4px 12px", borderRadius: "8px", background: "rgba(255,255,255,0.08)", fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.5)" }}>{newsItems[modal].category}</span>
                 <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>{newsItems[modal].date}</span>
               </div>
-              <h2 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "15px" }}>{newsItems[modal].title}</h2>
+              <h2 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "15px", color: "#ffffff" }}>{newsItems[modal].title}</h2>
               <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.8, fontSize: "14px" }}>{newsItems[modal].full}</p>
             </motion.div>
           </motion.div>
@@ -109,8 +109,8 @@ export default function NewsPage() {
       </AnimatePresence>
 
       <footer className="footer">
-        <div className="footer-bottom">© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
+        <div className="footer-bottom" style={{ color: "rgba(255,255,255,0.6)" }}>© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
       </footer>
-    </>
+    </div>
   );
 }

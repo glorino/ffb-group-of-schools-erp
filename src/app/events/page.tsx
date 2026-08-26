@@ -72,7 +72,7 @@ export default function EventsPage() {
   const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
   return (
-    <>
+    <div className="bg-animated" style={{ minHeight: "100vh" }}>
       {particles.map((p) => (
         <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
       ))}
@@ -81,13 +81,13 @@ export default function EventsPage() {
         <div className="nav-inner">
           <Link href="/" className="flex items-center gap-2"><img src="/logo.svg" alt="FFB" style={{ height: "50px" }} /></Link>
           <div className={`nav-links ${mobileMenuOpen ? "active" : ""}`}>
-            <Link href="/">Home</Link>
-            <Link href="/about">About</Link>
-            <Link href="/events" className="active">Events</Link>
-            <Link href="/news">News</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#001f5f" }}>Admissions</Link>
-            <Link href="/auth/login" className="menu-btn portal-btn">Portal</Link>
+            <Link href="/" style={{ color: "#ffffff" }}>Home</Link>
+            <Link href="/about" style={{ color: "#ffffff" }}>About</Link>
+            <Link href="/events" className="active" style={{ color: "#ffffff" }}>Events</Link>
+            <Link href="/news" style={{ color: "#ffffff" }}>News</Link>
+            <Link href="/contact" style={{ color: "#ffffff" }}>Contact</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Admissions</Link>
+            <Link href="/auth/login" className="menu-btn portal-btn" style={{ color: "#ffffff" }}>Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             <span></span><span></span><span></span>
@@ -96,19 +96,19 @@ export default function EventsPage() {
       </div>
 
       <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800 }}>
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#ffffff" }}>
           School <span className="accent">Events</span>
         </motion.h1>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.7)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
           Stay updated with our academic calendar, competitions and school activities.
         </motion.p>
       </section>
 
       <section className="glass-section">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: "center", marginBottom: "40px", padding: "30px", background: "rgba(40,255,156,0.05)", borderRadius: "20px", border: "1px solid rgba(40,255,156,0.15)" }}>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", marginBottom: "5px" }}>NEXT EVENT</p>
-          <h3 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "10px" }}>{nextEvent.icon} {nextEvent.title}</h3>
-          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "12px" }}>{nextEvent.desc}</p>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginBottom: "5px" }}>NEXT EVENT</p>
+          <h3 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "10px", color: "#ffffff" }}>{nextEvent.icon} {nextEvent.title}</h3>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginBottom: "12px" }}>{nextEvent.desc}</p>
           <CountdownTimer date={nextEvent.date} />
         </motion.div>
 
@@ -127,8 +127,8 @@ export default function EventsPage() {
                 <span style={{ fontSize: "32px" }}>{e.icon}</span>
                 <span style={{ padding: "4px 12px", borderRadius: "8px", background: "rgba(40,255,156,0.13)", color: categoryColors[e.category] || "#28ff9c", fontSize: "11px", fontWeight: 600 }}>{e.category}</span>
               </div>
-              <h3 style={{ fontSize: "18px", fontWeight: 700, marginBottom: "8px" }}>{e.title}</h3>
-              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", marginBottom: "15px", lineHeight: 1.6 }}>{e.desc}</p>
+              <h3 style={{ fontSize: "18px", fontWeight: 700, marginBottom: "8px", color: "#ffffff" }}>{e.title}</h3>
+              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)", marginBottom: "15px", lineHeight: 1.6 }}>{e.desc}</p>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "15px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                 <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>{fmtDate(e.date)}</span>
                 <CountdownTimer date={e.date} />
@@ -139,8 +139,8 @@ export default function EventsPage() {
       </section>
 
       <footer className="footer">
-        <div className="footer-bottom">© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
+        <div className="footer-bottom" style={{ color: "rgba(255,255,255,0.6)" }}>© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
       </footer>
-    </>
+    </div>
   );
 }

@@ -59,7 +59,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", position: "relative" }}>
+    <div className="bg-animated" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", position: "relative" }}>
       {particles.map((p) => (
         <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
       ))}
@@ -77,8 +77,8 @@ export default function LoginPage() {
           {/* Logo */}
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} style={{ textAlign: "center", marginBottom: "30px" }}>
             <img src="/logo.svg" alt="FFB" style={{ height: "70px", margin: "0 auto 15px" }} />
-            <h1 style={{ fontSize: "24px", fontWeight: 800 }}>Welcome Back</h1>
-            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", marginTop: "5px" }}>Sign in to your portal</p>
+            <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#fff" }}>Welcome Back</h1>
+            <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "14px", marginTop: "5px" }}>Sign in to your portal</p>
           </motion.div>
 
           {error && (
@@ -89,11 +89,11 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
-              <label style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "6px", display: "block", fontWeight: 600 }}>Email Address</label>
+              <label style={{ fontSize: "12px", color: "rgba(255,255,255,0.8)", marginBottom: "6px", display: "block", fontWeight: 600 }}>Email Address</label>
               <input className="input-glass" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div>
-              <label style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "6px", display: "block", fontWeight: 600 }}>Password</label>
+              <label style={{ fontSize: "12px", color: "rgba(255,255,255,0.8)", marginBottom: "6px", display: "block", fontWeight: 600 }}>Password</label>
               <div style={{ position: "relative" }}>
                 <input className="input-glass" type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ paddingRight: "45px" }} />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer", padding: "4px", fontSize: "14px" }}>
@@ -102,15 +102,15 @@ export default function LoginPage() {
               </div>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "rgba(255,255,255,0.8)", cursor: "pointer" }}>
                 <input type="checkbox" style={{ accentColor: "#28ff9c" }} /> Remember me
               </label>
               <Link href="/auth/forgot-password" style={{ color: "#28ff9c", fontSize: "12px", textDecoration: "none" }}>Forgot password?</Link>
             </div>
-            <motion.button type="submit" className="btn-primary" disabled={loading} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ width: "100%", padding: "16px", fontSize: "15px", fontWeight: 700, borderRadius: "20px", marginTop: "5px" }}>
+            <motion.button type="submit" className="btn-primary" disabled={loading} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ width: "100%", padding: "16px", fontSize: "15px", fontWeight: 700, borderRadius: "20px", marginTop: "5px", color: "#ffffff" }}>
               {loading ? (
                 <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-                  <span className="spinner" style={{ width: "18px", height: "18px", border: "2px solid rgba(0,31,95,0.3)", borderTopColor: "#001f5f", borderRadius: "50%", animation: "spin 0.8s linear infinite" }}></span>
+                  <span className="spinner" style={{ width: "18px", height: "18px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#ffffff", borderRadius: "50%", animation: "spin 0.8s linear infinite" }}></span>
                   Signing In...
                 </span>
               ) : "Sign In"}
@@ -135,7 +135,7 @@ export default function LoginPage() {
 
           {/* Links */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} style={{ textAlign: "center", marginTop: "20px" }}>
-            <Link href="/portal/apply" style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", textDecoration: "none" }}>
+            <Link href="/portal/apply" style={{ color: "rgba(255,255,255,0.8)", fontSize: "13px", textDecoration: "none" }}>
               New student? <span style={{ color: "#28ff9c", fontWeight: 600 }}>Apply for Admission</span>
             </Link>
           </motion.div>

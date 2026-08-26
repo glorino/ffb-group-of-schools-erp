@@ -56,7 +56,7 @@ export default function TrackPage() {
   const currentStepIdx = result ? timelineSteps.indexOf(result.status) : -1;
 
   return (
-    <>
+    <div className="bg-animated" style={{ minHeight: "100vh" }}>
       {particles.map((p) => (
         <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
       ))}
@@ -66,9 +66,9 @@ export default function TrackPage() {
           <Link href="/" className="flex items-center gap-2"><img src="/logo.svg" alt="FFB" style={{ height: "50px" }} /></Link>
           <div className={`nav-links ${mobileMenuOpen ? "active" : ""}`}>
             <Link href="/">Home</Link>
-            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#001f5f" }}>Admissions</Link>
-            <Link href="/portal/track" className="menu-btn apply-btn" style={{ color: "#001f5f" }}>Track Application</Link>
-            <Link href="/auth/login" className="menu-btn portal-btn">Portal</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Admissions</Link>
+            <Link href="/portal/track" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Track Application</Link>
+            <Link href="/auth/login" className="menu-btn portal-btn" style={{ color: "#ffffff" }}>Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             <span></span><span></span><span></span>
@@ -170,8 +170,8 @@ export default function TrackPage() {
       </AnimatePresence>
 
       <footer className="footer">
-        <div className="footer-bottom">© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
+        <div className="footer-bottom" style={{ color: "rgba(255,255,255,0.6)" }}>© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
       </footer>
-    </>
+    </div>
   );
 }

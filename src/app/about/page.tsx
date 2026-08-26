@@ -34,7 +34,7 @@ export default function AboutPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <>
+    <div className="bg-animated" style={{ minHeight: "100vh" }}>
       {particles.map((p) => (
         <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
       ))}
@@ -43,13 +43,13 @@ export default function AboutPage() {
         <div className="nav-inner">
           <Link href="/" className="flex items-center gap-2"><img src="/logo.svg" alt="FFB" style={{ height: "50px" }} /></Link>
           <div className={`nav-links ${mobileMenuOpen ? "active" : ""}`}>
-            <Link href="/">Home</Link>
-            <Link href="/about" className="active">About</Link>
-            <Link href="/events">Events</Link>
-            <Link href="/news">News</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#001f5f" }}>Admissions</Link>
-            <Link href="/auth/login" className="menu-btn portal-btn">Portal</Link>
+            <Link href="/" style={{ color: "#ffffff" }}>Home</Link>
+            <Link href="/about" className="active" style={{ color: "#ffffff" }}>About</Link>
+            <Link href="/events" style={{ color: "#ffffff" }}>Events</Link>
+            <Link href="/news" style={{ color: "#ffffff" }}>News</Link>
+            <Link href="/contact" style={{ color: "#ffffff" }}>Contact</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Admissions</Link>
+            <Link href="/auth/login" className="menu-btn portal-btn" style={{ color: "#ffffff" }}>Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             <span></span><span></span><span></span>
@@ -59,17 +59,17 @@ export default function AboutPage() {
 
       {/* Hero */}
       <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
-        <motion.h1 {...fadeUp} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800 }}>
+        <motion.h1 {...fadeUp} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#ffffff" }}>
           About <span className="accent">FFB</span> Group of Schools
         </motion.h1>
-        <motion.p {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.2 }} style={{ color: "rgba(255,255,255,0.7)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
+        <motion.p {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.2 }} style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
           Learn about our journey, mission and commitment to nurturing future leaders.
         </motion.p>
       </section>
 
       {/* Mission / Vision / Values */}
       <section className="glass-section">
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Our Foundation</motion.h2>
+        <motion.h2 className="section-title" style={{ color: "#ffffff" }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Our Foundation</motion.h2>
         <motion.div className="features-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
           {[
             { icon: "🎯", title: "Mission", desc: "To provide quality education that empowers students to become responsible leaders and lifelong learners through innovative teaching methods." },
@@ -78,8 +78,8 @@ export default function AboutPage() {
           ].map((f, i) => (
             <motion.div key={i} className="feature-card" variants={item} style={{ textAlign: "center" }}>
               <div style={{ fontSize: "40px", marginBottom: "15px" }}>{f.icon}</div>
-              <h3>{f.title}</h3>
-              <p>{f.desc}</p>
+              <h3 style={{ color: "#ffffff" }}>{f.title}</h3>
+              <p style={{ color: "rgba(255,255,255,0.8)" }}>{f.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -87,8 +87,8 @@ export default function AboutPage() {
 
       {/* History Timeline */}
       <section className="glass-section">
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Our Journey</motion.h2>
-        <motion.p className="section-subtitle" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <motion.h2 className="section-title" style={{ color: "#ffffff" }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Our Journey</motion.h2>
+        <motion.p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
           From humble beginnings to a leading educational institution.
         </motion.p>
         <div style={{ maxWidth: "700px", margin: "0 auto" }}>
@@ -99,7 +99,7 @@ export default function AboutPage() {
                 <span style={{ fontSize: "15px", fontWeight: 700, color: "#28ff9c" }}>{m.year}</span>
               </div>
               <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: "16px", padding: "18px 22px", flex: 1, borderLeft: "3px solid #28ff9c" }}>
-                <p style={{ fontSize: "14px", lineHeight: 1.6 }}>{m.event}</p>
+                <p style={{ fontSize: "14px", lineHeight: 1.6, color: "rgba(255,255,255,0.8)" }}>{m.event}</p>
               </div>
             </motion.div>
           ))}
@@ -108,8 +108,8 @@ export default function AboutPage() {
 
       {/* Team */}
       <section className="glass-section">
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Our Leadership</motion.h2>
-        <motion.p className="section-subtitle" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <motion.h2 className="section-title" style={{ color: "#ffffff" }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Our Leadership</motion.h2>
+        <motion.p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
           Experienced educators committed to nurturing excellence.
         </motion.p>
         <motion.div className="features-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
@@ -118,9 +118,9 @@ export default function AboutPage() {
               <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "linear-gradient(135deg, #0039a6, #28ff9c)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 15px", fontSize: "28px", fontWeight: 800 }}>
                 {t.name.split(" ").map((n) => n[0]).join("")}
               </div>
-              <h3 style={{ fontSize: "16px", marginBottom: "4px" }}>{t.name}</h3>
+              <h3 style={{ fontSize: "16px", marginBottom: "4px", color: "#ffffff" }}>{t.name}</h3>
               <p style={{ color: "#28ff9c", fontSize: "12px", fontWeight: 600, marginBottom: "10px" }}>{t.role}</p>
-              <p style={{ fontSize: "13px" }}>{t.desc}</p>
+              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.8)" }}>{t.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -145,8 +145,8 @@ export default function AboutPage() {
 
       {/* CTA */}
       <section className="glass-section" style={{ textAlign: "center" }}>
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Join Our Community</motion.h2>
-        <motion.p className="section-subtitle" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <motion.h2 className="section-title" style={{ color: "#ffffff" }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Join Our Community</motion.h2>
+        <motion.p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
           Give your child the best education and leadership development.
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
@@ -160,27 +160,27 @@ export default function AboutPage() {
         <div className="footer-grid">
           <div>
             <img src="/logo.svg" alt="FFB" style={{ height: "70px", marginBottom: "15px" }} />
-            <p>{SCHOOL_CONFIG.name} is committed to academic excellence, innovation and leadership development.</p>
+            <p style={{ color: "rgba(255,255,255,0.7)" }}>{SCHOOL_CONFIG.name} is committed to academic excellence, innovation and leadership development.</p>
           </div>
           <div>
-            <h4>Quick Links</h4>
+            <h4 style={{ color: "#ffffff" }}>Quick Links</h4>
             <div className="footer-links">
-              <Link href="/">Home</Link>
-              <Link href="/about">About</Link>
-              <Link href="/events">Events</Link>
-              <Link href="/news">News</Link>
-              <Link href="/contact">Contact</Link>
+              <Link href="/" style={{ color: "#ffffff" }}>Home</Link>
+              <Link href="/about" style={{ color: "#ffffff" }}>About</Link>
+              <Link href="/events" style={{ color: "#ffffff" }}>Events</Link>
+              <Link href="/news" style={{ color: "#ffffff" }}>News</Link>
+              <Link href="/contact" style={{ color: "#ffffff" }}>Contact</Link>
             </div>
           </div>
           <div>
-            <h4>Contact</h4>
-            <p>{SCHOOL_CONFIG.address}</p>
-            <p style={{ marginTop: "8px" }}>{SCHOOL_CONFIG.phone}</p>
-            <p style={{ marginTop: "8px" }}>{SCHOOL_CONFIG.email}</p>
+            <h4 style={{ color: "#ffffff" }}>Contact</h4>
+            <p style={{ color: "rgba(255,255,255,0.7)" }}>{SCHOOL_CONFIG.address}</p>
+            <p style={{ marginTop: "8px", color: "rgba(255,255,255,0.7)" }}>{SCHOOL_CONFIG.phone}</p>
+            <p style={{ marginTop: "8px", color: "rgba(255,255,255,0.7)" }}>{SCHOOL_CONFIG.email}</p>
           </div>
         </div>
-        <div className="footer-bottom">{`© ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.`}</div>
+        <div className="footer-bottom" style={{ color: "rgba(255,255,255,0.6)" }}>{`© ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.`}</div>
       </footer>
-    </>
+    </div>
   );
 }

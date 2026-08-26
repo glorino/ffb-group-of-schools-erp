@@ -187,7 +187,7 @@ export default function ApplyPage() {
 
   const inputStyle: React.CSSProperties = { background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "16px", padding: "14px 18px", color: "#fff", fontSize: "14px", outline: "none", width: "100%", fontFamily: "'Poppins', sans-serif", colorScheme: "dark" };
   const inputErrorStyle: React.CSSProperties = { ...inputStyle, borderColor: "rgba(239,68,68,0.6)" };
-  const labelStyle: React.CSSProperties = { fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "6px", display: "block", fontWeight: 600 };
+  const labelStyle: React.CSSProperties = { fontSize: "12px", color: "rgba(255,255,255,0.8)", marginBottom: "6px", display: "block", fontWeight: 600 };
 
   if (submitted) {
     return (
@@ -197,18 +197,18 @@ export default function ApplyPage() {
         ))}
         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} style={{ textAlign: "center", maxWidth: "500px" }}>
           <div style={{ width: "90px", height: "90px", borderRadius: "50%", background: "linear-gradient(135deg, #28ff9c, #0055ff)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 25px", fontSize: "42px" }}>✓</div>
-          <h1 style={{ fontSize: "32px", fontWeight: 800, marginBottom: "12px" }}>Application Submitted!</h1>
-          <p style={{ color: "rgba(255,255,255,0.6)", marginBottom: "20px", lineHeight: 1.7 }}>Your admission application has been received successfully.</p>
+          <h1 style={{ fontSize: "32px", fontWeight: 800, marginBottom: "12px", color: "#fff" }}>Application Submitted!</h1>
+          <p style={{ color: "rgba(255,255,255,0.8)", marginBottom: "20px", lineHeight: 1.7 }}>Your admission application has been received successfully.</p>
           <div style={{ background: "rgba(40,255,156,0.08)", border: "1px solid rgba(40,255,156,0.2)", borderRadius: "16px", padding: "18px", marginBottom: "25px" }}>
-            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px", marginBottom: "5px" }}>APPLICATION NUMBER</p>
+            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "12px", marginBottom: "5px" }}>APPLICATION NUMBER</p>
             <p style={{ fontSize: "22px", fontWeight: 800, color: "#28ff9c", letterSpacing: "1px" }}>{appNumber}</p>
           </div>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", marginBottom: "25px" }}>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginBottom: "25px" }}>
             Use this number to track your admission status.
           </p>
           <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/portal/track" className="btn-primary" style={{ display: "inline-block" }}>Track Application</Link>
-            <Link href="/" className="btn-primary" style={{ display: "inline-block", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff" }}>Return Home</Link>
+            <Link href="/portal/track" className="btn-primary" style={{ display: "inline-block", color: "#ffffff" }}>Track Application</Link>
+            <Link href="/" className="btn-primary" style={{ display: "inline-block", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff" }}>Return Home</Link>
           </div>
         </motion.div>
       </div>
@@ -216,7 +216,7 @@ export default function ApplyPage() {
   }
 
   return (
-    <>
+    <div className="bg-animated" style={{ minHeight: "100vh" }}>
       {particles.map((p) => (
         <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
       ))}
@@ -226,8 +226,8 @@ export default function ApplyPage() {
           <Link href="/" className="flex items-center gap-2"><img src="/logo.svg" alt="FFB" style={{ height: "50px" }} /></Link>
           <div className={`nav-links ${mobileMenuOpen ? "active" : ""}`}>
             <Link href="/">Home</Link>
-            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#001f5f" }}>Admissions</Link>
-            <Link href="/auth/login" className="menu-btn portal-btn">Portal</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Admissions</Link>
+            <Link href="/auth/login" className="menu-btn portal-btn" style={{ color: "#ffffff" }}>Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             <span></span><span></span><span></span>
@@ -236,10 +236,10 @@ export default function ApplyPage() {
       </div>
 
       <section style={{ marginTop: "90px", padding: "40px 20px 20px", textAlign: "center" }}>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800 }}>
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800, color: "#fff" }}>
           Admission <span className="accent">Application</span>
         </motion.h1>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.6)", maxWidth: "500px", margin: "10px auto 0" }}>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.8)", maxWidth: "500px", margin: "10px auto 0" }}>
           Complete the form below to apply for admission.
         </motion.p>
       </section>
@@ -254,7 +254,7 @@ export default function ApplyPage() {
               <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: i <= step ? "#28ff9c" : "rgba(255,255,255,0.1)", color: i <= step ? "#001f5f" : "rgba(255,255,255,0.4)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 6px", fontSize: "13px", fontWeight: 700, transition: "0.3s" }}>
                 {i < step ? "✓" : i + 1}
               </div>
-              <span style={{ fontSize: "11px", color: i <= step ? "#28ff9c" : "rgba(255,255,255,0.3)", fontWeight: 600 }}>{s}</span>
+              <span style={{ fontSize: "11px", color: i <= step ? "#28ff9c" : "rgba(255,255,255,0.4)", fontWeight: 600 }}>{s}</span>
             </div>
           ))}
         </div>
@@ -263,7 +263,7 @@ export default function ApplyPage() {
           <motion.div key={step} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }}>
             {step === 0 && (
               <div>
-                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px" }}>Personal Information</h2>
+                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px", color: "#fff" }}>Personal Information</h2>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
                   <div><label style={labelStyle}>First Name *</label><input style={errors.firstName ? inputErrorStyle : inputStyle} value={form.firstName} onChange={(e) => update("firstName", e.target.value)} />{errors.firstName && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.firstName}</span>}</div>
                   <div><label style={labelStyle}>Last Name *</label><input style={errors.lastName ? inputErrorStyle : inputStyle} value={form.lastName} onChange={(e) => update("lastName", e.target.value)} />{errors.lastName && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.lastName}</span>}</div>
@@ -280,7 +280,7 @@ export default function ApplyPage() {
 
             {step === 1 && (
               <div>
-                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px" }}>Academic Information</h2>
+                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px", color: "#fff" }}>Academic Information</h2>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
                   <div style={{ gridColumn: "1 / -1" }}><label style={labelStyle}>Class Applying For *</label><select style={errors.classApplying ? inputErrorStyle : inputStyle} value={form.classApplying} onChange={(e) => update("classApplying", e.target.value)}><option value="">Select a class</option>{classOptions.map((section) => (<optgroup key={section.section} label={section.section}>{section.classes.map((c) => (<option key={c} value={c}>{c}</option>))}</optgroup>))}</select>{errors.classApplying && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.classApplying}</span>}</div>
                   <div style={{ gridColumn: "1 / -1" }}><label style={labelStyle}>Previous School</label><input style={inputStyle} value={form.previousSchool} onChange={(e) => update("previousSchool", e.target.value)} placeholder="Enter previous school name" /></div>
@@ -290,7 +290,7 @@ export default function ApplyPage() {
 
             {step === 2 && (
               <div>
-                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px" }}>Parent / Guardian Information</h2>
+                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px", color: "#fff" }}>Parent / Guardian Information</h2>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
                   <div><label style={labelStyle}>Full Name *</label><input style={errors.guardianName ? inputErrorStyle : inputStyle} value={form.guardianName} onChange={(e) => update("guardianName", e.target.value)} />{errors.guardianName && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.guardianName}</span>}</div>
                   <div><label style={labelStyle}>Relationship *</label><select style={errors.guardianRelationship ? inputErrorStyle : inputStyle} value={form.guardianRelationship} onChange={(e) => update("guardianRelationship", e.target.value)}><option value="">Select</option><option>Father</option><option>Mother</option><option>Guardian</option><option>Uncle</option><option>Aunt</option><option>Other</option></select>{errors.guardianRelationship && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.guardianRelationship}</span>}</div>
@@ -302,8 +302,8 @@ export default function ApplyPage() {
 
             {step === 3 && (
               <div>
-                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "8px" }}>Documents</h2>
-                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", marginBottom: "20px" }}>Upload required documents (PDF, JPG or PNG, max 5MB each)</p>
+                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "8px", color: "#fff" }}>Documents</h2>
+                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginBottom: "20px" }}>Upload required documents (PDF, JPG or PNG, max 5MB each)</p>
                 {docFields.map((doc) => (
                   <div key={doc.key} style={{ marginBottom: "16px", padding: "20px", border: `2px dashed ${fileObjects[doc.key] ? "rgba(40,255,156,0.4)" : "rgba(255,255,255,0.15)"}`, borderRadius: "16px", textAlign: "center", cursor: "pointer", background: fileObjects[doc.key] ? "rgba(40,255,156,0.04)" : "transparent" }}>
                     <div style={{ fontSize: "24px", marginBottom: "8px" }}>{fileObjects[doc.key] ? "✅" : "📄"}</div>
@@ -317,7 +317,7 @@ export default function ApplyPage() {
                       onChange={(e) => handleFileChange(doc.key, e)}
                     />
                     <div style={{ display: "flex", gap: "8px", justifyContent: "center", alignItems: "center" }}>
-                      <label htmlFor={doc.key} className="btn-primary" style={{ fontSize: "12px", padding: "8px 20px", cursor: "pointer" }}>
+                      <label htmlFor={doc.key} className="btn-primary" style={{ fontSize: "12px", padding: "8px 20px", cursor: "pointer", color: "#ffffff" }}>
                         {fileObjects[doc.key] ? "Change File" : "Choose File"}
                       </label>
                       {fileObjects[doc.key] && (
@@ -335,7 +335,7 @@ export default function ApplyPage() {
 
             {step === 4 && (
               <div>
-                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px" }}>Review Application</h2>
+                <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px", color: "#fff" }}>Review Application</h2>
                 {[
                   { label: "Name", value: `${form.firstName} ${form.middleName} ${form.lastName}` },
                   { label: "Date of Birth", value: form.dateOfBirth },
@@ -347,14 +347,14 @@ export default function ApplyPage() {
                   { label: "Address", value: form.homeAddress },
                 ].map((r, i) => (
                   <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                    <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)" }}>{r.label}</span>
+                    <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>{r.label}</span>
                     <span style={{ fontSize: "13px", fontWeight: 600 }}>{r.value || "—"}</span>
                   </div>
                 ))}
                 <div style={{ marginTop: "12px" }}>
-                  <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "6px", fontWeight: 600 }}>Documents:</p>
+                  <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", marginBottom: "6px", fontWeight: 600 }}>Documents:</p>
                   {docFields.filter((d) => fileNames[d.key]).length === 0 ? (
-                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)" }}>No documents attached</p>
+                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>No documents attached</p>
                   ) : (
                     docFields.filter((d) => fileNames[d.key]).map((d) => (
                       <p key={d.key} style={{ fontSize: "12px", color: "#28ff9c", padding: "4px 0" }}>✓ {d.label}: {fileNames[d.key]}</p>
@@ -374,13 +374,13 @@ export default function ApplyPage() {
             Previous
           </button>
           {step < steps.length - 1 ? (
-            <motion.button onClick={nextStep} className="btn-primary" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: "12px 35px" }}>
+            <motion.button onClick={nextStep} className="btn-primary" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: "12px 35px", color: "#ffffff" }}>
               Next Step
             </motion.button>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px" }}>
               {submitError && <p style={{ color: "#ef4444", fontSize: "13px", textAlign: "right" }}>{submitError}</p>}
-              <motion.button onClick={handleSubmit} className="btn-primary" disabled={submitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: "12px 35px", opacity: submitting ? 0.6 : 1 }}>
+              <motion.button onClick={handleSubmit} className="btn-primary" disabled={submitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: "12px 35px", opacity: submitting ? 0.6 : 1, color: "#ffffff" }}>
                 {submitting ? (uploadingDocs ? "Uploading documents..." : "Submitting...") : "Submit Application"}
               </motion.button>
             </div>
@@ -391,6 +391,6 @@ export default function ApplyPage() {
       <footer className="footer" style={{ marginTop: "40px" }}>
         <div className="footer-bottom">© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
       </footer>
-    </>
+    </div>
   );
 }

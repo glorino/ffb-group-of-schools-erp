@@ -41,7 +41,7 @@ export default function ContactPage() {
   };
 
   return (
-    <>
+    <div className="bg-animated" style={{ minHeight: "100vh" }}>
       {particles.map((p) => (
         <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
       ))}
@@ -55,8 +55,8 @@ export default function ContactPage() {
             <Link href="/events">Events</Link>
             <Link href="/news">News</Link>
             <Link href="/contact" className="active">Contact</Link>
-            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#001f5f" }}>Admissions</Link>
-            <Link href="/auth/login" className="menu-btn portal-btn">Portal</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Admissions</Link>
+            <Link href="/auth/login" className="menu-btn portal-btn" style={{ color: "#ffffff" }}>Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             <span></span><span></span><span></span>
@@ -65,10 +65,10 @@ export default function ContactPage() {
       </div>
 
       <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800 }}>
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#fff" }}>
           Get In <span className="accent">Touch</span>
         </motion.h1>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.7)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
           Have questions? Reach out to us and we will respond promptly.
         </motion.p>
       </section>
@@ -83,16 +83,16 @@ export default function ContactPage() {
           ].map((c, i) => (
             <motion.div key={i} variants={item} whileHover={{ y: -3 }} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "20px", padding: "25px", textAlign: "center", border: "1px solid rgba(255,255,255,0.08)", cursor: "default" }}>
               <div style={{ fontSize: "32px", marginBottom: "12px" }}>{c.icon}</div>
-              <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "8px" }}>{c.title}</h3>
-              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", lineHeight: 1.5 }}>{c.text}</p>
+              <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "8px", color: "#fff" }}>{c.title}</h3>
+              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.8)", lineHeight: 1.5 }}>{c.text}</p>
             </motion.div>
           ))}
         </motion.div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "30px", alignItems: "start" }}>
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-            <h2 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "8px" }}>Send Us A Message</h2>
-            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", marginBottom: "25px" }}>Fill out the form and our team will get back to you within 24 hours.</p>
+            <h2 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "8px", color: "#fff" }}>Send Us A Message</h2>
+            <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "14px", marginBottom: "25px" }}>Fill out the form and our team will get back to you within 24 hours.</p>
             {sent && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} style={{ background: "rgba(40,255,156,0.1)", border: "1px solid rgba(40,255,156,0.3)", borderRadius: "12px", padding: "14px 18px", marginBottom: "20px", color: "#28ff9c", fontSize: "14px", fontWeight: 600 }}>
                 Message sent successfully! We will get back to you soon.
@@ -108,7 +108,7 @@ export default function ContactPage() {
                 <input className="input-glass" placeholder="Subject" required value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} />
               </div>
               <textarea className="input-glass" placeholder="Your Message" rows={5} required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} style={{ resize: "vertical", minHeight: "120px" }} />
-              <motion.button type="submit" className="btn-primary" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={sending} style={{ width: "100%", padding: "16px", opacity: sending ? 0.7 : 1 }}>
+              <motion.button type="submit" className="btn-primary" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={sending} style={{ width: "100%", padding: "16px", opacity: sending ? 0.7 : 1, color: "#ffffff" }}>
                 {sending ? "Sending..." : "Send Message"}
               </motion.button>
             </form>
@@ -122,7 +122,7 @@ export default function ContactPage() {
 
       {/* FAQ */}
       <section className="glass-section">
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Frequently Asked Questions</motion.h2>
+        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={{ color: "#fff" }}>Frequently Asked Questions</motion.h2>
         <div style={{ maxWidth: "700px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "12px" }}>
           {[
             { q: "What is the admission process?", a: "Visit our Apply page to fill out the admission form. Shortlisted candidates will be contacted for an entrance examination and interview." },
@@ -131,16 +131,16 @@ export default function ContactPage() {
             { q: "How can I track my child's progress?", a: "Parents can track their child's academic progress through the school portal using their login credentials." },
           ].map((faq, i) => (
             <motion.details key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} style={{ background: "rgba(255,255,255,0.04)", borderRadius: "16px", padding: "18px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <summary style={{ cursor: "pointer", fontWeight: 600, fontSize: "14px", listStyle: "none" }}>{faq.q}</summary>
-              <p style={{ marginTop: "10px", fontSize: "13px", color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>{faq.a}</p>
+              <summary style={{ cursor: "pointer", fontWeight: 600, fontSize: "14px", listStyle: "none", color: "#fff" }}>{faq.q}</summary>
+              <p style={{ marginTop: "10px", fontSize: "13px", color: "rgba(255,255,255,0.8)", lineHeight: 1.6 }}>{faq.a}</p>
             </motion.details>
           ))}
         </div>
       </section>
 
       <footer className="footer">
-        <div className="footer-bottom">{`© ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.`}</div>
+        <div className="footer-bottom" style={{ color: "#fff" }}>{`© ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.`}</div>
       </footer>
-    </>
+    </div>
   );
 }
