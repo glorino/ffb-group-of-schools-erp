@@ -185,6 +185,7 @@ select optgroup {
   text-align: center;
   overflow: hidden;
   padding: 90px 20px;
+  background: #000;
 }
 
 .hero video {
@@ -194,7 +195,7 @@ select optgroup {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -2;
+  z-index: 0;
   pointer-events: none;
 }
 
@@ -204,8 +205,13 @@ select optgroup {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
-  z-index: -1;
+  background: rgba(0,0,0,0.5);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
 }
 
 .hero-content h1 {
@@ -213,7 +219,8 @@ select optgroup {
   font-weight: 800;
   margin-bottom: 20px;
   line-height: 1.2;
-  text-shadow: 0 2px 40px rgba(0,0,0,0.3);
+  color: #ffffff;
+  text-shadow: 0 2px 40px rgba(0,0,0,0.5);
 }
 
 .hero-content h1 .accent {
@@ -238,6 +245,7 @@ select optgroup {
   transition: 0.3s;
   font-size: 15px;
   letter-spacing: 0.5px;
+  color: #ffffff;
 }
 
 .hero-btn:hover {

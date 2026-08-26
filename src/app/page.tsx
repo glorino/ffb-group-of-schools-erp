@@ -125,7 +125,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="bg-animated" style={{ minHeight: "100vh" }}>
+    <div style={{ minHeight: "100vh", background: "#0a1428" }}>
       {particles.map((p) => (
         <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
       ))}
@@ -156,15 +156,15 @@ export default function LandingPage() {
         </video>
         <div className="hero-overlay"></div>
         <div className="hero-content container">
-          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} style={{ textShadow: "0 2px 40px rgba(0,0,0,0.3)" }}>
+          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             Building Leaders<br />For The <span className="accent">Future</span>
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
             {SCHOOL_CONFIG.name} provides a world-class learning environment where students develop academic excellence, leadership and innovation.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }} style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/portal/apply" className="hero-btn" style={{ background: "#28ff9c", color: "#ffffff" }}>Apply For Admission</Link>
-            <Link href="/auth/login" className="hero-btn" style={{ background: "rgba(0,0,0,0.6)", border: "1px solid #fff", color: "#ffffff" }}>Portal Login</Link>
+            <Link href="/portal/apply" className="hero-btn" style={{ background: "#28ff9c", color: "#000000" }}>Apply For Admission</Link>
+            <Link href="/auth/login" className="hero-btn" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid #fff", color: "#ffffff" }}>Portal Login</Link>
           </motion.div>
         </div>
       </section>

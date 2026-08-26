@@ -389,7 +389,7 @@ export default function ApplyPage() {
       </section>
 
       <footer className="footer" style={{ marginTop: "40px" }}>
-        <div className="footer-bottom">© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
+        <div className="footer-bottom" style={{ color: "rgba(255,255,255,0.6)" }}>© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
       </footer>
     </div>
   );

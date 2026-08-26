@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-animated flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{ background: "linear-gradient(-45deg, #000a1f, #001f5f, #0039a6, #0055ff)", backgroundSize: "400% 400%", animation: "gradientMove 18s ease infinite" }}>
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-[var(--primary)] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[var(--accent)] rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse" />
@@ -57,16 +57,16 @@ export default function ForgotPasswordPage() {
             </div>
             <div className="text-left">
               <h1 className="text-2xl font-bold text-white">FFB ERP</h1>
-              <p className="text-white/50 text-xs">School Management System</p>
+              <p className="text-white/60 text-xs">School Management System</p>
             </div>
           </Link>
         </div>
 
-        <div className="card">
+        <div style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "20px", padding: "32px" }}>
           {!isSent ? (
             <>
               <h2 className="text-2xl font-bold text-white mb-2">Reset Password</h2>
-              <p className="text-white/50 mb-8">
+              <p className="text-white/60 mb-8">
                 Enter your email address and we&apos;ll send you a link to reset your password
               </p>
 
@@ -76,14 +76,14 @@ export default function ForgotPasswordPage() {
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="admin@ffb.edu.ng"
                       required
-                      className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all"
+                      className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all"
                     />
                   </div>
                 </div>
@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
                 <CheckCircle className="w-8 h-8 text-emerald-400" />
               </div>
               <h2 className="text-2xl font-bold text-white mb-2">Check Your Email</h2>
-              <p className="text-white/50 mb-6">
+              <p className="text-white/60 mb-6">
                 We&apos;ve sent a password reset link to{" "}
                 <span className="text-white font-medium">{email}</span>
               </p>
@@ -140,7 +140,7 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
 
-        <p className="text-white/30 text-xs text-center mt-6">
+        <p className="text-white/40 text-xs text-center mt-6">
           Protected by enterprise-grade security. Your data is safe with us.
         </p>
       </motion.div>
