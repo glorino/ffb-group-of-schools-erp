@@ -281,7 +281,7 @@ export default function TeachersPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="input-search pl-9 w-48"
+                className="input-search pl-9 w-full sm:w-48"
               />
             </div>
             <button onClick={handleExport} className="btn btn-secondary">

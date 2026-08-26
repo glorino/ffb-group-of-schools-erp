@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
+import { GRADE_SCALE } from "@/lib/constants";
 import {
   FileText,
   Download,
@@ -57,25 +59,13 @@ interface TermGrades {
   avgScore: number;
 }
 
-const GRADING_SCALE: { grade: string; min: number; max: number; points: number; remark: string }[] = [
-  { grade: "A1", min: 75, max: 100, points: 4.0, remark: "Excellent" },
-  { grade: "B2", min: 70, max: 74, points: 3.5, remark: "Very Good" },
-  { grade: "B3", min: 65, max: 69, points: 3.0, remark: "Good" },
-  { grade: "C4", min: 60, max: 64, points: 2.5, remark: "Credit" },
-  { grade: "C5", min: 55, max: 59, points: 2.0, remark: "Credit" },
-  { grade: "C6", min: 50, max: 54, points: 1.5, remark: "Credit" },
-  { grade: "D7", min: 45, max: 49, points: 1.0, remark: "Pass" },
-  { grade: "E8", min: 40, max: 44, points: 0.5, remark: "Pass" },
-  { grade: "F9", min: 0, max: 39, points: 0.0, remark: "Fail" },
-];
-
 function getGradePoint(grade: string): number {
-  const match = GRADING_SCALE.find((g) => g.grade === grade);
-  return match ? match.points : 0;
+  const match = GRADE_SCALE.find((g) => g.grade === grade);
+  return match ? match.gpa : 0;
 }
 
 function getGradeFromScore(score: number): string {
-  const match = GRADING_SCALE.find((g) => score >= g.min && score <= g.max);
+  const match = GRADE_SCALE.find((g) => score >= g.min && score <= g.max);
   return match ? match.grade : "F9";
 }
 
@@ -273,7 +263,7 @@ export default function TranscriptPage() {
   @media print { body { padding: 20px; } }
 </style></head><body>
   <div class="header">
-    <h1>FFB Group of Schools</h1>
+    <h1>${SCHOOL_CONFIG.name}</h1>
     <h2>Academic Affairs Office</h2>
     <p>Official Academic Transcript of Record</p>
   </div>
@@ -325,7 +315,7 @@ export default function TranscriptPage() {
   <div class="stamp-area">OFFICIAL STAMP</div>
 
   <div class="footer-note">
-    This is an official academic transcript issued by FFB Group of Schools. Any alteration or forgery of this document is prohibited.<br/>
+    This is an official academic transcript issued by ${SCHOOL_CONFIG.name}. Any alteration or forgery of this document is prohibited.<br/>
     Transcript ID: TRN-${Date.now().toString(36).toUpperCase()}
   </div>
 
@@ -603,7 +593,7 @@ export default function TranscriptPage() {
                 </div>
 
                 <p className="text-center text-[#94a3b8] text-[9px] mt-4">
-                  This is an official academic transcript issued by FFB Group of Schools. Any alteration or forgery is strictly prohibited.
+                  This is an official academic transcript issued by {SCHOOL_CONFIG.name}. Any alteration or forgery is strictly prohibited.
                 </p>
               </div>
             </>

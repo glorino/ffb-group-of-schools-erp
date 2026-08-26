@@ -384,11 +384,11 @@ export default function ClassesPage() {
                     placeholder="e.g. A, B, C"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
-                    <select
-                      value={form.level}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   <div>
+                     <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
+                     <select
+                       value={form.level}
                       onChange={(e) => setForm({ ...form, level: e.target.value })}
                       className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "light" }}
@@ -445,9 +445,9 @@ export default function ClassesPage() {
                 <button onClick={() => setViewClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
               </div>
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <p className="text-[#64748b] text-[11px] mb-1">Class Name</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
+                     <p className="text-[#64748b] text-[11px] mb-1">Class Name</p>
                     <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.displayName}{viewClass.arm ? ` - Arm ${viewClass.arm}` : ""}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
@@ -523,10 +523,10 @@ export default function ClassesPage() {
                   <input type="text" value={editForm.displayName} onChange={(e) => setEditForm({ ...editForm, displayName: e.target.value })}
                     className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
-                    <select value={editForm.level} onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   <div>
+                     <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
+                     <select value={editForm.level} onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
                       className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
                       style={{ colorScheme: "light" }}>
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="nursery">Nursery</option>

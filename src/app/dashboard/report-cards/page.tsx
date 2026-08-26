@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import {
   FileText, Download, Eye, Printer, QrCode, CheckCircle, Clock, Users, Search,
@@ -82,7 +83,7 @@ export default function ReportCardsPage() {
               academicYear: d.term?.academicYear || "2025/2026",
             },
             school: {
-              name: d.school?.name || process.env.NEXT_PUBLIC_SCHOOL_NAME || "FFB Group of Schools",
+              name: d.school?.name || process.env.NEXT_PUBLIC_SCHOOL_NAME || SCHOOL_CONFIG.name,
               address: d.school?.address,
               logo: d.school?.logo,
             },

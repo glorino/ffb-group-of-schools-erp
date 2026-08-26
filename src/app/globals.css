@@ -259,21 +259,7 @@ select optgroup {
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
 }
 
-.section-title {
-  text-align: center;
-  font-size: 42px;
-  font-weight: 800;
-  margin-bottom: 15px;
-}
 
-.section-subtitle {
-  text-align: center;
-  max-width: 750px;
-  margin: 0 auto 40px auto;
-  color: rgba(255,255,255,0.85);
-  font-size: 16px;
-  line-height: 1.7;
-}
 
 /* Features Grid */
 .features-grid {
@@ -651,19 +637,6 @@ select optgroup {
   padding: 20px;
 }
 
-.modal-content {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 20px;
-  max-width: 600px;
-  width: 100%;
-  padding: 40px;
-  color: #fff;
-  position: relative;
-  animation: modalFade 0.4s ease;
-}
-
 @keyframes modalFade {
   from { transform: scale(0.8); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
@@ -712,12 +685,6 @@ select optgroup {
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
-
-/* Badge */
-.badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; }
-.badge-success { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
-.badge-warning { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
-.badge-danger { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
 
 /* Skeleton */
 @keyframes shimmer {
@@ -781,27 +748,6 @@ select optgroup {
   .footer-grid { grid-template-columns: 1fr; text-align: center; }
   .social-icons { justify-content: center; }
   .glass-section { padding: 50px 25px; border-radius: 25px; margin: 30px 15px; }
-}
-
-/* Button Primary */
-.btn-primary {
-  background: #28ff9c;
-  color: #001f5f;
-  padding: 14px 30px;
-  border-radius: 35px;
-  font-weight: 600;
-  text-decoration: none;
-  display: inline-block;
-  transition: 0.3s;
-  border: none;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-size: 15px;
-}
-
-.btn-primary:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(40,255,156,0.4);
 }
 
 /* ============================
@@ -947,6 +893,15 @@ select optgroup {
   font-size: 14px;
   color: #64748b;
   margin-top: 2px;
+}
+
+/* Landing page glass sections — white text on dark background */
+.glass-section .section-title {
+  color: #ffffff;
+}
+
+.glass-section .section-subtitle {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* Grid layouts */

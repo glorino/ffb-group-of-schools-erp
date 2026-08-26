@@ -71,7 +71,10 @@ export async function initializePayment({
   const publicKey = process.env.FLW_PUBLIC_KEY;
   if (!publicKey) throw new Error("FLW_PUBLIC_KEY is not configured");
 
-  const txRef = `FFB-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  const txRef =
+    metadata?.reference && typeof metadata.reference === "string" && metadata.reference.length > 0
+      ? metadata.reference
+      : `FFB-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
   const body: Record<string, unknown> = {
     tx_ref: txRef,

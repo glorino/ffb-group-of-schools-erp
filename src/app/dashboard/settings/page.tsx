@@ -304,11 +304,24 @@ export default function SettingsPage() {
   const handleSaveNotifications = () => saveSection("notifications", notifications);
   const handleSaveRoles = () => saveSection("roles", roles);
 
-  const handleSavePasswordPolicy = () => {
-    saveToStorage("passwordPolicy", passwordPolicy);
-    saveToStorage("sessionPolicy", sessionPolicy);
-    saveToStorage("twoFactorEnabled", twoFactorEnabled);
-    toast.success("Security settings saved");
+  const handleSavePasswordPolicy = async () => {
+    try {
+      await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          passwordPolicy,
+          sessionPolicy,
+          twoFactorEnabled,
+        }),
+      });
+      saveToStorage("passwordPolicy", passwordPolicy);
+      saveToStorage("sessionPolicy", sessionPolicy);
+      saveToStorage("twoFactorEnabled", twoFactorEnabled);
+      toast.success("Security settings saved");
+    } catch {
+      toast.error("Failed to save security settings");
+    }
   };
 
   const handleChangePassword = async () => {

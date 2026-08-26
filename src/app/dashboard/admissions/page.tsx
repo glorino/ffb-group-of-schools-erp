@@ -341,6 +341,7 @@ export default function AdmissionsPage() {
                           const isImage = ["jpg", "jpeg", "png", "gif", "webp"].includes(ext);
                           const iconBg = isPDF ? "bg-red-500/10" : isImage ? "bg-blue-500/10" : "bg-green-500/10";
                           const iconColor = isPDF ? "text-[#dc2626]" : isImage ? "text-[#2563eb]" : "text-[#16a34a]";
+                          const typeBg = isPDF ? "bg-red-500/10 text-[#dc2626]" : isImage ? "bg-blue-500/10 text-[#2563eb]" : "bg-green-500/10 text-[#16a34a]";
                           return (
                           <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] hover:border-[#e2e8f0] transition">
                             <div className="flex items-center gap-3">
@@ -348,8 +349,11 @@ export default function AdmissionsPage() {
                                 <FileText className={`w-4 h-4 ${iconColor}`} />
                               </div>
                               <div>
-                                <p className="text-[#1a1a2e] text-[13px] font-medium">{doc.name}</p>
-                                <p className="text-[#94a3b8] text-[10px]">{doc.type} · {doc.size ? `${(doc.size / 1024).toFixed(1)} KB` : "—"}</p>
+                                <div className="flex items-center gap-2">
+                                  <p className="text-[#1a1a2e] text-[13px] font-medium">{doc.name}</p>
+                                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold ${typeBg}`}>{doc.type}</span>
+                                </div>
+                                <p className="text-[#94a3b8] text-[10px]">{doc.size ? `${(doc.size / 1024).toFixed(1)} KB` : "—"}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-1">

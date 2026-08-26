@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 import {
   User,
   Mail,
@@ -256,11 +257,11 @@ export default function ProfilePage() {
             </div>
             <div className="flex items-center gap-3">
               <Phone className="w-4 h-4 text-[#64748b]" />
-              <span className="text-[#475569] text-[13px]">+234 801 234 5678</span>
+              <span className="text-[#475569] text-[13px]">{SCHOOL_CONFIG.phone}</span>
             </div>
             <div className="flex items-center gap-3">
               <MapPin className="w-4 h-4 text-[#64748b]" />
-              <span className="text-[#475569] text-[13px]">12 Education Lane, Victoria Island, Lagos</span>
+              <span className="text-[#475569] text-[13px]">{SCHOOL_CONFIG.address}</span>
             </div>
             <div className="flex items-center gap-3">
               <Calendar className="w-4 h-4 text-[#64748b]" />
@@ -402,9 +403,19 @@ export default function ProfilePage() {
                     <span className="text-[#1a1a2e] text-[13px]">{notif.label}</span>
                     <button
                       type="button"
-                      onClick={() => {
-                        setNotifications(prev => ({ ...prev, [notif.key]: !prev[notif.key] }));
+                      onClick={async () => {
+                        const updated = { ...notifications, [notif.key]: !notifications[notif.key] };
+                        setNotifications(updated);
                         toast.success(`${notif.label} ${notifications[notif.key] ? "disabled" : "enabled"}`);
+                        try {
+                          await fetch('/api/settings', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ type: 'notifications', settings: { email: updated.email, sms: updated.sms, push: updated.push } })
+                          });
+                        } catch {
+                          // preferences update is best-effort
+                        }
                       }}
                       className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${notifications[notif.key] ? "bg-[var(--accent)]" : "bg-[#e2e8f0]"}`}
                     >

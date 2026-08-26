@@ -357,9 +357,9 @@ export default function ExamsPage() {
                     <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="practice">Practice</option>
                   </select>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Start Date *</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                   <div>
+                     <label className="block text-[#475569] text-[13px] mb-1.5">Start Date *</label>
                     <input
                       type="date"
                       required

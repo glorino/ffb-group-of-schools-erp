@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const particles = Array.from({ length: 80 }, (_, i) => ({
   id: i, left: `${Math.random() * 100}%`, duration: `${10 + Math.random() * 20}s`,
@@ -16,12 +17,27 @@ export default function ContactPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 5000);
-    setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+    setSending(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send message");
+      setSent(true);
+      setTimeout(() => setSent(false), 5000);
+      setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+    } catch {
+      alert("Failed to send message. Please try again later.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -60,10 +76,10 @@ export default function ContactPage() {
       <section className="glass-section">
         <motion.div variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "20px", marginBottom: "40px" }}>
           {[
-            { icon: "📍", title: "Address", text: "123 Education Avenue, GRA, Lagos State, Nigeria" },
-            { icon: "📞", title: "Phone", text: "+234 905 998 0991" },
-            { icon: "✉️", title: "Email", text: "info@ffb.edu.ng" },
-            { icon: "⏰", title: "Working Hours", text: "Mon - Fri: 7:30 AM - 4:00 PM" },
+            { icon: "📍", title: "Address", text: SCHOOL_CONFIG.address },
+            { icon: "📞", title: "Phone", text: SCHOOL_CONFIG.phone },
+            { icon: "✉️", title: "Email", text: SCHOOL_CONFIG.email },
+            { icon: "⏰", title: "Working Hours", text: SCHOOL_CONFIG.workingHours },
           ].map((c, i) => (
             <motion.div key={i} variants={item} whileHover={{ y: -3 }} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "20px", padding: "25px", textAlign: "center", border: "1px solid rgba(255,255,255,0.08)", cursor: "default" }}>
               <div style={{ fontSize: "32px", marginBottom: "12px" }}>{c.icon}</div>
@@ -92,8 +108,8 @@ export default function ContactPage() {
                 <input className="input-glass" placeholder="Subject" required value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} />
               </div>
               <textarea className="input-glass" placeholder="Your Message" rows={5} required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} style={{ resize: "vertical", minHeight: "120px" }} />
-              <motion.button type="submit" className="btn-primary" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ width: "100%", padding: "16px" }}>
-                Send Message
+              <motion.button type="submit" className="btn-primary" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={sending} style={{ width: "100%", padding: "16px", opacity: sending ? 0.7 : 1 }}>
+                {sending ? "Sending..." : "Send Message"}
               </motion.button>
             </form>
           </motion.div>
@@ -110,7 +126,7 @@ export default function ContactPage() {
         <div style={{ maxWidth: "700px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "12px" }}>
           {[
             { q: "What is the admission process?", a: "Visit our Apply page to fill out the admission form. Shortlisted candidates will be contacted for an entrance examination and interview." },
-            { q: "Do you offer boarding facilities?", a: "Yes, FFB Group of Schools provides comfortable boarding facilities for students from Junior Secondary upwards." },
+            { q: "Do you offer boarding facilities?", a: `Yes, ${SCHOOL_CONFIG.name} provides comfortable boarding facilities for students from Junior Secondary upwards.` },
             { q: "What extracurricular activities are available?", a: "We offer sports, clubs, debates, science exhibitions, cultural events and leadership programmes." },
             { q: "How can I track my child's progress?", a: "Parents can track their child's academic progress through the school portal using their login credentials." },
           ].map((faq, i) => (
@@ -123,7 +139,7 @@ export default function ContactPage() {
       </section>
 
       <footer className="footer">
-        <div className="footer-bottom">{`© ${new Date().getFullYear()} FFB Group of Schools. All rights reserved.`}</div>
+        <div className="footer-bottom">{`© ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.`}</div>
       </footer>
     </>
   );

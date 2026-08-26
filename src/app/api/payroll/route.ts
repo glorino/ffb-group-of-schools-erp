@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { PayrollSchema } from "@/lib/validations";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 export async function GET(request: NextRequest) {
   try {
@@ -96,7 +97,7 @@ export async function PUT(request: NextRequest) {
           payroll.teacher.email,
           `Salary Payment - ${payroll.month}/${payroll.year}`,
           `<div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
-            <h2 style="color: #0055ff;">FFB Group of Schools</h2>
+            <h2 style="color: #0055ff;">${SCHOOL_CONFIG.name}</h2>
             <p>Dear ${payroll.teacher.firstName} ${payroll.teacher.lastName},</p>
             <p>Your salary for ${payroll.month}/${payroll.year} has been processed.</p>
             <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">

@@ -87,7 +87,7 @@ export function DataTable<T extends Record<string, any>>({
     <div className="space-y-4">
       {searchable && (
         <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search..."
@@ -96,12 +96,12 @@ export function DataTable<T extends Record<string, any>>({
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-[#1a1a2e] placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
           />
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-xl border border-white/10">
+      <div className="overflow-x-auto rounded-xl border border-[#e2e8f0]">
         <table className="w-full table-glass">
           <thead>
             <tr>
@@ -121,7 +121,7 @@ export function DataTable<T extends Record<string, any>>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="text-center py-12 text-white/40"
+                  className="text-center py-12 text-gray-400"
                 >
                   <div className="flex flex-col items-center gap-2">
                     <Inbox className="w-10 h-10" />
@@ -137,7 +137,7 @@ export function DataTable<T extends Record<string, any>>({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.03 }}
-                    className="hover:bg-white/5 transition-colors cursor-pointer"
+                    className="hover:bg-gray-50 transition-colors cursor-pointer"
                   >
                     {columns.map((col) => (
                       <td key={col.key} className={col.className}>
@@ -153,7 +153,7 @@ export function DataTable<T extends Record<string, any>>({
       </div>
 
       {pagination && totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm text-white/50">
+        <div className="flex items-center justify-between text-sm text-gray-500">
           <p>
             Showing {startItem}–{endItem} of {filteredData.length}
           </p>
@@ -161,23 +161,23 @@ export function DataTable<T extends Record<string, any>>({
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={safePage === 1}
-              className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="w-8 h-8 rounded-lg bg-white flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all border border-[#e2e8f0]"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-4 h-4 text-[#1a1a2e]" />
             </button>
             {pageNumbers.map((p, i) =>
               typeof p === "string" ? (
-                <span key={`dots-${i}`} className="text-white/30 px-1">
+                <span key={`dots-${i}`} className="text-gray-400 px-1">
                   ...
                 </span>
               ) : (
                 <button
                   key={p}
                   onClick={() => setPage(p)}
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all border border-[#e2e8f0] ${
                     safePage === p
                       ? "bg-[var(--primary)] text-white"
-                      : "bg-white/5 text-white/50 hover:bg-white/10"
+                      : "bg-white text-gray-500 hover:bg-gray-50"
                   }`}
                 >
                   {p}
@@ -187,9 +187,9 @@ export function DataTable<T extends Record<string, any>>({
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={safePage === totalPages}
-              className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="w-8 h-8 rounded-lg bg-white flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all border border-[#e2e8f0]"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 text-[#1a1a2e]" />
             </button>
           </div>
         </div>

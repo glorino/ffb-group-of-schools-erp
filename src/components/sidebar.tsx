@@ -42,6 +42,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
       { label: "My Exams", href: "/dashboard/exams", emoji: "📝", roles: ["STUDENT"] },
       { label: "Timetable", href: "/dashboard/timetable", emoji: "📅", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
       { label: "Lesson Plans", href: "/dashboard/lesson-plans", emoji: "📋", roles: ["TEACHER", "PRINCIPAL", "VICE_PRINCIPAL"] },
+      { label: "Assignments", href: "/dashboard/assignments", emoji: "📝", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
       { label: "Discipline", href: "/dashboard/discipline", emoji: "⚖️", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
     ],
   },
@@ -88,8 +89,14 @@ const navSections: { title: string; items: NavItem[] }[] = [
     title: "Operations",
     items: [
       { label: "Transport", href: "/dashboard/transport", emoji: "🚌", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"] },
-      { label: "Clinic", href: "/dashboard/clinic", emoji: "🏥", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "CLINIC_STAFF"] },
+      { label: "Clinic", href: "/dashboard/clinic", emoji: "🏥", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "CLINIC_STAFF", "NURSE"] },
       { label: "Inventory", href: "/dashboard/inventory", emoji: "📦", roles: ["OWNER", "ADMINISTRATOR"] },
+    ],
+  },
+  {
+    title: "CBT & Exam Prep",
+    items: [
+      { label: "CBT Exams", href: "/dashboard/cbt", emoji: "💻", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"] },
     ],
   },
   {
@@ -205,7 +212,7 @@ export function Sidebar() {
     <>
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-2.5 left-3 z-[70] w-10 h-10 rounded-xl bg-white/[0.08] backdrop-blur-xl flex items-center justify-center text-white border border-white/10 shadow-lg"
+        className="lg:hidden fixed top-2.5 left-3 z-[81] w-10 h-10 rounded-xl bg-white/[0.08] backdrop-blur-xl flex items-center justify-center text-white border border-white/10 shadow-lg"
       >
         <Menu className="w-5 h-5" />
       </button>

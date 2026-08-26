@@ -83,6 +83,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Save security settings (password policy, session policy, 2FA)
+    if (body.passwordPolicy || body.sessionPolicy || body.twoFactorEnabled !== undefined) {
+      const school = await prisma.school.findFirst();
+      if (school) {
+        const currentSettings = (school.settings as Record<string, any>) || {};
+        const securitySettings: Record<string, any> = {};
+        if (body.passwordPolicy) securitySettings.passwordPolicy = body.passwordPolicy;
+        if (body.sessionPolicy) securitySettings.sessionPolicy = body.sessionPolicy;
+        if (body.twoFactorEnabled !== undefined) securitySettings.twoFactorEnabled = body.twoFactorEnabled;
+        await prisma.school.update({
+          where: { id: school.id },
+          data: { settings: { ...currentSettings, ...securitySettings } },
+        });
+      }
+    }
+
     return NextResponse.json({ success: true, message: "Settings saved" });
   } catch (error) {
     console.error("POST /api/settings error:", error);

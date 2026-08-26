@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
+import { formatCurrency } from "@/lib/school-config";
 
 interface Expense {
   id: string;
@@ -49,9 +50,6 @@ const categories = [
   "Food & Supplies",
   "Others",
 ];
-
-const formatNaira = (amount: number) =>
-  new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", minimumFractionDigits: 0 }).format(amount);
 
 export default function ExpensesPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -180,8 +178,8 @@ export default function ExpensesPage() {
   });
 
   const statCards = [
-    { label: "Total Expenses", value: formatNaira(stats.totalAmount), icon: TrendingDown, color: "from-blue-500 to-blue-600" },
-    { label: "Pending Amount", value: formatNaira(stats.pendingAmount), icon: Receipt, color: "from-emerald-500 to-emerald-600" },
+    { label: "Total Expenses", value: formatCurrency(stats.totalAmount), icon: TrendingDown, color: "from-blue-500 to-blue-600" },
+    { label: "Pending Amount", value: formatCurrency(stats.pendingAmount), icon: Receipt, color: "from-emerald-500 to-emerald-600" },
     { label: "Total Count", value: stats.totalCount.toString(), icon: Clock, color: "from-orange-500 to-orange-600" },
     { label: "Pending Approvals", value: stats.pendingCount.toString(), icon: Wrench, color: "from-purple-500 to-purple-600" },
   ];
@@ -325,7 +323,7 @@ export default function ExpensesPage() {
                           <p className="text-[#64748b] text-[12px]">{expense.vendor}</p>
                         )}
                       </td>
-                      <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{formatNaira(expense.amount)}</td>
+                      <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{formatCurrency(expense.amount)}</td>
                       <td className="py-3 px-4">
                         <span className="px-2 py-1 rounded-lg bg-[#f8fafc] text-[#475569] text-[12px]">{expense.category}</span>
                       </td>
@@ -393,7 +391,7 @@ export default function ExpensesPage() {
                           <div className={`w-2 h-2 rounded-full ${item.color}`} />
                           <span className="text-[#475569]">{item.label}</span>
                         </div>
-                        <span className="text-[#64748b] text-[12px]">{formatNaira(item.amount)}</span>
+                        <span className="text-[#64748b] text-[12px]">{formatCurrency(item.amount)}</span>
                       </div>
                       <div className="w-full bg-[#f8fafc] rounded-full h-1.5">
                         <div className={`${item.color} h-1.5 rounded-full transition-all duration-500`} style={{ width: `${item.percent}%` }} />

@@ -379,7 +379,7 @@ export default function ResultsPage() {
                 placeholder="Search subjects..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] transition-colors w-56"
+                className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] transition-colors w-full sm:w-56"
               />
             </div>
           </div>
@@ -656,9 +656,9 @@ export default function ResultsPage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Type *</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   <div>
+                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Type *</label>
                     <select
                       value={form.type}
                       onChange={(e) => setForm({ ...form, type: e.target.value })}
@@ -684,9 +684,9 @@ export default function ResultsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Max Score</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   <div>
+                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Max Score</label>
                     <input
                       type="number"
                       min="1"
@@ -707,9 +707,9 @@ export default function ResultsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Session</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   <div>
+                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Session</label>
                     <input
                       type="text"
                       value={form.session}
@@ -785,13 +785,13 @@ export default function ResultsPage() {
                   <label className="block text-[#475569] text-xs font-medium mb-1.5">Type</label>
                   <p className="text-[#1a1a2e] text-sm font-medium">{typeLabel[editingGrade.type] || editingGrade.type}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Score *</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={editForm.score}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   <div>
+                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Score *</label>
+                     <input
+                       type="number"
+                       min="0"
+                       value={editForm.score}
                       onChange={(e) => setEditForm({ ...editForm, score: e.target.value })}
                       className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
                     />

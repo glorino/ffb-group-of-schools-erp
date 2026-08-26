@@ -23,9 +23,8 @@ export function getGPA(score: number): number {
 export const CURRENCY = "NGN";
 export const CURRENCY_SYMBOL = "\u20A6";
 
-export function formatCurrency(amount: number): string {
-  return `${CURRENCY_SYMBOL}${amount.toLocaleString("en-NG")}`;
-}
+import { formatCurrency } from './school-config';
+export { formatCurrency };
 
 export const DEFAULT_CLASS_CAPACITY = 40;
 

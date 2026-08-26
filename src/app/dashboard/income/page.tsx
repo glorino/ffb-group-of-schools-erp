@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
+import { formatCurrency } from "@/lib/school-config";
 
 interface IncomeCategory {
   id: string;
@@ -38,9 +39,6 @@ interface IncomeStats {
   totalIncome: number;
   count: number;
 }
-
-const formatNaira = (amount: number) =>
-  new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", minimumFractionDigits: 0 }).format(amount);
 
 export default function IncomePage() {
   const [incomes, setIncomes] = useState<Income[]>([]);
@@ -158,10 +156,10 @@ export default function IncomePage() {
     .sort((a, b) => b.amount - a.amount);
 
   const statCards = [
-    { label: "Total Income", value: formatNaira(stats.totalIncome), icon: TrendingUp, color: "from-blue-500 to-blue-600" },
+    { label: "Total Income", value: formatCurrency(stats.totalIncome), icon: TrendingUp, color: "from-blue-500 to-blue-600" },
     { label: "Transactions", value: stats.count.toString(), icon: Calendar, color: "from-emerald-500 to-emerald-600" },
     { label: "Categories", value: incomeCategories.length.toString(), icon: BarChart3, color: "from-purple-500 to-purple-600" },
-    { label: "This Month", value: formatNaira(incomes.filter((i) => {
+    { label: "This Month", value: formatCurrency(incomes.filter((i) => {
       const d = new Date(i.date);
       const now = new Date();
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
@@ -273,7 +271,7 @@ export default function IncomePage() {
                   {filteredIncomes.map((income, idx) => (
                     <tr key={income.id} className={`border-b border-[#e2e8f0] hover:bg-[#f1f5f9] transition-all ${idx % 2 === 1 ? "bg-[#f8fafc]" : ""}`}>
                       <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{income.title}</td>
-                      <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{formatNaira(income.amount)}</td>
+                      <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{formatCurrency(income.amount)}</td>
                       <td className="py-3 px-4">
                         <span className="px-2 py-1 rounded-lg bg-[#f8fafc] text-[#475569] text-[12px]">
                           {income.category?.name || "Uncategorized"}
@@ -312,7 +310,7 @@ export default function IncomePage() {
                       <div key={i}>
                         <div className="flex items-center justify-between text-[13px] mb-1">
                           <span className="text-[#475569]">{item.name}</span>
-                          <span className="text-[#64748b] text-[12px]">{formatNaira(item.amount)}</span>
+                          <span className="text-[#64748b] text-[12px]">{formatCurrency(item.amount)}</span>
                         </div>
                         <div className="w-full bg-[#f8fafc] rounded-full h-1.5">
                           <div
@@ -331,7 +329,7 @@ export default function IncomePage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between p-2 rounded-lg bg-[#f8fafc]">
                     <span className="text-[#475569] text-[13px]">Total Income</span>
-                    <span className="text-[#1a1a2e] text-[13px] font-medium">{formatNaira(stats.totalIncome)}</span>
+                    <span className="text-[#1a1a2e] text-[13px] font-medium">{formatCurrency(stats.totalIncome)}</span>
                   </div>
                   <div className="flex items-center justify-between p-2 rounded-lg bg-[#f8fafc]">
                     <span className="text-[#475569] text-[13px]">Transactions</span>

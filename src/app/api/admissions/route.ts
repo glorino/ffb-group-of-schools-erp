@@ -94,6 +94,22 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const documents = (body as any).documents as
+      | { name: string; type: string; url: string; size?: number }[]
+      | undefined;
+
+    if (Array.isArray(documents) && documents.length > 0) {
+      await prisma.applicantDocument.createMany({
+        data: documents.map((doc) => ({
+          applicantId: applicant.id,
+          name: doc.name,
+          type: doc.type,
+          url: doc.url,
+          size: doc.size ?? null,
+        })),
+      });
+    }
+
     try {
       await sendApplicationSubmittedEmail({
         firstName: validated.firstName,

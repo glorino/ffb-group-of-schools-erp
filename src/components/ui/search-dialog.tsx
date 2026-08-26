@@ -42,7 +42,7 @@ const sampleResults: SearchResult[] = [
   { id: "4", title: "Mrs. Fatima Ali", subtitle: "English Department", type: "teacher", href: "/dashboard/teachers/2" },
   { id: "5", title: "JSS1 - Gold", subtitle: "42 students", type: "class", href: "/dashboard/classes/1" },
   { id: "6", title: "SS3 - Diamond", subtitle: "38 students", type: "class", href: "/dashboard/classes/2" },
-  { id: "7", title: "Payment #INV-2025-0847", subtitle: "₦125,000 - Amina Mohammed", type: "payment", href: "/dashboard/payments/1" },
+  { id: "7", title: "Payment #INV-2025-0847", subtitle: "Amina Mohammed", type: "payment", href: "/dashboard/payments/1" },
 ];
 
 export function SearchDialog() {

@@ -51,9 +51,23 @@ export default function EventsPage() {
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/announcements");
+      const res = await fetch("/api/events");
       const data = await res.json();
-      const items = (data.announcements || data || []).filter((a: any) => a.type === "event");
+      const items = (data.events || []).map((e: any) => ({
+        id: e.id,
+        title: e.title,
+        content: e.description || "",
+        type: e.type || "event",
+        priority: "medium",
+        published: true,
+        createdAt: e.createdAt,
+        target: {
+          eventDate: e.startDate,
+          imageUrl: "",
+          featured: false,
+          audience: ["all"],
+        },
+      }));
       setEvents(items);
     } catch {
       toast.error("Failed to load events");
@@ -126,20 +140,15 @@ export default function EventsPage() {
     try {
       const body: any = {
         title: title.trim(),
-        content: content.trim(),
+        description: content.trim(),
+        startDate: eventDate,
+        endDate: eventDate,
         type: "event",
-        priority: "medium",
-        published: true,
-        target: {
-          eventDate,
-          imageUrl: imageFile || imageUrl || "",
-          featured,
-          audience: ["all"],
-        },
+        location: "",
       };
 
       if (editItem) {
-        const res = await fetch(`/api/announcements?id=${editItem.id}`, {
+        const res = await fetch(`/api/events?id=${editItem.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -147,7 +156,7 @@ export default function EventsPage() {
         if (!res.ok) throw new Error("Failed to update");
         toast.success("Event updated");
       } else {
-        const res = await fetch("/api/announcements", {
+        const res = await fetch("/api/events", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -167,7 +176,7 @@ export default function EventsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this event?")) return;
     try {
-      const res = await fetch(`/api/announcements?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/events?id=${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
       toast.success("Event deleted");
       fetchEvents();

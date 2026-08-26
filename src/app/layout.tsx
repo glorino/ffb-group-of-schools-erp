@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 import { Toaster } from "sonner";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -12,11 +13,11 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "FFB Group of Schools",
+  title: SCHOOL_CONFIG.name,
   description:
-    "Excellence, Discipline, Integrity - FFB Group of Schools Management Portal",
+    `Excellence, Discipline, Integrity - ${SCHOOL_CONFIG.name} Management Portal`,
   keywords: [
-    "FFB Group of Schools",
+    SCHOOL_CONFIG.name,
     "school portal",
     "student management",
     "education",

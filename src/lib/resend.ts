@@ -1,3 +1,5 @@
+import { SCHOOL_CONFIG } from "@/lib/school-config";
+
 const RESEND_BASE_URL = "https://api.resend.com";
 
 function getApiKey(): string {
@@ -7,7 +9,7 @@ function getApiKey(): string {
 }
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "noreply@ffb.edu.ng";
-const FROM_NAME = process.env.RESEND_FROM_NAME || "FFB Group of Schools";
+const FROM_NAME = process.env.RESEND_FROM_NAME || SCHOOL_CONFIG.name;
 
 export interface EmailResponse {
   id: string;
@@ -105,7 +107,7 @@ export async function sendWelcomeEmail(
     <body>
       <div class="container">
         <div class="header">
-          <h1>FFB Group of Schools</h1>
+          <h1>${SCHOOL_CONFIG.name}</h1>
           <p>Welcome to our School ERP System</p>
         </div>
         <div class="content">
@@ -113,17 +115,17 @@ export async function sendWelcomeEmail(
           <p>Your account has been successfully created. We're excited to have you on board.</p>
           <p><span class="badge">${role}</span></p>
           <p>You can now log in to access the system using your registered email address. If you have any questions, please don't hesitate to reach out to our support team.</p>
-          <p>Thank you for choosing FFB Group of Schools!</p>
+          <p>Thank you for choosing ${SCHOOL_CONFIG.name}!</p>
         </div>
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} FFB Group of Schools. All rights reserved.</p>
+          <p>&copy; ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.</p>
         </div>
       </div>
     </body>
     </html>
   `;
 
-  return sendEmail(email, "Welcome to FFB Group of Schools", html);
+  return sendEmail(email, `Welcome to ${SCHOOL_CONFIG.name}`, html);
 }
 
 export async function sendPaymentReceipt(
@@ -184,7 +186,7 @@ export async function sendPaymentReceipt(
           <p>This receipt serves as proof of payment. Please keep it for your records.</p>
         </div>
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} FFB Group of Schools. All rights reserved.</p>
+          <p>&copy; ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.</p>
         </div>
       </div>
     </body>
@@ -231,14 +233,14 @@ export async function sendPasswordResetEmail(
           <p>If you didn't request this, please ignore this email. The link expires in 1 hour.</p>
         </div>
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} FFB Group of Schools. All rights reserved.</p>
+          <p>&copy; ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.</p>
         </div>
       </div>
     </body>
     </html>
   `;
 
-  return sendEmail(email, "Password Reset - FFB Group of Schools", html);
+  return sendEmail(email, `Password Reset - ${SCHOOL_CONFIG.name}`, html);
 }
 
 export async function sendAdmissionLetter(
@@ -271,12 +273,12 @@ export async function sendAdmissionLetter(
     <body>
       <div class="container">
         <div class="header">
-          <h1>FFB Group of Schools</h1>
+          <h1>${SCHOOL_CONFIG.name}</h1>
           <p>Admission Offer</p>
         </div>
         <div class="content">
           <h2>Congratulations, ${name}!</h2>
-          <p>We are pleased to inform you that you have been offered admission into FFB Group of Schools. Below are your admission details:</p>
+          <p>We are pleased to inform you that you have been offered admission into ${SCHOOL_CONFIG.name}. Below are your admission details:</p>
           <div class="info-box">
             <p><strong>Student Name:</strong> ${name}</p>
             <p><strong>Admission Number:</strong> ${admissionNumber}</p>
@@ -288,14 +290,14 @@ export async function sendAdmissionLetter(
           <p>We look forward to welcoming you to our school community!</p>
         </div>
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} FFB Group of Schools. All rights reserved.</p>
+          <p>&copy; ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.</p>
         </div>
       </div>
     </body>
     </html>
   `;
 
-  return sendEmail(email, "Admission Letter - FFB Group of Schools", html);
+  return sendEmail(email, `Admission Letter - ${SCHOOL_CONFIG.name}`, html);
 }
 
 export async function sendAbsenceNotification(
@@ -304,9 +306,9 @@ export async function sendAbsenceNotification(
   studentName: string,
   date: string
 ): Promise<EmailResponse> {
-  const schoolName = process.env.SCHOOL_NAME || "FFB Group of Schools";
+  const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
   const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
-  const schoolPhone = process.env.SCHOOL_PHONE || "+234 905 998 0991";
+  const schoolPhone = process.env.SCHOOL_PHONE || SCHOOL_CONFIG.phone;
 
   const html = `
     <!DOCTYPE html>
@@ -370,9 +372,9 @@ export interface ApplicantForEmail {
 export async function sendApplicationSubmittedEmail(
   applicantData: ApplicantForEmail
 ): Promise<EmailResponse | null> {
-  const schoolName = process.env.SCHOOL_NAME || "FFB Group of Schools";
+  const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
   const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
-  const schoolPhone = process.env.SCHOOL_PHONE || "+234 905 998 0991";
+  const schoolPhone = process.env.SCHOOL_PHONE || SCHOOL_CONFIG.phone;
   if (!process.env.RESEND_API_KEY) return null;
 
   const fullName = `${applicantData.firstName} ${applicantData.lastName}`;
@@ -440,9 +442,9 @@ export async function sendApplicationStatusUpdateEmail(
   newStatus: string,
   note?: string
 ): Promise<EmailResponse | null> {
-  const schoolName = process.env.SCHOOL_NAME || "FFB Group of Schools";
+  const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
   const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
-  const schoolPhone = process.env.SCHOOL_PHONE || "+234 905 998 0991";
+  const schoolPhone = process.env.SCHOOL_PHONE || SCHOOL_CONFIG.phone;
   if (!process.env.RESEND_API_KEY) return null;
 
   const fullName = `${applicantData.firstName} ${applicantData.lastName}`;

@@ -21,19 +21,25 @@ export async function POST(request: NextRequest) {
     }
 
     const verification = await verifyPayment(transactionId);
-
     const paymentData = verification.data;
-    const reference =
-      typeof paymentData.meta === "object" &&
+
+    const ref =
+      paymentData.tx_ref ||
+      (typeof paymentData.meta === "object" &&
       paymentData.meta !== null &&
       "reference" in paymentData.meta
         ? (paymentData.meta as { reference: string }).reference
-        : undefined;
+        : undefined);
+
+    if (!ref) {
+      return NextResponse.json(
+        { error: "Could not determine payment reference" },
+        { status: 400 }
+      );
+    }
 
     const payment = await prisma.payment.findFirst({
-      where: {
-        ...(reference ? { reference } : {}),
-      },
+      where: { reference: ref },
     });
 
     if (!payment) {
@@ -43,7 +49,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (payment.status === "completed") {
+      return NextResponse.json({
+        success: true,
+        paymentId: payment.id,
+        status: payment.status,
+        amount: payment.amount,
+        reference: payment.reference,
+        message: "Payment already processed",
+      });
+    }
+
     const isSuccessful = paymentData.status === "successful";
+
+    if (isSuccessful && Math.abs(paymentData.amount - payment.amount) > 0.01) {
+      console.error(
+        `Amount mismatch for reference ${ref}: expected ${payment.amount}, got ${paymentData.amount}`
+      );
+      return NextResponse.json({ error: "Amount mismatch" }, { status: 400 });
+    }
 
     const updatedPayment = await prisma.payment.update({
       where: { id: payment.id },
@@ -66,27 +90,26 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    if (isSuccessful && payment.invoiceId) {
+    if (isSuccessful && updatedPayment.invoiceId) {
       await prisma.invoice.update({
-        where: { id: payment.invoiceId },
+        where: { id: updatedPayment.invoiceId },
         data: { status: "paid" },
       });
     }
 
-    // Send receipt email on successful payment
     if (isSuccessful) {
       try {
-        const paymentWithStudent = await prisma.payment.findUnique({
-          where: { id: payment.id },
-          include: { student: true },
+        const student = await prisma.student.findUnique({
+          where: { id: updatedPayment.studentId },
+          select: { firstName: true, lastName: true, email: true },
         });
-        if (paymentWithStudent?.student?.email) {
+        if (student?.email) {
           const { sendPaymentReceipt } = await import("@/lib/resend");
           await sendPaymentReceipt(
-            `${paymentWithStudent.student.firstName} ${paymentWithStudent.student.lastName}`,
-            paymentWithStudent.student.email || "",
-            paymentWithStudent.amount,
-            paymentWithStudent.reference
+            `${student.firstName} ${student.lastName}`,
+            student.email,
+            updatedPayment.amount,
+            updatedPayment.reference
           );
         }
       } catch (emailError) {

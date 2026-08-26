@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const particles = Array.from({ length: 80 }, (_, i) => ({
   id: i, left: `${Math.random() * 100}%`, duration: `${10 + Math.random() * 20}s`,
@@ -18,6 +19,22 @@ const classOptions = [
   { section: "Senior Secondary", classes: ["SSS 1", "SSS 2", "SSS 3"] },
 ];
 
+const docFields = [
+  { key: "birthCert", label: "Birth Certificate" },
+  { key: "reportCard", label: "Last School Report Card" },
+  { key: "medicalCert", label: "Medical Certificate" },
+] as const;
+
+type DocKey = (typeof docFields)[number]["key"];
+
+interface UploadedDoc {
+  name: string;
+  type: string;
+  url: string;
+  size: number;
+  docType: string;
+}
+
 export default function ApplyPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -26,16 +43,72 @@ export default function ApplyPage() {
   const [appNumber, setAppNumber] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState("");
+  const fileRefs = useRef<Record<DocKey, HTMLInputElement | null>>({
+    birthCert: null,
+    reportCard: null,
+    medicalCert: null,
+  });
+  const [fileNames, setFileNames] = useState<Record<DocKey, string>>({
+    birthCert: "",
+    reportCard: "",
+    medicalCert: "",
+  });
+  const [fileObjects, setFileObjects] = useState<Record<DocKey, File | null>>({
+    birthCert: null,
+    reportCard: null,
+    medicalCert: null,
+  });
+  const [uploadingDocs, setUploadingDocs] = useState(false);
   const [form, setForm] = useState({
     firstName: "", lastName: "", middleName: "", dateOfBirth: "", gender: "", bloodGroup: "", nationality: "Nigerian", stateOfOrigin: "", homeAddress: "",
     previousSchool: "", classApplying: "",
     guardianName: "", guardianPhone: "", guardianEmail: "", guardianRelationship: "",
-    birthCert: "", reportCard: "", medicalCert: "",
   });
 
   const update = (field: string, value: string) => {
     setForm({ ...form, [field]: value });
     if (errors[field]) setErrors({ ...errors, [field]: "" });
+  };
+
+  const handleFileChange = (key: DocKey, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors((prev) => ({ ...prev, [key]: "File must be 5MB or less" }));
+        return;
+      }
+      const allowed = ["application/pdf", "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+      if (!allowed.includes(file.type)) {
+        setErrors((prev) => ({ ...prev, [key]: "Only PDF, JPG, PNG, GIF, or WebP allowed" }));
+        return;
+      }
+      setFileObjects((prev) => ({ ...prev, [key]: file }));
+      setFileNames((prev) => ({ ...prev, [key]: file.name }));
+      if (errors[key]) setErrors((prev) => ({ ...prev, [key]: "" }));
+    }
+  };
+
+  const removeFile = (key: DocKey) => {
+    setFileObjects((prev) => ({ ...prev, [key]: null }));
+    setFileNames((prev) => ({ ...prev, [key]: "" }));
+    if (fileRefs.current[key]) fileRefs.current[key]!.value = "";
+  };
+
+  const uploadFile = async (file: File, docType: string): Promise<UploadedDoc | null> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("docType", docType);
+    try {
+      const res = await fetch("/api/admissions/documents", { method: "POST", body: formData });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Upload failed");
+      }
+      const data = await res.json();
+      return { name: data.name, type: data.type, url: data.url, size: data.size, docType: data.type };
+    } catch {
+      return null;
+    }
   };
 
   const validate = (): boolean => {
@@ -64,7 +137,27 @@ export default function ApplyPage() {
     if (!validate()) return;
     setSubmitting(true);
     setSubmitError("");
+    setUploadingDocs(true);
     try {
+      const docsToUpload = docFields.filter((d) => fileObjects[d.key]);
+      const uploadedDocs: UploadedDoc[] = [];
+
+      for (const doc of docsToUpload) {
+        const file = fileObjects[doc.key];
+        if (!file) continue;
+        const result = await uploadFile(file, doc.label);
+        if (result) {
+          uploadedDocs.push(result);
+        } else {
+          setSubmitError(`Failed to upload ${doc.label}. Please try again.`);
+          setSubmitting(false);
+          setUploadingDocs(false);
+          return;
+        }
+      }
+
+      setUploadingDocs(false);
+
       const res = await fetch("/api/admissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -76,6 +169,7 @@ export default function ApplyPage() {
           guardianEmail: form.guardianEmail, guardianRelationship: form.guardianRelationship,
           address: form.homeAddress, nationality: form.nationality,
           stateOfOrigin: form.stateOfOrigin, bloodGroup: form.bloodGroup,
+          documents: uploadedDocs,
         }),
       });
       const data = await res.json();
@@ -210,17 +304,30 @@ export default function ApplyPage() {
               <div>
                 <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "8px" }}>Documents</h2>
                 <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", marginBottom: "20px" }}>Upload required documents (PDF, JPG or PNG, max 5MB each)</p>
-                {[
-                  { key: "birthCert", label: "Birth Certificate" },
-                  { key: "reportCard", label: "Last School Report Card" },
-                  { key: "medicalCert", label: "Medical Certificate" },
-                ].map((doc) => (
-                  <div key={doc.key} style={{ marginBottom: "16px", padding: "20px", border: "2px dashed rgba(255,255,255,0.15)", borderRadius: "16px", textAlign: "center", cursor: "pointer" }}>
-                    <div style={{ fontSize: "24px", marginBottom: "8px" }}>📄</div>
+                {docFields.map((doc) => (
+                  <div key={doc.key} style={{ marginBottom: "16px", padding: "20px", border: `2px dashed ${fileObjects[doc.key] ? "rgba(40,255,156,0.4)" : "rgba(255,255,255,0.15)"}`, borderRadius: "16px", textAlign: "center", cursor: "pointer", background: fileObjects[doc.key] ? "rgba(40,255,156,0.04)" : "transparent" }}>
+                    <div style={{ fontSize: "24px", marginBottom: "8px" }}>{fileObjects[doc.key] ? "✅" : "📄"}</div>
                     <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", marginBottom: "6px" }}>{doc.label}</p>
-                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }} id={doc.key} onChange={(e) => update(doc.key, e.target.files?.[0]?.name || "")} />
-                    <label htmlFor={doc.key} className="btn-primary" style={{ fontSize: "12px", padding: "8px 20px", cursor: "pointer" }}>Choose File</label>
-                    {form[doc.key as keyof typeof form] && <p style={{ fontSize: "12px", color: "#28ff9c", marginTop: "8px" }}>✓ {form[doc.key as keyof typeof form]}</p>}
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                      style={{ display: "none" }}
+                      id={doc.key}
+                      ref={(el) => { fileRefs.current[doc.key] = el; }}
+                      onChange={(e) => handleFileChange(doc.key, e)}
+                    />
+                    <div style={{ display: "flex", gap: "8px", justifyContent: "center", alignItems: "center" }}>
+                      <label htmlFor={doc.key} className="btn-primary" style={{ fontSize: "12px", padding: "8px 20px", cursor: "pointer" }}>
+                        {fileObjects[doc.key] ? "Change File" : "Choose File"}
+                      </label>
+                      {fileObjects[doc.key] && (
+                        <button type="button" onClick={() => removeFile(doc.key)} style={{ fontSize: "12px", padding: "8px 14px", borderRadius: "20px", border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: "#ef4444", cursor: "pointer" }}>
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    {fileNames[doc.key] && <p style={{ fontSize: "12px", color: "#28ff9c", marginTop: "8px" }}>✓ {fileNames[doc.key]}</p>}
+                    {errors[doc.key] && <p style={{ fontSize: "11px", color: "#ef4444", marginTop: "6px" }}>{errors[doc.key]}</p>}
                   </div>
                 ))}
               </div>
@@ -244,6 +351,16 @@ export default function ApplyPage() {
                     <span style={{ fontSize: "13px", fontWeight: 600 }}>{r.value || "—"}</span>
                   </div>
                 ))}
+                <div style={{ marginTop: "12px" }}>
+                  <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "6px", fontWeight: 600 }}>Documents:</p>
+                  {docFields.filter((d) => fileNames[d.key]).length === 0 ? (
+                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)" }}>No documents attached</p>
+                  ) : (
+                    docFields.filter((d) => fileNames[d.key]).map((d) => (
+                      <p key={d.key} style={{ fontSize: "12px", color: "#28ff9c", padding: "4px 0" }}>✓ {d.label}: {fileNames[d.key]}</p>
+                    ))
+                  )}
+                </div>
                 <div style={{ marginTop: "20px", padding: "14px", background: "rgba(40,255,156,0.06)", border: "1px solid rgba(40,255,156,0.2)", borderRadius: "12px", fontSize: "13px", color: "#28ff9c" }}>
                   By submitting, you confirm all information provided is accurate. False information may result in disqualification.
                 </div>
@@ -264,7 +381,7 @@ export default function ApplyPage() {
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px" }}>
               {submitError && <p style={{ color: "#ef4444", fontSize: "13px", textAlign: "right" }}>{submitError}</p>}
               <motion.button onClick={handleSubmit} className="btn-primary" disabled={submitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: "12px 35px", opacity: submitting ? 0.6 : 1 }}>
-                {submitting ? "Submitting..." : "Submit Application"}
+                {submitting ? (uploadingDocs ? "Uploading documents..." : "Submitting...") : "Submit Application"}
               </motion.button>
             </div>
           )}
@@ -272,7 +389,7 @@ export default function ApplyPage() {
       </section>
 
       <footer className="footer" style={{ marginTop: "40px" }}>
-        <div className="footer-bottom">© {new Date().getFullYear()} FFB Group of Schools. All rights reserved.</div>
+        <div className="footer-bottom">© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
       </footer>
     </>
   );

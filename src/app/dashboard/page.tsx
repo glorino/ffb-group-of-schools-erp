@@ -533,7 +533,7 @@ function VicePrincipalDashboard() {
               </div>
             ))}
           </div>
-          <div className="mt-3 grid grid-cols-3 gap-2">
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
             {disciplineStats.map((item) => (
               <div key={item.label} className="text-center p-2 rounded-lg bg-[#f8fafc]">
                 <p className="text-[18px] font-bold" style={{ color: item.color }}>{item.value}</p>
@@ -577,7 +577,7 @@ function PrincipalDashboard() {
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">School Revenue</p><p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Avg. Performance</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.classPerformance?.length ? Math.round(stats.classPerformance.reduce((s: number, c: any) => s + (c.performance || c.students || 0), 0) / stats.classPerformance.length) : 0}%</p></DashboardCard>
       </div>
-      <div className="grid grid-cols-3 gap-4 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Pending Admissions</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.pendingAdmissions}</p><p className="text-[#d97706] text-[11px] mt-1">Needs review</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Active Classes</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p></DashboardCard>
         <DashboardCard><p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p><p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.attendance?.rate || 0}%</p></DashboardCard>

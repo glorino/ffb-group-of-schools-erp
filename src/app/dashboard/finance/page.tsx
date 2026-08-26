@@ -161,6 +161,21 @@ export default function FinancePage() {
   const verifiedPayments = payments.filter(p => p.status === "verified").length;
   const pendingPayments = payments.filter(p => p.status === "pending").length;
 
+  const handleRemind = async (invoice: Invoice) => {
+    try {
+      const res = await fetch("/api/finance/remind", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invoiceId: invoice.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send reminder");
+      toast.success(data.message || "Reminder sent successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send reminder");
+    }
+  };
+
   const handlePayNow = async (invoice: any) => {
     try {
       const res = await fetch("/api/payments/initialize", {
@@ -249,7 +264,7 @@ export default function FinancePage() {
           </h1>
           <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">Manage fees, payments, and financial records</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-3">
             <select value={filterSession} onChange={(e) => setFilterSession(e.target.value)}
               className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] focus:outline-none focus:border-[var(--primary)]"
@@ -460,7 +475,7 @@ export default function FinancePage() {
                           <button onClick={() => handlePayNow(inv)} className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-[#16a34a] text-[11px] font-medium hover:bg-[#dcfce7] transition">
                             Pay Now
                           </button>
-                          <button onClick={() => toast.success("Payment reminder sent")} className="px-3 py-1.5 rounded-lg bg-[var(--primary)]/10 text-[var(--blue-3)] text-[11px] font-medium hover:bg-[var(--primary)]/20 transition">
+                          <button onClick={() => handleRemind(inv)} className="px-3 py-1.5 rounded-lg bg-[var(--primary)]/10 text-[var(--blue-3)] text-[11px] font-medium hover:bg-[var(--primary)]/20 transition">
                             Remind
                           </button>
                         </div>

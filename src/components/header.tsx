@@ -87,7 +87,7 @@ const email = session?.user?.email || SCHOOL_CONFIG.email;
 
   return (
     <>
-      <header className="sticky top-0 z-30 h-14 bg-white border-b border-[#e8ecf1] overflow-hidden">
+      <header className="sticky top-0 z-30 h-14 bg-white border-b border-[#e8ecf1]">
         <div className="h-full pl-14 pr-4 flex items-center gap-3 lg:pl-4">
           <div className="flex-1 min-w-0">
             <button
@@ -121,7 +121,7 @@ const email = session?.user?.email || SCHOOL_CONFIG.email;
                     initial={{ opacity: 0, y: 6, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.96 }}
-                    className="absolute right-0 top-12 w-[320px] rounded-xl bg-white border border-[#e2e8f0] shadow-xl overflow-hidden z-[55]"
+                    className="absolute right-0 top-12 w-[calc(100vw-32px)] max-w-[320px] rounded-xl bg-white border border-[#e2e8f0] shadow-xl overflow-hidden z-[55]"
                   >
                     <div className="px-4 py-3 border-b border-[#e8ecf1] flex items-center justify-between">
                       <h3 className="text-[#1a1a2e] font-semibold text-[13px]">Notifications</h3>

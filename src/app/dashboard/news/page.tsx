@@ -48,9 +48,18 @@ export default function NewsPage() {
   const fetchNews = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/announcements");
+      const res = await fetch("/api/news");
       const data = await res.json();
-      const items = (data.announcements || data || []).filter((a: any) => a.type === "news");
+      const items = (data.announcements || []).map((a: any) => ({
+        id: a.id,
+        title: a.title,
+        content: a.content,
+        type: a.type || "news",
+        priority: a.priority || "medium",
+        published: a.published,
+        createdAt: a.createdAt,
+        target: typeof a.target === "string" ? JSON.parse(a.target) : a.target,
+      }));
       setNews(items);
     } catch {
       toast.error("Failed to load news");
@@ -128,7 +137,7 @@ export default function NewsPage() {
       };
 
       if (editItem) {
-        const res = await fetch(`/api/announcements?id=${editItem.id}`, {
+        const res = await fetch(`/api/news?id=${editItem.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -136,7 +145,7 @@ export default function NewsPage() {
         if (!res.ok) throw new Error("Failed to update");
         toast.success("News updated");
       } else {
-        const res = await fetch("/api/announcements", {
+        const res = await fetch("/api/news", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -156,7 +165,7 @@ export default function NewsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this news article?")) return;
     try {
-      const res = await fetch(`/api/announcements?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/news?id=${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
       toast.success("News deleted");
       fetchNews();

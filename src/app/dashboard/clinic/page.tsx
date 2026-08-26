@@ -33,14 +33,23 @@ interface ClinicVisit {
   student: { firstName: string; lastName: string };
 }
 
+interface Medication {
+  name: string;
+  used: number;
+  category: string;
+}
+
 interface ClinicStats {
   totalVisits: number;
   recentVisits: number;
+  totalMedications: number;
+  lowStockAlerts: number;
 }
 
 export default function ClinicPage() {
   const [visits, setVisits] = useState<ClinicVisit[]>([]);
-  const [stats, setStats] = useState<ClinicStats>({ totalVisits: 0, recentVisits: 0 });
+  const [stats, setStats] = useState<ClinicStats>({ totalVisits: 0, recentVisits: 0, totalMedications: 0, lowStockAlerts: 0 });
+  const [medications, setMedications] = useState<Medication[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -54,10 +63,24 @@ export default function ClinicPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/clinic");
-      const data = await res.json();
-      setVisits(data.visits || []);
-      setStats(data.stats || { totalVisits: 0, recentVisits: 0 });
+      const [clinicRes, inventoryRes] = await Promise.all([
+        fetch("/api/clinic"),
+        fetch("/api/clinic/inventory"),
+      ]);
+
+      const clinicData = await clinicRes.json();
+      setVisits(clinicData.visits || []);
+
+      const inventoryData = await inventoryRes.json();
+      const meds = inventoryData.medications || [];
+      setMedications(meds);
+
+      setStats({
+        totalVisits: clinicData.stats?.totalVisits || 0,
+        recentVisits: clinicData.stats?.recentVisits || 0,
+        totalMedications: meds.length,
+        lowStockAlerts: meds.filter((m: Medication) => m.used > 0).length,
+      });
     } catch {
       toast.error("Failed to load clinic data");
     } finally {
@@ -108,8 +131,8 @@ export default function ClinicPage() {
   const statCards = [
     { label: "Total Visits", value: stats.totalVisits, icon: Users, color: "from-blue-500 to-blue-600" },
     { label: "Recent Visits", value: stats.recentVisits, icon: Clock, color: "from-emerald-500 to-emerald-600" },
-    { label: "Medications", value: "85", icon: Pill, color: "from-purple-500 to-purple-600" },
-    { label: "Alerts", value: "3", icon: AlertTriangle, color: "from-orange-500 to-orange-600" },
+    { label: "Medications", value: stats.totalMedications, icon: Pill, color: "from-purple-500 to-purple-600" },
+    { label: "Alerts", value: stats.lowStockAlerts, icon: AlertTriangle, color: "from-orange-500 to-orange-600" },
   ];
 
   const handleExport = () => {
@@ -246,56 +269,49 @@ export default function ClinicPage() {
           <div className="card">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Medications Stock</h3>
             <div className="space-y-3">
-              {[
-                { name: "Paracetamol", stock: 500, used: 120, category: "Analgesic" },
-                { name: "Amalar", stock: 200, used: 85, category: "Antimalarial" },
-                { name: "Amoxicillin", stock: 150, used: 45, category: "Antibiotic" },
-                { name: "ORS", stock: 300, used: 90, category: "Rehydration" },
-              ].map((med, i) => (
-                <div key={i} className="p-3 rounded-xl bg-[#f8fafc]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[#1a1a2e] text-[13px] font-medium">{med.name}</span>
-                    <span className="text-[#64748b] text-[12px]">{med.category}</span>
+              {medications.length === 0 ? (
+                <p className="text-[#64748b] text-[13px] text-center py-4">No medications recorded yet</p>
+              ) : (
+                medications.map((med, i) => (
+                  <div key={i} className="p-3 rounded-xl bg-[#f8fafc]">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[#1a1a2e] text-[13px] font-medium">{med.name}</span>
+                      <span className="text-[#64748b] text-[12px]">{med.category}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[12px] mb-1">
+                      <span className="text-[#64748b]">Used: {med.used} times</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-[12px] mb-1">
-                    <span className="text-[#64748b]">Stock: {med.stock}</span>
-                    <span className="text-[#64748b]">Used: {med.used}</span>
-                  </div>
-                  <div className="w-full bg-[#f1f5f9] rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full ${
-                        (med.stock - med.used) / med.stock < 0.2 ? "bg-red-500" : "bg-[var(--accent)]"
-                      }`}
-                      style={{ width: `${((med.stock - med.used) / med.stock) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 
           <div className="card">
             <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Health Alerts</h3>
             <div className="space-y-2">
-              {[
-                { alert: "Low stock: Amalar", severity: "high" },
-                { alert: "Allergy alert: Chidinma O.", severity: "medium" },
-                { alert: "Vaccination due: JSS1", severity: "low" },
-              ].map((alert, i) => (
-                <div key={i} className={`p-3 rounded-xl ${
-                  alert.severity === "high" ? "bg-red-500/10 border border-red-500/20" :
-                  alert.severity === "medium" ? "bg-orange-500/10 border border-orange-500/20" :
-                  "bg-[#f8fafc]"
-                }`}>
-                  <div className="flex items-center gap-3">
-                    <AlertTriangle className={`w-4 h-4 ${
-                      alert.severity === "high" ? "text-[#dc2626]" :
-                      alert.severity === "medium" ? "text-orange-400" : "text-[#64748b]"
-                    }`} />
-                    <span className="text-[#1a1a2e] text-[13px]">{alert.alert}</span>
-                  </div>
-                </div>
-              ))}
+              {stats.lowStockAlerts === 0 && stats.totalVisits === 0 ? (
+                <p className="text-[#64748b] text-[13px] text-center py-4">No alerts at this time</p>
+              ) : (
+                <>
+                  {stats.lowStockAlerts > 0 && (
+                    <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                      <div className="flex items-center gap-3">
+                        <AlertTriangle className="w-4 h-4 text-orange-400" />
+                        <span className="text-[#1a1a2e] text-[13px]">{stats.lowStockAlerts} medications have been used recently</span>
+                      </div>
+                    </div>
+                  )}
+                  {stats.recentVisits > 5 && (
+                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                      <div className="flex items-center gap-3">
+                        <AlertTriangle className="w-4 h-4 text-[#dc2626]" />
+                        <span className="text-[#1a1a2e] text-[13px]">High clinic activity: {stats.recentVisits} visits this week</span>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </motion.div>

@@ -11,6 +11,7 @@ import {
   Check,
   Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface Notification {
   id: string;
@@ -35,47 +36,17 @@ const colorMap = {
   warning: "text-orange-400 bg-orange-500/20",
 };
 
-const sampleNotifications: Notification[] = [
-  {
-    id: "1",
-    title: "New admission application",
-    description: "Chidi Okonkwo applied for JSS1",
-    type: "academic",
-    read: false,
-    time: "5m ago",
-  },
-  {
-    id: "2",
-    title: "Fee payment received",
-    description: "Amina Mohammed paid ₦125,000",
-    type: "finance",
-    read: false,
-    time: "12m ago",
-  },
-  {
-    id: "3",
-    title: "System update scheduled",
-    description: "Maintenance tonight at 2 AM",
-    type: "system",
-    read: true,
-    time: "1h ago",
-  },
-  {
-    id: "4",
-    title: "Low attendance alert",
-    description: "SS2B attendance below 70%",
-    type: "warning",
-    read: false,
-    time: "2h ago",
-  },
-];
-
 export function NotificationBell() {
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState(sampleNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -87,14 +58,44 @@ export function NotificationBell() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const markAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+  const fetchNotifications = async () => {
+    try {
+      const res = await fetch("/api/notifications");
+      const data = await res.json();
+      setNotifications(data.notifications || []);
+    } catch {
+      setNotifications([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  const markAsRead = async (id: string) => {
+    try {
+      await fetch("/api/notifications", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, read: true }),
+      });
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
+    } catch {
+      toast.error("Failed to mark notification as read");
+    }
+  };
+
+  const markAllRead = async () => {
+    try {
+      await fetch("/api/notifications", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ read: true }),
+      });
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch {
+      toast.error("Failed to mark all as read");
+    }
   };
 
   const removeNotification = (id: string) => {
@@ -142,7 +143,11 @@ export function NotificationBell() {
               )}
             </div>
             <div className="max-h-80 overflow-y-auto">
-              {notifications.length === 0 ? (
+              {loading ? (
+                <div className="py-8 text-center text-white/40 text-sm">
+                  Loading notifications...
+                </div>
+              ) : notifications.length === 0 ? (
                 <div className="py-8 text-center text-white/40 text-sm">
                   No notifications
                 </div>

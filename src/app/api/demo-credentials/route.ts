@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
 
 export async function GET() {
   try {
     if (process.env.NODE_ENV === "production") {
+      return NextResponse.json({ credentials: [] });
+    }
+
+    const session = await auth();
+    const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+    if (!session?.user || (!userRoles.includes("OWNER") && !userRoles.includes("ADMINISTRATOR"))) {
       return NextResponse.json({ credentials: [] });
     }
 

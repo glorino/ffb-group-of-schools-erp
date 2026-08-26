@@ -1,3 +1,5 @@
+import { SCHOOL_CONFIG } from "@/lib/school-config";
+
 export function downloadCSV(data: Record<string, any>[], filename: string) {
   if (!data.length) return;
   const headers = Object.keys(data[0]);
@@ -38,7 +40,7 @@ export function downloadPDF(title: string, content: string) {
       @media print { body { padding: 20px; } }
     </style></head><body>
     <div class="header">
-      <div class="school-name">FFB Group of Schools</div>
+      <div class="school-name">${SCHOOL_CONFIG.name}</div>
       <div class="date">Generated: ${new Date().toLocaleDateString()}</div>
     </div>
     <h1>${title}</h1>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const particles = Array.from({ length: 80 }, (_, i) => ({
   id: i, left: `${Math.random() * 100}%`, duration: `${10 + Math.random() * 20}s`,
@@ -138,7 +139,7 @@ export default function EventsPage() {
       </section>
 
       <footer className="footer">
-        <div className="footer-bottom">© {new Date().getFullYear()} FFB Group of Schools. All rights reserved.</div>
+        <div className="footer-bottom">© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
       </footer>
     </>
   );

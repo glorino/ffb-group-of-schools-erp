@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, Clock, User, Search, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface ActivityLog {
   id: string;
@@ -30,6 +31,7 @@ export default function ActivityLogPage() {
       setLogs(data.logs || []);
     } catch {
       console.error("Failed to fetch activity logs");
+      toast.error("Failed to fetch activity logs");
     } finally {
       setLoading(false);
     }

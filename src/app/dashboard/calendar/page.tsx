@@ -13,6 +13,7 @@ import {
   Filter,
   X,
   Loader2,
+  Download,
 } from "lucide-react";
 import { downloadCSV } from "@/lib/exports";
 import { toast } from "sonner";
@@ -198,8 +199,8 @@ export default function CalendarPage() {
               }}
               className="btn btn-secondary"
             >
-              <Filter className="w-4 h-4" />
-              Filter
+              <Download className="w-4 h-4" />
+              Export
             </button>
             <button
               onClick={() => setShowModal(true)}

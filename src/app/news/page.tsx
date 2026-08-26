@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const particles = Array.from({ length: 80 }, (_, i) => ({
   id: i, left: `${Math.random() * 100}%`, duration: `${10 + Math.random() * 20}s`,
@@ -10,12 +11,12 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
 }));
 
 const newsItems = [
-  { title: "Academic Excellence Award", desc: "Our students received national recognition for outstanding WAEC results.", full: "FFB Group of Schools has once again demonstrated academic excellence as our students received national recognition for their outstanding WAEC results. With a 98% pass rate and multiple distinctions across key subjects, our school has been ranked among the top performing institutions in the state.", date: "June 2025", category: "Achievement", gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)", image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop" },
-  { title: "New Science Laboratory", desc: "A state-of-the-art science laboratory was commissioned.", full: "A new state-of-the-art science laboratory has been commissioned at FFB Group of Schools. The laboratory features modern equipment for Physics, Chemistry and Biology practical sessions. This facility will provide students with hands-on experience and improve their understanding of scientific concepts.", date: "May 2025", category: "Infrastructure", gradient: "linear-gradient(135deg, #164e63, #06b6d4)", image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=400&fit=crop" },
-  { title: "Leadership Bootcamp", desc: "Students trained in leadership development and innovation.", full: "Over 150 students participated in the annual Leadership Bootcamp organized by FFB Group of Schools. The programme covered topics including public speaking, project management, entrepreneurship and digital literacy. Participants gained practical skills that will serve them in academics and future careers.", date: "April 2025", category: "Programme", gradient: "linear-gradient(135deg, #312e81, #6366f1)", image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop" },
-  { title: "Cultural Day Celebration", desc: "Students showcased diverse Nigerian cultures through presentations.", full: "The annual Cultural Day celebration at FFB Group of Schools was a vibrant display of Nigerian cultural heritage. Students from different backgrounds presented traditional dances, songs, food and attire, fostering unity and appreciation for cultural diversity.", date: "March 2025", category: "Event", gradient: "linear-gradient(135deg, #7c2d12, #f97316)", image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop" },
+  { title: "Academic Excellence Award", desc: "Our students received national recognition for outstanding WAEC results.", full: `${SCHOOL_CONFIG.name} has once again demonstrated academic excellence as our students received national recognition for their outstanding WAEC results. With a 98% pass rate and multiple distinctions across key subjects, our school has been ranked among the top performing institutions in the state.`, date: "June 2025", category: "Achievement", gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)", image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop" },
+  { title: "New Science Laboratory", desc: "A state-of-the-art science laboratory was commissioned.", full: `A new state-of-the-art science laboratory has been commissioned at ${SCHOOL_CONFIG.name}. The laboratory features modern equipment for Physics, Chemistry and Biology practical sessions. This facility will provide students with hands-on experience and improve their understanding of scientific concepts.`, date: "May 2025", category: "Infrastructure", gradient: "linear-gradient(135deg, #164e63, #06b6d4)", image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=400&fit=crop" },
+  { title: "Leadership Bootcamp", desc: "Students trained in leadership development and innovation.", full: `Over 150 students participated in the annual Leadership Bootcamp organized by ${SCHOOL_CONFIG.name}. The programme covered topics including public speaking, project management, entrepreneurship and digital literacy. Participants gained practical skills that will serve them in academics and future careers.`, date: "April 2025", category: "Programme", gradient: "linear-gradient(135deg, #312e81, #6366f1)", image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop" },
+  { title: "Cultural Day Celebration", desc: "Students showcased diverse Nigerian cultures through presentations.", full: `The annual Cultural Day celebration at ${SCHOOL_CONFIG.name} was a vibrant display of Nigerian cultural heritage. Students from different backgrounds presented traditional dances, songs, food and attire, fostering unity and appreciation for cultural diversity.`, date: "March 2025", category: "Event", gradient: "linear-gradient(135deg, #7c2d12, #f97316)", image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop" },
   { title: "Sports Festival Results", desc: "Our athletes excelled at the zonal sports competition.", full: "FFB students brought home 12 gold medals, 8 silver medals and 6 bronze medals from the zonal sports competition. The school came first overall, demonstrating exceptional athletic ability and sportsmanship.", date: "February 2025", category: "Sports", gradient: "linear-gradient(135deg, #065f46, #10b981)", image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=400&fit=crop" },
-  { title: "Digital Learning Platform Launch", desc: "Students now have access to online learning resources.", full: "FFB Group of Schools has officially launched its digital learning platform, providing students with access to e-books, video lessons, practice tests and interactive quizzes. The platform supports both in-school and remote learning.", date: "January 2025", category: "Technology", gradient: "linear-gradient(135deg, #581c87, #a855f7)", image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop" },
+  { title: "Digital Learning Platform Launch", desc: "Students now have access to online learning resources.", full: `${SCHOOL_CONFIG.name} has officially launched its digital learning platform, providing students with access to e-books, video lessons, practice tests and interactive quizzes. The platform supports both in-school and remote learning.`, date: "January 2025", category: "Technology", gradient: "linear-gradient(135deg, #581c87, #a855f7)", image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop" },
 ];
 
 const categories = ["All", "Achievement", "Infrastructure", "Programme", "Event", "Sports", "Technology"];
@@ -59,7 +60,7 @@ export default function NewsPage() {
           School <span className="accent">News</span>
         </motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.7)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
-          Stay updated with the latest happenings, achievements and events at FFB Group of Schools.
+          Stay updated with the latest happenings, achievements and events at {SCHOOL_CONFIG.name}.
         </motion.p>
       </section>
 
@@ -108,7 +109,7 @@ export default function NewsPage() {
       </AnimatePresence>
 
       <footer className="footer">
-        <div className="footer-bottom">© {new Date().getFullYear()} FFB Group of Schools. All rights reserved.</div>
+        <div className="footer-bottom">© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>
       </footer>
     </>
   );

@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const newsAndEvents = [
   { title: "Academic Excellence Award", content: "Our students received national recognition for outstanding WAEC results. With a 98% pass rate and multiple distinctions across key subjects, our school has been ranked among the top performing institutions in the state.", imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop", type: "news", featured: true, eventDate: null },
-  { title: "New Science Laboratory", content: "A new state-of-the-art science laboratory has been commissioned at FFB Group of Schools. The laboratory features modern equipment for Physics, Chemistry, and Biology practical sessions.", imageUrl: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=400&fit=crop", type: "news", featured: true, eventDate: null },
-  { title: "Leadership Bootcamp", content: "Over 150 students participated in the annual Leadership Bootcamp organized by FFB Group of Schools. The programme covered topics including public speaking, project management, entrepreneurship, and digital literacy.", imageUrl: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop", type: "news", featured: true, eventDate: null },
+  { title: "New Science Laboratory", content: `A new state-of-the-art science laboratory has been commissioned at ${SCHOOL_CONFIG.name}. The laboratory features modern equipment for Physics, Chemistry, and Biology practical sessions.`, imageUrl: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=400&fit=crop", type: "news", featured: true, eventDate: null },
+  { title: "Leadership Bootcamp", content: `Over 150 students participated in the annual Leadership Bootcamp organized by ${SCHOOL_CONFIG.name}. The programme covered topics including public speaking, project management, entrepreneurship, and digital literacy.`, imageUrl: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop", type: "news", featured: true, eventDate: null },
   { title: "Interhouse Sports", content: "Annual sports competition showcasing teamwork and athleticism across all houses.", imageUrl: "", type: "event", featured: false, eventDate: "2026-03-25" },
   { title: "Science Exhibition", content: "Students present innovative science projects and research findings.", imageUrl: "", type: "event", featured: false, eventDate: "2026-04-10" },
   { title: "Graduation Ceremony", content: "Celebrating graduating students and their achievements.", imageUrl: "", type: "event", featured: false, eventDate: "2026-07-18" },

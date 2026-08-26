@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const particles = Array.from({ length: 80 }, (_, i) => ({
   id: i, left: `${Math.random() * 100}%`, duration: `${10 + Math.random() * 20}s`,
@@ -73,7 +74,7 @@ export default function AboutPage() {
           {[
             { icon: "🎯", title: "Mission", desc: "To provide quality education that empowers students to become responsible leaders and lifelong learners through innovative teaching methods." },
             { icon: "🌍", title: "Vision", desc: "To be a leading institution recognized for academic excellence, character development and preparing students for global success." },
-            { icon: "⭐", title: "Core Values", desc: "Integrity, Discipline, Excellence, Innovation and Respect. These values guide everything we do at FFB Group of Schools." },
+            { icon: "⭐", title: "Core Values", desc: `Integrity, Discipline, Excellence, Innovation and Respect. These values guide everything we do at ${SCHOOL_CONFIG.name}.` },
           ].map((f, i) => (
             <motion.div key={i} className="feature-card" variants={item} style={{ textAlign: "center" }}>
               <div style={{ fontSize: "40px", marginBottom: "15px" }}>{f.icon}</div>
@@ -159,7 +160,7 @@ export default function AboutPage() {
         <div className="footer-grid">
           <div>
             <img src="/logo.svg" alt="FFB" style={{ height: "70px", marginBottom: "15px" }} />
-            <p>FFB Group of Schools is committed to academic excellence, innovation and leadership development.</p>
+            <p>{SCHOOL_CONFIG.name} is committed to academic excellence, innovation and leadership development.</p>
           </div>
           <div>
             <h4>Quick Links</h4>
@@ -173,12 +174,12 @@ export default function AboutPage() {
           </div>
           <div>
             <h4>Contact</h4>
-            <p>123 Education Avenue, GRA, Lagos</p>
-            <p style={{ marginTop: "8px" }}>+234 905 998 0991</p>
-            <p style={{ marginTop: "8px" }}>info@ffb.edu.ng</p>
+            <p>{SCHOOL_CONFIG.address}</p>
+            <p style={{ marginTop: "8px" }}>{SCHOOL_CONFIG.phone}</p>
+            <p style={{ marginTop: "8px" }}>{SCHOOL_CONFIG.email}</p>
           </div>
         </div>
-        <div className="footer-bottom">{`© ${new Date().getFullYear()} FFB Group of Schools. All rights reserved.`}</div>
+        <div className="footer-bottom">{`© ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.`}</div>
       </footer>
     </>
   );

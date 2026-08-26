@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
 import { sendApplicationStatusUpdateEmail } from "@/lib/resend";
@@ -123,9 +124,9 @@ export async function PUT(
       try {
         const RESEND_API_KEY = process.env.RESEND_API_KEY;
         if (RESEND_API_KEY) {
-          const schoolName = process.env.SCHOOL_NAME || "FFB Group of Schools";
+          const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
           const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
-          const schoolPhone = process.env.SCHOOL_PHONE || "+234 905 998 0991";
+          const schoolPhone = process.env.SCHOOL_PHONE || SCHOOL_CONFIG.phone;
           await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
@@ -178,7 +179,7 @@ export async function PUT(
       try {
         const RESEND_API_KEY = process.env.RESEND_API_KEY;
         if (RESEND_API_KEY) {
-          const schoolName = process.env.SCHOOL_NAME || "FFB Group of Schools";
+          const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
           const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
           await fetch("https://api.resend.com/emails", {
             method: "POST",
