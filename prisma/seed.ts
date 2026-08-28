@@ -1259,6 +1259,260 @@ async function main() {
   }
   console.log("✅ Class-Term assignments created");
 
+  // ── Report Cards (SS2 students) ───────────────────────────
+  for (const student of allStudents) {
+    if (student.class !== "SS2") continue;
+
+    const grades = await prisma.grade.findMany({
+      where: { studentId: student.id, term: "First Term", session: "2024/2025" },
+    });
+    const totalScore = grades.reduce((sum, g) => sum + g.score, 0);
+    const average = grades.length > 0 ? totalScore / grades.length : 0;
+
+    const attendance = await prisma.attendanceRecord.findMany({
+      where: { studentId: student.id },
+    });
+    const present = attendance.filter(a => a.status === "present").length;
+    const absent = attendance.filter(a => a.status === "absent").length;
+    const late = attendance.filter(a => a.status === "late").length;
+
+    await prisma.reportCard.upsert({
+      where: { studentId_termId: { studentId: student.id, termId: currentTerm } },
+      update: {},
+      create: {
+        studentId: student.id,
+        termId: currentTerm,
+        academicYear: "2024/2025",
+        attendanceSummary: { present, absent, late, total: present + absent + late },
+        behaviour: behaviourRatings[Math.floor(Math.random() * behaviourRatings.length)],
+        psychomotor: {
+          handwriting: Math.floor(Math.random() * 5) + 1,
+          drawing: Math.floor(Math.random() * 5) + 1,
+          speaking: Math.floor(Math.random() * 5) + 1,
+          reading: Math.floor(Math.random() * 5) + 1,
+          playing: Math.floor(Math.random() * 5) + 1,
+        },
+        affective: {
+          respect: Math.floor(Math.random() * 5) + 1,
+          honesty: Math.floor(Math.random() * 5) + 1,
+          cooperation: Math.floor(Math.random() * 5) + 1,
+          perseverance: Math.floor(Math.random() * 5) + 1,
+          selfControl: Math.floor(Math.random() * 5) + 1,
+        },
+        teacherComment: teacherComments[Math.floor(Math.random() * teacherComments.length)],
+        principalComment: principalComments[Math.floor(Math.random() * principalComments.length)],
+        feesSummary: {
+          totalFees: 295000,
+          amountPaid: Math.random() > 0.3 ? 295000 : Math.floor(Math.random() * 200000) + 50000,
+          balance: Math.random() > 0.3 ? 0 : Math.floor(Math.random() * 150000) + 10000,
+        },
+      },
+    });
+  }
+  console.log("✅ Report cards created for SS2 students");
+
+  // ── Report Cards (SS1 students) ───────────────────────────
+  for (const student of allStudents) {
+    if (student.class !== "SS1") continue;
+
+    const grades = await prisma.grade.findMany({
+      where: { studentId: student.id, term: "First Term", session: "2024/2025" },
+    });
+    const totalScore = grades.reduce((sum, g) => sum + g.score, 0);
+    const average = grades.length > 0 ? totalScore / grades.length : 0;
+
+    const attendance = await prisma.attendanceRecord.findMany({
+      where: { studentId: student.id },
+    });
+    const present = attendance.filter(a => a.status === "present").length;
+    const absent = attendance.filter(a => a.status === "absent").length;
+    const late = attendance.filter(a => a.status === "late").length;
+
+    await prisma.reportCard.upsert({
+      where: { studentId_termId: { studentId: student.id, termId: currentTerm } },
+      update: {},
+      create: {
+        studentId: student.id,
+        termId: currentTerm,
+        academicYear: "2024/2025",
+        attendanceSummary: { present, absent, late, total: present + absent + late },
+        behaviour: behaviourRatings[Math.floor(Math.random() * behaviourRatings.length)],
+        psychomotor: {
+          handwriting: Math.floor(Math.random() * 5) + 1,
+          drawing: Math.floor(Math.random() * 5) + 1,
+          speaking: Math.floor(Math.random() * 5) + 1,
+          reading: Math.floor(Math.random() * 5) + 1,
+          playing: Math.floor(Math.random() * 5) + 1,
+        },
+        affective: {
+          respect: Math.floor(Math.random() * 5) + 1,
+          honesty: Math.floor(Math.random() * 5) + 1,
+          cooperation: Math.floor(Math.random() * 5) + 1,
+          perseverance: Math.floor(Math.random() * 5) + 1,
+          selfControl: Math.floor(Math.random() * 5) + 1,
+        },
+        teacherComment: teacherComments[Math.floor(Math.random() * teacherComments.length)],
+        principalComment: principalComments[Math.floor(Math.random() * principalComments.length)],
+        feesSummary: {
+          totalFees: 295000,
+          amountPaid: Math.random() > 0.3 ? 295000 : Math.floor(Math.random() * 200000) + 50000,
+          balance: Math.random() > 0.3 ? 0 : Math.floor(Math.random() * 150000) + 10000,
+        },
+      },
+    });
+  }
+  console.log("✅ Report cards created for SS1 students");
+
+  // ── Report Cards (JSS3 students) ──────────────────────────
+  for (const student of allStudents) {
+    if (student.class !== "JSS3") continue;
+
+    const grades = await prisma.grade.findMany({
+      where: { studentId: student.id, term: "First Term", session: "2024/2025" },
+    });
+    const totalScore = grades.reduce((sum, g) => sum + g.score, 0);
+    const average = grades.length > 0 ? totalScore / grades.length : 0;
+
+    const attendance = await prisma.attendanceRecord.findMany({
+      where: { studentId: student.id },
+    });
+    const present = attendance.filter(a => a.status === "present").length;
+    const absent = attendance.filter(a => a.status === "absent").length;
+    const late = attendance.filter(a => a.status === "late").length;
+
+    await prisma.reportCard.upsert({
+      where: { studentId_termId: { studentId: student.id, termId: currentTerm } },
+      update: {},
+      create: {
+        studentId: student.id,
+        termId: currentTerm,
+        academicYear: "2024/2025",
+        attendanceSummary: { present, absent, late, total: present + absent + late },
+        behaviour: behaviourRatings[Math.floor(Math.random() * behaviourRatings.length)],
+        psychomotor: {
+          handwriting: Math.floor(Math.random() * 5) + 1,
+          drawing: Math.floor(Math.random() * 5) + 1,
+          speaking: Math.floor(Math.random() * 5) + 1,
+          reading: Math.floor(Math.random() * 5) + 1,
+          playing: Math.floor(Math.random() * 5) + 1,
+        },
+        affective: {
+          respect: Math.floor(Math.random() * 5) + 1,
+          honesty: Math.floor(Math.random() * 5) + 1,
+          cooperation: Math.floor(Math.random() * 5) + 1,
+          perseverance: Math.floor(Math.random() * 5) + 1,
+          selfControl: Math.floor(Math.random() * 5) + 1,
+        },
+        teacherComment: teacherComments[Math.floor(Math.random() * teacherComments.length)],
+        principalComment: principalComments[Math.floor(Math.random() * principalComments.length)],
+        feesSummary: {
+          totalFees: 295000,
+          amountPaid: Math.random() > 0.3 ? 295000 : Math.floor(Math.random() * 200000) + 50000,
+          balance: Math.random() > 0.3 ? 0 : Math.floor(Math.random() * 150000) + 10000,
+        },
+      },
+    });
+  }
+  console.log("✅ Report cards created for JSS3 students");
+
+  // ── Alumni Records ────────────────────────────────────────
+  const alumniData = [
+    { first: "Chukwuemeka", last: "Okoli", graduationYear: 2020, university: "University of Lagos", degree: "B.Sc Computer Science", employer: "Andela Nigeria", position: "Software Engineer", industry: "Technology", bio: "Full-stack developer passionate about education technology." },
+    { first: "Amina", last: "Lawal", graduationYear: 2019, university: "Obafemi Awolowo University", degree: "B.Sc Economics", employer: "KPMG Nigeria", position: "Senior Analyst", industry: "Finance", bio: "Chartered accountant with expertise in financial advisory." },
+    { first: "Tunde", last: "Akindele", graduationYear: 2021, university: "University of Ibadan", degree: "MBBS Medicine", employer: "Lagos University Teaching Hospital", position: "Medical Doctor", industry: "Healthcare", bio: "Passionate about community health and medical education." },
+    { first: "Ngozi", last: "Eze", graduationYear: 2018, university: "Covenant University", degree: "B.Eng Electrical Engineering", employer: "Shell Nigeria", position: "Project Engineer", industry: "Oil & Gas", bio: "Petroleum engineer with focus on sustainable energy solutions." },
+    { first: "Yusuf", last: "Garba", graduationYear: 2022, university: "Bayero University Kano", degree: "LLB Law", employer: "Dikko & Associates", position: "Associate Lawyer", industry: "Legal", bio: "Corporate lawyer specializing in technology and startup law." },
+  ];
+
+  for (const a of alumniData) {
+    const email = `${a.first.toLowerCase()}.${a.last.toLowerCase()}@alumni.ffb.edu.ng`;
+    const alumniUser = await prisma.user.upsert({
+      where: { email },
+      update: {},
+      create: {
+        email,
+        name: `${a.first} ${a.last}`,
+        password: await bcrypt.hash("alumni123", 12),
+        isActive: true,
+        schoolId: school.id,
+      },
+    });
+
+    const alumniRole = roles["ALUMNI"];
+    await prisma.userRole.upsert({
+      where: { userId_roleId_schoolId: { userId: alumniUser.id, roleId: alumniRole, schoolId: school.id } },
+      update: {},
+      create: { userId: alumniUser.id, roleId: alumniRole, schoolId: school.id },
+    });
+
+    await prisma.alumni.upsert({
+      where: { userId: alumniUser.id },
+      update: {},
+      create: {
+        userId: alumniUser.id,
+        schoolId: school.id,
+        graduationYear: a.graduationYear,
+        university: a.university,
+        degree: a.degree,
+        currentEmployer: a.employer,
+        currentPosition: a.position,
+        industry: a.industry,
+        biography: a.bio,
+        photo: `https://ui-avatars.com/api/?name=${a.first}+${a.last}&background=0055ff&color=fff&size=200`,
+        isPublic: true,
+      },
+    });
+  }
+  console.log("✅ Alumni records created:", alumniData.length);
+
+  // ── Alumni Donations ──────────────────────────────────────
+  const alumniRecords = await prisma.alumni.findMany({ where: { schoolId: school.id } });
+  for (const al of alumniRecords) {
+    for (let d = 0; d < 2; d++) {
+      await prisma.alumniDonation.create({
+        data: {
+          alumniId: al.id,
+          amount: Math.floor(Math.random() * 500000) + 50000,
+          purpose: ["Library Fund", "Sports Development", "Scholarship Fund", "Infrastructure"][Math.floor(Math.random() * 4)],
+          reference: `DON-${al.id.slice(-4)}-${d + 1}`,
+          status: "completed",
+          donatedAt: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
+        },
+      });
+    }
+  }
+  console.log("✅ Alumni donations created");
+
+  // ── Student Activities/Timeline ───────────────────────────
+  const activityTypes = [
+    { type: "enrollment", action: "Enrolled in school", icon: "user-plus" },
+    { type: "grade", action: "Received term results", icon: "award" },
+    { type: "attendance", action: "Marked present", icon: "check-circle" },
+    { type: "payment", action: "School fees paid", icon: "credit-card" },
+    { type: "achievement", action: "Made the honour roll", icon: "star" },
+  ];
+
+  for (const student of allStudents) {
+    for (const act of activityTypes) {
+      await prisma.studentActivity.create({
+        data: {
+          studentId: student.id,
+          type: act.type,
+          data: { action: act.action, icon: act.icon },
+        },
+      });
+      await prisma.studentTimeline.create({
+        data: {
+          studentId: student.id,
+          action: act.action,
+          details: `${act.action} for ${student.firstName} ${student.lastName}`,
+          icon: act.icon,
+        },
+      });
+    }
+  }
+  console.log("✅ Student activities and timeline records created");
+
   console.log("\n🎉 Seed completed successfully!");
   console.log("\n📧 Admin Login:");
   console.log("   Email: admin@ffb.edu.ng");
