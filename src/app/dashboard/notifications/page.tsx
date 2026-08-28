@@ -154,10 +154,10 @@ export default function NotificationsPage() {
     <div className="space-y-6">
       <Breadcrumb items={[{ label: "Notifications" }]} />
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-6 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#1a1a2e]">Notifications</h1>
-          <p className="text-[#64748b] text-sm mt-1">
+          <h1 className="text-2xl font-bold text-white">Notifications</h1>
+          <p className="text-white/70 text-[13px]">
             {unreadCount > 0
               ? `You have ${unreadCount} unread notification${unreadCount > 1 ? "s" : ""}`
               : "All caught up!"}
@@ -166,7 +166,7 @@ export default function NotificationsPage() {
         {unreadCount > 0 && (
           <button
             onClick={markAllRead}
-            className="btn btn-primary"
+            className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
           >
             <Check className="w-4 h-4" />
             Mark all as read

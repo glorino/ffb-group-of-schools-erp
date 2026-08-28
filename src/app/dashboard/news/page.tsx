@@ -176,13 +176,13 @@ export default function NewsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-6 border border-white/10 flex items-center justify-between">
         <div>
-          <h1 className="text-[#1a1a2e] text-2xl font-bold">News Management</h1>
-          <p className="text-[#64748b] text-sm mt-1">Create and manage school news articles</p>
+          <h1 className="text-2xl font-bold text-white">News Management</h1>
+          <p className="text-white/70 text-[13px]">Create and manage school news articles</p>
         </div>
         {canManage && (
-          <button onClick={openCreate} className="btn btn-primary">
+          <button onClick={openCreate} className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all">
             <Plus className="w-4 h-4" />
             New News
           </button>

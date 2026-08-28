@@ -126,12 +126,12 @@ export default function PayrollPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20"
+        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Payroll Management</h1>
-            <p className="text-[#475569]">Manage teacher salaries, allowances, deductions, and payments</p>
+            <h1 className="text-2xl font-bold text-white mb-1">Payroll Management</h1>
+            <p className="text-white/70 text-[13px]">Manage teacher salaries, allowances, deductions, and payments</p>
           </div>
           <div className="flex gap-3">
             <button
@@ -148,14 +148,14 @@ export default function PayrollPage() {
                 })), `payroll_${monthLabel}`);
                 toast.success("Exported successfully");
               }}
-              className="btn btn-secondary"
+              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
             >
               <Download className="w-4 h-4" />
               Export
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="btn btn-primary"
+              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
             >
               <Plus className="w-4 h-4" />
               Add Entry

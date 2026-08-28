@@ -220,7 +220,7 @@ export default function TeachersPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="dashboard-card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20"
+        className="dashboard-card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10"
       >
         <div className="section-header">
           <div>

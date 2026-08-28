@@ -451,12 +451,12 @@ export default function TimetablePage() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-6 border border-white/10 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">
+          <h1 className="text-2xl font-bold text-white mb-1">
             {isReadOnly ? "My Timetable" : "Timetable Management"}
           </h1>
-          <p className="text-[#475569]">
+          <p className="text-white/70 text-[13px]">
             {isReadOnly
               ? `${className?.displayName || className?.name || "Your class"} schedule`
               : "Schedule classes, assign teachers, and manage rooms"
@@ -464,8 +464,8 @@ export default function TimetablePage() {
           </p>
         </div>
         {isReadOnly && (
-          <div className="px-3 py-1.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
-            <span className="text-[#64748b] text-[12px]">{className?.displayName || className?.name || "—"}</span>
+          <div className="px-3 py-1.5 rounded-lg bg-white/10 border border-white/20">
+            <span className="text-white/80 text-[12px]">{className?.displayName || className?.name || "—"}</span>
           </div>
         )}
       </div>

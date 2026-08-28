@@ -184,7 +184,7 @@ export default function ProfilePage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20"
+        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
@@ -211,23 +211,24 @@ export default function ProfilePage() {
           className="card shadow-sm"
         >
           <div className="flex flex-col items-center text-center">
-            <div className="relative mb-4">
+            <div className="relative mb-5">
               {userImage ? (
                 <img
                   src={userImage}
                   alt={userName}
-                  className="w-24 h-24 rounded-full object-cover"
+                  className="w-28 h-28 rounded-full object-cover ring-4 ring-white shadow-lg"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-3xl font-bold">
+                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-4xl font-bold ring-4 ring-white shadow-lg">
                   {initials}
                 </div>
               )}
-              <label className="absolute bottom-0 right-0 w-9 h-9 rounded-xl bg-[var(--primary)] flex items-center justify-center cursor-pointer hover:brightness-110 transition-all shadow-lg">
+              <label className="absolute bottom-0 right-0 w-10 h-10 rounded-xl bg-[var(--primary)] flex items-center justify-center cursor-pointer hover:bg-[var(--blue-2)] transition-all shadow-lg border-2 border-white">
                 <Camera className="w-4 h-4 text-white" />
                 <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
+                  if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5MB"); return; }
                   const reader = new FileReader();
                   reader.onload = async () => {
                     try {
@@ -247,7 +248,7 @@ export default function ProfilePage() {
               </label>
             </div>
             <h3 className="text-[#1a1a2e] text-xl font-bold">{userName}</h3>
-            <p className="text-[#475569] text-[13px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</p>
+            <p className="text-[var(--primary)] text-[13px] font-medium mt-1">{(session?.user as any)?.roles?.[0]?.name || "User"}</p>
           </div>
 
           <div className="mt-6 pt-6 border-t border-[#e2e8f0] space-y-3">

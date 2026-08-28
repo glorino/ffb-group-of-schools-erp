@@ -168,7 +168,7 @@ export default function AlumniPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border-[var(--primary)]/20 p-6 shadow-sm"
+        className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 p-6 shadow-sm"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>

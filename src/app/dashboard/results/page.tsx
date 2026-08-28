@@ -298,19 +298,19 @@ export default function ResultsPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-[var(--primary)]/20 to-[var(--accent)]/10 border border-[var(--primary)]/20 rounded-2xl p-6 backdrop-blur-xl"
+        className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border border-white/10 rounded-2xl p-6"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Results Management</h1>
-            <p className="text-[#475569] text-sm">Grading, ranking, CA marks, and result analysis</p>
+            <h1 className="text-2xl font-bold text-white mb-1">Results Management</h1>
+            <p className="text-white/70 text-[13px]">Grading, ranking, CA marks, and result analysis</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
             {!isReadOnly && (
               <button
                 onClick={handlePublishAll}
                 disabled={publishing}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#dcfce7] border border-emerald-500/30 text-[#16a34a] text-sm font-medium hover:bg-emerald-500/30 transition-all duration-200 disabled:opacity-50 shadow-sm"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all disabled:opacity-50"
               >
                 {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
                 Publish Results
@@ -318,7 +318,7 @@ export default function ResultsPage() {
             )}
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-sm font-medium hover:bg-[#f1f5f9] transition-all duration-200"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
             >
               <Download className="w-4 h-4" />
               Export
@@ -326,7 +326,7 @@ export default function ResultsPage() {
             {!isReadOnly && (
               <button
                 onClick={() => setShowModal(true)}
-                className="btn btn-primary flex items-center gap-2"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#0055ff] text-[13px] font-semibold hover:bg-white/90 transition-all shadow-sm"
               >
                 <Plus className="w-4 h-4" />
                 Enter Results
@@ -537,7 +537,7 @@ export default function ResultsPage() {
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden"
             >
-              <div className="bg-gradient-to-r from-[var(--primary)]/30 to-[var(--accent)]/10 px-6 py-4 border-b border-[#e2e8f0]">
+              <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] px-6 py-4 border-b border-[#e2e8f0]">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-[#1a1a2e] font-semibold text-lg">Enter Results</h3>
@@ -767,7 +767,7 @@ export default function ResultsPage() {
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-sm bg-white border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden"
             >
-              <div className="bg-gradient-to-r from-[var(--primary)]/30 to-[var(--accent)]/10 px-6 py-4 border-b border-[#e2e8f0]">
+              <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] px-6 py-4 border-b border-[#e2e8f0]">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Grade</h3>

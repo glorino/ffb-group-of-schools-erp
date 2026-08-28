@@ -155,28 +155,28 @@ export default function StudentsPage() {
   return (
     <motion.div {...fadeIn} className="space-y-5">
       {/* Header */}
-      <div className="section-header">
-        <div>
-          <h1 className="section-title" style={{ color: "#ffffff" }}>Students</h1>
-          <p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }}>Manage student records and profiles</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={async () => {
-              try {
-                const res = await fetch("/api/students/graduate", { method: "POST" });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || "Failed");
-                if (data.graduated === 0) toast.info(data.message || "No SSS 3 students to graduate");
-                else toast.success(data.message || `${data.graduated} students graduated to alumni`);
-              } catch (err: any) {
-                toast.error(err.message || "Graduation failed");
-              }
-            }}
-            className="btn btn-secondary"
-            style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)", color: "#ffffff" }}
-          >
-            <GraduationCap className="w-4 h-4" />
+      <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-6 border border-white/10">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-1">Students</h1>
+            <p className="text-white/70 text-[13px]">Manage student records and profiles</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={async () => {
+                try {
+                  const res = await fetch("/api/students/graduate", { method: "POST" });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error || "Failed");
+                  if (data.graduated === 0) toast.info(data.message || "No SSS 3 students to graduate");
+                  else toast.success(data.message || `${data.graduated} students graduated to alumni`);
+                } catch (err: any) {
+                  toast.error(err.message || "Graduation failed");
+                }
+              }}
+              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
+            >
+              <GraduationCap className="w-4 h-4" />
             Graduate SSS 3
           </button>
           <button
@@ -188,20 +188,19 @@ export default function StudentsPage() {
               Status: s.status,
               "Date Added": new Date(s.createdAt).toLocaleDateString(),
             })), "students_list")}
-            className="btn btn-secondary"
-            style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)", color: "#ffffff" }}
+            className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
           >
             <Download className="w-4 h-4" />
             Export
           </button>
           <button
             onClick={() => { setEditingStudent(null); setForm({ firstName: "", lastName: "", email: "", phone: "", admissionNumber: "", guardianName: "", guardianPhone: "", classId: "" }); setShowModal(true); }}
-            className="btn btn-primary"
-            style={{ background: "#0055ff", border: "none", color: "#ffffff" }}
+            className="px-5 py-2.5 rounded-xl bg-white text-[#0055ff] text-[13px] font-semibold hover:bg-white/90 transition-all shadow-sm"
           >
             <UserPlus className="w-4 h-4" />
             Add Student
           </button>
+        </div>
         </div>
       </div>
 

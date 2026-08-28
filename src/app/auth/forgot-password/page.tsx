@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { GraduationCap, Mail, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
+import { Mail, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ForgotPasswordPage() {
@@ -48,31 +48,25 @@ export default function ForgotPasswordPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-[420px] relative z-10"
+        className="w-full max-w-[440px] relative z-10"
       >
-        <div className="text-center mb-8">
+        <div className="text-center mb-10">
           <Link href="/" className="inline-flex items-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center shadow-lg">
-              <GraduationCap className="w-8 h-8 text-white" />
-            </div>
-            <div className="text-left">
-              <h1 className="text-2xl font-bold text-white">FFB ERP</h1>
-              <p className="text-white/60 text-xs">School Management System</p>
-            </div>
+            <img src="/logo.svg" alt="FFB" className="h-16 w-auto" />
           </Link>
         </div>
 
-        <div style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "24px", padding: "40px 36px" }}>
+        <div style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "24px", padding: "48px 40px" }}>
           {!isSent ? (
             <>
               <h2 className="text-[26px] font-bold text-white mb-3 tracking-tight">Reset Password</h2>
-              <p className="text-white/50 mb-8 text-[14px] leading-relaxed">
+              <p className="text-white/50 mb-10 text-[14px] leading-relaxed">
                 Enter your email address and we&apos;ll send you a link to reset your password
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-8">
                 <div>
-                  <label className="block text-white/70 text-[13px] font-medium mb-2.5">
+                  <label className="block text-white/70 text-[13px] font-medium mb-3">
                     Email Address
                   </label>
                   <div className="relative">
@@ -129,7 +123,7 @@ export default function ForgotPasswordPage() {
             </div>
           )}
 
-          <div className="mt-8 text-center">
+          <div className="mt-10 text-center">
             <Link
               href="/auth/login"
               className="text-white/40 text-[13px] hover:text-white/60 transition-colors inline-flex items-center gap-2"
@@ -140,7 +134,7 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
 
-        <p className="text-white/30 text-[11px] text-center mt-6 tracking-wide">
+        <p className="text-white/30 text-[11px] text-center mt-8 tracking-wide">
           Protected by enterprise-grade security. Your data is safe with us.
         </p>
       </motion.div>

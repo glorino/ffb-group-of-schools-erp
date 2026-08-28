@@ -87,11 +87,11 @@ export default function AdmissionsPage() {
       if (search) params.set("search", search);
       if (statusFilter) params.set("status", statusFilter);
       const res = await fetch(`/api/admissions?${params}`);
-      if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch");
       setApplicants(data.applicants ?? []);
-    } catch {
-      toast.error("Failed to load admissions data");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to load admissions data");
     }
     setLoading(false);
   }, [search, statusFilter]);

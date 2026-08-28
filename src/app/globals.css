@@ -1492,36 +1492,28 @@ body:has(.bg-animated) .section-subtitle {
    BLUE GRADIENT THEME - DASHBOARD OVERRIDES
    ============================ */
 
-/* Dashboard gradient header cards: ensure dark text on light gradient */
+/* Dashboard gradient header cards: dark blue gradient bg + white text */
+.dashboard-main .card.bg-gradient-to-r,
+.dashboard-main .dashboard-card.bg-gradient-to-r,
+.dashboard-main div.bg-gradient-to-r {
+  background: linear-gradient(to right, #0a2a6e, #0055ff) !important;
+  background-image: linear-gradient(to right, #0a2a6e, #0055ff) !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+
 .dashboard-main .card.bg-gradient-to-r h1,
-.dashboard-main .card.bg-gradient-to-r h2 {
-  color: #1a1a2e !important;
+.dashboard-main .card.bg-gradient-to-r h2,
+.dashboard-main .dashboard-card.bg-gradient-to-r h1,
+.dashboard-main .dashboard-card.bg-gradient-to-r h2,
+.dashboard-main div.bg-gradient-to-r h1,
+.dashboard-main div.bg-gradient-to-r h2 {
+  color: #ffffff !important;
 }
 
-.dashboard-main .card.bg-gradient-to-r p {
-  color: #475569 !important;
-}
-
-/* Also target h1/h2 with text-2xl class in dashboard */
-.dashboard-main h1.text-2xl,
-.dashboard-main h1.text-2xl.font-bold {
-  color: #1a1a2e !important;
-}
-
-/* Pattern B pages (discipline, announcements, timetable, etc.) */
-.dashboard-main .space-y-6 > div:first-child > div:first-child h1,
-.dashboard-main .space-y-6 > div:first-child > div:first-child h2 {
-  color: #1a1a2e !important;
-}
-
-.dashboard-main .space-y-6 > div:first-child > div:first-child p {
-  color: #64748b !important;
-}
-
-/* Notifications page breadcrumb */
-.dashboard-main nav[aria-label="breadcrumb"] a,
-.dashboard-main .breadcrumb a {
-  color: #64748b !important;
+.dashboard-main .card.bg-gradient-to-r p,
+.dashboard-main .dashboard-card.bg-gradient-to-r p,
+.dashboard-main div.bg-gradient-to-r p {
+  color: rgba(255,255,255,0.8) !important;
 }
 
 /* Dashboard stat cards: blue gradient accents */

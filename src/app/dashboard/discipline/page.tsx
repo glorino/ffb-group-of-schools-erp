@@ -94,12 +94,12 @@ export default function DisciplinePage() {
   return (
     <div className="space-y-6">
       <Toaster richColors position="top-right" />
-      <div className="flex items-center justify-between">
+      <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-6 border border-white/10 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1a1a2e]">Discipline Management</h1>
-          <p className="text-[#64748b] text-sm">Track and manage student discipline records</p>
+          <h1 className="text-2xl font-bold text-white">Discipline Management</h1>
+          <p className="text-white/70 text-[13px]">Track and manage student discipline records</p>
         </div>
-        <button onClick={() => { setShowModal(true); setEditingRecord(null); setForm({ studentId: "", type: "behavior", title: "", details: "", date: new Date().toISOString().split("T")[0], action: "pending" }); }} className="btn btn-primary">+ New Record</button>
+        <button onClick={() => { setShowModal(true); setEditingRecord(null); setForm({ studentId: "", type: "behavior", title: "", details: "", date: new Date().toISOString().split("T")[0], action: "pending" }); }} className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all">+ New Record</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
