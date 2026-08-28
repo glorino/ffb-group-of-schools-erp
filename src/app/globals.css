@@ -38,6 +38,11 @@ body {
   padding-top: 0;
 }
 
+body:has(.bg-animated) {
+  background: #000a1f;
+  color: #ffffff;
+}
+
 @keyframes gradientMove {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -48,6 +53,33 @@ body {
   background: linear-gradient(-45deg, #000a1f, #001f5f, #0039a6, #0055ff);
   background-size: 400% 400%;
   animation: gradientMove 18s ease infinite;
+  color: #ffffff;
+}
+
+.bg-animated h1,
+.bg-animated h2,
+.bg-animated h3,
+.bg-animated h4,
+.bg-animated h5,
+.bg-animated h6,
+.bg-animated p,
+.bg-animated span,
+.bg-animated a,
+.bg-animated li,
+.bg-animated label {
+  color: #ffffff;
+}
+
+.bg-animated .accent {
+  color: #28ff9c;
+}
+
+.bg-animated .section-subtitle,
+.bg-animated .feature-card p,
+.bg-animated .event-card p,
+.bg-animated .news-content p,
+.bg-animated .founder-text p {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 ::-webkit-scrollbar { width: 8px; }
@@ -147,7 +179,18 @@ select optgroup {
 
 .apply-btn {
   background: #28ff9c;
-  color: #001f5f;
+  color: #000000 !important;
+  font-weight: 700;
+  padding: 10px 28px;
+  border-radius: 30px;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+}
+
+.apply-btn:hover {
+  background: #1eff8c;
+  box-shadow: 0 4px 20px rgba(40,255,156,0.3);
 }
 
 .portal-btn {
@@ -185,7 +228,7 @@ select optgroup {
   text-align: center;
   overflow: hidden;
   padding: 90px 20px;
-  background: #000;
+  z-index: 1;
 }
 
 .hero video {
@@ -237,15 +280,16 @@ select optgroup {
 
 .hero-btn {
   padding: 14px 30px;
-  border-radius: 35px;
+  border-radius: 14px;
   text-decoration: none;
   font-weight: 600;
   margin: 10px;
   display: inline-block;
   transition: 0.3s;
-  font-size: 15px;
-  letter-spacing: 0.5px;
+  font-size: 14px;
+  letter-spacing: 0.3px;
   color: #ffffff;
+  border: none;
 }
 
 .hero-btn:hover {
@@ -591,6 +635,7 @@ select optgroup {
   margin-right: auto;
   padding-left: 20px;
   padding-right: 20px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* Floating Contact Buttons */
@@ -897,10 +942,18 @@ select optgroup {
   letter-spacing: -0.02em;
 }
 
+body:has(.bg-animated) .section-title {
+  color: #ffffff;
+}
+
 .section-subtitle {
   font-size: 14px;
   color: #64748b;
   margin-top: 2px;
+}
+
+body:has(.bg-animated) .section-subtitle {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* Landing page glass sections — white text on dark background */
@@ -1435,6 +1488,156 @@ select optgroup {
   flex-shrink: 0;
 }
 
+/* ============================
+   BLUE GRADIENT THEME - DASHBOARD OVERRIDES
+   ============================ */
+
+/* Dashboard gradient header cards: ensure dark text on light gradient */
+.dashboard-main .card.bg-gradient-to-r h1,
+.dashboard-main .card.bg-gradient-to-r h2 {
+  color: #1a1a2e !important;
+}
+
+.dashboard-main .card.bg-gradient-to-r p {
+  color: #475569 !important;
+}
+
+/* Also target h1/h2 with text-2xl class in dashboard */
+.dashboard-main h1.text-2xl,
+.dashboard-main h1.text-2xl.font-bold {
+  color: #1a1a2e !important;
+}
+
+/* Pattern B pages (discipline, announcements, timetable, etc.) */
+.dashboard-main .space-y-6 > div:first-child > div:first-child h1,
+.dashboard-main .space-y-6 > div:first-child > div:first-child h2 {
+  color: #1a1a2e !important;
+}
+
+.dashboard-main .space-y-6 > div:first-child > div:first-child p {
+  color: #64748b !important;
+}
+
+/* Notifications page breadcrumb */
+.dashboard-main nav[aria-label="breadcrumb"] a,
+.dashboard-main .breadcrumb a {
+  color: #64748b !important;
+}
+
+/* Dashboard stat cards: blue gradient accents */
+.dashboard-main .stat-card:nth-child(1) {
+  background: linear-gradient(135deg, #0055ff, #0033cc) !important;
+}
+
+.dashboard-main .stat-card:nth-child(2) {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+}
+
+.dashboard-main .stat-card:nth-child(3) {
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+}
+
+.dashboard-main .stat-card:nth-child(4) {
+  background: linear-gradient(135deg, #ec4899, #d946ef) !important;
+}
+
+/* Dashboard buttons: blue gradient primary */
+.dashboard-main .btn-primary {
+  background: linear-gradient(135deg, #0055ff, #0033cc) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0,85,255,0.25) !important;
+}
+
+.dashboard-main .btn-primary:hover {
+  background: linear-gradient(135deg, #0044cc, #002299) !important;
+  box-shadow: 0 4px 16px rgba(0,85,255,0.35) !important;
+}
+
+/* Dashboard view-mode buttons */
+.dashboard-main button[class*="rounded-lg"] {
+  transition: all 0.2s ease;
+}
+
+/* Dashboard card titles - dark on white cards */
+.dashboard-main .dashboard-card h3 {
+  color: #1a1a2e !important;
+}
+
+/* Dashboard card subtitle text on white cards */
+.dashboard-main .dashboard-card p {
+  color: #475569 !important;
+}
+
+/* Dashboard sidebar links */
+.dashboard-sidebar .nav-item,
+.dashboard-sidebar a {
+  transition: all 0.2s ease;
+}
+
+.dashboard-sidebar .nav-item:hover,
+.dashboard-sidebar a:hover {
+  background: rgba(0,85,255,0.1);
+}
+
+.dashboard-sidebar .nav-item.active,
+.dashboard-sidebar .nav-item[aria-current="page"] {
+  background: linear-gradient(135deg, #0055ff, #0033cc);
+  color: #ffffff !important;
+}
+
+/* Dashboard table header: blue tinted */
+.dashboard-main table thead th {
+  background: #f0f4ff !important;
+  color: #1a1a2e !important;
+  font-weight: 600 !important;
+}
+
+/* Dashboard empty state icon */
+.dashboard-main .empty-state-icon {
+  background: linear-gradient(135deg, rgba(0,85,255,0.1), rgba(16,185,129,0.05));
+}
+
+/* Dashboard progress bars */
+.dashboard-main .progress-bar-fill {
+  background: linear-gradient(135deg, #0055ff, #10b981) !important;
+}
+
+/* Dashboard avatar colors */
+.dashboard-main .avatar:nth-child(6n+1) { background: linear-gradient(135deg, #0055ff, #0033cc); }
+.dashboard-main .avatar:nth-child(6n+2) { background: linear-gradient(135deg, #10b981, #059669); }
+.dashboard-main .avatar:nth-child(6n+3) { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+.dashboard-main .avatar:nth-child(6n+4) { background: linear-gradient(135deg, #ec4899, #d946ef); }
+.dashboard-main .avatar:nth-child(6n+5) { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.dashboard-main .avatar:nth-child(6n+6) { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+
+/* Portal & Auth pages: blue gradient button consistency */
+.portal-apply-form .btn-primary,
+.portal-track-form .btn-primary,
+.auth-form .btn-primary {
+  background: linear-gradient(135deg, #0055ff, #0033cc) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0,85,255,0.25) !important;
+}
+
+.portal-apply-form .btn-primary:hover,
+.portal-track-form .btn-primary:hover,
+.auth-form .btn-primary:hover {
+  background: linear-gradient(135deg, #0044cc, #002299) !important;
+  box-shadow: 0 4px 16px rgba(0,85,255,0.35) !important;
+}
+
+/* Auth page glass cards: blue tinted */
+.auth-card {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+}
+
+/* Public page accent colors: blue gradient */
+.glass-section .feature-card:hover {
+  border-color: rgba(0,85,255,0.3) !important;
+  box-shadow: 0 8px 32px rgba(0,85,255,0.15) !important;
+}
+
 /* Responsive */
 @media (max-width: 1280px) {
   .stats-grid-4 {
@@ -1479,4 +1682,17 @@ select optgroup {
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* Typewriter cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Ensure apply-btn always has black font regardless of inline style overrides */
+.menu-btn.apply-btn,
+a.apply-btn,
+.apply-btn {
+  color: #000000 !important;
 }

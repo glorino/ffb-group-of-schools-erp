@@ -157,8 +157,8 @@ export default function StudentsPage() {
       {/* Header */}
       <div className="section-header">
         <div>
-          <h1 className="section-title">Students</h1>
-          <p className="section-subtitle">Manage student records and profiles</p>
+          <h1 className="section-title" style={{ color: "#ffffff" }}>Students</h1>
+          <p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }}>Manage student records and profiles</p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -174,6 +174,7 @@ export default function StudentsPage() {
               }
             }}
             className="btn btn-secondary"
+            style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)", color: "#ffffff" }}
           >
             <GraduationCap className="w-4 h-4" />
             Graduate SSS 3
@@ -188,6 +189,7 @@ export default function StudentsPage() {
               "Date Added": new Date(s.createdAt).toLocaleDateString(),
             })), "students_list")}
             className="btn btn-secondary"
+            style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)", color: "#ffffff" }}
           >
             <Download className="w-4 h-4" />
             Export
@@ -195,6 +197,7 @@ export default function StudentsPage() {
           <button
             onClick={() => { setEditingStudent(null); setForm({ firstName: "", lastName: "", email: "", phone: "", admissionNumber: "", guardianName: "", guardianPhone: "", classId: "" }); setShowModal(true); }}
             className="btn btn-primary"
+            style={{ background: "#0055ff", border: "none", color: "#ffffff" }}
           >
             <UserPlus className="w-4 h-4" />
             Add Student
@@ -205,7 +208,7 @@ export default function StudentsPage() {
       {/* Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1 relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#ffffff]" />
           <input
             type="text"
             placeholder="Search by name, admission number, or email..."
@@ -234,16 +237,16 @@ export default function StudentsPage() {
           <option value="inactive">Inactive</option>
           <option value="graduated">Graduated</option>
         </select>
-        <div className="flex items-center gap-1 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-1">
+        <div className="flex items-center gap-1 bg-[#001f5f] border border-[#0a1428] rounded-xl p-1">
           <button
             onClick={() => setViewMode("table")}
-            className={`p-2 rounded-lg transition ${viewMode === "table" ? "bg-[#f8fafc] text-[#1a1a2e]" : "text-[#94a3b8] hover:text-[#64748b]"}`}
+            className={`p-2 rounded-lg transition ${viewMode === "table" ? "bg-[#001f5f] text-[#ffffff]" : "text-[#ffffff] hover:text-[#64748b]"}`}
           >
             <List className="w-4 h-4" />
           </button>
           <button
             onClick={() => setViewMode("grid")}
-            className={`p-2 rounded-lg transition ${viewMode === "grid" ? "bg-[#f8fafc] text-[#1a1a2e]" : "text-[#94a3b8] hover:text-[#64748b]"}`}
+            className={`p-2 rounded-lg transition ${viewMode === "grid" ? "bg-[#001f5f] text-[#ffffff]" : "text-[#ffffff] hover:text-[#64748b]"}`}
           >
             <Grid3X3 className="w-4 h-4" />
           </button>
@@ -255,8 +258,8 @@ export default function StudentsPage() {
         <div className="table-container">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead>
-                <tr className="border-b border-[#e2e8f0]">
+<thead>
+                <tr className="border-b border-[#0a1428]">
                   {[
                     { key: "name" as const, label: "Student" },
                     { key: "class" as const, label: "Class" },
@@ -265,7 +268,7 @@ export default function StudentsPage() {
                     <th
                       key={col.key}
                       onClick={() => toggleSort(col.key)}
-                      className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#64748b] uppercase tracking-wider cursor-pointer hover:text-[#475569] transition select-none"
+                      className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#ffffff] uppercase tracking-wider cursor-pointer hover:text-[#64748b] transition select-none"
                     >
                       <span className="flex items-center gap-1.5">
                         {col.label}
@@ -275,9 +278,9 @@ export default function StudentsPage() {
                       </span>
                     </th>
                   ))}
-                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#64748b] uppercase tracking-wider">Guardian</th>
-                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#64748b] uppercase tracking-wider">Status</th>
-                  <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-[#64748b] uppercase tracking-wider">Actions</th>
+                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#ffffff] uppercase tracking-wider">Guardian</th>
+                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#ffffff] uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3.5 text-right text-[#ffffff] uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody>

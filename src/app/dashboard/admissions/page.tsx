@@ -121,7 +121,7 @@ export default function AdmissionsPage() {
         }),
       });
       const data = await res.json();
-      if (data.id) {
+      if (data.success || data.applicant?.id) {
         setApplicants((prev) => prev.map((a) => a.id === applicantId ? { ...a, status: newStatus, decisionNote: actionNote || a.decisionNote } : a));
         setShowActionModal(null);
         setActionNote("");

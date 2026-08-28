@@ -48,7 +48,7 @@ export async function requireAuth(requiredRoles?: string[]) {
   }
   const userRoles: string[] = (session.user as any)?.roles?.map((r: any) => r.name) || [];
 
-  if (userRoles.includes("OWNER")) {
+  if (userRoles.includes("OWNER") || userRoles.includes("SUPER_ADMIN")) {
     return { error: null, session, userRoles };
   }
 

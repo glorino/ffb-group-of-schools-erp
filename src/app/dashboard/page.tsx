@@ -85,17 +85,17 @@ function AdminDashboard() {
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Pending Admissions</p>
           <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.pendingAdmissions}</p>
-          <p className="text-[#d97706] text-[11px] mt-1">Needs review</p>
+          <p className="text-[#ffd700] text-[11px] mt-1">Needs review</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p>
           <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.attendance?.rate || 0}%</p>
-          <p className="text-[#16a34a] text-[11px] mt-1">{stats.attendance?.present || 0} present</p>
+          <p className="text-[#22c55e] text-[11px] mt-1">{stats.attendance?.present || 0} present</p>
         </DashboardCard>
         <DashboardCard>
           <p className="text-[#64748b] text-[12px] font-medium">Fee Collection</p>
           <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
-          <p className="text-[#16a34a] text-[11px] mt-1">Total collected</p>
+          <p className="text-[#22c55e] text-[11px] mt-1">Total collected</p>
         </DashboardCard>
       </div>
       <div className="charts-grid">
@@ -186,21 +186,21 @@ function AdminDashboard() {
         </DashboardCard>
       </div>
       <div className="stats-grid-4">
-        <Link href="/dashboard/admissions" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">New admissions</p></div>
+        <Link href="/dashboard/admissions" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#0055ff] to-[#0033cc] border border-[#1a1a2e] text-[#ffffff] hover:bg-gradient-to-r transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#1a1a2e] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-[#ffffff] text-[9px] sm:text-[10px]">New admissions</p></div>
         </Link>
-        <Link href="/dashboard/classes" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#f3e8ff] border-[#e9d5ff] text-[#1a1a2e] hover:bg-[#e9d5ff] transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#c4b5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Organize classes</p></div>
+        <Link href="/dashboard/classes" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#1e40af] to-[#1e3a8a] border border-[#1a1a2e] text-[#ffffff] hover:bg-gradient-to-r transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#1a1a2e] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-[#ffffff] text-[9px] sm:text-[10px]">Organize classes</p></div>
         </Link>
-        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dcfce7] border-[#bbf7d0] text-[#1a1a2e] hover:bg-[#bbf7d0] transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#86efac] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Fee records</p></div>
+        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#06b6d4] border border-[#1a1a2e] text-[#ffffff] hover:bg-gradient-to-r transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#1a1a2e] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-[#ffffff] text-[9px] sm:text-[10px]">Fee records</p></div>
         </Link>
-        <Link href="/dashboard/announcements" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#fef3c7] border-[#fde68a] text-[#1a1a2e] hover:bg-[#fde68a] transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#fcd34d] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">Broadcast to all</p></div>
+        <Link href="/dashboard/announcements" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#0055ff] to-[#3b82f6] border border-[#1a1a2e] text-[#ffffff] hover:bg-gradient-to-r transition-all group">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#1a1a2e] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
+          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-[#ffffff] text-[9px] sm:text-[10px]">Broadcast to all</p></div>
         </Link>
       </div>
     </>

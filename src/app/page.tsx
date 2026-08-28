@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
@@ -10,10 +10,46 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
   delay: `${Math.random() * 10}s`, size: `${3 + Math.random() * 3}px`,
 }));
 
+const captions = [
+  "Excellence", "Leadership", "Innovation", "Discipline", "Character", "Integrity"
+];
+
+function TypewriterCaption() {
+  const [captionIdx, setCaptionIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [text, setText] = useState("");
+
+  useEffect(() => {
+    const currentWord = captions[captionIdx];
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setText(currentWord.substring(0, charIdx + 1));
+        setCharIdx(charIdx + 1);
+        if (charIdx + 1 === currentWord.length) {
+          setTimeout(() => setIsDeleting(true), 2000);
+        }
+      } else {
+        setText(currentWord.substring(0, charIdx - 1));
+        setCharIdx(charIdx - 1);
+        if (charIdx - 1 === 0) {
+          setIsDeleting(false);
+          setCaptionIdx((prev) => (prev + 1) % captions.length);
+        }
+      }
+    }, isDeleting ? 60 : 120);
+    return () => clearTimeout(timeout);
+  }, [charIdx, isDeleting, captionIdx]);
+
+  return (
+    <span className="accent">{text}<span style={{ borderRight: "3px solid #28ff9c", animation: "blink 0.8s infinite", marginLeft: "2px" }}>&nbsp;</span></span>
+  );
+}
+
 const defaultEvents = [
-  { title: "Interhouse Sports", desc: "Annual sports competition showcasing teamwork and athleticism across all houses.", date: "2026-03-25T09:00:00" },
-  { title: "Science Exhibition", desc: "Students present innovative science projects and research findings.", date: "2026-04-10T10:00:00" },
-  { title: "Graduation Ceremony", desc: "Celebrating graduating students and their achievements.", date: "2026-07-18T11:00:00" },
+  { title: "Interhouse Sports", desc: "Annual sports competition showcasing teamwork and athleticism across all houses.", date: "2026-10-17T09:00:00" },
+  { title: "Science Exhibition", desc: "Students present innovative science projects and research findings.", date: "2026-11-14T10:00:00" },
+  { title: "Graduation Ceremony", desc: "Celebrating graduating students and their achievements.", date: "2027-06-28T11:00:00" },
 ];
 
 const defaultNewsItems = [
@@ -125,7 +161,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0a1428" }}>
+    <div className="bg-animated" style={{ minHeight: "100vh" }}>
       {particles.map((p) => (
         <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
       ))}
@@ -140,7 +176,7 @@ export default function LandingPage() {
             <Link href="/events">Events</Link>
             <Link href="/news">News</Link>
             <Link href="/contact">Contact</Link>
-            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Admissions</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#000000" }}>Admissions</Link>
             <Link href="/auth/login" className="menu-btn portal-btn">Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -151,20 +187,16 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="hero">
-        <video autoPlay muted loop playsInline>
-          <source src="/video/school-hero.mp4" type="video/mp4" />
-        </video>
-        <div className="hero-overlay"></div>
         <div className="hero-content container">
           <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            Building Leaders<br />For The <span className="accent">Future</span>
+            Building Leaders<br />For The <TypewriterCaption />
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
             {SCHOOL_CONFIG.name} provides a world-class learning environment where students develop academic excellence, leadership and innovation.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }} style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/portal/apply" className="hero-btn" style={{ background: "#28ff9c", color: "#000000" }}>Apply For Admission</Link>
-            <Link href="/auth/login" className="hero-btn" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid #fff", color: "#ffffff" }}>Portal Login</Link>
+            <Link href="/portal/apply" className="hero-btn" style={{ background: "#28ff9c", color: "#000000", fontWeight: 600, padding: "14px 32px", borderRadius: "12px", fontSize: "14px" }}>Apply For Admission</Link>
+            <Link href="/auth/login" className="hero-btn" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.3)", color: "#ffffff", fontWeight: 500, padding: "14px 32px", borderRadius: "12px", fontSize: "14px" }}>Portal Login</Link>
           </motion.div>
         </div>
       </section>
@@ -183,7 +215,7 @@ export default function LandingPage() {
           ].map((f, i) => (
             <motion.div key={i} className="feature-card" variants={item} style={{ textAlign: "center" }}>
               <div style={{ width: "80px", height: "80px", margin: "0 auto 15px", borderRadius: "50%", background: "rgba(40,255,156,0.1)", border: "1px solid rgba(40,255,156,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>{f.icon}</div>
-              <h3>{f.title}</h3>
+              <h3 style={{ color: "#ffffff" }}>{f.title}</h3>
               <p>{f.desc}</p>
             </motion.div>
           ))}
@@ -193,7 +225,7 @@ export default function LandingPage() {
       {/* Founder */}
       <section className="glass-section">
         <div className="founder">
-          <motion.img src="/logo.svg" alt="Founder" style={{ width: "260px", height: "300px", borderRadius: "20px", objectFit: "cover", border: "2px solid rgba(255,255,255,0.15)", background: "rgba(0,31,95,0.5)", padding: "20px" }} initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} />
+          <motion.img src="/founder.jpg" alt="Founder" style={{ width: "260px", height: "300px", borderRadius: "20px", objectFit: "cover", border: "2px solid rgba(255,255,255,0.15)" }} initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} />
           <motion.div className="founder-text" initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <h2 className="section-title" style={{ textAlign: "left", fontSize: "32px" }}>Message From The Founder</h2>
             <p>Welcome to {SCHOOL_CONFIG.name}. Our mission is to inspire young minds to achieve their highest potential academically and morally. We believe every child deserves access to quality education and mentorship that prepares them for global success.</p>
@@ -219,7 +251,7 @@ export default function LandingPage() {
         <motion.div className="events-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
           {events.map((e, i) => (
             <motion.div key={i} className="event-card" variants={item}>
-              <h3>{e.title}</h3>
+              <h3 style={{ color: "#ffffff" }}>{e.title}</h3>
               <p>{e.desc}</p>
               <span className="event-date">{new Date(e.date).toLocaleDateString("en-NG", { month: "long", day: "numeric", year: "numeric" })}</span>
               <CountdownTimer date={e.date} />
@@ -239,7 +271,7 @@ export default function LandingPage() {
             <motion.div key={i} className="news-card" variants={item}>
               <img src={n.image} alt={n.title} className="w-full h-[200px] object-cover rounded-t-[25px]" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop"; }} />
               <div className="news-content">
-                <h3>{n.title}</h3>
+                <h3 style={{ color: "#ffffff" }}>{n.title}</h3>
                 <p>{n.desc}</p>
                 <span className="read-more" onClick={() => setNewsModal(i)}>Read More</span>
               </div>
@@ -271,7 +303,7 @@ export default function LandingPage() {
             <motion.div key={i} style={{ display: i === testimonialIdx ? "block" : "none" }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <div style={{ position: "relative", padding: "0 30px" }}>
                 <span style={{ position: "absolute", top: "-20px", left: "50%", transform: "translateX(-50%)", fontSize: "60px", color: "rgba(40,255,156,0.2)", lineHeight: 1, fontFamily: "Georgia, serif" }}>"</span>
-                <p style={{ fontStyle: "italic", fontSize: "22px", lineHeight: 1.8 }}>{t.text}</p>
+                <p style={{ fontStyle: "italic", fontSize: "22px", lineHeight: 1.8, color: "#ffffff" }}>{t.text}</p>
               </div>
               <h4 style={{ marginTop: "15px", color: "#28ff9c", fontSize: "16px" }}>— {t.name}</h4>
             </motion.div>
@@ -307,7 +339,7 @@ export default function LandingPage() {
         <div className="footer-grid">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <img src="/logo.svg" alt="FFB" style={{ height: "70px", marginBottom: "15px" }} />
-            <p>{SCHOOL_CONFIG.name} is committed to academic excellence, innovation and leadership development.</p>
+            <p style={{ color: "#ffffff" }}>{SCHOOL_CONFIG.name} is committed to academic excellence, innovation and leadership development.</p>
             <div className="social-icons">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
@@ -316,21 +348,21 @@ export default function LandingPage() {
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-            <h4>Quick Links</h4>
+            <h4 style={{ color: "#ffffff" }}>Quick Links</h4>
             <div className="footer-links">
-              <Link href="/">Home</Link>
-              <Link href="/about">About Us</Link>
-              <Link href="/events">Events</Link>
-              <Link href="/news">News</Link>
-              <Link href="/contact">Contact</Link>
-              <Link href="/portal/apply">Apply for Admission</Link>
+              <Link href="/" style={{ color: "#ffffff" }}>Home</Link>
+              <Link href="/about" style={{ color: "#ffffff" }}>About Us</Link>
+              <Link href="/events" style={{ color: "#ffffff" }}>Events</Link>
+              <Link href="/news" style={{ color: "#ffffff" }}>News</Link>
+              <Link href="/contact" style={{ color: "#ffffff" }}>Contact</Link>
+              <Link href="/portal/apply" style={{ color: "#ffffff" }}>Apply for Admission</Link>
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
-            <h4>Contact</h4>
-            <p>{SCHOOL_CONFIG.address}</p>
-            <p style={{ marginTop: "8px" }}>Phone: {SCHOOL_CONFIG.phone}</p>
-            <p style={{ marginTop: "8px" }}>Email: {SCHOOL_CONFIG.email}</p>
+            <h4 style={{ color: "#ffffff" }}>Contact</h4>
+            <p style={{ color: "#ffffff" }}>{SCHOOL_CONFIG.address}</p>
+            <p style={{ marginTop: "8px", color: "#ffffff" }}>Phone: {SCHOOL_CONFIG.phone}</p>
+            <p style={{ marginTop: "8px", color: "#ffffff" }}>Email: {SCHOOL_CONFIG.email}</p>
             <div className="footer-map" style={{ marginTop: "15px" }}><iframe src="https://www.google.com/maps?q=Lagos+Nigeria&output=embed"></iframe></div>
           </motion.div>
         </div>

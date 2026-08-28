@@ -48,7 +48,7 @@ export default function AboutPage() {
             <Link href="/events" style={{ color: "#ffffff" }}>Events</Link>
             <Link href="/news" style={{ color: "#ffffff" }}>News</Link>
             <Link href="/contact" style={{ color: "#ffffff" }}>Contact</Link>
-            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Admissions</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn">Admissions</Link>
             <Link href="/auth/login" className="menu-btn portal-btn" style={{ color: "#ffffff" }}>Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -150,8 +150,8 @@ export default function AboutPage() {
           Give your child the best education and leadership development.
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
-          <Link href="/portal/apply" className="btn-primary">Apply for Admission</Link>
-          <Link href="/contact" className="btn-primary" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff" }}>Contact Us</Link>
+          <Link href="/portal/apply" className="btn-primary" style={{ padding: "14px 32px", borderRadius: "12px", fontSize: "14px", fontWeight: 600 }}>Apply for Admission</Link>
+          <Link href="/contact" style={{ padding: "14px 32px", borderRadius: "12px", fontSize: "14px", fontWeight: 600, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff", textDecoration: "none", transition: "all 0.3s ease" }}>Contact Us</Link>
         </motion.div>
       </section>
 

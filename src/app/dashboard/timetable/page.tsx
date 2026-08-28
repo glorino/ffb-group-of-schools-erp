@@ -350,34 +350,42 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="modal-overlay bg-black/60 backdrop-blur-sm">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-2xl border border-[#e2e8f0] p-6 w-full max-w-md shadow-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Timetable Slot Details</h3>
-                <button onClick={() => setDetailSlot(null)} className="text-[#94a3b8] hover:text-[#475569]"><X className="w-5 h-5" /></button>
+              className="bg-white rounded-2xl border border-[#e2e8f0] w-full max-w-lg shadow-2xl" style={{ padding: "28px 32px" }}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[#1a1a2e] font-bold text-[18px]">Timetable Slot Details</h3>
+                <button onClick={() => setDetailSlot(null)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] transition-colors"><X className="w-5 h-5" /></button>
               </div>
-              <div className="space-y-3">
-                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Day</span><span className="text-[#1a1a2e] text-[13px] font-medium">{dayLabels[detailSlot.dayOfWeek - 1]}</span></div>
-                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Time</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.startTime} — {detailSlot.endTime}</span></div>
-                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Subject</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.subject || "—"}</span></div>
-                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Teacher</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.teacher.firstName} {detailSlot.teacher.lastName}</span></div>
-                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Class</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.class.displayName || detailSlot.class.name}</span></div>
-                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Room</span><span className="text-[#1a1a2e] text-[13px] font-medium">{detailSlot.room || "—"}</span></div>
-                <div className="flex justify-between"><span className="text-[#64748b] text-[13px]">Type</span>
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
-                      detailSlot.type === "lesson" ? "bg-[#dbeafe] text-[#2563eb]" :
-                      detailSlot.type === "break" ? "bg-[#fef3c7] text-[#d97706]" :
-                      detailSlot.type === "lab" ? "bg-[#f3e8ff] text-[#7c3aed]" :
-                      "bg-[#f1f5f9] text-[#64748b]"
+              <div className="space-y-4">
+                {[
+                  { label: "Day", value: dayLabels[detailSlot.dayOfWeek - 1] },
+                  { label: "Time", value: `${detailSlot.startTime} — ${detailSlot.endTime}` },
+                  { label: "Subject", value: detailSlot.subject || "—" },
+                  { label: "Teacher", value: `${detailSlot.teacher.firstName} ${detailSlot.teacher.lastName}` },
+                  { label: "Class", value: detailSlot.class.displayName || detailSlot.class.name },
+                  { label: "Room", value: detailSlot.room || "—" },
+                ].map((row) => (
+                  <div key={row.label} className="flex justify-between items-center py-2 border-b border-[#f1f5f9]">
+                    <span className="text-[#64748b] text-[13px] font-medium">{row.label}</span>
+                    <span className="text-[#1a1a2e] text-[13px] font-semibold">{row.value}</span>
+                  </div>
+                ))}
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-[#64748b] text-[13px] font-medium">Type</span>
+                  <span className={`px-3 py-1 rounded-lg text-[11px] font-semibold ${
+                    detailSlot.type === "lesson" ? "bg-[#dbeafe] text-[#2563eb]" :
+                    detailSlot.type === "break" ? "bg-[#fef3c7] text-[#d97706]" :
+                    detailSlot.type === "lab" ? "bg-[#f3e8ff] text-[#7c3aed]" :
+                    "bg-[#f1f5f9] text-[#64748b]"
                   }`}>{detailSlot.type}</span>
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-3 px-0 pt-4 mt-4 border-t border-[#e2e8f0]">
+              <div className="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-[#e2e8f0]">
                 <button onClick={() => { setDetailSlot(null); handleDelete(detailSlot.id); }}
-                  className="px-5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-[#dc2626] text-[13px] font-medium hover:bg-[#fee2e2] transition-colors">
+                  className="px-6 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-[#dc2626] text-[13px] font-medium hover:bg-[#fee2e2] transition-colors">
                   Delete
                 </button>
                 <button onClick={() => setDetailSlot(null)}
-                  className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all">
+                  className="px-6 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all">
                   Close
                 </button>
               </div>

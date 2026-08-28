@@ -54,10 +54,10 @@ export default function AttendancePage() {
   }, [records]);
 
   const todayStats = [
-    { label: "Total Students", value: stats.total, icon: Users, color: "from-blue-500 to-blue-600" },
-    { label: "Present", value: stats.present, icon: CheckCircle, color: "from-emerald-500 to-emerald-600" },
-    { label: "Absent", value: stats.absent, icon: XCircle, color: "from-red-500 to-red-600" },
-    { label: "Late", value: stats.late, icon: Clock, color: "from-yellow-500 to-yellow-600" },
+    { label: "Total Students", value: stats.total, icon: Users, color: "from-[#0055ff] to-[#0033cc]" },
+    { label: "Present", value: stats.present, icon: CheckCircle, color: "from-[#28ff9c] to-[#0055ff]" },
+    { label: "Absent", value: stats.absent, icon: XCircle, color: "from-[#ff4444] to-[#ec4899]" },
+    { label: "Late", value: stats.late, icon: Clock, color: "from-[#f59e0b] to-[#dd6b20]" },
   ];
 
   const markPresent = async (admissionNumber: string) => {

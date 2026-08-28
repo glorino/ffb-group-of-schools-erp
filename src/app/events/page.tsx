@@ -11,15 +11,15 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
 }));
 
 const events = [
-  { title: "Interhouse Sports", desc: "Annual sports competition showcasing teamwork and athleticism across all houses.", date: "2026-03-25T09:00:00", icon: "🏅", category: "Sports" },
-  { title: "Science Exhibition", desc: "Students present innovative science projects and research findings to judges and the school community.", date: "2026-04-10T10:00:00", icon: "🔬", category: "Academic" },
-  { title: "Graduation Ceremony", desc: "Celebrating graduating students and their achievements in academics and leadership.", date: "2026-07-18T11:00:00", icon: "🎓", category: "Ceremony" },
-  { title: "Cultural Day", desc: "Students showcase diverse Nigerian cultures through dress, dance, food and art presentations.", date: "2026-05-20T09:00:00", icon: "🎭", category: "Cultural" },
-  { title: "Math Olympiad", desc: "Mathematical competition challenging students to solve complex problems under timed conditions.", date: "2026-06-05T10:00:00", icon: "📐", category: "Academic" },
-  { title: "Career Fair", desc: "Professionals from various fields share career insights and mentorship opportunities.", date: "2026-06-28T10:00:00", icon: "💼", category: "Career" },
-  { title: "Art Exhibition", desc: "Students display creative artwork including paintings, sculptures and digital designs.", date: "2026-08-15T09:00:00", icon: "🎨", category: "Creative" },
-  { title: "Spelling Bee", desc: "Annual spelling competition testing vocabulary and language skills across all grade levels.", date: "2026-04-22T10:00:00", icon: "📝", category: "Academic" },
-  { title: "Quiz Competition", desc: "Inter-class quiz competition covering science, humanities and general knowledge.", date: "2026-05-08T10:00:00", icon: "❓", category: "Academic" },
+  { title: "Interhouse Sports", desc: "Annual sports competition showcasing teamwork and athleticism across all houses.", date: "2026-10-17T09:00:00", icon: "🏅", category: "Sports" },
+  { title: "Science Exhibition", desc: "Students present innovative science projects and research findings to judges and the school community.", date: "2026-11-14T10:00:00", icon: "🔬", category: "Academic" },
+  { title: "Graduation Ceremony", desc: "Celebrating graduating students and their achievements in academics and leadership.", date: "2027-06-28T11:00:00", icon: "🎓", category: "Ceremony" },
+  { title: "Cultural Day", desc: "Students showcase diverse Nigerian cultures through dress, dance, food and art presentations.", date: "2026-12-05T09:00:00", icon: "🎭", category: "Cultural" },
+  { title: "Math Olympiad", desc: "Mathematical competition challenging students to solve complex problems under timed conditions.", date: "2027-01-24T10:00:00", icon: "📐", category: "Academic" },
+  { title: "Career Fair", desc: "Professionals from various fields share career insights and mentorship opportunities.", date: "2027-02-20T10:00:00", icon: "💼", category: "Career" },
+  { title: "Art Exhibition", desc: "Students display creative artwork including paintings, sculptures and digital designs.", date: "2027-03-15T09:00:00", icon: "🎨", category: "Creative" },
+  { title: "Spelling Bee", desc: "Annual spelling competition testing vocabulary and language skills across all grade levels.", date: "2027-04-10T10:00:00", icon: "📝", category: "Academic" },
+  { title: "Quiz Competition", desc: "Inter-class quiz competition covering science, humanities and general knowledge.", date: "2027-05-15T10:00:00", icon: "❓", category: "Academic" },
 ];
 
 const categoryColors: Record<string, string> = {
@@ -86,7 +86,7 @@ export default function EventsPage() {
             <Link href="/events" className="active" style={{ color: "#ffffff" }}>Events</Link>
             <Link href="/news" style={{ color: "#ffffff" }}>News</Link>
             <Link href="/contact" style={{ color: "#ffffff" }}>Contact</Link>
-            <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#ffffff" }}>Admissions</Link>
+            <Link href="/portal/apply" className="menu-btn apply-btn">Admissions</Link>
             <Link href="/auth/login" className="menu-btn portal-btn" style={{ color: "#ffffff" }}>Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>

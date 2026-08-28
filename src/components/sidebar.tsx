@@ -167,7 +167,7 @@ export function Sidebar() {
                       href={item.href}
                       className={`flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg text-[13px] font-medium transition-all duration-150 ${
                         isActive
-                          ? "bg-white/[0.1] text-white"
+                          ? "bg-gradient-to-r from-[#0055ff] to-[#0033cc] text-white shadow-lg shadow-blue-500/20"
                           : "text-white/50 hover:text-white/80 hover:bg-white/[0.04]"
                       }`}
                     >
