@@ -54,10 +54,10 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil(total / limit),
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("GET /api/admissions error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch admissions" },
+      { error: error?.message?.includes("does not exist") ? "Admissions table not found. Please run database migration." : "Failed to fetch admissions" },
       { status: 500 }
     );
   }

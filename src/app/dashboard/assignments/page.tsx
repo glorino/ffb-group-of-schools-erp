@@ -342,24 +342,26 @@ export default function AssignmentsPage() {
   return (
     <motion.div {...fadeIn} className="space-y-5">
       {/* Header */}
-      <div className="section-header">
-        <div>
-          <h1 className="section-title">Assignments</h1>
-          <p className="section-subtitle">Manage and track class assignments</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {!isStudent && (
-            <button
-              onClick={() => {
-                resetForm();
-                setShowCreateModal(true);
-              }}
-              className="btn btn-primary"
-            >
-              <Plus className="w-4 h-4" />
-              Create Assignment
-            </button>
-          )}
+      <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-7 border border-white/10 mx-6 mt-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-1">Assignments</h1>
+            <p className="text-white/70 text-[13px]">Manage and track class assignments</p>
+          </div>
+          <div className="flex items-center gap-3 flex-wrap">
+            {!isStudent && (
+              <button
+                onClick={() => {
+                  resetForm();
+                  setShowCreateModal(true);
+                }}
+                className="px-4 py-2 rounded-xl bg-white text-[#0055ff] text-[13px] font-semibold hover:bg-white/90 transition-all shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Create Assignment
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -1533,6 +1533,18 @@ body:has(.bg-animated) .section-subtitle {
   background: linear-gradient(135deg, #ec4899, #d946ef) !important;
 }
 
+.dashboard-main .stat-card p {
+  color: #ffffff !important;
+}
+
+.dashboard-main .stat-card .text-\[\#1a1a2e\] {
+  color: #ffffff !important;
+}
+
+.dashboard-main .stat-card .text-\[\#94a3b8\] {
+  color: rgba(255,255,255,0.7) !important;
+}
+
 /* Dashboard buttons: blue gradient primary */
 .dashboard-main .btn-primary {
   background: linear-gradient(135deg, #0055ff, #0033cc) !important;

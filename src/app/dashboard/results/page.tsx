@@ -298,7 +298,7 @@ export default function ResultsPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border border-white/10 rounded-2xl p-6"
+        className="mx-6 mt-6 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border border-white/10 rounded-2xl p-7"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
@@ -310,7 +310,7 @@ export default function ResultsPage() {
               <button
                 onClick={handlePublishAll}
                 disabled={publishing}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all disabled:opacity-50"
               >
                 {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
                 Publish Results
@@ -318,7 +318,7 @@ export default function ResultsPage() {
             )}
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
             >
               <Download className="w-4 h-4" />
               Export
@@ -326,7 +326,7 @@ export default function ResultsPage() {
             {!isReadOnly && (
               <button
                 onClick={() => setShowModal(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#0055ff] text-[13px] font-semibold hover:bg-white/90 transition-all shadow-sm"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-[#0055ff] text-[13px] font-semibold hover:bg-white/90 transition-all shadow-sm"
               >
                 <Plus className="w-4 h-4" />
                 Enter Results

@@ -435,7 +435,7 @@ export default function SettingsPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10"
+        className="mx-6 mt-6 card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 p-7"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>

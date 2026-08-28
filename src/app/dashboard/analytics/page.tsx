@@ -353,7 +353,7 @@ export default function AnalyticsPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="dashboard-card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10"
+        className="dashboard-card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mx-6 mt-6 p-7"
       >
         <div className="section-header">
           <div>

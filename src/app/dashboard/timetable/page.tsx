@@ -451,7 +451,7 @@ export default function TimetablePage() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-6 border border-white/10 flex items-center justify-between">
+      <div className="mx-6 mt-6 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-7 border border-white/10 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">
             {isReadOnly ? "My Timetable" : "Timetable Management"}

@@ -155,13 +155,13 @@ export default function StudentsPage() {
   return (
     <motion.div {...fadeIn} className="space-y-5">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-6 border border-white/10">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="mx-6 mt-6 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-7 border border-white/10">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
           <div>
             <h1 className="text-2xl font-bold text-white mb-1">Students</h1>
             <p className="text-white/70 text-[13px]">Manage student records and profiles</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={async () => {
                 try {
@@ -195,7 +195,7 @@ export default function StudentsPage() {
           </button>
           <button
             onClick={() => { setEditingStudent(null); setForm({ firstName: "", lastName: "", email: "", phone: "", admissionNumber: "", guardianName: "", guardianPhone: "", classId: "" }); setShowModal(true); }}
-            className="px-5 py-2.5 rounded-xl bg-white text-[#0055ff] text-[13px] font-semibold hover:bg-white/90 transition-all shadow-sm"
+            className="px-4 py-2 rounded-xl bg-white text-[#0055ff] text-[13px] font-semibold hover:bg-white/90 transition-all shadow-sm"
           >
             <UserPlus className="w-4 h-4" />
             Add Student

@@ -94,7 +94,7 @@ export default function DisciplinePage() {
   return (
     <div className="space-y-6">
       <Toaster richColors position="top-right" />
-      <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-6 border border-white/10 flex items-center justify-between">
+      <div className="mx-6 mt-6 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-7 border border-white/10 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Discipline Management</h1>
           <p className="text-white/70 text-[13px]">Track and manage student discipline records</p>

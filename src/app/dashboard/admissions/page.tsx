@@ -154,17 +154,19 @@ export default function AdmissionsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-[#1a1a2e]">Admissions Management</h2>
-          <p className="text-[#64748b] text-sm">Review applications, approve or reject, and manage admission decisions</p>
+      <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-7 border border-white/10 mx-6 mt-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-1">Admissions Management</h1>
+            <p className="text-white/70 text-[13px]">Review applications, approve or reject, and manage admission decisions</p>
+          </div>
+          <button
+            onClick={handleExport}
+            className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
+          >
+            Export CSV
+          </button>
         </div>
-        <button
-          onClick={handleExport}
-          className="btn btn-secondary flex items-center gap-2"
-        >
-          Export CSV
-        </button>
       </div>
 
       {/* Pipeline */}

@@ -168,7 +168,7 @@ export default function AlumniPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 p-6 shadow-sm"
+        className="mx-6 mt-6 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 p-7 shadow-sm"
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
@@ -226,7 +226,7 @@ export default function AlumniPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-[#1a1a2e] font-semibold text-lg">Alumni Directory</h3>
-            <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
                 <input
