@@ -79,9 +79,12 @@ export default function AdmissionsPage() {
   const [showActionModal, setShowActionModal] = useState<string | null>(null);
   const [actionNote, setActionNote] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
+  const [loadError, setLoadError] = useState("");
+  const [pushingSchema, setPushingSchema] = useState(false);
 
   const fetchApplicants = useCallback(async () => {
     setLoading(true);
+    setLoadError("");
     try {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
@@ -91,10 +94,27 @@ export default function AdmissionsPage() {
       if (!res.ok) throw new Error(data.error || "Failed to fetch");
       setApplicants(data.applicants ?? []);
     } catch (err: any) {
-      toast.error(err.message || "Failed to load admissions data");
+      setLoadError(err.message || "Failed to load admissions data");
     }
     setLoading(false);
   }, [search, statusFilter]);
+
+  const handlePushSchema = async () => {
+    setPushingSchema(true);
+    try {
+      const res = await fetch("/api/seed/schema", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message);
+        fetchApplicants();
+      } else {
+        toast.error(data.error || "Failed to push schema");
+      }
+    } catch {
+      toast.error("Failed to push schema");
+    }
+    setPushingSchema(false);
+  };
 
   useEffect(() => { fetchApplicants(); }, [fetchApplicants]);
 
@@ -210,6 +230,20 @@ export default function AdmissionsPage() {
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-6 h-6 text-[#64748b] animate-spin" />
+          </div>
+        ) : loadError ? (
+          <div className="text-center py-16">
+            <AlertCircle className="w-10 h-10 text-[#dc2626] mx-auto mb-3" />
+            <p className="text-[#dc2626] text-[14px] font-medium mb-2">{loadError}</p>
+            <p className="text-[#94a3b8] text-[12px] mb-4">This may be because the admissions table hasn&apos;t been created yet.</p>
+            <button
+              onClick={handlePushSchema}
+              disabled={pushingSchema}
+              className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-medium hover:opacity-90 transition-all disabled:opacity-50"
+            >
+              {pushingSchema ? <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> : null}
+              {pushingSchema ? "Setting up..." : "Setup Admissions Table"}
+            </button>
           </div>
         ) : applicants.length === 0 ? (
           <div className="text-center py-16"><FileText className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" /><p className="text-[#94a3b8] text-[13px]">No applications found</p></div>
