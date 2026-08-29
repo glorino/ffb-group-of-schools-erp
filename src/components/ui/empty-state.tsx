@@ -24,11 +24,11 @@ export function EmptyState({
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col items-center justify-center py-16 text-center"
     >
-      <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-        <Icon className="w-8 h-8 text-white/30" />
+      <div className="w-16 h-16 rounded-2xl bg-[#f1f5f9] flex items-center justify-center mb-4">
+        <Icon className="w-8 h-8 text-[#cbd5e1]" />
       </div>
-      <h3 className="text-white font-semibold text-lg mb-1">{title}</h3>
-      <p className="text-white/40 text-sm max-w-sm mb-6">{description}</p>
+      <h3 className="text-[#1a1a2e] font-semibold text-lg mb-1">{title}</h3>
+      <p className="text-[#64748b] text-sm max-w-sm mb-6">{description}</p>
       {actionLabel && onAction && (
         <button
           onClick={onAction}

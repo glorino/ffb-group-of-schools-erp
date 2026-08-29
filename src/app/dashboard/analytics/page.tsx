@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Suspense, lazy } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  BarChart3,
   TrendingUp,
   Users,
   GraduationCap,
@@ -13,26 +12,28 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Loader2,
-  X,
 } from "lucide-react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-} from "recharts";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
-import { formatCurrency, formatCurrencyCompact } from "@/lib/school-config";
+import { formatCurrencyCompact } from "@/lib/school-config";
+
+const PIE_COLORS = ["#6366f1", "#22d3ee"];
+const ATTENDANCE_COLORS = ["#22c55e", "#ef4444"];
+const FALLBACK_CLASS_PERF = [
+  { class: "JSS1", avg: 0, pass: 0, fail: 0 },
+  { class: "JSS2", avg: 0, pass: 0, fail: 0 },
+  { class: "JSS3", avg: 0, pass: 0, fail: 0 },
+  { class: "SS1", avg: 0, pass: 0, fail: 0 },
+  { class: "SS2", avg: 0, pass: 0, fail: 0 },
+  { class: "SS3", avg: 0, pass: 0, fail: 0 },
+];
+const FALLBACK_SUBJECT_PERF = [
+  { subject: "Mathematics", avg: 0, trend: "up" as const },
+  { subject: "English", avg: 0, trend: "up" as const },
+  { subject: "Physics", avg: 0, trend: "up" as const },
+  { subject: "Chemistry", avg: 0, trend: "up" as const },
+  { subject: "Biology", avg: 0, trend: "up" as const },
+];
 
 interface DashboardStats {
   totalStudents?: number;
@@ -102,6 +103,181 @@ interface MonthlyRevenue {
   amount: number;
 }
 
+function ChartFallback() {
+  return (
+    <div className="flex items-center justify-center h-[260px]">
+      <Loader2 className="w-6 h-6 text-[var(--primary)] animate-spin" />
+    </div>
+  );
+}
+
+function AnalyticsCharts({
+  genderData,
+  attendanceData,
+  classPerformance,
+  subjectPerformance,
+  monthlyRevenue,
+}: {
+  genderData: { name: string; value: number }[];
+  attendanceData: { name: string; value: number }[];
+  classPerformance: ClassPerf[];
+  subjectPerformance: SubjectPerf[];
+  monthlyRevenue: MonthlyRevenue[];
+}) {
+  const {
+    PieChart, Pie, Cell,
+    LineChart, Line, BarChart, Bar,
+    ResponsiveContainer, Tooltip, Legend,
+    XAxis, YAxis, CartesianGrid,
+  } = require("recharts");
+
+  return (
+    <>
+      <div className="charts-grid-equal">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="dashboard-card"
+        >
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Gender Distribution</h3>
+          <ResponsiveContainer width="100%" height={260}>
+            <PieChart>
+              <Pie
+                data={genderData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                paddingAngle={4}
+                dataKey="value"
+                label={({ name, percent }: any) => `${name || ""} ${((percent || 0) * 100).toFixed(0)}%`}
+              >
+                {genderData.map((_entry: any, index: number) => (
+                  <Cell key={`cell-${index}`} fill={PIE_COLORS[index]} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  background: "#ffffff",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "12px",
+                  color: "#1a1a2e",
+                }}
+              />
+              <Legend wrapperStyle={{ color: "#64748b" }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="dashboard-card"
+        >
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Attendance Overview</h3>
+          <ResponsiveContainer width="100%" height={260}>
+            <PieChart>
+              <Pie
+                data={attendanceData}
+                cx="50%"
+                cy="50%"
+                innerRadius={70}
+                outerRadius={100}
+                paddingAngle={4}
+                dataKey="value"
+                label={({ name, value }: any) => `${name} ${value}%`}
+              >
+                {attendanceData.map((_entry: any, index: number) => (
+                  <Cell key={`cell-${index}`} fill={ATTENDANCE_COLORS[index]} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  background: "#ffffff",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "12px",
+                  color: "#1a1a2e",
+                }}
+              />
+              <Legend wrapperStyle={{ color: "#64748b" }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </motion.div>
+      </div>
+
+      <div className="charts-grid-equal">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          className="dashboard-card"
+        >
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Payment Trend</h3>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={monthlyRevenue}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="month" stroke="#94a3b8" tick={{ fontSize: 11 }} />
+              <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
+              <Tooltip
+                contentStyle={{
+                  background: "#ffffff",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "12px",
+                  color: "#1a1a2e",
+                }}
+              />
+              <Legend wrapperStyle={{ color: "#64748b" }} />
+              <Line
+                type="monotone"
+                dataKey="amount"
+                stroke="#a78bfa"
+                strokeWidth={3}
+                dot={{ fill: "#a78bfa", strokeWidth: 2 }}
+                activeDot={{ r: 6 }}
+                name={`Collection (${formatCurrencyCompact(0).charAt(0)}M)`}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
+          className="dashboard-card"
+        >
+          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Class Performance</h3>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={classPerformance}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="class" stroke="#94a3b8" tick={{ fontSize: 11 }} />
+              <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
+              <Tooltip
+                contentStyle={{
+                  background: "#ffffff",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "12px",
+                  color: "#1a1a2e",
+                }}
+              />
+              <Legend wrapperStyle={{ color: "#64748b" }} />
+              <Bar dataKey="avg" fill="#34d399" radius={[6, 6, 0, 0]} name="Avg Score %" />
+            </BarChart>
+          </ResponsiveContainer>
+        </motion.div>
+      </div>
+    </>
+  );
+}
+
+const AnalyticsChartsLazy = (props: any) => (
+  <Suspense fallback={<ChartFallback />}>
+    <AnalyticsCharts {...props} />
+  </Suspense>
+);
+
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [showFilter, setShowFilter] = useState(false);
@@ -115,9 +291,6 @@ export default function AnalyticsPage() {
   const [rawStudents, setRawStudents] = useState<Student[]>([]);
   const [rawAttendance, setRawAttendance] = useState<Attendance[]>([]);
   const [rawStats, setRawStats] = useState<DashboardStats>({});
-
-  const PIE_COLORS = ["#6366f1", "#22d3ee"];
-  const ATTENDANCE_COLORS = ["#22c55e", "#ef4444"];
 
   const filteredGrades = useMemo(() => {
     return rawGrades.filter((g) => {
@@ -181,7 +354,7 @@ export default function AnalyticsPage() {
     return [
       {
         label: "Total Students",
-        value: totalStudents > 0 ? String(totalStudents) : "—",
+        value: totalStudents > 0 ? String(totalStudents) : "\u2014",
         change: totalStudents > 0 ? `+${Math.round(totalStudents * 0.05)}` : "+0",
         trend: "up",
         icon: Users,
@@ -189,7 +362,7 @@ export default function AnalyticsPage() {
       },
       {
         label: "Pass Rate",
-        value: passRate > 0 ? `${passRate}%` : "—",
+        value: passRate > 0 ? `${passRate}%` : "\u2014",
         change: passRate > 0 ? `+${Math.min(5, Math.round(passRate * 0.03))}%` : "+0%",
         trend: "up",
         icon: GraduationCap,
@@ -197,7 +370,7 @@ export default function AnalyticsPage() {
       },
       {
         label: "Revenue",
-        value: totalRevenue > 0 ? formatCurrencyCompact(totalRevenue) : "—",
+        value: totalRevenue > 0 ? formatCurrencyCompact(totalRevenue) : "\u2014",
         change: totalRevenue > 0 ? "+18%" : "+0%",
         trend: "up",
         icon: TrendingUp,
@@ -205,7 +378,7 @@ export default function AnalyticsPage() {
       },
       {
         label: "Avg Score",
-        value: avgScore > 0 ? `${avgScore.toFixed(1)}%` : "—",
+        value: avgScore > 0 ? `${avgScore.toFixed(1)}%` : "\u2014",
         change: avgScore > 0 ? `+${Math.min(5, Math.round(avgScore * 0.02))}%` : "+0%",
         trend: "up",
         icon: Calendar,
@@ -252,14 +425,7 @@ export default function AnalyticsPage() {
       fail: Math.round(((data.total - data.passed) / data.total) * 100),
     })).sort((a, b) => a.class.localeCompare(b.class));
 
-    return result.length > 0 ? result : [
-      { class: "JSS1", avg: 0, pass: 0, fail: 0 },
-      { class: "JSS2", avg: 0, pass: 0, fail: 0 },
-      { class: "JSS3", avg: 0, pass: 0, fail: 0 },
-      { class: "SS1", avg: 0, pass: 0, fail: 0 },
-      { class: "SS2", avg: 0, pass: 0, fail: 0 },
-      { class: "SS3", avg: 0, pass: 0, fail: 0 },
-    ];
+    return result.length > 0 ? result : FALLBACK_CLASS_PERF;
   }, [filteredGrades]);
 
   const subjectPerformance = useMemo(() => {
@@ -276,13 +442,7 @@ export default function AnalyticsPage() {
       trend: scores.length > 1 && scores[scores.length - 1] > scores[0] ? "up" : "down",
     })).sort((a, b) => b.avg - a.avg);
 
-    return result.length > 0 ? result : [
-      { subject: "Mathematics", avg: 0, trend: "up" as const },
-      { subject: "English", avg: 0, trend: "up" as const },
-      { subject: "Physics", avg: 0, trend: "up" as const },
-      { subject: "Chemistry", avg: 0, trend: "up" as const },
-      { subject: "Biology", avg: 0, trend: "up" as const },
-    ];
+    return result.length > 0 ? result : FALLBACK_SUBJECT_PERF;
   }, [filteredGrades]);
 
   const monthlyRevenue = useMemo(() => {
@@ -306,11 +466,11 @@ export default function AnalyticsPage() {
     setLoading(true);
     try {
       const [statsRes, gradesRes, paymentsRes, studentsRes, attendanceRes] = await Promise.all([
-        fetch("/api/dashboard/stats"),
-        fetch("/api/grades"),
-        fetch("/api/finance/payments"),
-        fetch("/api/students?limit=9999"),
-        fetch("/api/attendance?limit=9999"),
+        fetch("/api/dashboard/stats").catch(() => ({ ok: false, json: async () => ({}) })),
+        fetch("/api/grades").catch(() => ({ ok: false, json: async () => ({}) })),
+        fetch("/api/finance/payments").catch(() => ({ ok: false, json: async () => ({}) })),
+        fetch("/api/students?limit=9999").catch(() => ({ ok: false, json: async () => ({ students: [] }) })),
+        fetch("/api/attendance?limit=9999").catch(() => ({ ok: false, json: async () => ({ records: [] }) })),
       ]);
 
       const statsData: DashboardStats = statsRes.ok ? await statsRes.json() : {};
@@ -584,141 +744,13 @@ export default function AnalyticsPage() {
         </div>
       </motion.div>
 
-      <div className="charts-grid-equal">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="dashboard-card"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Gender Distribution</h3>
-          <ResponsiveContainer width="100%" height={260}>
-            <PieChart>
-              <Pie
-                data={genderData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={4}
-                dataKey="value"
-                label={({ name, percent }: any) => `${name || ""} ${((percent || 0) * 100).toFixed(0)}%`}
-              >
-                {genderData.map((_entry, index) => (
-                  <Cell key={`cell-${index}`} fill={PIE_COLORS[index]} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  background: "#ffffff",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "12px",
-                  color: "#1a1a2e",
-                }}
-              />
-              <Legend wrapperStyle={{ color: "#64748b" }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="dashboard-card"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Attendance Overview</h3>
-          <ResponsiveContainer width="100%" height={260}>
-            <PieChart>
-              <Pie
-                data={attendanceData}
-                cx="50%"
-                cy="50%"
-                innerRadius={70}
-                outerRadius={100}
-                paddingAngle={4}
-                dataKey="value"
-                label={({ name, value }) => `${name} ${value}%`}
-              >
-                {attendanceData.map((_entry, index) => (
-                  <Cell key={`cell-${index}`} fill={ATTENDANCE_COLORS[index]} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  background: "#ffffff",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "12px",
-                  color: "#1a1a2e",
-                }}
-              />
-              <Legend wrapperStyle={{ color: "#64748b" }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </motion.div>
-      </div>
-
-      <div className="charts-grid-equal">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-          className="dashboard-card"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Payment Trend</h3>
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={monthlyRevenue}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="month" stroke="#94a3b8" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
-              <Tooltip
-                contentStyle={{
-                  background: "#ffffff",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "12px",
-                  color: "#1a1a2e",
-                }}
-              />
-              <Legend wrapperStyle={{ color: "#64748b" }} />
-              <Line
-                type="monotone"
-                dataKey="amount"
-                stroke="#a78bfa"
-                strokeWidth={3}
-                dot={{ fill: "#a78bfa", strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-                name={`Collection (${formatCurrencyCompact(0).charAt(0)}M)`}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
-          className="dashboard-card"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Class Performance</h3>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={classPerformance}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="class" stroke="#94a3b8" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
-              <Tooltip
-                contentStyle={{
-                  background: "#ffffff",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "12px",
-                  color: "#1a1a2e",
-                }}
-              />
-              <Legend wrapperStyle={{ color: "#64748b" }} />
-              <Bar dataKey="avg" fill="#34d399" radius={[6, 6, 0, 0]} name="Avg Score %" />
-            </BarChart>
-          </ResponsiveContainer>
-        </motion.div>
-      </div>
+      <AnalyticsChartsLazy
+        genderData={genderData}
+        attendanceData={attendanceData}
+        classPerformance={classPerformance}
+        subjectPerformance={subjectPerformance}
+        monthlyRevenue={monthlyRevenue}
+      />
     </div>
   );
 }
