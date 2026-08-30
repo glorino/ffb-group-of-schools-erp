@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -141,7 +141,7 @@ export default function ClassesPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mx-10 mt-8 p-8"
+        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 p-8"
         style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

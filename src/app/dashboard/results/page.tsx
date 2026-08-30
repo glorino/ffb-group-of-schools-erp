@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
@@ -298,7 +298,7 @@ export default function ResultsPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mx-10 mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border border-white/10 rounded-2xl p-8"
+        className="mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border border-white/10 rounded-2xl p-8"
         style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
       >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

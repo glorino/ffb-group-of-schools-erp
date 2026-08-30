@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -195,7 +195,7 @@ export default function EventsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="mx-10 mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
+      <div className="mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
         <div>
           <h1 className="text-2xl font-bold text-white">Events Management</h1>
           <p className="text-white/70 text-[13px]">Create and manage school events and activities</p>
