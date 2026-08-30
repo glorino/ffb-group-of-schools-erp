@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/resend";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
+import { requireAuth } from "@/lib/api-rbac";
 
 export async function POST(req: NextRequest) {
   try {
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT"]);
+    if (authResult.error) return authResult.error;
+
     const { invoiceId } = await req.json();
 
     if (!invoiceId) {
@@ -119,7 +123,7 @@ export async function POST(req: NextRequest) {
       : "Parent/Guardian";
 
     await sendEmail(
-      recipientName,
+      recipientEmail,
       `Payment Reminder - ${invoice.invoiceNumber} (${formattedAmount})`,
       html
     );

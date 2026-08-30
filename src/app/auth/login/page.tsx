@@ -141,8 +141,6 @@ export default function LoginPage() {
           </motion.div>
         </div>
       </motion.div>
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

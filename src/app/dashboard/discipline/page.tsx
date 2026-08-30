@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatCurrency } from "@/lib/school-config";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 interface DisciplineRecord {
   id: string;
@@ -93,7 +93,6 @@ export default function DisciplinePage() {
 
   return (
     <div className="space-y-6">
-      <Toaster richColors position="top-right" />
       <div className="mx-8 mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
         <div>
           <h1 className="text-2xl font-bold text-white">Discipline Management</h1>

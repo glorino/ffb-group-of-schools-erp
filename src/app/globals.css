@@ -1700,3 +1700,7 @@ a.apply-btn,
 .apply-btn {
   color: #000000 !important;
 }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

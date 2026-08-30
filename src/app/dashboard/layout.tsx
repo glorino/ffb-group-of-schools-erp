@@ -5,7 +5,6 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
-import { ParticleBackground } from "@/components/particles";
 import { canAccessRoute, getDefaultRoute } from "@/lib/rbac";
 
 export default function DashboardLayout({

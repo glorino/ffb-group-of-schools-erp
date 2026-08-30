@@ -15,7 +15,6 @@ import {
   Users,
   BookOpen,
   Play,
-  Settings,
   X,
   Loader2,
   Download,

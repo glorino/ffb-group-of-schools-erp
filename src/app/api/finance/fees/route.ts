@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT", "AUDITOR", "STUDENT", "PARENT"]);
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT"]);
     if (authResult.error) return authResult.error;
 
     const body = await request.json();

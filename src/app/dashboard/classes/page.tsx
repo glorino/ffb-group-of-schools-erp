@@ -7,7 +7,6 @@ import {
   Users,
   Plus,
   Search,
-  Filter,
   MoreVertical,
   Building,
   UserCheck,

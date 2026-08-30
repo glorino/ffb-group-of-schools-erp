@@ -108,14 +108,10 @@ export async function POST(
       const question = questionMap.get(r.questionId);
       return {
         questionId: r.questionId,
-        question: question?.question ?? "",
-        options: question?.options ?? {},
         yourAnswer: r.answer,
-        correctAnswer: question?.answer ?? "",
         isCorrect:
           question?.answer.toUpperCase() === r.answer.toUpperCase(),
         marks: question?.marks ?? 0,
-        explanation: question?.explanation ?? "",
       };
     });
 

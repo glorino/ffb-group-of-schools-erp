@@ -24,7 +24,6 @@ import {
   Shield,
   Zap,
   Copy,
-  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 

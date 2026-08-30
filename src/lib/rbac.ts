@@ -21,7 +21,7 @@ const routeRoles: Record<string, string[]> = {
   "/dashboard/library": ["OWNER", "ADMINISTRATOR", "LIBRARIAN", "TEACHER", "STUDENT", "PARENT"],
   "/dashboard/hostel": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "PORTER"],
   "/dashboard/transport": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"],
-  "/dashboard/clinic": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "CLINIC_STAFF"],
+  "/dashboard/clinic": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "CLINIC_STAFF", "NURSE"],
   "/dashboard/inventory": ["OWNER", "ADMINISTRATOR"],
   "/dashboard/ai": ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "AUDITOR"],
   "/dashboard/alumni": ["OWNER", "ADMINISTRATOR", "ALUMNI"],
@@ -64,6 +64,7 @@ export function getDefaultRoute(userRoles: string[]): string {
   if (userRoles.includes("ACCOUNTANT") || userRoles.includes("AUDITOR")) return "/dashboard/finance";
   if (userRoles.includes("LIBRARIAN")) return "/dashboard/library";
   if (userRoles.includes("PORTER")) return "/dashboard/hostel";
+  if (userRoles.includes("CLINIC_STAFF") || userRoles.includes("NURSE")) return "/dashboard/clinic";
   if (userRoles.includes("PARENT")) return "/dashboard";
   if (userRoles.includes("STUDENT")) return "/dashboard";
   if (userRoles.includes("ALUMNI")) return "/dashboard/alumni";

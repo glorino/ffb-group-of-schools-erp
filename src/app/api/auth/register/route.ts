@@ -33,8 +33,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const roleName = role === "teacher" ? "TEACHER" : role === "accountant" ? "ACCOUNTANT" : "ADMINISTRATOR";
-    const roleRecord = await prisma.role.findUnique({ where: { name: roleName } });
+    const roleRecord = await prisma.role.findUnique({ where: { name: "STUDENT" } });
     if (roleRecord) {
       await prisma.userRole.create({
         data: { userId: user.id, roleId: roleRecord.id, schoolId },

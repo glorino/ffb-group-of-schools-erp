@@ -11,8 +11,6 @@ import {
   Shield,
   Users,
   Save,
-  Globe,
-  Palette,
   Loader2,
   Plus,
   Trash2,

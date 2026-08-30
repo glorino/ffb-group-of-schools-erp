@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, Search, Plus, Eye, Edit3, Calendar, Clock, X, Loader2, Trash2 } from "lucide-react";
+import { BookOpen, Search, Plus, Eye, Calendar, X, Loader2, Trash2 } from "lucide-react";
 import { downloadCSV } from "@/lib/exports";
 import { toast } from "sonner";
 
@@ -116,15 +116,13 @@ export default function LessonPlansPage() {
 
   return (
     <motion.div {...fadeIn} className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="mx-8 mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
         <div>
-          <h1 className="text-[22px] font-bold text-[#1a1a2e] font-display tracking-tight flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-              <BookOpen className="w-[18px] h-[18px] text-white" />
-            </div>
+          <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
+            <BookOpen className="w-6 h-6" />
             Lesson Plans
           </h1>
-          <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">Create and manage lesson plans for your classes</p>
+          <p className="text-white/70 text-[13px] mt-1">Create and manage lesson plans for your classes</p>
         </div>
         <div className="flex items-center gap-3">
           <button

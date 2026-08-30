@@ -132,15 +132,13 @@ export default function ReportCardsPage() {
 
   return (
     <motion.div {...fadeIn} className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="mx-8 mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
         <div>
-          <h1 className="text-[22px] font-bold text-[#1a1a2e] font-display tracking-tight flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-              <FileText className="w-[18px] h-[18px] text-white" />
-            </div>
+          <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
+            <FileText className="w-6 h-6" />
             Report Cards
           </h1>
-          <p className="text-[#64748b] text-[12px] mt-1 ml-[46px]">Generate, preview, and download report cards with QR verification</p>
+          <p className="text-white/70 text-[13px] mt-1">Generate, preview, and download report cards with QR verification</p>
         </div>
       </div>
 

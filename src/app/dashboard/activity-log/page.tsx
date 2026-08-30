@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Activity, Clock, User, Search, Loader2 } from "lucide-react";
+import { Activity, Clock, Search, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface ActivityLog {
@@ -30,7 +30,6 @@ export default function ActivityLogPage() {
       const data = await res.json();
       setLogs(data.logs || []);
     } catch {
-      console.error("Failed to fetch activity logs");
       toast.error("Failed to fetch activity logs");
     } finally {
       setLoading(false);
@@ -45,26 +44,27 @@ export default function ActivityLogPage() {
 
   return (
     <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-[#1a1a2e] text-xl font-bold">Activity Log</h1>
-            <p className="text-[#64748b] text-[13px] mt-1">Track all system activities and changes</p>
-          </div>
-          <div className="flex gap-3">
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-              <input
-                type="text"
-                placeholder="Search activities..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-              />
-            </div>
+      <div className="mx-8 mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
+        <div>
+          <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
+            <Activity className="w-6 h-6" />
+            Activity Log
+          </h1>
+          <p className="text-white/70 text-[13px] mt-1">Track all system activities and changes</p>
+        </div>
+        <div className="flex gap-3">
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+            <input
+              type="text"
+              placeholder="Search activities..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+            />
           </div>
         </div>
-      </motion.div>
+      </div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card">
         {loading ? (

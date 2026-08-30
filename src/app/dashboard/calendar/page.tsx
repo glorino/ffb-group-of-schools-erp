@@ -9,8 +9,6 @@ import {
   ChevronRight,
   Clock,
   MapPin,
-  Users,
-  Filter,
   X,
   Loader2,
   Download,
