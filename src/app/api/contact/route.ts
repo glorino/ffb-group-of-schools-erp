@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
             </div>
             <p><strong>Message:</strong></p>
             <div class="message-box">
-              <p>${message.replace(/\n/g, "<br>")}</p>
+              <p>${message.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, "<br>")}</p>
             </div>
             <p>You can reply directly to <strong>${email}</strong> to respond to this inquiry.</p>
           </div>

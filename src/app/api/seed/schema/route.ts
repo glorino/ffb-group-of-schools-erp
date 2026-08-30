@@ -10,22 +10,17 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Try to query the Applicant table to check if it exists
     try {
       await prisma.$queryRaw`SELECT 1 FROM "Applicant" LIMIT 1`;
       return NextResponse.json({ success: true, message: "Applicant table exists" });
     } catch {
-      // Table doesn't exist - push schema
-      const { execSync } = await import("child_process");
-      execSync("npx prisma db push --skip-generate", { 
-        cwd: process.cwd(), 
-        timeout: 60000,
-        stdio: "pipe"
-      });
-      return NextResponse.json({ success: true, message: "Schema pushed successfully. Applicant table created." });
+      return NextResponse.json({
+        success: false,
+        message: "Applicant table not found. Please run 'npx prisma db push' on the server."
+      }, { status: 404 });
     }
   } catch (error: any) {
     console.error("POST /api/seed/schema error:", error);
-    return NextResponse.json({ error: error.message || "Failed to push schema" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to check schema" }, { status: 500 });
   }
 }

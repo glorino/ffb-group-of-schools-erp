@@ -262,10 +262,10 @@ export default function StudentDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 pb-1">
-                  <button title="Print student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white/30 hover:text-[#475569] hover:bg-[#f1f5f9] transition">
+                  <button title="Print student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#64748b] hover:text-[#475569] hover:bg-[#f1f5f9] transition">
                     <Printer className="w-4 h-4" />
                   </button>
-                  <button title="Download student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-white/30 hover:text-[#475569] hover:bg-[#f1f5f9] transition">
+                  <button title="Download student profile" onClick={() => window.print()} className="p-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#64748b] hover:text-[#475569] hover:bg-[#f1f5f9] transition">
                     <Download className="w-4 h-4" />
                   </button>
                   <button onClick={() => router.push(`/dashboard/students?edit=${student.id}`)} className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
@@ -284,7 +284,7 @@ export default function StudentDetailPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-medium transition-all whitespace-nowrap ${
                   activeTab === tab.id
-                    ? "bg-[#f1f5f9] text-white shadow-lg shadow-black/10"
+                    ? "bg-[#0055ff] text-white shadow-lg shadow-black/10"
                     : "text-[#94a3b8] hover:text-[#475569] hover:bg-[#f8fafc]"
                 }`}
               >
@@ -300,7 +300,7 @@ export default function StudentDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Personal Info */}
               <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                <h3 className="text-white font-semibold text-[15px] mb-5">Personal Information</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Personal Information</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
                     { label: "Full Name", value: `${student.firstName} ${student.lastName}`, icon: User },
@@ -326,7 +326,7 @@ export default function StudentDetailPage() {
               {/* Guardian & Quick Stats */}
               <div className="space-y-4">
                 <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                  <h3 className="text-white font-semibold text-[15px] mb-4">Guardian / Parent</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4">Guardian / Parent</h3>
                   <div className="space-y-3">
                     {student.guardians && student.guardians.length > 0 ? (
                       student.guardians.slice(0, 1).map((g, i) => (
@@ -374,7 +374,7 @@ export default function StudentDetailPage() {
 
                 {/* Quick Stats */}
                 <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                  <h3 className="text-white font-semibold text-[15px] mb-4">Academic Summary</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4">Academic Summary</h3>
                   <div className="space-y-3">
                     {[
                       { label: "Attendance Rate", value: `${attendanceRate}%`, icon: ClipboardCheck, color: "text-emerald-400" },
@@ -399,7 +399,7 @@ export default function StudentDetailPage() {
 
             {/* Recent Activity — Grades */}
             <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-              <h3 className="text-white font-semibold text-[15px] mb-5 flex items-center gap-2">
+              <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5 flex items-center gap-2">
                 <Activity className="w-4 h-4 text-[#64748b]" /> Recent Activity
               </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -476,7 +476,7 @@ export default function StudentDetailPage() {
 
             {/* Quick Actions */}
             <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-              <h3 className="text-white font-semibold text-[15px] mb-4">Quick Actions</h3>
+              <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4">Quick Actions</h3>
               <div className="flex flex-wrap gap-3">
                 <button onClick={() => setShowMessageModal(true)} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[13px] font-medium hover:bg-blue-500/15 transition">
                   <MessageSquare className="w-4 h-4" /> Send Message
@@ -493,7 +493,7 @@ export default function StudentDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Discipline Records */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                <h3 className="text-white font-semibold text-[15px] mb-5">Discipline Records</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Discipline Records</h3>
                 {!student.disciplineRecords || student.disciplineRecords.length === 0 ? (
                   <div className="text-center py-8">
                     <CheckCircle2 className="w-8 h-8 text-[#94a3b8] mx-auto mb-2" />
@@ -525,7 +525,7 @@ export default function StudentDetailPage() {
 
               {/* Hostel Information */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                <h3 className="text-white font-semibold text-[15px] mb-5">Hostel Information</h3>
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Hostel Information</h3>
                 {!student.hostels || student.hostels.length === 0 ? (
                   <div className="text-center py-8">
                     <School className="w-8 h-8 text-[#94a3b8] mx-auto mb-2" />
@@ -562,7 +562,7 @@ export default function StudentDetailPage() {
 
             {/* Transport Information */}
             <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-              <h3 className="text-white font-semibold text-[15px] mb-5">Transport Information</h3>
+              <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Transport Information</h3>
               <div className="text-center py-8">
                 <MapPin className="w-8 h-8 text-[#94a3b8] mx-auto mb-2" />
                 <p className="text-[#94a3b8] text-[13px]">No transport information available</p>
@@ -576,7 +576,7 @@ export default function StudentDetailPage() {
               {/* Bar Chart */}
               {gradeRows.length > 0 && (
                 <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                  <h3 className="text-white font-semibold text-[15px] mb-5">Subject Performance</h3>
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Subject Performance</h3>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData} barGap={4}>
@@ -857,7 +857,7 @@ export default function StudentDetailPage() {
             <div className="space-y-4">
               {/* Medical Info */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
-                <h3 className="text-white font-semibold text-[15px] mb-5 flex items-center gap-2">
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5 flex items-center gap-2">
                   <Heart className="w-4 h-4 text-[#64748b]" /> Medical Information
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -885,7 +885,7 @@ export default function StudentDetailPage() {
               {/* Clinic Visit History */}
               <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden">
                 <div className="p-6 border-b border-[#e2e8f0]">
-                  <h3 className="text-white font-semibold text-[15px] flex items-center gap-2">
+                  <h3 className="text-[#1a1a2e] font-semibold text-[15px] flex items-center gap-2">
                     <Stethoscope className="w-4 h-4 text-[#64748b]" /> Clinic Visit History
                   </h3>
                 </div>
@@ -927,7 +927,7 @@ export default function StudentDetailPage() {
           {activeTab === "documents" && (
             <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-[15px] flex items-center gap-2">
+                <h3 className="text-[#1a1a2e] font-semibold text-[15px] flex items-center gap-2">
                   <FileText className="w-4 h-4 text-[#64748b]" /> Documents
                 </h3>
                 {canUploadDocs && (

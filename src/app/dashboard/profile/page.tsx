@@ -151,10 +151,10 @@ export default function ProfilePage() {
     }
     setChangingPassword(true);
     try {
-      const res = await fetch("/api/users", {
-        method: "PUT",
+      const res = await fetch("/api/auth/change-password", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userId, password: passwordData.newPassword }),
+        body: JSON.stringify({ currentPassword: passwordData.currentPassword, newPassword: passwordData.newPassword }),
       });
       if (res.ok) {
         toast.success("Password changed successfully");

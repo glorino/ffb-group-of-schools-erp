@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI"]);
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
     if (authResult.error) return authResult.error;
     const { session } = authResult;
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -96,7 +96,7 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT", "ALUMNI"]);
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL"]);
     if (authResult.error) return authResult.error;
 
     const { searchParams } = new URL(request.url);
