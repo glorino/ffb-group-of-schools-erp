@@ -44,7 +44,7 @@ export default function ActivityLogPage() {
 
   return (
     <div className="space-y-6">
-      <div className="mx-8 mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
+      <div className="mx-10 mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
             <Activity className="w-6 h-6" />

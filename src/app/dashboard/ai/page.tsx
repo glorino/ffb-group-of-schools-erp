@@ -360,7 +360,7 @@ export default function AIPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="dashboard-card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mx-8 mt-8 p-8"
+        className="dashboard-card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mx-10 mt-8 p-8"
         style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
       >
         <div className="section-header">
