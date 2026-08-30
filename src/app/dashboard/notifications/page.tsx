@@ -154,7 +154,7 @@ export default function NotificationsPage() {
     <div className="space-y-6">
       <Breadcrumb items={[{ label: "Notifications" }]} />
 
-      <div className="mt-8 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
+      <div className="mt-8 mx-4 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
         <div>
           <h1 className="text-2xl font-bold text-white">Notifications</h1>
           <p className="text-white/70 text-[13px]">

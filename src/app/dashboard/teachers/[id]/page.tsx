@@ -158,7 +158,7 @@ export default function TeacherDetailPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 p-8 shadow-sm"
+        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8 shadow-sm"
         style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">

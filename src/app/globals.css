@@ -826,7 +826,7 @@ select optgroup {
 
 /* Dashboard main content padding */
 .dashboard-main main {
-  padding: 24px 40px 40px 40px;
+  padding: 24px 48px 40px 48px;
 }
 
 /* Dashboard card base styling */
