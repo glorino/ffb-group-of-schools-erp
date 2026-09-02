@@ -1314,9 +1314,13 @@ model Payroll {
   basicSalary Float
   allowances  Float?
   deductions  Float?
+  bonus       Float?
   netSalary   Float
+  notes       String?
   status      String    @default("pending")
   paidAt      DateTime?
+  payslipSent Boolean   @default(false)
+  payslipSentAt DateTime?
   createdAt   DateTime  @default(now())
 
   teacher Teacher @relation(fields: [teacherId], references: [id])

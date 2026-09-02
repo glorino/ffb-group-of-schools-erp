@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/school-config";
-import { Wallet, Plus, Search, Download, CheckCircle, Clock, Users, X, Loader2 } from "lucide-react";
+import { Wallet, Plus, Search, Download, CheckCircle, Clock, Users, X, Loader2, Zap, Mail, CheckCheck } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
 
 interface PayrollEntry {
-  id: string; teacherId: string; month: string; year: number; basicSalary: number; allowances: number; deductions: number; netSalary: number; status: string; paidAt: string | null;
-  teacher: { id: string; firstName: string; lastName: string; employeeId: string };
+  id: string; teacherId: string; month: string; year: number; basicSalary: number; allowances: number; deductions: number; bonus: number; netSalary: number; status: string; paidAt: string | null; payslipSent: boolean; payslipSentAt: string | null;
+  teacher: { id: string; firstName: string; lastName: string; employeeId: string; email: string };
 }
 interface PayrollStats { totalNet: number; totalDeductions: number; paidCount: number; pendingCount: number; total: number; }
 
@@ -38,16 +38,23 @@ export default function PayrollPage() {
   const [currentYear, setCurrentYear] = useState(String(new Date().getFullYear()));
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [sendingAll, setSendingAll] = useState(false);
+  const [sendingId, setSendingId] = useState<string | null>(null);
   const [teachers, setTeachers] = useState<{ id: string; firstName: string; lastName: string; employeeId: string }[]>([]);
   const [form, setForm] = useState({ teacherId: "", basicSalary: "", allowances: "", deductions: "" });
 
-  useEffect(() => {
-    setLoading(true);
+  const fetchPayroll = () => {
     fetch(`/api/payroll?month=${currentMonth}&year=${currentYear}`)
       .then(r => r.json())
       .then(d => { setPayrolls(d.payrolls || []); setStats(d.stats || null); })
-      .catch(() => { setPayrolls([]); toast.error("Failed to load payroll"); })
-      .finally(() => setLoading(false));
+      .catch(() => { setPayrolls([]); toast.error("Failed to load payroll"); });
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    fetchPayroll();
+    setTimeout(() => setLoading(false), 300);
   }, [currentMonth, currentYear]);
 
   useEffect(() => { fetch("/api/teachers?limit=100").then(r => r.json()).then(d => setTeachers(d.teachers || [])).catch(() => {}); }, []);
@@ -63,7 +70,7 @@ export default function PayrollPage() {
       if (!res.ok) throw new Error(data.error || "Failed to create");
       setShowModal(false); setForm({ teacherId: "", basicSalary: "", allowances: "", deductions: "" });
       toast.success("Payroll entry created");
-      fetch(`/api/payroll?month=${currentMonth}&year=${currentYear}`).then(r => r.json()).then(d => { setPayrolls(d.payrolls || []); setStats(d.stats || null); });
+      fetchPayroll();
     } catch (err: any) { toast.error(err.message); } finally { setSubmitting(false); }
   };
 
@@ -74,6 +81,55 @@ export default function PayrollPage() {
       setPayrolls(prev => prev.map(p => p.id === id ? { ...p, status: "paid", paidAt: new Date().toISOString() } : p));
       toast.success("Marked as paid");
     } catch { toast.error("Failed to mark as paid"); }
+  };
+
+  const handleAutoGenerate = async () => {
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/payroll/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ month: currentMonth, year: currentYear }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to generate");
+      toast.success(data.message);
+      fetchPayroll();
+    } catch (err: any) { toast.error(err.message); } finally { setGenerating(false); }
+  };
+
+  const handleSendPayslip = async (payrollId: string) => {
+    setSendingId(payrollId);
+    try {
+      const res = await fetch("/api/payroll/send-payslips", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ payrollIds: [payrollId] }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send");
+      if (data.sent > 0) {
+        toast.success("Payslip sent successfully");
+        setPayrolls(prev => prev.map(p => p.id === payrollId ? { ...p, payslipSent: true, payslipSentAt: new Date().toISOString() } : p));
+      } else {
+        toast.error(data.errors?.[0] || "Failed to send");
+      }
+    } catch (err: any) { toast.error(err.message); } finally { setSendingId(null); }
+  };
+
+  const handleSendAll = async () => {
+    setSendingAll(true);
+    try {
+      const res = await fetch("/api/payroll/send-payslips", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ month: currentMonth, year: currentYear }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send");
+      toast.success(data.message);
+      fetchPayroll();
+    } catch (err: any) { toast.error(err.message); } finally { setSendingAll(false); }
   };
 
   const fmt = (n: number) => formatCurrency(n);
@@ -96,8 +152,16 @@ export default function PayrollPage() {
             <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", display: "flex", alignItems: "center", gap: "12px" }}><Wallet style={{ width: "28px", height: "28px" }} /> Payroll Management</h1>
             <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Manage teacher salaries, allowances, deductions, and payments</p>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <button onClick={() => { downloadCSV(filtered.map(p => ({ Name: `${p.teacher.firstName} ${p.teacher.lastName}`, "Employee ID": p.teacher.employeeId, Month: monthLabel, "Basic Salary": p.basicSalary, Allowances: p.allowances, Deductions: p.deductions, "Net Pay": p.netSalary, Status: p.status })), `payroll_${monthLabel}`); toast.success("Exported successfully"); }} style={{ padding: "10px 20px", borderRadius: "12px", border: "1.5px solid rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.1)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            <button onClick={handleAutoGenerate} disabled={generating} style={{ padding: "10px 20px", borderRadius: "12px", border: "1.5px solid rgba(255,255,255,0.25)", background: generating ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.15)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: generating ? "not-allowed" : "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s", opacity: generating ? 0.6 : 1 }} onMouseEnter={(e) => { if (!generating) e.currentTarget.style.background = "rgba(255,255,255,0.25)"; }} onMouseLeave={(e) => { if (!generating) e.currentTarget.style.background = "rgba(255,255,255,0.15)"; }}>
+              {generating ? <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> : <Zap style={{ width: "16px", height: "16px" }} />}
+              {generating ? "Generating..." : "Auto-Generate"}
+            </button>
+            <button onClick={handleSendAll} disabled={sendingAll || filtered.length === 0} style={{ padding: "10px 20px", borderRadius: "12px", border: "1.5px solid rgba(255,255,255,0.25)", background: sendingAll ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.15)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: sendingAll || filtered.length === 0 ? "not-allowed" : "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s", opacity: sendingAll || filtered.length === 0 ? 0.6 : 1 }} onMouseEnter={(e) => { if (!sendingAll && filtered.length > 0) e.currentTarget.style.background = "rgba(255,255,255,0.25)"; }} onMouseLeave={(e) => { if (!sendingAll && filtered.length > 0) e.currentTarget.style.background = "rgba(255,255,255,0.15)"; }}>
+              {sendingAll ? <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> : <Mail style={{ width: "16px", height: "16px" }} />}
+              {sendingAll ? "Sending..." : "Send All Payslips"}
+            </button>
+            <button onClick={() => { downloadCSV(filtered.map(p => ({ Name: `${p.teacher.firstName} ${p.teacher.lastName}`, "Employee ID": p.teacher.employeeId, Month: monthLabel, "Basic Salary": p.basicSalary, Allowances: p.allowances, Deductions: p.deductions, "Net Pay": p.netSalary, Status: p.status, "Payslip Sent": p.payslipSent ? "Yes" : "No" })), `payroll_${monthLabel}`); toast.success("Exported successfully"); }} style={{ padding: "10px 20px", borderRadius: "12px", border: "1.5px solid rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.1)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}>
               <Download style={{ width: "16px", height: "16px" }} /> Export
             </button>
             <button onClick={() => setShowModal(true)} style={{ padding: "10px 20px", borderRadius: "12px", border: "1.5px solid rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.1)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}>
@@ -141,13 +205,13 @@ export default function PayrollPage() {
         </div>
 
         {loading ? (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}><Loader2 style={{ width: "24px", height: "24px", color: "#0055ff" }} className="animate-spin" /></div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}><Loader2 style={{ width: "24px", height: "24px", color: "#0055ff", animation: "spin 1s linear infinite" }} /></div>
         ) : filtered.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "80px 0" }}><Wallet style={{ width: "48px", height: "48px", color: "#cbd5e1", margin: "0 auto 16px" }} /><p style={{ margin: 0, fontSize: "14px", color: "#94a3b8" }}>No payroll entries for this period</p></div>
+          <div style={{ textAlign: "center", padding: "80px 0" }}><Wallet style={{ width: "48px", height: "48px", color: "#cbd5e1", margin: "0 auto 16px" }} /><p style={{ margin: 0, fontSize: "14px", color: "#94a3b8" }}>No payroll entries for this period</p><p style={{ margin: "8px 0 0", fontSize: "13px", color: "#94a3b8" }}>Click &quot;Auto-Generate&quot; to create payroll for all active staff</p></div>
         ) : (
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead><tr>{["Staff", "Basic Salary", "Allowances", "Deductions", "Net Pay", "Status", "Actions"].map((h, i) => (<th key={h} style={{ padding: "12px 20px", textAlign: i === 0 ? "left" : "right", fontSize: "11px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "2px solid #f1f5f9" }}>{h}</th>))}</tr></thead>
+              <thead><tr>{["Staff", "Basic Salary", "Allowances", "Deductions", "Net Pay", "Status", "Payslip", "Actions"].map((h, i) => (<th key={h} style={{ padding: "12px 20px", textAlign: i === 0 ? "left" : "right", fontSize: "11px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "2px solid #f1f5f9" }}>{h}</th>))}</tr></thead>
               <tbody>
                 {filtered.map((p, idx) => (
                   <tr key={p.id} style={{ borderBottom: "1px solid #f1f5f9", transition: "background 0.1s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
@@ -169,6 +233,16 @@ export default function PayrollPage() {
                     <td style={{ padding: "14px 20px", textAlign: "center" }}>
                       <span style={{ padding: "3px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 600, background: p.status === "paid" ? "rgba(16,185,129,0.1)" : "rgba(245,158,11,0.1)", color: p.status === "paid" ? "#16a34a" : "#d97706" }}>{p.status}</span>
                     </td>
+                    <td style={{ padding: "14px 20px", textAlign: "center" }}>
+                      {p.payslipSent ? (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "3px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 600, background: "rgba(16,185,129,0.1)", color: "#16a34a" }}><CheckCheck style={{ width: "12px", height: "12px" }} /> Sent</span>
+                      ) : (
+                        <button onClick={() => handleSendPayslip(p.id)} disabled={sendingId === p.id} style={{ padding: "5px 12px", borderRadius: "8px", border: "none", background: "rgba(0,85,255,0.1)", color: "#0055ff", fontSize: "11px", fontWeight: 600, cursor: sendingId === p.id ? "not-allowed" : "pointer", display: "inline-flex", alignItems: "center", gap: "4px", transition: "all 0.15s", opacity: sendingId === p.id ? 0.6 : 1 }}>
+                          {sendingId === p.id ? <Loader2 style={{ width: "12px", height: "12px", animation: "spin 1s linear infinite" }} /> : <Mail style={{ width: "12px", height: "12px" }} />}
+                          Send
+                        </button>
+                      )}
+                    </td>
                     <td style={{ padding: "14px 20px", textAlign: "right" }}>
                       {p.status === "pending" && (
                         <button onClick={() => handleMarkPaid(p.id)} style={{ padding: "5px 12px", borderRadius: "8px", border: "none", background: "rgba(16,185,129,0.1)", color: "#16a34a", fontSize: "11px", fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.1)")}>
@@ -189,7 +263,6 @@ export default function PayrollPage() {
         <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
           <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} onClick={() => setShowModal(false)} />
           <div style={{ position: "relative", width: "100%", maxWidth: "520px", background: "#ffffff", borderRadius: "20px", boxShadow: "0 25px 60px rgba(0,0,0,0.2)", overflow: "hidden" }}>
-            {/* Modal Gradient Header */}
             <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "24px 28px", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)" }} />
               <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -228,13 +301,15 @@ export default function PayrollPage() {
               <div style={{ display: "flex", gap: "10px", paddingTop: "16px", borderTop: "1px solid #f1f5f9" }}>
                 <button onClick={() => setShowModal(false)} style={{ flex: 1, padding: "10px 20px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", color: "#475569", fontSize: "13px", fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f1f5f9")} onMouseLeave={(e) => (e.currentTarget.style.background = "#f8fafc")}>Cancel</button>
                 <button onClick={handleCreate} disabled={submitting} style={{ ...btnStyle("#0055ff", submitting), flex: 1, justifyContent: "center" }}>
-                  {submitting && <Loader2 style={{ width: "16px", height: "16px" }} className="animate-spin" />} Create Entry
+                  {submitting && <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} />} Create Entry
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
