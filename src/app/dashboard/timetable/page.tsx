@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
-  Clock,
   Plus,
   Trash2,
   GripVertical,
@@ -34,57 +32,64 @@ interface TimetableEntry {
   teacher: { id: string; firstName: string; lastName: string };
 }
 
+const inputStyle: React.CSSProperties = { width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1.5px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box", background: "#f8fafc", transition: "border-color 0.2s, box-shadow 0.2s" };
+const inputFocus = (e: React.FocusEvent<HTMLSelectElement | HTMLInputElement>) => { e.currentTarget.style.borderColor = "#0055ff"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,85,255,0.1)"; e.currentTarget.style.background = "#ffffff"; };
+const inputBlur = (e: React.FocusEvent<HTMLSelectElement | HTMLInputElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "#f8fafc"; };
+const labelStyle: React.CSSProperties = { display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" };
+const modalOverlay: React.CSSProperties = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" };
+const modalCard: React.CSSProperties = { background: "#ffffff", borderRadius: "24px", width: "100%", maxWidth: "520px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 25px 80px rgba(0,0,0,0.25)" };
+const modalGradient: React.CSSProperties = { padding: "28px 32px 24px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "24px 24px 0 0", position: "relative", overflow: "hidden" };
+
 function ReadOnlyTimetable({ entries, loading }: { entries: TimetableEntry[]; loading: boolean }) {
-  const getEntry = (day: number, time: string) =>
-    entries.find(e => e.dayOfWeek === day && e.startTime === time);
+  const getEntry = (day: number, time: string) => entries.find(e => e.dayOfWeek === day && e.startTime === time);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 text-[#94a3b8] animate-spin" />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "60px 0" }}>
+        <Loader2 style={{ width: "24px", height: "24px", color: "#94a3b8", animation: "spin 1s linear infinite" }} />
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr>
-            <th className="p-2 text-left text-[#64748b] text-[11px] font-medium w-[90px]">Time</th>
-            {dayLabels.map((day, i) => (
-              <th key={day} className="p-2 text-center text-[#475569] text-[12px] font-semibold">{day}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {timeSlots.map((time, ti) => (
-            <tr key={time} className="border-t border-[#e2e8f0]">
-              <td className="p-2 text-[#94a3b8] text-[11px] font-medium whitespace-nowrap">{time}</td>
-              {dayLabels.map((_, di) => {
-                const entry = getEntry(di + 1, time);
-                return (
-                  <td key={di} className="p-1.5">
-                    <div className={`min-h-[52px] rounded-lg p-2 flex items-center justify-center text-center ${
-                      entry ? "bg-[#f8fafc] border border-[#e2e8f0]" : "bg-[#f8fafc]"
-                    }`}>
-                      {entry ? (
-                        <div>
-                          <p className="text-[var(--accent)] text-[11px] font-bold leading-tight">{entry.subject || "Lesson"}</p>
-                          <p className="text-[#64748b] text-[9px] mt-0.5">{entry.teacher.firstName} {entry.teacher.lastName[0]}.</p>
-                          {entry.room && <p className="text-[#94a3b8] text-[8px]">{entry.room}</p>}
-                        </div>
-                      ) : (
-                        <span className="text-[#94a3b8] text-[10px]">—</span>
-                      )}
-                    </div>
-                  </td>
-                );
-              })}
+    <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+              <th style={{ padding: "14px 20px", fontSize: "11px", fontWeight: 700, color: "#94a3b8", textAlign: "left", textTransform: "uppercase", letterSpacing: "0.05em", width: "90px" }}>Time</th>
+              {dayLabels.map((day) => (
+                <th key={day} style={{ padding: "14px 16px", fontSize: "12px", fontWeight: 700, color: "#475569", textAlign: "center", textTransform: "uppercase", letterSpacing: "0.03em" }}>{day}</th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {timeSlots.map((time) => (
+              <tr key={time} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                <td style={{ padding: "12px 20px", fontSize: "12px", fontWeight: 600, color: "#94a3b8", whiteSpace: "nowrap" }}>{time}</td>
+                {dayLabels.map((_, di) => {
+                  const entry = getEntry(di + 1, time);
+                  return (
+                    <td key={di} style={{ padding: "6px" }}>
+                      <div style={{ minHeight: "56px", borderRadius: "10px", padding: "10px 8px", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", background: entry ? "#f8fafc" : "#fafbfc", border: entry ? "1px solid #e2e8f0" : "1px solid transparent" }}>
+                        {entry ? (
+                          <div>
+                            <p style={{ margin: 0, fontSize: "11px", fontWeight: 700, color: "#10b981", lineHeight: 1.3 }}>{entry.subject || "Lesson"}</p>
+                            <p style={{ margin: "3px 0 0", fontSize: "9px", color: "#94a3b8" }}>{entry.teacher.firstName} {entry.teacher.lastName[0]}.</p>
+                            {entry.room && <p style={{ margin: "2px 0 0", fontSize: "8px", color: "#cbd5e1" }}>{entry.room}</p>}
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: "10px", color: "#e2e8f0" }}>&mdash;</span>
+                        )}
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -101,15 +106,7 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
   const [submitting, setSubmitting] = useState(false);
   const [detailSlot, setDetailSlot] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({
-    dayOfWeek: "1",
-    startTime: "8:00 AM",
-    endTime: "9:00 AM",
-    teacherId: "",
-    room: "",
-    subject: "",
-    type: "lesson",
-  });
+  const [form, setForm] = useState({ dayOfWeek: "1", startTime: "8:00 AM", endTime: "9:00 AM", teacherId: "", room: "", subject: "", type: "lesson" });
 
   useEffect(() => {
     if (!selectedClass) return;
@@ -121,25 +118,20 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
       .finally(() => setLoading(false));
   }, [selectedClass, setEntries]);
 
-  const getEntry = (day: number, time: string) =>
-    entries.find(e => e.dayOfWeek === day && e.startTime === time);
+  const getEntry = (day: number, time: string) => entries.find(e => e.dayOfWeek === day && e.startTime === time);
 
   const stats = [
-    { label: "Total Slots", value: entries.length, icon: BookOpen, color: "#0055ff" },
-    { label: "Teachers Assigned", value: new Set(entries.map(e => e.teacherId)).size, icon: Users, color: "#28ff9c" },
-    { label: "Rooms Used", value: new Set(entries.filter(e => e.room).map(e => e.room)).size, icon: Calendar, color: "#a855f7" },
-    { label: "Days Covered", value: new Set(entries.map(e => e.dayOfWeek)).size, icon: AlertCircle, color: "#f97316" },
+    { label: "Total Slots", value: entries.length, icon: BookOpen, bg: "linear-gradient(135deg, #0055ff, #0033cc)" },
+    { label: "Teachers Assigned", value: new Set(entries.map(e => e.teacherId)).size, icon: Users, bg: "linear-gradient(135deg, #10b981, #059669)" },
+    { label: "Rooms Used", value: new Set(entries.filter(e => e.room).map(e => e.room)).size, icon: Calendar, bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
+    { label: "Days Covered", value: new Set(entries.map(e => e.dayOfWeek)).size, icon: AlertCircle, bg: "linear-gradient(135deg, #f59e0b, #d97706)" },
   ];
 
   const handleCreate = async () => {
     if (!form.teacherId) { toast.error("Please select a teacher"); return; }
     setSubmitting(true);
     try {
-      const res = await fetch("/api/timetable", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ classId: selectedClass, ...form, dayOfWeek: parseInt(form.dayOfWeek) }),
-      });
+      const res = await fetch("/api/timetable", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ classId: selectedClass, ...form, dayOfWeek: parseInt(form.dayOfWeek) }) });
       if (!res.ok) throw new Error("Failed");
       toast.success("Timetable slot created");
       setShowModal(false);
@@ -157,242 +149,225 @@ function AdminTimetable({ entries, setEntries, classes, teachers, selectedClass,
     } catch { toast.error("Failed to delete"); }
   };
 
+  const typeColors: Record<string, { bg: string; color: string }> = {
+    lesson: { bg: "#eff6ff", color: "#2563eb" },
+    break: { bg: "#fef3c7", color: "#d97706" },
+    lab: { bg: "#f3e8ff", color: "#7c3aed" },
+    assembly: { bg: "#f1f5f9", color: "#64748b" },
+  };
+
   return (
     <>
-      <div className="flex items-center justify-between gap-4 mb-4 relative z-30">
-        <select
-          value={selectedClass}
-          onChange={(e) => setSelectedClass(e.target.value)}
-          className="px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-          style={{ colorScheme: "light" }}
-        >
-          {classes.map(c => (
-            <option key={c.id} value={c.id} style={{ background: "#ffffff", color: "#1a1a2e" }}>{c.displayName || c.name}</option>
-          ))}
+      {/* Controls Bar */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", marginBottom: "24px", flexWrap: "wrap" }}>
+        <select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} style={{ ...inputStyle, width: "auto", minWidth: "200px", cursor: "pointer", colorScheme: "light" }} onFocus={inputFocus} onBlur={inputBlur}>
+          {classes.map(c => <option key={c.id} value={c.id}>{c.displayName || c.name}</option>)}
         </select>
-        <button
-          onClick={() => setShowModal(true)}
-          disabled={!selectedClass}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 shadow-lg shadow-[var(--primary)]/25 relative z-30"
-        >
-          <Plus className="w-4 h-4" />
-          Add Slot
+        <button onClick={() => setShowModal(true)} disabled={!selectedClass} style={{ padding: "10px 22px", borderRadius: "12px", border: "none", background: !selectedClass ? "#93c5fd" : "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: !selectedClass ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: !selectedClass ? "none" : "0 4px 14px rgba(0,85,255,0.3)", transition: "all 0.15s" }}>
+          <Plus style={{ width: "16px", height: "16px" }} /> Add Slot
         </button>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "28px" }}>
         {stats.map((stat, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-            className="bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-4">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
-                <p className="text-[28px] font-bold text-[#1a1a2e]">{stat.value}</p>
-              </div>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${stat.color}15` }}>
-                <stat.icon className="w-5 h-5" style={{ color: stat.color }} />
-              </div>
+          <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", transition: "box-shadow 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)")} onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)")}>
+            <div>
+              <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, color: "#64748b" }}>{stat.label}</p>
+              <p style={{ margin: "6px 0 0", fontSize: "28px", fontWeight: 800, color: "#0f172a" }}>{stat.value}</p>
             </div>
-          </motion.div>
+            <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: stat.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <stat.icon style={{ width: "22px", height: "22px", color: "#ffffff" }} />
+            </div>
+          </div>
         ))}
       </div>
 
-      <p className="text-[#1a1a2e] text-[12px] mb-3 font-medium uppercase tracking-wider">Weekly Timetable</p>
+      {/* Weekly Timetable Label */}
+      <p style={{ margin: "0 0 12px", fontSize: "12px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em" }}>Weekly Timetable</p>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 text-[#94a3b8] animate-spin" />
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th className="p-2 text-left text-[#64748b] text-[11px] font-medium w-[90px]">Time</th>
-                {dayLabels.map((day) => (
-                  <th key={day} className="p-2 text-center text-[#475569] text-[12px] font-semibold">{day}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {timeSlots.map((time) => (
-                <tr key={time} className="border-t border-[#e2e8f0]">
-                  <td className="p-2 text-[#94a3b8] text-[11px] font-medium whitespace-nowrap">{time}</td>
-                  {dayLabels.map((_, di) => {
-                    const entry = getEntry(di + 1, time);
-                    return (
-                      <td key={di} className="p-1.5">
-                        <div
-                          onClick={() => entry && setDetailSlot(entry)}
-                          className={`min-h-[52px] rounded-lg p-2 flex items-center justify-center text-center transition-all ${
-                            entry
-                              ? "bg-[#f8fafc] border border-[#e2e8f0] hover:bg-[#f1f5f9] cursor-pointer group relative"
-                              : "bg-[#f8fafc] hover:bg-[#f8fafc] cursor-pointer"
-                          }`}
-                        >
-                          {entry ? (
-                            <>
-                              <div>
-                                <p className="text-[#1a1a2e] text-[13px] font-medium">{entry.teacher.firstName} {entry.teacher.lastName}</p>
-                                <p className="text-[#94a3b8] text-[9px]">{entry.room || "—"}</p>
-                              </div>
-                              <button
-                                onClick={(e) => { e.stopPropagation(); handleDelete(entry.id); }}
-                                className="absolute top-1 right-1 p-1 rounded-md bg-[#fee2e2] text-[#dc2626] opacity-0 group-hover:opacity-100 hover:bg-red-500/30 transition"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
-                            </>
-                          ) : (
-                            <GripVertical className="w-4 h-4 text-[#94a3b8]" />
-                          )}
-                        </div>
-                      </td>
-                    );
-                  })}
+      {/* Timetable Grid */}
+      <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+        {loading ? (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "60px 0" }}>
+            <Loader2 style={{ width: "24px", height: "24px", color: "#94a3b8", animation: "spin 1s linear infinite" }} />
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                  <th style={{ padding: "14px 20px", fontSize: "11px", fontWeight: 700, color: "#94a3b8", textAlign: "left", textTransform: "uppercase", letterSpacing: "0.05em", width: "90px" }}>Time</th>
+                  {dayLabels.map((day) => (
+                    <th key={day} style={{ padding: "14px 16px", fontSize: "12px", fontWeight: 700, color: "#475569", textAlign: "center", textTransform: "uppercase", letterSpacing: "0.03em" }}>{day}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {timeSlots.map((time) => (
+                  <tr key={time} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    <td style={{ padding: "12px 20px", fontSize: "12px", fontWeight: 600, color: "#94a3b8", whiteSpace: "nowrap" }}>{time}</td>
+                    {dayLabels.map((_, di) => {
+                      const entry = getEntry(di + 1, time);
+                      return (
+                        <td key={di} style={{ padding: "6px" }}>
+                          <div
+                            onClick={() => entry && setDetailSlot(entry)}
+                            style={{ minHeight: "60px", borderRadius: "10px", padding: "10px 8px", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", cursor: "pointer", transition: "all 0.15s", background: entry ? "#f8fafc" : "#fafbfc", border: entry ? "1px solid #e2e8f0" : "1px dashed #e2e8f0", position: "relative" }}
+                            onMouseEnter={(e) => { if (entry) e.currentTarget.style.background = "#f1f5f9"; }}
+                            onMouseLeave={(e) => { if (entry) e.currentTarget.style.background = "#f8fafc"; }}
+                          >
+                            {entry ? (
+                              <>
+                                <div>
+                                  <p style={{ margin: 0, fontSize: "12px", fontWeight: 700, color: "#0f172a", lineHeight: 1.3 }}>{entry.teacher.firstName} {entry.teacher.lastName}</p>
+                                  {entry.room && <p style={{ margin: "3px 0 0", fontSize: "9px", color: "#94a3b8" }}>{entry.room}</p>}
+                                </div>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleDelete(entry.id); }}
+                                  style={{ position: "absolute", top: "4px", right: "4px", width: "20px", height: "20px", borderRadius: "6px", border: "none", background: "#fef2f2", color: "#dc2626", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", opacity: 0, transition: "opacity 0.15s" }}
+                                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+                                >
+                                  <Trash2 style={{ width: "11px", height: "11px" }} />
+                                </button>
+                              </>
+                            ) : (
+                              <GripVertical style={{ width: "16px", height: "16px", color: "#e2e8f0" }} />
+                            )}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Add Slot Modal */}
+      {showModal && (
+        <div style={modalOverlay} onClick={() => setShowModal(false)}>
+          <div style={modalCard} onClick={(e) => e.stopPropagation()}>
+            <div style={modalGradient}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>Add Timetable Slot</h3>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>Schedule a class for this week</p>
+                </div>
+                <button onClick={() => setShowModal(false)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <X style={{ width: "18px", height: "18px" }} />
+                </button>
+              </div>
+            </div>
+            <div style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
+              <div>
+                <label style={labelStyle}>Day of Week</label>
+                <select value={form.dayOfWeek} onChange={e => setForm({ ...form, dayOfWeek: e.target.value })} style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
+                  {dayLabels.map((d, i) => <option key={i} value={i + 1}>{d}</option>)}
+                </select>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label style={labelStyle}>Start Time</label>
+                  <select value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })} style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
+                    {timeSlots.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={labelStyle}>End Time</label>
+                  <select value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })} style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
+                    {timeSlots.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>Teacher <span style={{ color: "#ef4444" }}>*</span></label>
+                <select value={form.teacherId} onChange={e => setForm({ ...form, teacherId: e.target.value })} style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
+                  <option value="">Select Teacher</option>
+                  {teachers.map(t => <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={labelStyle}>Subject</label>
+                <input type="text" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} placeholder="e.g. Mathematics" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label style={labelStyle}>Room</label>
+                  <input type="text" value={form.room} onChange={e => setForm({ ...form, room: e.target.value })} placeholder="e.g. Room 101" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Type</label>
+                  <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
+                    <option value="lesson">Lesson</option>
+                    <option value="break">Break</option>
+                    <option value="lab">Lab</option>
+                    <option value="assembly">Assembly</option>
+                  </select>
+                </div>
+              </div>
+              <div style={{ height: "1px", background: "#f1f5f9" }} />
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                <button onClick={() => setShowModal(false)} style={{ padding: "12px 24px", borderRadius: "12px", border: "1.5px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+                <button onClick={handleCreate} disabled={submitting || !form.teacherId} style={{ padding: "12px 28px", borderRadius: "12px", border: "none", background: submitting || !form.teacherId ? "#93c5fd" : "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: submitting || !form.teacherId ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: submitting || !form.teacherId ? "none" : "0 4px 14px rgba(0,85,255,0.3)" }}>
+                  {submitting && <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />} Add Slot
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
-      <AnimatePresence>
-        {showModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="modal-overlay bg-black/60 backdrop-blur-sm">
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-2xl border border-[#e2e8f0] p-6 w-full max-w-md shadow-2xl">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Timetable Slot</h3>
-                <button onClick={() => setShowModal(false)} className="text-[#94a3b8] hover:text-[#475569]"><X className="w-5 h-5" /></button>
-              </div>
-              <div className="space-y-4">
+      {/* Detail Modal */}
+      {detailSlot && (
+        <div style={modalOverlay} onClick={() => setDetailSlot(null)}>
+          <div style={{ ...modalCard, maxWidth: "480px" }} onClick={(e) => e.stopPropagation()}>
+            <div style={modalGradient}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
                 <div>
-                  <label className="text-[#64748b] text-[12px] mb-1 block">Day of Week</label>
-                  <select value={form.dayOfWeek} onChange={e => setForm({ ...form, dayOfWeek: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    style={{ colorScheme: "light" }}>
-                    {dayLabels.map((d, i) => <option key={i} value={i + 1} style={{ background: "#ffffff", color: "#1a1a2e" }}>{d}</option>)}
-                  </select>
+                  <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>Timetable Slot</h3>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>Class session details</p>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[#64748b] text-[12px] mb-1 block">Start Time</label>
-                    <select value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "light" }}>
-                      {timeSlots.map(t => <option key={t} value={t} style={{ background: "#ffffff", color: "#1a1a2e" }}>{t}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-[#64748b] text-[12px] mb-1 block">End Time</label>
-                    <select value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "light" }}>
-                      {timeSlots.map(t => <option key={t} value={t} style={{ background: "#ffffff", color: "#1a1a2e" }}>{t}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-[#64748b] text-[12px] mb-1 block">Teacher</label>
-                  <select value={form.teacherId} onChange={e => setForm({ ...form, teacherId: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    style={{ colorScheme: "light" }}>
-                    <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select Teacher</option>
-                    {teachers.map(t => <option key={t.id} value={t.id} style={{ background: "#ffffff", color: "#1a1a2e" }}>{t.firstName} {t.lastName}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-[#64748b] text-[12px] mb-1 block">Subject</label>
-                  <input type="text" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })}
-                    placeholder="e.g. Mathematics"
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] focus:outline-none focus:border-[var(--primary)]" />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[#64748b] text-[12px] mb-1 block">Room</label>
-                    <input type="text" value={form.room} onChange={e => setForm({ ...form, room: e.target.value })}
-                      placeholder="e.g. Room 101"
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] focus:outline-none focus:border-[var(--primary)]" />
-                  </div>
-                  <div>
-                    <label className="text-[#64748b] text-[12px] mb-1 block">Type</label>
-                    <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "light" }}>
-                      <option value="lesson" style={{ background: "#ffffff", color: "#1a1a2e" }}>Lesson</option>
-                      <option value="break" style={{ background: "#ffffff", color: "#1a1a2e" }}>Break</option>
-                      <option value="lab" style={{ background: "#ffffff", color: "#1a1a2e" }}>Lab</option>
-                      <option value="assembly" style={{ background: "#ffffff", color: "#1a1a2e" }}>Assembly</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center justify-end gap-3 mt-6">
-                <button onClick={() => setShowModal(false)}
-                  className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">
-                  Cancel
-                </button>
-                <button onClick={handleCreate} disabled={submitting || !form.teacherId}
-                  className="px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-[var(--primary)]/25">
-                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Add Slot
+                <button onClick={() => setDetailSlot(null)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <X style={{ width: "18px", height: "18px" }} />
                 </button>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {detailSlot && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="modal-overlay bg-black/60 backdrop-blur-sm">
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-2xl border border-[#e2e8f0] w-full max-w-lg shadow-2xl" style={{ padding: "28px 32px" }}>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-bold text-[18px]">Timetable Slot Details</h3>
-                <button onClick={() => setDetailSlot(null)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] transition-colors"><X className="w-5 h-5" /></button>
-              </div>
-              <div className="space-y-4">
-                {[
-                  { label: "Day", value: dayLabels[detailSlot.dayOfWeek - 1] },
-                  { label: "Time", value: `${detailSlot.startTime} — ${detailSlot.endTime}` },
-                  { label: "Subject", value: detailSlot.subject || "—" },
-                  { label: "Teacher", value: `${detailSlot.teacher.firstName} ${detailSlot.teacher.lastName}` },
-                  { label: "Class", value: detailSlot.class.displayName || detailSlot.class.name },
-                  { label: "Room", value: detailSlot.room || "—" },
-                ].map((row) => (
-                  <div key={row.label} className="flex justify-between items-center py-2 border-b border-[#f1f5f9]">
-                    <span className="text-[#64748b] text-[13px] font-medium">{row.label}</span>
-                    <span className="text-[#1a1a2e] text-[13px] font-semibold">{row.value}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-[#64748b] text-[13px] font-medium">Type</span>
-                  <span className={`px-3 py-1 rounded-lg text-[11px] font-semibold ${
-                    detailSlot.type === "lesson" ? "bg-[#dbeafe] text-[#2563eb]" :
-                    detailSlot.type === "break" ? "bg-[#fef3c7] text-[#d97706]" :
-                    detailSlot.type === "lab" ? "bg-[#f3e8ff] text-[#7c3aed]" :
-                    "bg-[#f1f5f9] text-[#64748b]"
-                  }`}>{detailSlot.type}</span>
+            </div>
+            <div style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "14px" }}>
+              {[
+                { label: "Day", value: dayLabels[detailSlot.dayOfWeek - 1] },
+                { label: "Time", value: `${detailSlot.startTime} — ${detailSlot.endTime}` },
+                { label: "Subject", value: detailSlot.subject || "—" },
+                { label: "Teacher", value: `${detailSlot.teacher.firstName} ${detailSlot.teacher.lastName}` },
+                { label: "Class", value: detailSlot.class.displayName || detailSlot.class.name },
+                { label: "Room", value: detailSlot.room || "—" },
+              ].map((row) => (
+                <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #f1f5f9" }}>
+                  <span style={{ fontSize: "13px", fontWeight: 500, color: "#64748b" }}>{row.label}</span>
+                  <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{row.value}</span>
                 </div>
+              ))}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0" }}>
+                <span style={{ fontSize: "13px", fontWeight: 500, color: "#64748b" }}>Type</span>
+                <span style={{ padding: "4px 12px", borderRadius: "8px", fontSize: "11px", fontWeight: 600, background: typeColors[detailSlot.type]?.bg || "#f1f5f9", color: typeColors[detailSlot.type]?.color || "#64748b" }}>{detailSlot.type}</span>
               </div>
-              <div className="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-[#e2e8f0]">
-                <button onClick={() => { setDetailSlot(null); handleDelete(detailSlot.id); }}
-                  className="px-6 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-[#dc2626] text-[13px] font-medium hover:bg-[#fee2e2] transition-colors">
-                  Delete
+              <div style={{ height: "1px", background: "#f1f5f9", margin: "4px 0" }} />
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                <button onClick={() => { setDetailSlot(null); handleDelete(detailSlot.id); }} style={{ padding: "12px 24px", borderRadius: "12px", border: "1.5px solid #fecaca", background: "#fef2f2", color: "#dc2626", fontSize: "13px", fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#fee2e2")} onMouseLeave={(e) => (e.currentTarget.style.background = "#fef2f2")}>
+                  Delete Slot
                 </button>
-                <button onClick={() => setDetailSlot(null)}
-                  className="px-6 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all">
+                <button onClick={() => setDetailSlot(null)} style={{ padding: "12px 28px", borderRadius: "12px", border: "none", background: "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 14px rgba(0,85,255,0.3)" }}>
                   Close
                 </button>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -416,11 +391,7 @@ export default function TimetablePage() {
         .then(r => r.json())
         .then(d => {
           const child = d.children?.[0];
-          if (child?.classId) {
-            setSelectedClass(child.classId);
-          } else {
-            setLoading(false);
-          }
+          if (child?.classId) { setSelectedClass(child.classId); } else { setLoading(false); }
         })
         .catch(() => { setLoading(false); });
     } else {
@@ -430,9 +401,7 @@ export default function TimetablePage() {
       ]).then(([classData, teacherData]) => {
         setClasses(classData.classes || classData || []);
         setTeachers(teacherData.teachers || []);
-        if (classData.classes?.length && !selectedClass) {
-          setSelectedClass(classData.classes[0].id);
-        }
+        if (classData.classes?.length && !selectedClass) setSelectedClass(classData.classes[0].id);
       }).catch(() => {});
     }
   }, [isReadOnly, session]);
@@ -450,35 +419,32 @@ export default function TimetablePage() {
   const className = classes.find(c => c.id === selectedClass);
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="mt-8 mx-4 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
-        <div>
-          <h1 className="text-2xl font-bold text-white mb-1">
-            {isReadOnly ? "My Timetable" : "Timetable Management"}
-          </h1>
-          <p className="text-white/70 text-[13px]">
-            {isReadOnly
-              ? `${className?.displayName || className?.name || "Your class"} schedule`
-              : "Schedule classes, assign teachers, and manage rooms"
-            }
-          </p>
-        </div>
-        {isReadOnly && (
-          <div className="px-3 py-1.5 rounded-lg bg-white/10 border border-white/20">
-            <span className="text-white/80 text-[12px]">{className?.displayName || className?.name || "—"}</span>
+    <div style={{ padding: "24px 32px", minHeight: "100vh", background: "#f8fafc" }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "20px", padding: "28px 32px", marginBottom: "28px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.12) 0%, transparent 60%), radial-gradient(circle at 10% 80%, rgba(255,255,255,0.08) 0%, transparent 50%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff" }}>
+              {isReadOnly ? "My Timetable" : "Timetable Management"}
+            </h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>
+              {isReadOnly ? `${className?.displayName || className?.name || "Your class"} schedule` : "Schedule classes, assign teachers, and manage rooms"}
+            </p>
           </div>
-        )}
+          {isReadOnly && (
+            <div style={{ padding: "8px 16px", borderRadius: "10px", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}>
+              <span style={{ fontSize: "13px", fontWeight: 600, color: "#ffffff" }}>{className?.displayName || className?.name || "—"}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {isReadOnly ? (
         <ReadOnlyTimetable entries={entries} loading={loading} />
       ) : (
-        <AdminTimetable
-          entries={entries} setEntries={setEntries}
-          classes={classes} teachers={teachers}
-          selectedClass={selectedClass} setSelectedClass={setSelectedClass}
-        />
+        <AdminTimetable entries={entries} setEntries={setEntries} classes={classes} teachers={teachers} selectedClass={selectedClass} setSelectedClass={setSelectedClass} />
       )}
-    </motion.div>
+    </div>
   );
 }
