@@ -531,3 +531,209 @@ export async function sendApplicationStatusUpdateEmail(
   return sendEmail(toEmails, subject, html);
 }
 
+export async function sendEntranceExamEmail(params: {
+  firstName: string;
+  lastName: string;
+  applicationNumber: string;
+  classAppliedFor: string;
+  email: string;
+  guardianName?: string;
+  guardianEmail?: string;
+  examDate: Date;
+  startTime: string;
+  endTime: string;
+  durationMins: number;
+  examUrl: string;
+}) {
+  const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
+  const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
+  const schoolPhone = process.env.SCHOOL_PHONE || SCHOOL_CONFIG.phone;
+
+  const fullName = `${params.firstName} ${params.lastName}`;
+  const examDateStr = params.examDate.toLocaleDateString("en-NG", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+    <body style="margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;background:#f4f6f9;">
+      <div style="max-width:600px;margin:20px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+        <div style="background:linear-gradient(135deg,#0a2a6e,#0055ff);padding:36px 32px;text-align:center;">
+          <h1 style="margin:0;font-size:22px;font-weight:800;color:#fff;">${schoolName}</h1>
+          <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.8);">Entrance Examination Invitation</p>
+        </div>
+        <div style="padding:32px;">
+          <div style="text-align:center;margin-bottom:28px;">
+            <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#0055ff,#0033cc);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;">📝</div>
+            <h2 style="margin:0;font-size:20px;font-weight:700;color:#0f172a;">Entrance Examination</h2>
+            <p style="margin:6px 0 0;font-size:14px;color:#64748b;">You have been invited to take the entrance examination</p>
+          </div>
+
+          <p style="font-size:14px;color:#374151;line-height:1.7;margin-bottom:20px;">
+            Dear <strong>${fullName}</strong>,
+          </p>
+          <p style="font-size:14px;color:#374151;line-height:1.7;margin-bottom:24px;">
+            Congratulations! Your application (<strong>${params.applicationNumber}</strong>) has been reviewed and you have been invited to take the entrance examination for admission into <strong>${params.classAppliedFor}</strong>.
+          </p>
+
+          <div style="background:#f8fafc;border-radius:12px;padding:20px;margin-bottom:24px;border:1px solid #e2e8f0;">
+            <h3 style="margin:0 0 14px;font-size:14px;font-weight:700;color:#0f172a;">📋 Exam Details</h3>
+            <table style="width:100%;font-size:13px;color:#374151;border-collapse:collapse;">
+              <tr><td style="padding:8px 0;font-weight:600;width:40%;">Date</td><td style="padding:8px 0;">${examDateStr}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;border-top:1px solid #e5e7eb;">Time</td><td style="padding:8px 0;border-top:1px solid #e5e7eb;">${params.startTime} - ${params.endTime}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;border-top:1px solid #e5e7eb;">Duration</td><td style="padding:8px 0;border-top:1px solid #e5e7eb;">${params.durationMins} minutes</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;border-top:1px solid #e5e7eb;">Subjects</td><td style="padding:8px 0;border-top:1px solid #e5e7eb;">Mathematics, English Language, Science</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;border-top:1px solid #e5e7eb;">Format</td><td style="padding:8px 0;border-top:1px solid #e5e7eb;">Multiple Choice Questions (MCQ)</td></tr>
+            </table>
+          </div>
+
+          <div style="background:linear-gradient(135deg,#0a2a6e,#0055ff);border-radius:12px;padding:24px;text-align:center;margin-bottom:24px;">
+            <p style="margin:0 0 8px;font-size:12px;color:rgba(255,255,255,0.8);text-transform:uppercase;letter-spacing:0.05em;">Your Exam Link</p>
+            <a href="${params.examUrl}" style="display:inline-block;background:#fff;color:#0055ff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;transition:all 0.15s;">Start Examination →</a>
+            <p style="margin:10px 0 0;font-size:11px;color:rgba(255,255,255,0.6);">This link is unique to you. Do not share it with anyone.</p>
+          </div>
+
+          <div style="background:#fef3c7;border-radius:12px;padding:16px;margin-bottom:24px;border:1px solid #fbbf24;">
+            <h4 style="margin:0 0 8px;font-size:13px;font-weight:700;color:#92400e;">⚠️ Important Instructions</h4>
+            <ul style="margin:0;padding-left:18px;font-size:12px;color:#92400e;line-height:1.8;">
+              <li>The exam will only be accessible on the scheduled date and time</li>
+              <li>Ensure you have a stable internet connection</li>
+              <li>Use a laptop or desktop computer for the best experience</li>
+              <li>Do not refresh the page during the exam</li>
+              <li>Results will be displayed immediately after submission</li>
+            </ul>
+          </div>
+
+          <p style="font-size:13px;color:#64748b;line-height:1.7;margin-bottom:0;">
+            For enquiries, contact us at <a href="mailto:${schoolEmail}" style="color:#0055ff;">${schoolEmail}</a> or call <strong>${schoolPhone}</strong>.
+          </p>
+        </div>
+        <div style="padding:16px 32px;background:#f8fafc;text-align:center;border-top:1px solid #e5e7eb;">
+          <p style="margin:0;font-size:11px;color:#9ca3af;">&copy; ${new Date().getFullYear()} ${schoolName}. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const recipients = [params.email];
+  if (params.guardianEmail && params.guardianEmail !== params.email) {
+    recipients.push(params.guardianEmail);
+  }
+
+  return sendEmail(
+    recipients,
+    `Entrance Examination Invitation - ${schoolName} (${params.applicationNumber})`,
+    html
+  );
+}
+
+export async function sendEntranceExamResultEmail(params: {
+  firstName: string;
+  lastName: string;
+  applicationNumber: string;
+  classAppliedFor: string;
+  email: string;
+  guardianName?: string;
+  guardianEmail?: string;
+  score: number;
+  totalQuestions: number;
+  passed: boolean;
+  percentage: number;
+}) {
+  const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
+  const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
+  const schoolPhone = process.env.SCHOOL_PHONE || SCHOOL_CONFIG.phone;
+
+  const fullName = `${params.firstName} ${params.lastName}`;
+  const statusColor = params.passed ? "#059669" : "#dc2626";
+  const statusBg = params.passed ? "rgba(5,150,105,0.08)" : "rgba(220,38,38,0.08)";
+  const statusBorder = params.passed ? "rgba(5,150,105,0.2)" : "rgba(220,38,38,0.2)";
+  const statusText = params.passed ? "Congratulations! You have passed." : "We regret to inform you that you did not meet the required score.";
+  const statusEmoji = params.passed ? "🎉" : "📋";
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+    <body style="margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;background:#f4f6f9;">
+      <div style="max-width:600px;margin:20px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+        <div style="background:linear-gradient(135deg,#0a2a6e,#0055ff);padding:36px 32px;text-align:center;">
+          <h1 style="margin:0;font-size:22px;font-weight:800;color:#fff;">${schoolName}</h1>
+          <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.8);">Entrance Examination Results</p>
+        </div>
+        <div style="padding:32px;">
+          <div style="text-align:center;margin-bottom:28px;">
+            <div style="width:64px;height:64px;border-radius:50%;background:${statusBg};display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;border:2px solid ${statusBorder};">${statusEmoji}</div>
+            <h2 style="margin:0;font-size:20px;font-weight:700;color:#0f172a;">Examination Results</h2>
+          </div>
+
+          <p style="font-size:14px;color:#374151;line-height:1.7;margin-bottom:20px;">
+            Dear <strong>${fullName}</strong>,
+          </p>
+          <p style="font-size:14px;color:#374151;line-height:1.7;margin-bottom:24px;">
+            ${statusText}
+          </p>
+
+          <div style="background:${statusBg};border-radius:12px;padding:24px;margin-bottom:24px;border:1px solid ${statusBorder};text-align:center;">
+            <p style="margin:0 0 4px;font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;">Your Score</p>
+            <p style="margin:0;font-size:48px;font-weight:800;color:${statusColor};">${params.percentage}%</p>
+            <p style="margin:8px 0 0;font-size:13px;color:#64748b;">${params.score} out of ${params.totalQuestions} questions</p>
+          </div>
+
+          <div style="background:#f8fafc;border-radius:12px;padding:20px;margin-bottom:24px;border:1px solid #e2e8f0;">
+            <h3 style="margin:0 0 12px;font-size:14px;font-weight:700;color:#0f172a;">📊 Score Breakdown</h3>
+            <table style="width:100%;font-size:13px;color:#374151;border-collapse:collapse;">
+              <tr><td style="padding:8px 0;font-weight:600;">Application Number</td><td style="padding:8px 0;text-align:right;">${params.applicationNumber}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;border-top:1px solid #e5e7eb;">Class Applied For</td><td style="padding:8px 0;text-align:right;border-top:1px solid #e5e7eb;">${params.classAppliedFor}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;border-top:1px solid #e5e7eb;">Correct Answers</td><td style="padding:8px 0;text-align:right;border-top:1px solid #e5e7eb;color:#059669;font-weight:600;">${params.score}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;border-top:1px solid #e5e7eb;">Total Questions</td><td style="padding:8px 0;text-align:right;border-top:1px solid #e5e7eb;">${params.totalQuestions}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;border-top:1px solid #e5e7eb;">Percentage</td><td style="padding:8px 0;text-align:right;border-top:1px solid #e5e7eb;color:${statusColor};font-weight:700;">${params.percentage}%</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;border-top:1px solid #e5e7eb;">Result</td><td style="padding:8px 0;text-align:right;border-top:1px solid #e5e7eb;color:${statusColor};font-weight:700;">${params.passed ? "PASSED" : "NOT PASSED"}</td></tr>
+            </table>
+          </div>
+
+          ${params.passed ? `
+          <div style="background:rgba(5,150,105,0.08);border-radius:12px;padding:16px;margin-bottom:24px;border:1px solid rgba(5,150,105,0.2);">
+            <h4 style="margin:0 0 8px;font-size:13px;font-weight:700;color:#059669;">✅ Next Steps</h4>
+            <ul style="margin:0;padding-left:18px;font-size:12px;color:#059669;line-height:1.8;">
+              <li>Your application will now move to the interview stage</li>
+              <li>You will receive an interview invitation soon</li>
+              <li>Please prepare your original documents for verification</li>
+            </ul>
+          </div>
+          ` : `
+          <div style="background:rgba(220,38,38,0.08);border-radius:12px;padding:16px;margin-bottom:24px;border:1px solid rgba(220,38,38,0.2);">
+            <h4 style="margin:0 0 8px;font-size:13px;font-weight:700;color:#dc2626;">📋 What's Next</h4>
+            <ul style="margin:0;padding-left:18px;font-size:12px;color:#dc2626;line-height:1.8;">
+              <li>Your application will be reviewed by the admissions team</li>
+              <li>You may be contacted for additional information</li>
+              <li>We encourage you to apply again in the future</li>
+            </ul>
+          </div>
+          `}
+
+          <p style="font-size:13px;color:#64748b;line-height:1.7;margin-bottom:0;">
+            For enquiries, contact us at <a href="mailto:${schoolEmail}" style="color:#0055ff;">${schoolEmail}</a> or call <strong>${schoolPhone}</strong>.
+          </p>
+        </div>
+        <div style="padding:16px 32px;background:#f8fafc;text-align:center;border-top:1px solid #e5e7eb;">
+          <p style="margin:0;font-size:11px;color:#9ca3af;">&copy; ${new Date().getFullYear()} ${schoolName}. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const recipients = [params.email];
+  if (params.guardianEmail && params.guardianEmail !== params.email) {
+    recipients.push(params.guardianEmail);
+  }
+
+  return sendEmail(
+    recipients,
+    `Entrance Examination ${params.passed ? "Results - Passed" : "Results"} - ${schoolName} (${params.applicationNumber})`,
+    html
+  );
+}
+

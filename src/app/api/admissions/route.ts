@@ -4,6 +4,7 @@ import { requireAuth } from "@/lib/api-rbac";
 import { AdmissionSchema } from "@/lib/validations";
 import { getDefaultSchoolId } from "@/lib/school";
 import { sendApplicationSubmittedEmail } from "@/lib/resend";
+import { generateApplicationNumber } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -76,7 +77,14 @@ export async function POST(request: NextRequest) {
     const validated = AdmissionSchema.parse(body);
     const documents: { name: string; type: string; url: string; size?: number }[] = (body as any).documents || [];
 
-    const applicationNumber = `APP/${new Date().getFullYear()}/${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
+    let applicationNumber = generateApplicationNumber();
+    let retries = 0;
+    while (retries < 5) {
+      const existing = await prisma.applicant.findUnique({ where: { applicationNumber } });
+      if (!existing) break;
+      applicationNumber = generateApplicationNumber();
+      retries++;
+    }
 
     const applicant = await prisma.applicant.create({
       data: {

@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   Eye,
@@ -17,6 +16,7 @@ import {
   Loader2,
   Download,
   Image as ImageIcon,
+  ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
@@ -69,6 +69,30 @@ const statusConfig: Record<string, { bg: string; text: string; border: string; l
   rejected: { bg: "#fee2e2", text: "#dc2626", border: "#fca5a5", label: "Rejected", dot: "#ef4444" },
 };
 
+const nextStatusMap: Record<string, { status: string; label: string; color: string; bg: string; border: string }[]> = {
+  pending: [
+    { status: "under_review", label: "Under Review", color: "#2563eb", bg: "#eff6ff", border: "#bfdbfe" },
+    { status: "exam", label: "Schedule Exam", color: "#7c3aed", bg: "#faf5ff", border: "#ddd6fe" },
+    { status: "admitted", label: "Admit Directly", color: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0" },
+    { status: "rejected", label: "Reject", color: "#dc2626", bg: "#fef2f2", border: "#fecaca" },
+  ],
+  under_review: [
+    { status: "exam", label: "Schedule Exam", color: "#7c3aed", bg: "#faf5ff", border: "#ddd6fe" },
+    { status: "interview", label: "Schedule Interview", color: "#0891b2", bg: "#ecfeff", border: "#a5f3fc" },
+    { status: "admitted", label: "Admit", color: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0" },
+    { status: "rejected", label: "Reject", color: "#dc2626", bg: "#fef2f2", border: "#fecaca" },
+  ],
+  exam: [
+    { status: "interview", label: "Schedule Interview", color: "#0891b2", bg: "#ecfeff", border: "#a5f3fc" },
+    { status: "admitted", label: "Admit", color: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0" },
+    { status: "rejected", label: "Reject", color: "#dc2626", bg: "#fef2f2", border: "#fecaca" },
+  ],
+  interview: [
+    { status: "admitted", label: "Admit", color: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0" },
+    { status: "rejected", label: "Reject", color: "#dc2626", bg: "#fef2f2", border: "#fecaca" },
+  ],
+};
+
 export default function AdmissionsPage() {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,7 +101,13 @@ export default function AdmissionsPage() {
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [showActionModal, setShowActionModal] = useState<string | null>(null);
+  const [actionTarget, setActionTarget] = useState<{ applicantId: string; newStatus: string } | null>(null);
   const [actionNote, setActionNote] = useState("");
+  const [examDate, setExamDate] = useState("");
+  const [examStartTime, setExamStartTime] = useState("10:00 AM");
+  const [examEndTime, setExamEndTime] = useState("12:00 PM");
+  const [examDuration, setExamDuration] = useState(60);
+  const [interviewDate, setInterviewDate] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [pushingSchema, setPushingSchema] = useState(false);
@@ -143,28 +173,54 @@ export default function AdmissionsPage() {
     { step: "rejected", label: "Rejected", count: applicants.filter((a) => a.status === "rejected").length, dot: "#ef4444" },
   ];
 
-  const handleStatusUpdate = async (applicantId: string, newStatus: string) => {
+  const openActionModal = (applicantId: string, newStatus: string) => {
+    setActionTarget({ applicantId, newStatus });
+    setActionNote("");
+    setExamDate("");
+    setExamStartTime("10:00 AM");
+    setExamEndTime("12:00 PM");
+    setExamDuration(60);
+    setInterviewDate("");
+  };
+
+  const handleStatusUpdate = async () => {
+    if (!actionTarget) return;
     setActionLoading(true);
     try {
-      const res = await fetch(`/api/admissions/${applicantId}`, {
+      const payload: Record<string, any> = {
+        status: actionTarget.newStatus,
+        decision: actionTarget.newStatus === "admitted" ? "approved" : actionTarget.newStatus === "rejected" ? "rejected" : undefined,
+        decisionNote: actionNote || undefined,
+        rejectionReason: actionTarget.newStatus === "rejected" ? actionNote : undefined,
+      };
+
+      if (actionTarget.newStatus === "exam" && examDate) {
+        payload.examDate = examDate;
+        payload.startTime = examStartTime;
+        payload.endTime = examEndTime;
+        payload.durationMins = examDuration;
+      }
+
+      if (actionTarget.newStatus === "interview" && interviewDate) {
+        payload.interviewDate = interviewDate;
+      }
+
+      const res = await fetch(`/api/admissions/${actionTarget.applicantId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: newStatus,
-          decision: newStatus === "admitted" ? "approved" : newStatus === "rejected" ? "rejected" : undefined,
-          decisionNote: actionNote || undefined,
-          rejectionReason: newStatus === "rejected" ? actionNote : undefined,
-        }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (data.success || data.applicant?.id) {
-        setApplicants((prev) => prev.map((a) => a.id === applicantId ? { ...a, status: newStatus, decisionNote: actionNote || a.decisionNote } : a));
+        setApplicants((prev) => prev.map((a) => a.id === actionTarget.applicantId ? { ...a, status: actionTarget.newStatus, decisionNote: actionNote || a.decisionNote } : a));
         setShowActionModal(null);
+        setActionTarget(null);
         setActionNote("");
-        if (selectedApplicant?.id === applicantId) {
-          setSelectedApplicant({ ...selectedApplicant, status: newStatus, decisionNote: actionNote || selectedApplicant.decisionNote, documents: selectedApplicant.documents });
+        if (selectedApplicant?.id === actionTarget.applicantId) {
+          setSelectedApplicant({ ...selectedApplicant, status: actionTarget.newStatus, decisionNote: actionNote || selectedApplicant.decisionNote, documents: selectedApplicant.documents });
         }
-        toast.success(`Application ${newStatus === "admitted" ? "admitted" : newStatus === "rejected" ? "rejected" : "updated"}`);
+        const label = actionTarget.newStatus === "admitted" ? "admitted" : actionTarget.newStatus === "rejected" ? "rejected" : "updated";
+        toast.success(`Application ${label}`);
       } else {
         toast.error(data.error || "Failed to update status");
       }
@@ -199,6 +255,8 @@ export default function AdmissionsPage() {
     return (doc.url && doc.url.startsWith("data:image/")) || doc.url?.startsWith("blob:") || getDocFileType(doc.name) === "image";
   };
 
+  const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#fff", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" };
+
   return (
     <div style={{ padding: "0 16px 32px", maxWidth: "1200px", margin: "0 auto" }}>
       {/* Header */}
@@ -223,7 +281,7 @@ export default function AdmissionsPage() {
             const isActive = statusFilter === step.step;
             return (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <button onClick={() => setStatusFilter(isActive ? "" : step.step)} style={{ flex: 1, minWidth: "110px", padding: "16px 12px", borderRadius: "14px", border: isActive ? `2px solid ${step.dot}` : "2px solid transparent", background: isActive ? `${step.dot}10` : "#f8fafc", cursor: "pointer", textAlign: "center", transition: "all 0.2s", boxShadow: isActive ? `0 0 0 3px ${step.dot}15` : "none" }}>
+                <button onClick={() => setStatusFilter(isActive ? "" : step.step)} style={{ flex: 1, minWidth: "110px", padding: "16px 12px", borderRadius: "14px", border: isActive ? "2px solid " + step.dot : "2px solid transparent", background: isActive ? step.dot + "10" : "#f8fafc", cursor: "pointer", textAlign: "center", transition: "all 0.2s", boxShadow: isActive ? "0 0 0 3px " + step.dot + "15" : "none" }}>
                     <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: step.dot, margin: "0 auto 8px" }} />
                     <div style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", lineHeight: 1 }}>{step.count}</div>
                     <div style={{ fontSize: "11px", color: "#64748b", marginTop: "4px", fontWeight: 500 }}>{step.label}</div>
@@ -271,265 +329,285 @@ export default function AdmissionsPage() {
             <p style={{ margin: 0, fontSize: "14px", color: "#94a3b8" }}>No applications found</p>
           </div>
         ) : (
-          applicants.map((a, i) => {
+          applicants.map((a) => {
             const sc = statusConfig[a.status] || statusConfig.pending;
+            const nextActions = nextStatusMap[a.status] || [];
             return (
-              <motion.div key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", transition: "box-shadow 0.2s, border-color 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor = "#cbd5e1"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "16px", minWidth: 0, flex: 1 }}>
-                  <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "linear-gradient(135deg, #1e40af, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontSize: "15px", fontWeight: 700, flexShrink: 0, boxShadow: "0 2px 8px rgba(59,130,246,0.3)" }}>
-                    {a.firstName[0]}{a.lastName[0]}
-                  </div>
-                  <div style={{ minWidth: 0 }}>
-                    <p style={{ margin: 0, fontSize: "15px", fontWeight: 600, color: "#0f172a" }}>{a.firstName} {a.lastName}</p>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px", flexWrap: "wrap" }}>
-                      <span style={{ fontSize: "12px", color: "#94a3b8", fontFamily: "monospace" }}>{a.applicationNumber}</span>
-                      <span style={{ fontSize: "12px", color: "#e2e8f0" }}>|</span>
-                      <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 500 }}>{a.classAppliedFor}</span>
-                      <span style={{ fontSize: "12px", color: "#e2e8f0" }}>|</span>
-                      <span style={{ fontSize: "12px", color: "#94a3b8" }}>{new Date(a.submittedAt).toLocaleDateString("en-NG")}</span>
+              <div key={a.id} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", transition: "box-shadow 0.2s, border-color 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor = "#cbd5e1"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "16px", minWidth: 0, flex: 1 }}>
+                    <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "linear-gradient(135deg, #1e40af, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontSize: "15px", fontWeight: 700, flexShrink: 0, boxShadow: "0 2px 8px rgba(59,130,246,0.3)" }}>
+                      {a.firstName[0]}{a.lastName[0]}
+                    </div>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ margin: 0, fontSize: "15px", fontWeight: 600, color: "#0f172a" }}>{a.firstName} {a.lastName}</p>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px", flexWrap: "wrap" }}>
+                        <span style={{ fontSize: "12px", color: "#94a3b8", fontFamily: "monospace" }}>{a.applicationNumber}</span>
+                        <span style={{ fontSize: "12px", color: "#e2e8f0" }}>|</span>
+                        <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 500 }}>{a.classAppliedFor}</span>
+                        <span style={{ fontSize: "12px", color: "#e2e8f0" }}>|</span>
+                        <span style={{ fontSize: "12px", color: "#94a3b8" }}>{new Date(a.submittedAt).toLocaleDateString("en-NG")}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", padding: "5px 12px", borderRadius: "20px", background: sc.bg, color: sc.text, fontSize: "11px", fontWeight: 600, border: `1px solid ${sc.border}` }}>
-                    <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: sc.dot }} />
-                    {sc.label}
-                  </span>
-                  <button onClick={() => fetchApplicantDetail(a)} style={{ width: "34px", height: "34px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.color = "#0f172a"; e.currentTarget.style.borderColor = "#cbd5e1"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.color = "#64748b"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
-                    <Eye style={{ width: "15px", height: "15px" }} />
-                  </button>
-                  {a.status === "pending" && (
-                    <>
-                      <button onClick={() => setShowActionModal(a.id)} style={{ padding: "7px 14px", borderRadius: "10px", border: "1px solid #bbf7d0", background: "#f0fdf4", color: "#16a34a", fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", transition: "background 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#dcfce7"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f0fdf4"; }}>
-                        <CheckCircle style={{ width: "12px", height: "12px" }} /> Approve
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", padding: "5px 12px", borderRadius: "20px", background: sc.bg, color: sc.text, fontSize: "11px", fontWeight: 600, border: "1px solid " + sc.border }}>
+                      <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: sc.dot }} />
+                      {sc.label}
+                    </span>
+                    <button onClick={() => fetchApplicantDetail(a)} style={{ width: "34px", height: "34px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.color = "#0f172a"; e.currentTarget.style.borderColor = "#cbd5e1"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.color = "#64748b"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
+                      <Eye style={{ width: "15px", height: "15px" }} />
+                    </button>
+                    {nextActions.length > 0 && (
+                      <button onClick={() => openActionModal(a.id, nextActions[0].status)} style={{ padding: "7px 14px", borderRadius: "10px", border: "1px solid " + nextActions[0].border, background: nextActions[0].bg, color: nextActions[0].color, fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", transition: "background 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }} onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}>
+                        {nextActions[0].status === "admitted" ? <CheckCircle style={{ width: "12px", height: "12px" }} /> : nextActions[0].status === "rejected" ? <XCircle style={{ width: "12px", height: "12px" }} /> : <ChevronRight style={{ width: "12px", height: "12px" }} />}
+                        {nextActions[0].label}
                       </button>
-                      <button onClick={() => { setShowActionModal(a.id); setActionNote(""); }} style={{ padding: "7px 14px", borderRadius: "10px", border: "1px solid #fecaca", background: "#fef2f2", color: "#dc2626", fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", transition: "background 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#fee2e2"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#fef2f2"; }}>
-                        <XCircle style={{ width: "12px", height: "12px" }} /> Reject
-                      </button>
-                    </>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })
         )}
       </div>
 
       {/* Detail Modal */}
-      <AnimatePresence>
-        {selectedApplicant && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} onClick={() => { setSelectedApplicant(null); setDocPreview(null); }}>
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "680px", maxHeight: "88vh", background: "#ffffff", borderRadius: "20px", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 25px 60px rgba(0,0,0,0.25)" }}>
-              {/* Modal Header */}
-              <div style={{ padding: "24px 28px 20px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                  <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "linear-gradient(135deg, #1e40af, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontSize: "16px", fontWeight: 700, flexShrink: 0 }}>
-                    {selectedApplicant.firstName[0]}{selectedApplicant.lastName[0]}
-                  </div>
-                  <div>
-                    <h2 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>{selectedApplicant.firstName} {selectedApplicant.lastName}</h2>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
-                      <span style={{ fontSize: "12px", color: "#64748b" }}>{selectedApplicant.applicationNumber}</span>
-                      <span style={{ fontSize: "12px", color: "#cbd5e1" }}>|</span>
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "2px 8px", borderRadius: "12px", background: (statusConfig[selectedApplicant.status] || statusConfig.pending).bg, color: (statusConfig[selectedApplicant.status] || statusConfig.pending).text, fontSize: "10px", fontWeight: 600 }}>{(statusConfig[selectedApplicant.status] || statusConfig.pending).label}</span>
-                    </div>
+      {selectedApplicant && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} onClick={() => { setSelectedApplicant(null); setDocPreview(null); }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "680px", maxHeight: "88vh", background: "#ffffff", borderRadius: "20px", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 25px 60px rgba(0,0,0,0.25)" }}>
+            {/* Modal Header */}
+            <div style={{ padding: "24px 28px 20px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: "linear-gradient(135deg, #1e40af, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontSize: "16px", fontWeight: 700, flexShrink: 0 }}>
+                  {selectedApplicant.firstName[0]}{selectedApplicant.lastName[0]}
+                </div>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>{selectedApplicant.firstName} {selectedApplicant.lastName}</h2>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
+                    <span style={{ fontSize: "12px", color: "#64748b" }}>{selectedApplicant.applicationNumber}</span>
+                    <span style={{ fontSize: "12px", color: "#cbd5e1" }}>|</span>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "2px 8px", borderRadius: "12px", background: (statusConfig[selectedApplicant.status] || statusConfig.pending).bg, color: (statusConfig[selectedApplicant.status] || statusConfig.pending).text, fontSize: "10px", fontWeight: 600 }}>{(statusConfig[selectedApplicant.status] || statusConfig.pending).label}</span>
                   </div>
                 </div>
-                <button onClick={() => { setSelectedApplicant(null); setDocPreview(null); }} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "none", background: "#f8fafc", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#475569"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.color = "#94a3b8"; }}>
-                  <X style={{ width: "16px", height: "16px" }} />
-                </button>
               </div>
+              <button onClick={() => { setSelectedApplicant(null); setDocPreview(null); }} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "none", background: "#f8fafc", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#475569"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.color = "#94a3b8"; }}>
+                <X style={{ width: "16px", height: "16px" }} />
+              </button>
+            </div>
 
-              {/* Modal Body */}
-              <div style={{ padding: "20px 28px", overflowY: "auto", flex: 1 }}>
-                {detailLoading ? (
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "40px" }}>
-                    <Loader2 style={{ width: "24px", height: "24px", color: "#94a3b8", animation: "spin 1s linear infinite" }} />
-                  </div>
-                ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                    <ModalSection title="Personal Information">
-                      <InfoGrid items={[
-                        { label: "Class Applied", value: selectedApplicant.classAppliedFor },
-                        { label: "Gender", value: selectedApplicant.gender },
-                        { label: "Date of Birth", value: selectedApplicant.dateOfBirth ? new Date(selectedApplicant.dateOfBirth).toLocaleDateString("en-NG") : "—" },
-                        { label: "Nationality", value: selectedApplicant.nationality || "—" },
-                        { label: "State of Origin", value: selectedApplicant.stateOfOrigin || "—" },
-                        { label: "Blood Group", value: selectedApplicant.bloodGroup || "—" },
-                      ]} />
-                    </ModalSection>
-                    <ModalSection title="Contact Information">
-                      <InfoGrid items={[
-                        { label: "Email", value: selectedApplicant.email || "—" },
-                        { label: "Phone", value: selectedApplicant.phone || "—" },
-                        { label: "Address", value: selectedApplicant.address || "—" },
-                        { label: "Previous School", value: selectedApplicant.previousSchool || "—" },
-                      ]} />
-                    </ModalSection>
-                    <ModalSection title="Guardian Information">
-                      <InfoGrid items={[
-                        { label: "Guardian Name", value: selectedApplicant.guardianName || "—" },
-                        { label: "Relationship", value: selectedApplicant.guardianRelationship || "—" },
-                        { label: "Guardian Phone", value: selectedApplicant.guardianPhone || "—" },
-                        { label: "Guardian Email", value: selectedApplicant.guardianEmail || "—" },
-                      ]} />
-                    </ModalSection>
-                    <ModalSection title="Uploaded Documents" badge={selectedApplicant.documents?.length || 0}>
-                      {selectedApplicant.documents && selectedApplicant.documents.length > 0 ? (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                          {selectedApplicant.documents.map((doc, i) => {
-                            const fileType = getDocFileType(doc.name);
-                            const iconBg = fileType === "pdf" ? "#fef2f2" : fileType === "image" ? "#eff6ff" : "#f0fdf4";
-                            const iconColor = fileType === "pdf" ? "#dc2626" : fileType === "image" ? "#2563eb" : "#16a34a";
-                            const typeLabel = fileType === "pdf" ? "PDF" : fileType === "image" ? "IMG" : fileType === "doc" ? "DOC" : "FILE";
-                            const docUrl = `/api/admissions/documents/${doc.id}`;
-                            return (
-                              <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #e2e8f0", gap: "12px" }}>
-                                <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0, flex: 1 }}>
-                                  <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: iconBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                    {fileType === "image" ? <ImageIcon style={{ width: "18px", height: "18px", color: iconColor }} /> : <FileText style={{ width: "18px", height: "18px", color: iconColor }} />}
-                                  </div>
-                                  <div style={{ minWidth: 0 }}>
-                                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{doc.name}</p>
-                                    <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>{doc.size ? `${(doc.size / 1024).toFixed(1)} KB` : "—"}</p>
-                                  </div>
+            {/* Modal Body */}
+            <div style={{ padding: "20px 28px", overflowY: "auto", flex: 1 }}>
+              {detailLoading ? (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "40px" }}>
+                  <Loader2 style={{ width: "24px", height: "24px", color: "#94a3b8", animation: "spin 1s linear infinite" }} />
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                  <ModalSection title="Personal Information">
+                    <InfoGrid items={[
+                      { label: "Class Applied", value: selectedApplicant.classAppliedFor },
+                      { label: "Gender", value: selectedApplicant.gender },
+                      { label: "Date of Birth", value: selectedApplicant.dateOfBirth ? new Date(selectedApplicant.dateOfBirth).toLocaleDateString("en-NG") : "—" },
+                      { label: "Nationality", value: selectedApplicant.nationality || "—" },
+                      { label: "State of Origin", value: selectedApplicant.stateOfOrigin || "—" },
+                      { label: "Blood Group", value: selectedApplicant.bloodGroup || "—" },
+                    ]} />
+                  </ModalSection>
+                  <ModalSection title="Contact Information">
+                    <InfoGrid items={[
+                      { label: "Email", value: selectedApplicant.email || "—" },
+                      { label: "Phone", value: selectedApplicant.phone || "—" },
+                      { label: "Address", value: selectedApplicant.address || "—" },
+                      { label: "Previous School", value: selectedApplicant.previousSchool || "—" },
+                    ]} />
+                  </ModalSection>
+                  <ModalSection title="Guardian Information">
+                    <InfoGrid items={[
+                      { label: "Guardian Name", value: selectedApplicant.guardianName || "—" },
+                      { label: "Relationship", value: selectedApplicant.guardianRelationship || "—" },
+                      { label: "Guardian Phone", value: selectedApplicant.guardianPhone || "—" },
+                      { label: "Guardian Email", value: selectedApplicant.guardianEmail || "—" },
+                    ]} />
+                  </ModalSection>
+                  <ModalSection title="Uploaded Documents" badge={selectedApplicant.documents?.length || 0}>
+                    {selectedApplicant.documents && selectedApplicant.documents.length > 0 ? (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                        {selectedApplicant.documents.map((doc, i) => {
+                          const fileType = getDocFileType(doc.name);
+                          const iconBg = fileType === "pdf" ? "#fef2f2" : fileType === "image" ? "#eff6ff" : "#f0fdf4";
+                          const iconColor = fileType === "pdf" ? "#dc2626" : fileType === "image" ? "#2563eb" : "#16a34a";
+                          const typeLabel = fileType === "pdf" ? "PDF" : fileType === "image" ? "IMG" : fileType === "doc" ? "DOC" : "FILE";
+                          const docUrl = `/api/admissions/documents/${doc.id}`;
+                          return (
+                            <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #e2e8f0", gap: "12px" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0, flex: 1 }}>
+                                <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: iconBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                  {fileType === "image" ? <ImageIcon style={{ width: "18px", height: "18px", color: iconColor }} /> : <FileText style={{ width: "18px", height: "18px", color: iconColor }} />}
                                 </div>
-                                <div style={{ display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }}>
-                                  <span style={{ padding: "3px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: 700, background: iconBg, color: iconColor }}>{typeLabel}</span>
-                                  <button onClick={async () => {
-                                    try {
-                                      const res = await fetch(docUrl);
-                                      if (res.ok) {
-                                        const blob = await res.blob();
-                                        const url = URL.createObjectURL(blob);
-                                        setDocPreview({ ...doc, url } as any);
-                                      }
-                                    } catch {}
-                                  }} style={{ width: "30px", height: "30px", borderRadius: "8px", border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", transition: "all 0.15s" }} title="Preview" onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#475569"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94a3b8"; }}>
-                                    <Eye style={{ width: "15px", height: "15px" }} />
-                                  </button>
-                                  <a href={docUrl} download={doc.name} style={{ width: "30px", height: "30px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", textDecoration: "none", transition: "all 0.15s" }} title="Download" onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#475569"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94a3b8"; }}>
-                                    <Download style={{ width: "15px", height: "15px" }} />
-                                  </a>
+                                <div style={{ minWidth: 0 }}>
+                                  <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{doc.name}</p>
+                                  <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>{doc.size ? `${(doc.size / 1024).toFixed(1)} KB` : "—"}</p>
                                 </div>
                               </div>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <div style={{ textAlign: "center", padding: "24px 0", color: "#94a3b8", fontSize: "13px" }}>No documents uploaded</div>
-                      )}
-                    </ModalSection>
-                    <div style={{ display: "flex", gap: "20px", fontSize: "12px", color: "#94a3b8", paddingTop: "4px" }}>
-                      <span>Submitted: {new Date(selectedApplicant.submittedAt).toLocaleDateString("en-NG")}</span>
-                      {selectedApplicant.reviewedAt && <span>Reviewed: {new Date(selectedApplicant.reviewedAt).toLocaleDateString("en-NG")}</span>}
-                    </div>
-                    {selectedApplicant.decisionNote && (
-                      <div style={{ padding: "14px 18px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #e2e8f0" }}>
-                        <p style={{ margin: "0 0 4px", fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>Decision Note</p>
-                        <p style={{ margin: 0, fontSize: "13px", color: "#475569" }}>{selectedApplicant.decisionNote}</p>
+                              <div style={{ display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }}>
+                                <span style={{ padding: "3px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: 700, background: iconBg, color: iconColor }}>{typeLabel}</span>
+                                <button onClick={async () => {
+                                  try {
+                                    const res = await fetch(docUrl);
+                                    if (res.ok) {
+                                      const blob = await res.blob();
+                                      const url = URL.createObjectURL(blob);
+                                      setDocPreview({ ...doc, url } as any);
+                                    }
+                                  } catch {}
+                                }} style={{ width: "30px", height: "30px", borderRadius: "8px", border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", transition: "all 0.15s" }} title="Preview" onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#475569"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94a3b8"; }}>
+                                  <Eye style={{ width: "15px", height: "15px" }} />
+                                </button>
+                                <a href={docUrl} download={doc.name} style={{ width: "30px", height: "30px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", textDecoration: "none", transition: "all 0.15s" }} title="Download" onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#475569"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94a3b8"; }}>
+                                  <Download style={{ width: "15px", height: "15px" }} />
+                                </a>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
+                    ) : (
+                      <div style={{ textAlign: "center", padding: "24px 0", color: "#94a3b8", fontSize: "13px" }}>No documents uploaded</div>
                     )}
-                    {selectedApplicant.rejectionReason && (
-                      <div style={{ padding: "14px 18px", borderRadius: "12px", background: "#fef2f2", border: "1px solid #fecaca" }}>
-                        <p style={{ margin: "0 0 4px", fontSize: "10px", fontWeight: 700, color: "#dc2626", textTransform: "uppercase", letterSpacing: "0.05em" }}>Rejection Reason</p>
-                        <p style={{ margin: 0, fontSize: "13px", color: "#dc2626" }}>{selectedApplicant.rejectionReason}</p>
-                      </div>
-                    )}
+                  </ModalSection>
+                  <div style={{ display: "flex", gap: "20px", fontSize: "12px", color: "#94a3b8", paddingTop: "4px" }}>
+                    <span>Submitted: {new Date(selectedApplicant.submittedAt).toLocaleDateString("en-NG")}</span>
+                    {selectedApplicant.reviewedAt && <span>Reviewed: {new Date(selectedApplicant.reviewedAt).toLocaleDateString("en-NG")}</span>}
                   </div>
-                )}
-              </div>
-
-              {/* Modal Footer */}
-              {selectedApplicant.status === "pending" && (
-                <div style={{ padding: "16px 28px 20px", borderTop: "1px solid #f1f5f9", display: "flex", gap: "10px", flexShrink: 0 }}>
-                  <button onClick={() => setShowActionModal(selectedApplicant.id)} style={{ flex: 1, padding: "11px", borderRadius: "12px", border: "none", background: "#f0fdf4", color: "#16a34a", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", transition: "background 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#dcfce7"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f0fdf4"; }}>
-                    <CheckCircle style={{ width: "16px", height: "16px" }} /> Approve
-                  </button>
-                  <button onClick={() => setShowActionModal(selectedApplicant.id)} style={{ flex: 1, padding: "11px", borderRadius: "12px", border: "none", background: "#fef2f2", color: "#dc2626", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", transition: "background 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#fee2e2"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#fef2f2"; }}>
-                    <XCircle style={{ width: "16px", height: "16px" }} /> Reject
-                  </button>
+                  {selectedApplicant.decisionNote && (
+                    <div style={{ padding: "14px 18px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #e2e8f0" }}>
+                      <p style={{ margin: "0 0 4px", fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>Decision Note</p>
+                      <p style={{ margin: 0, fontSize: "13px", color: "#475569" }}>{selectedApplicant.decisionNote}</p>
+                    </div>
+                  )}
+                  {selectedApplicant.rejectionReason && (
+                    <div style={{ padding: "14px 18px", borderRadius: "12px", background: "#fef2f2", border: "1px solid #fecaca" }}>
+                      <p style={{ margin: "0 0 4px", fontSize: "10px", fontWeight: 700, color: "#dc2626", textTransform: "uppercase", letterSpacing: "0.05em" }}>Rejection Reason</p>
+                      <p style={{ margin: 0, fontSize: "13px", color: "#dc2626" }}>{selectedApplicant.rejectionReason}</p>
+                    </div>
+                  )}
                 </div>
               )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+
+            {/* Modal Footer - Action buttons for ALL actionable statuses */}
+            {selectedApplicant && nextStatusMap[selectedApplicant.status] && nextStatusMap[selectedApplicant.status].length > 0 && (
+              <div style={{ padding: "16px 28px 20px", borderTop: "1px solid #f1f5f9", display: "flex", gap: "8px", flexShrink: 0, flexWrap: "wrap" }}>
+                {nextStatusMap[selectedApplicant.status].map((action) => (
+                  <button key={action.status} onClick={() => { setSelectedApplicant(null); openActionModal(selectedApplicant.id, action.status); }} style={{ flex: 1, minWidth: "120px", padding: "11px", borderRadius: "12px", border: "none", background: action.bg, color: action.color, fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", transition: "opacity 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }} onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}>
+                    {action.status === "admitted" ? <CheckCircle style={{ width: "16px", height: "16px" }} /> : action.status === "rejected" ? <XCircle style={{ width: "16px", height: "16px" }} /> : <ChevronRight style={{ width: "16px", height: "16px" }} />}
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Document Preview Modal */}
-      <AnimatePresence>
-        {docPreview && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", backgroundColor: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }} onClick={() => { if (docPreview?.url?.startsWith("blob:")) URL.revokeObjectURL(docPreview.url); setDocPreview(null); }}>
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "900px", maxHeight: "90vh", background: "#ffffff", borderRadius: "16px", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 25px 60px rgba(0,0,0,0.4)" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <FileText style={{ width: "16px", height: "16px", color: "#64748b" }} />
-                  <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{docPreview.name}</span>
-                  {docPreview.size && <span style={{ fontSize: "11px", color: "#94a3b8" }}>({(docPreview.size / 1024).toFixed(1)} KB)</span>}
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  {docPreview.url && (
-                    <a href={docPreview.url} download={docPreview.name} style={{ padding: "6px 14px", borderRadius: "8px", background: "#f1f5f9", color: "#475569", fontSize: "12px", fontWeight: 500, textDecoration: "none", display: "flex", alignItems: "center", gap: "4px", transition: "background 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e2e8f0"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f1f5f9"; }}>
-                      <Download style={{ width: "12px", height: "12px" }} /> Download
-                    </a>
-                  )}
-                  <button onClick={() => { if (docPreview?.url?.startsWith("blob:")) URL.revokeObjectURL(docPreview.url); setDocPreview(null); }} style={{ width: "28px", height: "28px", borderRadius: "6px", border: "none", background: "#f1f5f9", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e2e8f0"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f1f5f9"; }}>
-                    <X style={{ width: "14px", height: "14px" }} />
-                  </button>
-                </div>
+      {docPreview && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", backgroundColor: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }} onClick={() => { if (docPreview?.url?.startsWith("blob:")) URL.revokeObjectURL(docPreview.url); setDocPreview(null); }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "900px", maxHeight: "90vh", background: "#ffffff", borderRadius: "16px", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 25px 60px rgba(0,0,0,0.4)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <FileText style={{ width: "16px", height: "16px", color: "#64748b" }} />
+                <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{docPreview.name}</span>
+                {docPreview.size && <span style={{ fontSize: "11px", color: "#94a3b8" }}>({(docPreview.size / 1024).toFixed(1)} KB)</span>}
               </div>
-              <div style={{ flex: 1, overflow: "auto", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px", background: "#f8fafc", minHeight: "300px" }}>
-                {isImageDoc(docPreview) ? (
-                  <img src={docPreview.url} alt={docPreview.name} style={{ maxWidth: "100%", maxHeight: "70vh", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
-                ) : (docPreview.url?.startsWith("data:application/pdf") || docPreview.url?.startsWith("blob:")) && getDocFileType(docPreview.name) === "pdf" ? (
-                  <iframe src={docPreview.url} style={{ width: "100%", height: "70vh", border: "none", borderRadius: "8px", background: "#ffffff" }} title={docPreview.name} />
-                ) : (
-                  <div style={{ textAlign: "center", padding: "40px" }}>
-                    <FileText style={{ width: "48px", height: "48px", color: "#cbd5e1", marginBottom: "12px" }} />
-                    <p style={{ fontSize: "14px", color: "#64748b", margin: "0 0 8px" }}>Preview not available for this file type</p>
-                    <p style={{ fontSize: "12px", color: "#94a3b8", margin: 0 }}>Click Download to save the file</p>
-                  </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                {docPreview.url && (
+                  <a href={docPreview.url} download={docPreview.name} style={{ padding: "6px 14px", borderRadius: "8px", background: "#f1f5f9", color: "#475569", fontSize: "12px", fontWeight: 500, textDecoration: "none", display: "flex", alignItems: "center", gap: "4px", transition: "background 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e2e8f0"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f1f5f9"; }}>
+                    <Download style={{ width: "12px", height: "12px" }} /> Download
+                  </a>
                 )}
+                <button onClick={() => { if (docPreview?.url?.startsWith("blob:")) URL.revokeObjectURL(docPreview.url); setDocPreview(null); }} style={{ width: "28px", height: "28px", borderRadius: "6px", border: "none", background: "#f1f5f9", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e2e8f0"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f1f5f9"; }}>
+                  <X style={{ width: "14px", height: "14px" }} />
+                </button>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+            <div style={{ flex: 1, overflow: "auto", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px", background: "#f8fafc", minHeight: "300px" }}>
+              {isImageDoc(docPreview) ? (
+                <img src={docPreview.url} alt={docPreview.name} style={{ maxWidth: "100%", maxHeight: "70vh", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
+              ) : (docPreview.url?.startsWith("data:application/pdf") || docPreview.url?.startsWith("blob:")) && getDocFileType(docPreview.name) === "pdf" ? (
+                <iframe src={docPreview.url} style={{ width: "100%", height: "70vh", border: "none", borderRadius: "8px", background: "#ffffff" }} title={docPreview.name} />
+              ) : (
+                <div style={{ textAlign: "center", padding: "40px" }}>
+                  <FileText style={{ width: "48px", height: "48px", color: "#cbd5e1", marginBottom: "12px" }} />
+                  <p style={{ fontSize: "14px", color: "#64748b", margin: "0 0 8px" }}>Preview not available for this file type</p>
+                  <p style={{ fontSize: "12px", color: "#94a3b8", margin: 0 }}>Click Download to save the file</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* Action Modal */}
-      <AnimatePresence>
-        {showActionModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", backgroundColor: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }} onClick={() => { setShowActionModal(null); setActionNote(""); }}>
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "480px", background: "#ffffff", borderRadius: "20px", padding: "28px", boxShadow: "0 25px 60px rgba(0,0,0,0.25)" }}>
-              <h3 style={{ margin: "0 0 4px", fontSize: "17px", fontWeight: 700, color: "#0f172a" }}>Review Application</h3>
-              <p style={{ margin: "0 0 16px", fontSize: "13px", color: "#64748b" }}>Add a note for the applicant (optional)</p>
-              <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder="Enter notes, instructions or reason..." rows={3} style={{ width: "100%", padding: "12px 14px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "13px", color: "#0f172a", outline: "none", resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
-              <div style={{ display: "flex", gap: "8px", marginTop: "14px" }}>
-                <button onClick={() => handleStatusUpdate(showActionModal, "admitted")} disabled={actionLoading} style={{ flex: 1, padding: "10px", borderRadius: "12px", border: "none", background: "#f0fdf4", color: "#16a34a", fontSize: "13px", fontWeight: 600, cursor: actionLoading ? "not-allowed" : "pointer", opacity: actionLoading ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
-                  <CheckCircle style={{ width: "16px", height: "16px" }} /> {actionLoading ? "Processing..." : "Approve & Admit"}
-                </button>
-                <button onClick={() => handleStatusUpdate(showActionModal, "rejected")} disabled={actionLoading} style={{ flex: 1, padding: "10px", borderRadius: "12px", border: "none", background: "#fef2f2", color: "#dc2626", fontSize: "13px", fontWeight: 600, cursor: actionLoading ? "not-allowed" : "pointer", opacity: actionLoading ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
-                  <XCircle style={{ width: "16px", height: "16px" }} /> {actionLoading ? "Processing..." : "Reject"}
-                </button>
+      {/* Action Modal - with scheduling fields */}
+      {showActionModal && actionTarget && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", backgroundColor: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }} onClick={() => { setShowActionModal(null); setActionTarget(null); setActionNote(""); }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "520px", background: "#ffffff", borderRadius: "20px", padding: "28px", boxShadow: "0 25px 60px rgba(0,0,0,0.25)" }}>
+            <h3 style={{ margin: "0 0 4px", fontSize: "17px", fontWeight: 700, color: "#0f172a" }}>
+              {actionTarget.newStatus === "exam" ? "Schedule Entrance Exam" : actionTarget.newStatus === "interview" ? "Schedule Interview" : actionTarget.newStatus === "admitted" ? "Admit Application" : actionTarget.newStatus === "rejected" ? "Reject Application" : "Update Status"}
+            </h3>
+            <p style={{ margin: "0 0 16px", fontSize: "13px", color: "#64748b" }}>
+              {actionTarget.newStatus === "exam" ? "Set the exam date and time for the applicant" : actionTarget.newStatus === "interview" ? "Set the interview date for the applicant" : "Add a note for the applicant (optional)"}
+            </p>
+
+            {/* Exam scheduling fields */}
+            {actionTarget.newStatus === "exam" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "16px", padding: "16px", background: "#faf5ff", borderRadius: "12px", border: "1px solid #ede9fe" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "4px" }}>Exam Date *</label>
+                  <input type="date" value={examDate} onChange={(e) => setExamDate(e.target.value)} style={inputStyle} />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "4px" }}>Start Time</label>
+                    <input type="text" value={examStartTime} onChange={(e) => setExamStartTime(e.target.value)} placeholder="10:00 AM" style={inputStyle} />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "4px" }}>End Time</label>
+                    <input type="text" value={examEndTime} onChange={(e) => setExamEndTime(e.target.value)} placeholder="12:00 PM" style={inputStyle} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "4px" }}>Duration (minutes)</label>
+                  <input type="number" value={examDuration} onChange={(e) => setExamDuration(Number(e.target.value))} min={15} max={180} style={inputStyle} />
+                </div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", marginTop: "8px" }}>
-                <button onClick={() => handleStatusUpdate(showActionModal, "under_review")} disabled={actionLoading} style={{ padding: "8px", borderRadius: "10px", border: "none", background: "#eff6ff", color: "#2563eb", fontSize: "12px", fontWeight: 600, cursor: actionLoading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
-                  <Clock style={{ width: "12px", height: "12px" }} /> Under Review
-                </button>
-                <button onClick={() => handleStatusUpdate(showActionModal, "exam")} disabled={actionLoading} style={{ padding: "8px", borderRadius: "10px", border: "none", background: "#faf5ff", color: "#7c3aed", fontSize: "12px", fontWeight: 600, cursor: actionLoading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
-                  <Calendar style={{ width: "12px", height: "12px" }} /> Schedule Exam
-                </button>
-                <button onClick={() => handleStatusUpdate(showActionModal, "interview")} disabled={actionLoading} style={{ padding: "8px", borderRadius: "10px", border: "none", background: "#ecfeff", color: "#0891b2", fontSize: "12px", fontWeight: 600, cursor: actionLoading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
-                  <UserCheck style={{ width: "12px", height: "12px" }} /> Schedule Interview
-                </button>
-                <button onClick={() => { setShowActionModal(null); setActionNote(""); }} disabled={actionLoading} style={{ padding: "8px", borderRadius: "10px", border: "none", background: "#f8fafc", color: "#64748b", fontSize: "12px", fontWeight: 500, cursor: "pointer", transition: "background 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f8fafc"; }}>
-                  Cancel
-                </button>
+            )}
+
+            {/* Interview scheduling fields */}
+            {actionTarget.newStatus === "interview" && (
+              <div style={{ marginBottom: "16px", padding: "16px", background: "#ecfeff", borderRadius: "12px", border: "1px solid #a5f3fc" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "4px" }}>Interview Date *</label>
+                <input type="date" value={interviewDate} onChange={(e) => setInterviewDate(e.target.value)} style={inputStyle} />
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            )}
+
+            {/* Note field */}
+            <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder={actionTarget.newStatus === "rejected" ? "Enter rejection reason..." : "Add a note (optional)..."} rows={3} style={{ width: "100%", padding: "12px 14px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "13px", color: "#0f172a", outline: "none", resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
+
+            {/* Action buttons */}
+            <div style={{ display: "flex", gap: "8px", marginTop: "16px" }}>
+              <button onClick={() => { setShowActionModal(null); setActionTarget(null); setActionNote(""); }} disabled={actionLoading} style={{ padding: "10px 20px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>
+                Cancel
+              </button>
+              <button onClick={handleStatusUpdate} disabled={actionLoading || (actionTarget.newStatus === "exam" && !examDate) || (actionTarget.newStatus === "interview" && !interviewDate)} style={{ flex: 1, padding: "10px 20px", borderRadius: "12px", border: "none", background: actionTarget.newStatus === "rejected" ? "#dc2626" : actionTarget.newStatus === "admitted" ? "#16a34a" : "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: actionLoading ? "not-allowed" : "pointer", opacity: actionLoading ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+                {actionLoading ? <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} /> : actionTarget.newStatus === "rejected" ? <XCircle style={{ width: "14px", height: "14px" }} /> : <CheckCircle style={{ width: "14px", height: "14px" }} />}
+                {actionLoading ? "Processing..." : actionTarget.newStatus === "exam" ? "Send Exam Invitation" : actionTarget.newStatus === "interview" ? "Schedule Interview" : actionTarget.newStatus === "admitted" ? "Admit Student" : actionTarget.newStatus === "rejected" ? "Reject Application" : "Update Status"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

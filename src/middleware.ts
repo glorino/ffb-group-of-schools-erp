@@ -13,6 +13,7 @@ const publicPaths = [
   "/auth/forgot-password",
   "/portal/apply",
   "/portal/track",
+  "/portal/entrance-exam",
   "/api/auth",
   "/api/seed-auto",
   "/api/seed-news",

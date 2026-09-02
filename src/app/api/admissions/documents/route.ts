@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-const MAX_FILE_SIZE = 4 * 1024 * 1024;
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = [
   "application/pdf",
   "image/jpeg",
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: "File size exceeds 4MB limit" }, { status: 400 });
+      return NextResponse.json({ error: "File size exceeds 5MB limit" }, { status: 400 });
     }
 
     if (!ALLOWED_TYPES.includes(file.type)) {

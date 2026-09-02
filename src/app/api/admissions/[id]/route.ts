@@ -339,7 +339,7 @@ export async function PUT(
       }
     }
 
-    if (["under_review", "exam", "interview"].includes(newStatus) && existing.status !== newStatus) {
+    if (["under_review", "interview"].includes(newStatus) && existing.status !== newStatus) {
       try {
         await sendApplicationStatusUpdateEmail(
           {
@@ -357,6 +357,108 @@ export async function PUT(
         );
       } catch (emailError) {
         console.error("Failed to send status update email:", emailError);
+      }
+    }
+
+    // Generate entrance exam and send email when status changes to "exam"
+    if (newStatus === "exam" && existing.status !== "exam") {
+      try {
+        const crypto = await import("crypto");
+        const token = crypto.randomBytes(32).toString("base64url");
+
+        const examDate = body.examDate ? new Date(body.examDate) : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+        const startTime = body.startTime || "10:00 AM";
+        const endTime = body.endTime || "12:00 PM";
+        const durationMins = body.durationMins || 60;
+
+        const EXAM_QUESTIONS = [
+          {
+            subject: "Mathematics",
+            questions: [
+              { q: "What is the value of 2x + 5 when x = 3?", options: ["8", "11", "13", "15"], answer: 1 },
+              { q: "Simplify: 3(2a + 4) - 5a", options: ["a + 12", "a + 8", "6a + 12", "6a + 8"], answer: 0 },
+              { q: "What is 15% of 200?", options: ["25", "30", "35", "40"], answer: 1 },
+              { q: "Solve: 2x - 7 = 15", options: ["x = 8", "x = 9", "x = 11", "x = 13"], answer: 2 },
+              { q: "What is the area of a rectangle with length 8cm and width 5cm?", options: ["13cm²", "26cm²", "40cm²", "80cm²"], answer: 2 },
+              { q: "What is 3² + 4²?", options: ["7", "12", "24", "25"], answer: 3 },
+              { q: "What is the value of √144?", options: ["11", "12", "13", "14"], answer: 1 },
+            ],
+          },
+          {
+            subject: "English Language",
+            questions: [
+              { q: "Choose the correct spelling:", options: ["Definately", "Definitely", "Definatly", "Definetly"], answer: 1 },
+              { q: "Which word is a synonym of 'happy'?", options: ["Sad", "Angry", "Joyful", "Tired"], answer: 2 },
+              { q: "Identify the noun: 'The cat sat on the mat.'", options: ["sat", "on", "cat", "the"], answer: 2 },
+              { q: "Which is the correct form? 'She ___ to school daily.'", options: ["go", "goes", "going", "gone"], answer: 1 },
+              { q: "Choose the antonym of 'brave':", options: ["Courageous", "Fearless", "Cowardly", "Bold"], answer: 2 },
+              { q: "Which sentence is correct?", options: ["He don't like it", "He doesn't likes it", "He doesn't like it", "He not like it"], answer: 2 },
+            ],
+          },
+          {
+            subject: "Science",
+            questions: [
+              { q: "What is the chemical symbol for water?", options: ["H2O", "CO2", "NaCl", "O2"], answer: 0 },
+              { q: "What is the boiling point of water in Celsius?", options: ["90°C", "95°C", "100°C", "110°C"], answer: 2 },
+              { q: "Which organ pumps blood in the human body?", options: ["Lungs", "Brain", "Heart", "Liver"], answer: 2 },
+              { q: "What is the largest planet in our solar system?", options: ["Earth", "Mars", "Jupiter", "Saturn"], answer: 2 },
+              { q: "Photosynthesis occurs in which part of a plant?", options: ["Roots", "Stem", "Leaves", "Flowers"], answer: 2 },
+              { q: "Which gas do humans breathe in to survive?", options: ["Carbon Dioxide", "Nitrogen", "Oxygen", "Hydrogen"], answer: 2 },
+              { q: "What is the process by which water turns into vapour?", options: ["Condensation", "Evaporation", "Freezing", "Melting"], answer: 1 },
+            ],
+          },
+        ];
+
+        const allQuestions: any[] = [];
+        for (const subject of EXAM_QUESTIONS) {
+          for (const q of subject.questions) {
+            allQuestions.push({
+              subject: subject.subject,
+              question: q.q,
+              options: q.options,
+              answer: q.answer,
+            });
+          }
+        }
+
+        const existingExam = await prisma.entranceExam.findUnique({ where: { applicantId: existing.id } });
+        if (!existingExam) {
+          await prisma.entranceExam.create({
+            data: {
+              applicantId: existing.id,
+              token,
+              examDate,
+              startTime,
+              endTime,
+              durationMins,
+              subjects: EXAM_QUESTIONS.map((s) => s.subject),
+              questions: allQuestions,
+              totalQuestions: allQuestions.length,
+              status: "pending",
+            },
+          });
+
+          const websiteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://ffb-erp.vercel.app";
+          const examUrl = `${websiteUrl}/portal/entrance-exam/${token}`;
+
+          const { sendEntranceExamEmail } = await import("@/lib/resend");
+          await sendEntranceExamEmail({
+            firstName: existing.firstName,
+            lastName: existing.lastName,
+            applicationNumber: existing.applicationNumber,
+            classAppliedFor: existing.classAppliedFor,
+            email: existing.email || "",
+            guardianName: existing.guardianName || undefined,
+            guardianEmail: existing.guardianEmail || undefined,
+            examDate,
+            startTime,
+            endTime,
+            durationMins,
+            examUrl,
+          });
+        }
+      } catch (examError) {
+        console.error("Failed to create entrance exam:", examError);
       }
     }
 

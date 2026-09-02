@@ -33,6 +33,14 @@ export function generateAdmissionNumber(): string {
   return `FFB/${year}/${random}`;
 }
 
+export function generateApplicationNumber(): string {
+  const year = new Date().getFullYear();
+  const random = Math.floor(Math.random() * 100000)
+    .toString()
+    .padStart(5, "0");
+  return `APP/${year}/${random}`;
+}
+
 export function generateInvoiceNumber(): string {
   const timestamp = Date.now().toString(36).toUpperCase();
   const random = Math.random().toString(36).substring(2, 6).toUpperCase();
