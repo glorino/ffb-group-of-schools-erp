@@ -2,68 +2,33 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
 import { formatCurrency, formatCurrencyCompact } from "@/lib/school-config";
 import {
-  CreditCard,
-  Search,
-  Download,
-  TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight,
-  Plus,
-  CheckCircle2,
-  Clock,
-  Wallet,
-  Receipt,
-  AlertCircle,
-  X,
-  Loader2,
-  ChevronDown,
+  CreditCard, Search, Download, TrendingUp, ArrowUpRight, ArrowDownRight,
+  Plus, CheckCircle2, Clock, Wallet, Receipt, AlertCircle, X, Loader2, ChevronDown,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
 
 interface Payment {
-  id: string;
-  amount: number;
-  method: string;
-  status: string;
-  reference: string;
-  paidAt: string;
+  id: string; amount: number; method: string; status: string; reference: string; paidAt: string;
   student?: { firstName: string; lastName: string; class?: { name: string } };
-  studentName?: string;
-  className?: string;
-  date?: string;
+  studentName?: string; className?: string; date?: string;
 }
-
 interface Invoice {
-  id: string;
-  invoiceNumber: string;
-  amount: number;
-  totalAmount: number;
-  discount: number;
-  dueDate: string;
-  status: string;
-  notes?: string;
+  id: string; invoiceNumber: string; amount: number; totalAmount: number; discount: number;
+  dueDate: string; status: string; notes?: string;
   student?: { id: string; firstName: string; lastName: string; admissionNumber: string; class?: { name: string } };
   schoolFee?: { id: string; name: string; type: string; amount: number };
 }
-
 interface Student { id: string; firstName: string; lastName: string; admissionNumber: string; class?: { name: string } }
 interface SchoolFee { id: string; name: string; type: string; amount: number }
+
+const inputStyle: React.CSSProperties = { width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1.5px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" as const, background: "#f8fafc", transition: "border-color 0.2s, box-shadow 0.2s" };
+const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#0055ff"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,85,255,0.1)"; e.currentTarget.style.background = "#ffffff"; };
+const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "#f8fafc"; };
+const labelStyle: React.CSSProperties = { display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" };
+const btnStyle = (bg: string, disabled?: boolean): React.CSSProperties => ({ padding: "10px 20px", borderRadius: "12px", border: "none", background: disabled ? "#94a3b8" : bg, color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: disabled ? "not-allowed" : "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s", opacity: disabled ? 0.6 : 1 });
 
 export default function FinancePage() {
   const { data: session } = useSession();
@@ -71,7 +36,6 @@ export default function FinancePage() {
   const isStudent = userRoles.includes("STUDENT");
   const isParent = userRoles.includes("PARENT");
   const isReadOnly = isStudent || isParent;
-
   const [payments, setPayments] = useState<Payment[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
@@ -86,8 +50,6 @@ export default function FinancePage() {
   const [selectedStudentName, setSelectedStudentName] = useState("");
   const [selectedFeeName, setSelectedFeeName] = useState("");
   const [form, setForm] = useState({ studentId: "", amount: "", schoolFeeId: "", dueDate: "", description: "", paymentType: "full" });
-  const [filterYear, setFilterYear] = useState("");
-  const [filterTerm, setFilterTerm] = useState("");
   const [filterSession, setFilterSession] = useState("");
   const [academicYears, setAcademicYears] = useState<any[]>([]);
   const [terms, setTerms] = useState<any[]>([]);
@@ -108,52 +70,30 @@ export default function FinancePage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const paymentStatus = params.get("payment");
-    if (paymentStatus === "success") {
-      toast.success("Payment completed successfully!");
-      window.history.replaceState({}, "", "/dashboard/finance");
-    } else if (paymentStatus === "error") {
-      toast.error("Payment failed. Please try again.");
-      window.history.replaceState({}, "", "/dashboard/finance");
-    }
+    const ps = params.get("payment");
+    if (ps === "success") { toast.success("Payment completed successfully!"); window.history.replaceState({}, "", "/dashboard/finance"); }
+    else if (ps === "error") { toast.error("Payment failed. Please try again."); window.history.replaceState({}, "", "/dashboard/finance"); }
   }, []);
 
-  useEffect(() => {
-    fetch("/api/calendar").then(r => r.json()).then(d => {
-      setAcademicYears(d.academicYears || []);
-      setTerms(d.terms || []);
-    }).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (showModal) {
-      setShowStudentDropdown(false);
-      setStudentSearch("");
-      setSelectedStudentName("");
-      setSelectedFeeName("");
-    }
-  }, [showModal]);
+  useEffect(() => { fetch("/api/calendar").then(r => r.json()).then(d => { setAcademicYears(d.academicYears || []); setTerms(d.terms || []); }).catch(() => {}); }, []);
+  useEffect(() => { if (showModal) { setShowStudentDropdown(false); setStudentSearch(""); setSelectedStudentName(""); setSelectedFeeName(""); } }, [showModal]);
 
   const filteredStudents = students.filter(s =>
-    `${s.firstName} ${s.lastName}`.toLowerCase().includes(studentSearch.toLowerCase()) ||
+    (`${s.firstName} ${s.lastName}`).toLowerCase().includes(studentSearch.toLowerCase()) ||
     s.admissionNumber.toLowerCase().includes(studentSearch.toLowerCase())
   );
-
   const filteredPayments = payments.filter(p => {
     if (filterSession && p.paidAt && !new Date(p.paidAt).getFullYear().toString().includes(filterSession)) return false;
     if (!search) return true;
     const s = search.toLowerCase();
     const name = p.student ? `${p.student.firstName} ${p.student.lastName}` : (p.studentName || "");
-    const cls = p.student?.class?.name || p.className || "";
-    return name.toLowerCase().includes(s) || cls.toLowerCase().includes(s) || (p.reference || "").toLowerCase().includes(s);
+    return name.toLowerCase().includes(s) || (p.student?.class?.name || p.className || "").toLowerCase().includes(s) || (p.reference || "").toLowerCase().includes(s);
   });
-
   const filteredInvoices = invoices.filter(inv => {
     if (filterSession && inv.dueDate && !new Date(inv.dueDate).getFullYear().toString().includes(filterSession)) return false;
     if (!search) return true;
     const s = search.toLowerCase();
-    const name = inv.student ? `${inv.student.firstName} ${inv.student.lastName}` : "";
-    return name.toLowerCase().includes(s) || inv.invoiceNumber.toLowerCase().includes(s);
+    return (inv.student ? `${inv.student.firstName} ${inv.student.lastName}` : "").toLowerCase().includes(s) || inv.invoiceNumber.toLowerCase().includes(s);
   });
 
   const totalCollected = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
@@ -161,226 +101,141 @@ export default function FinancePage() {
   const verifiedPayments = payments.filter(p => p.status === "verified").length;
   const pendingPayments = payments.filter(p => p.status === "pending").length;
 
-  const handleRemind = async (invoice: Invoice) => {
-    try {
-      const res = await fetch("/api/finance/remind", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ invoiceId: invoice.id }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to send reminder");
-      toast.success(data.message || "Reminder sent successfully");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to send reminder");
-    }
-  };
-
-  const handlePayNow = async (invoice: any) => {
-    try {
-      const res = await fetch("/api/payments/initialize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentId: invoice.studentId,
-          amount: invoice.totalAmount || invoice.amount,
-          email: invoice.student?.email || "",
-          name: invoice.student ? `${invoice.student.firstName} ${invoice.student.lastName}` : "",
-        }),
-      });
-      const data = await res.json();
-      if (data.paymentLink) {
-        window.location.href = data.paymentLink;
-      } else {
-        toast.error(data.error || "Failed to initialize payment");
-      }
-    } catch {
-      toast.error("Failed to initialize payment");
-    }
-  };
+  const handleRemind = async (invoice: Invoice) => { try { const res = await fetch("/api/finance/remind", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ invoiceId: invoice.id }) }); const data = await res.json(); if (!res.ok) throw new Error(data.error || "Failed"); toast.success(data.message || "Reminder sent"); } catch (err: any) { toast.error(err.message || "Failed"); } };
+  const handlePayNow = async (invoice: any) => { try { const res = await fetch("/api/payments/initialize", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ studentId: invoice.studentId, amount: invoice.totalAmount || invoice.amount, email: invoice.student?.email || "", name: invoice.student ? `${invoice.student.firstName} ${invoice.student.lastName}` : "" }) }); const data = await res.json(); if (data.paymentLink) { window.location.href = data.paymentLink; } else { toast.error(data.error || "Failed to initialize payment"); } } catch { toast.error("Failed to initialize payment"); } };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.studentId || !form.amount || !form.schoolFeeId || !form.dueDate) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
+    if (!form.studentId || !form.amount || !form.schoolFeeId || !form.dueDate) { toast.error("Please fill in all required fields"); return; }
     setSubmitting(true);
     try {
-      const res = await fetch("/api/finance/invoices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentId: form.studentId,
-          schoolFeeId: form.schoolFeeId,
-          amount: Number(form.amount),
-          dueDate: form.dueDate,
-          notes: form.description || undefined,
-          paymentType: form.paymentType,
-        }),
-      });
+      const res = await fetch("/api/finance/invoices", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ studentId: form.studentId, schoolFeeId: form.schoolFeeId, amount: Number(form.amount), dueDate: form.dueDate, notes: form.description || undefined, paymentType: form.paymentType }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create invoice");
       toast.success("Invoice created successfully");
       setShowModal(false);
       setForm({ studentId: "", amount: "", schoolFeeId: "", dueDate: "", description: "", paymentType: "full" });
-      setSelectedStudentName("");
-      setSelectedFeeName("");
+      setSelectedStudentName(""); setSelectedFeeName("");
       const invData = await fetch("/api/finance/invoices").then(r => r.json());
       setInvoices(invData.invoices || []);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to create invoice");
-    } finally {
-      setSubmitting(false);
-    }
+    } catch (err: any) { toast.error(err.message || "Failed to create invoice"); } finally { setSubmitting(false); }
   };
 
-  const handleExport = () => {
-    if (payments.length === 0) { toast.info("No payments to export"); return; }
-    downloadCSV(payments.map(p => ({
-      Student: p.student ? `${p.student.firstName} ${p.student.lastName}` : (p.studentName || "—"),
-      Amount: p.amount,
-      Method: p.method || "—",
-      Status: p.status,
-      Date: p.paidAt ? new Date(p.paidAt).toLocaleDateString() : "—",
-      Reference: p.reference || "—",
-    })), "finance_payments");
-    toast.success("Payments exported successfully");
-  };
+  const handleExport = () => { if (payments.length === 0) { toast.info("No payments to export"); return; } downloadCSV(payments.map(p => ({ Student: p.student ? `${p.student.firstName} ${p.student.lastName}` : (p.studentName || "\u2014"), Amount: p.amount, Method: p.method || "\u2014", Status: p.status, Date: p.paidAt ? new Date(p.paidAt).toLocaleDateString() : "\u2014", Reference: p.reference || "\u2014" })), "finance_payments"); toast.success("Payments exported successfully"); };
 
   const formatCompact = (v: number) => v >= 1000000 ? formatCurrencyCompact(v) : formatCurrency(v);
-
   const tabs = ["overview", "payments", "invoices"] as const;
+  const kpis = [
+    { label: "Total Collected", value: formatCurrency(totalCollected), change: `+${verifiedPayments}`, up: true, bg: "linear-gradient(135deg, #10b981, #059669)", icon: "wallet" },
+    { label: "Outstanding", value: formatCurrency(totalOutstanding), change: `-${pendingPayments}`, up: false, bg: "linear-gradient(135deg, #f59e0b, #d97706)", icon: "receipt" },
+    { label: "Total Payments", value: String(payments.length), change: `+${payments.length}`, up: true, bg: "linear-gradient(135deg, #0055ff, #0033cc)", icon: "trending" },
+    { label: "Pending Invoices", value: String(invoices.filter(i => i.status !== "paid").length), change: "+0", up: false, bg: "linear-gradient(135deg, #ef4444, #dc2626)", icon: "alert" },
+  ];
+  const kpiIcons: Record<string, React.ReactNode> = {
+    wallet: <Wallet style={{ width: "20px", height: "20px", color: "#ffffff" }} />,
+    receipt: <Receipt style={{ width: "20px", height: "20px", color: "#ffffff" }} />,
+    trending: <TrendingUp style={{ width: "20px", height: "20px", color: "#ffffff" }} />,
+    alert: <AlertCircle style={{ width: "20px", height: "20px", color: "#ffffff" }} />,
+  };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-[22px] font-bold text-[#1a1a2e] tracking-tight flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-              <CreditCard className="w-[18px] h-[18px] text-white" />
-            </div>
-            Finance
-          </h1>
-          <p className="text-[#94a3b8] text-[12px] mt-1 ml-[46px]">Manage fees, payments, and financial records</p>
-        </div>
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-3">
-            <select value={filterSession} onChange={(e) => setFilterSession(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] focus:outline-none focus:border-[var(--primary)]"
-              style={{ colorScheme: "light" }}>
+    <div style={{ padding: "24px 32px", minHeight: "100vh", background: "#f8fafc" }}>
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "20px", padding: "28px 32px", marginBottom: "28px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.12) 0%, transparent 60%), radial-gradient(circle at 10% 80%, rgba(255,255,255,0.08) 0%, transparent 50%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", display: "flex", alignItems: "center", gap: "12px" }}><CreditCard style={{ width: "28px", height: "28px" }} /> Finance</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Manage fees, payments, and financial records</p>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            <select value={filterSession} onChange={(e) => setFilterSession(e.target.value)} style={{ ...inputStyle, width: "auto", minWidth: "140px", padding: "10px 14px", cursor: "pointer" as const, colorScheme: "light" }} onFocus={inputFocus} onBlur={inputBlur}>
               <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">All Sessions</option>
               {academicYears.map((y: any) => <option key={y.id} style={{ background: "#ffffff", color: "#1a1a2e" }} value={y.name}>{y.name}</option>)}
             </select>
-            <select value={filterTerm} onChange={(e) => setFilterTerm(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] focus:outline-none focus:border-[var(--primary)]"
-              style={{ colorScheme: "light" }}>
-              <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">All Terms</option>
-              {terms.map((t: any) => <option key={t.id} style={{ background: "#ffffff", color: "#1a1a2e" }} value={t.name}>{t.name}</option>)}
-            </select>
+            <button onClick={handleExport} style={btnStyle("#ffffff")}><span style={{ color: "#475569" }}><Download style={{ width: "16px", height: "16px", display: "inline" }} /></span><span style={{ color: "#475569" }}>Export</span></button>
+            {!isReadOnly && <button onClick={() => setShowModal(true)} style={btnStyle("#0055ff")}><Plus style={{ width: "16px", height: "16px" }} /> Create Invoice</button>}
           </div>
-          <button onClick={handleExport} className="btn btn-secondary">
-            <Download className="w-4 h-4" /> Export
-          </button>
-          {!isReadOnly && (
-            <button onClick={() => setShowModal(true)} className="btn btn-primary">
-              <Plus className="w-4 h-4" /> Create Invoice
-            </button>
-          )}
         </div>
       </div>
 
-      <div className="flex gap-1 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-1.5">
-        {tabs.map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium capitalize transition-all duration-200 ${tab === t ? "bg-white text-[#1a1a2e] shadow-sm border border-[#e2e8f0]" : "text-[#94a3b8] hover:text-[#475569] hover:bg-white/50"}`}>
-            {t}
-          </button>
-        ))}
+      <div style={{ display: "flex", gap: "4px", background: "#f1f5f9", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "6px", marginBottom: "24px" }}>
+        {tabs.map(t => (<button key={t} onClick={() => setTab(t)} style={{ flex: 1, padding: "10px 0", borderRadius: "12px", border: "none", fontSize: "13px", fontWeight: 600, cursor: "pointer", textTransform: "capitalize" as const, transition: "all 0.2s", background: tab === t ? "#ffffff" : "transparent", color: tab === t ? "#0f172a" : "#94a3b8", boxShadow: tab === t ? "0 1px 3px rgba(0,0,0,0.06)" : "none" }}>{t}</button>))}
       </div>
 
       {tab === "overview" && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { label: "Total Collected", value: formatCurrency(totalCollected), change: `+${verifiedPayments}`, up: true, icon: Wallet, color: "from-emerald-500 to-emerald-700" },
-              { label: "Outstanding", value: formatCurrency(totalOutstanding), change: `-${pendingPayments}`, up: false, icon: Receipt, color: "from-amber-500 to-amber-700" },
-              { label: "Total Payments", value: String(payments.length), change: `+${payments.length}`, up: true, icon: TrendingUp, color: "from-blue-500 to-blue-700" },
-              { label: "Pending Invoices", value: String(invoices.filter(i => i.status !== "paid").length), change: "+0", up: false, icon: AlertCircle, color: "from-red-500 to-red-700" },
-            ].map((stat, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-                <div className="flex items-center justify-between mb-3">
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                    <stat.icon className="w-5 h-5 text-white" />
-                  </div>
-                  <span className={`flex items-center gap-1 text-[11px] font-semibold ${stat.up ? "text-[#16a34a]" : "text-[#dc2626]"}`}>
-                    {stat.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                    {stat.change}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" }}>
+            {kpis.map((stat, i) => (
+              <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 22px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
+                  <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: stat.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{kpiIcons[stat.icon]}</div>
+                  <span style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", fontWeight: 600, color: stat.up ? "#16a34a" : "#dc2626" }}>
+                    {stat.up ? <ArrowUpRight style={{ width: "14px", height: "14px" }} /> : <ArrowDownRight style={{ width: "14px", height: "14px" }} />}{stat.change}
                   </span>
                 </div>
-                <p className="text-[#1a1a2e] text-xl font-bold">{stat.value}</p>
-                <p className="text-[#94a3b8] text-[11px] mt-1">{stat.label}</p>
-              </motion.div>
+                <p style={{ margin: 0, fontSize: "22px", fontWeight: 800, color: "#0f172a" }}>{stat.value}</p>
+                <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#94a3b8" }}>{stat.label}</p>
+              </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-              <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-5">Recent Payments</h3>
-              {loading ? (
-                <div className="flex items-center justify-center py-16"><Loader2 className="w-6 h-6 text-[#94a3b8] animate-spin" /></div>
-              ) : payments.length === 0 ? (
-                <div className="text-center py-16 text-[#94a3b8]"><p className="text-[13px]">No payments recorded yet</p></div>
-              ) : (
-                <div className="space-y-2">
-                  {payments.slice(0, 5).map((p, i) => (
-                    <div key={p.id || i} className="flex items-center justify-between p-3 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] transition">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                          <CheckCircle2 className="w-4 h-4 text-[#16a34a]" />
-                        </div>
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px" }}>
+            <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+              <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9" }}>
+                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Recent Payments</h3>
+              </div>
+              <div style={{ padding: "8px" }}>
+                {loading ? (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "60px 0" }}><Loader2 style={{ width: "24px", height: "24px", color: "#0055ff" }} className="animate-spin" /></div>
+                ) : payments.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8" }}><p style={{ margin: 0, fontSize: "14px" }}>No payments recorded yet</p></div>
+                ) : (
+                  payments.slice(0, 5).map((p, i) => (
+                    <div key={p.id || i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderRadius: "12px", marginBottom: "4px", transition: "background 0.1s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "rgba(16,185,129,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><CheckCircle2 style={{ width: "18px", height: "18px", color: "#16a34a" }} /></div>
                         <div>
-                          <p className="text-[#1a1a2e] text-[13px] font-medium">{p.student ? `${p.student.firstName} ${p.student.lastName}` : (p.studentName || "—")}</p>
-                          <p className="text-[#94a3b8] text-[10px]">{p.method || "—"} · {p.paidAt ? new Date(p.paidAt).toLocaleDateString() : (p.date || "—")}</p>
+                          <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{p.student ? `${p.student.firstName} ${p.student.lastName}` : (p.studentName || "\u2014")}</p>
+                          <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#94a3b8" }}>{p.method || "\u2014"} \u00b7 {p.paidAt ? new Date(p.paidAt).toLocaleDateString() : (p.date || "\u2014")}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-[#1a1a2e] text-[13px] font-semibold">{formatCurrency(p.amount || 0)}</p>
-                        <span className={`text-[10px] font-medium ${p.status === "verified" ? "text-[#16a34a]" : "text-[#d97706]"}`}>{p.status}</span>
+                      <div style={{ textAlign: "right" }}>
+                        <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{formatCurrency(p.amount || 0)}</p>
+                        <span style={{ fontSize: "10px", fontWeight: 600, color: p.status === "verified" ? "#16a34a" : "#d97706" }}>{p.status}</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  ))
+                )}
+              </div>
             </div>
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-              <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4">Payment Status</h3>
-              <div className="space-y-3">
+
+            <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+              <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9" }}>
+                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Payment Status</h3>
+              </div>
+              <div style={{ padding: "20px 24px" }}>
                 {[
-                  { label: "Verified", count: verifiedPayments, color: "bg-emerald-500" },
-                  { label: "Pending", count: pendingPayments, color: "bg-amber-500" },
+                  { label: "Verified", count: verifiedPayments, color: "#10b981" },
+                  { label: "Pending", count: pendingPayments, color: "#f59e0b" },
                 ].map((item, i) => (
-                  <div key={i} className="p-3 rounded-xl bg-[#f8fafc]">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[#1a1a2e] text-[13px]">{item.label}</span>
-                      <span className="text-[#64748b] text-xs">{item.count}</span>
+                  <div key={i} style={{ padding: "12px 16px", borderRadius: "12px", background: "#f8fafc", marginBottom: i === 0 ? "10px" : 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                      <span style={{ fontSize: "13px", fontWeight: 500, color: "#0f172a" }}>{item.label}</span>
+                      <span style={{ fontSize: "12px", fontWeight: 600, color: "#64748b" }}>{item.count}</span>
                     </div>
-                    <div className="w-full bg-[#f1f5f9] rounded-full h-1.5">
-                      <div className={`${item.color} h-1.5 rounded-full`} style={{ width: `${Math.min((item.count / Math.max(verifiedPayments + pendingPayments, 1)) * 100, 100)}%` }} />
+                    <div style={{ width: "100%", height: "6px", borderRadius: "3px", background: "#f1f5f9" }}>
+                      <div style={{ height: "6px", borderRadius: "3px", background: item.color, width: `${Math.min((item.count / Math.max(verifiedPayments + pendingPayments, 1)) * 100, 100)}%`, transition: "width 0.3s" }} />
                     </div>
                   </div>
                 ))}
-              </div>
-              <div className="mt-4 pt-4 border-t border-[#e2e8f0]">
-                <h4 className="text-[#475569] text-xs font-medium mb-3">Quick Actions</h4>
-                <div className="space-y-2">
-                  {!isReadOnly && (
-                    <button onClick={() => setShowModal(true)} className="w-full flex items-center gap-2 p-2.5 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] text-[#475569] text-[12px] transition text-left">
-                      <Plus className="w-3.5 h-3.5" /> Create Invoice
-                    </button>
-                  )}
-                  <button onClick={handleExport} className="w-full flex items-center gap-2 p-2.5 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] text-[#475569] text-[12px] transition text-left">
-                    <Download className="w-3.5 h-3.5" /> Export Payments
-                  </button>
+                <div style={{ marginTop: "20px", paddingTop: "16px", borderTop: "1px solid #f1f5f9" }}>
+                  <p style={{ margin: "0 0 12px", fontSize: "12px", fontWeight: 600, color: "#64748b" }}>Quick Actions</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {!isReadOnly && (
+                      <button onClick={() => setShowModal(true)} style={{ width: "100%", padding: "10px 16px", borderRadius: "10px", border: "1px solid #f1f5f9", background: "#f8fafc", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", color: "#475569", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f1f5f9")} onMouseLeave={(e) => (e.currentTarget.style.background = "#f8fafc")}><Plus style={{ width: "14px", height: "14px" }} /> Create Invoice</button>
+                    )}
+                    <button onClick={handleExport} style={{ width: "100%", padding: "10px 16px", borderRadius: "10px", border: "1px solid #f1f5f9", background: "#f8fafc", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", color: "#475569", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f1f5f9")} onMouseLeave={(e) => (e.currentTarget.style.background = "#f8fafc")}><Download style={{ width: "14px", height: "14px" }} /> Export Payments</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -389,44 +244,31 @@ export default function FinancePage() {
       )}
 
       {tab === "payments" && (
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-[#e2e8f0]">
-            <div className="relative max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
-              <input type="text" placeholder="Search payments..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50 transition" />
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+          <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", gap: "16px" }}>
+            <div style={{ position: "relative", maxWidth: "320px", flex: 1 }}>
+              <Search style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", width: "16px", height: "16px", color: "#94a3b8" }} />
+              <input type="text" placeholder="Search payments..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ ...inputStyle, paddingLeft: "36px", padding: "10px 14px 10px 36px" }} onFocus={inputFocus} onBlur={inputBlur} />
             </div>
           </div>
           {loading ? (
-            <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-[#94a3b8] animate-spin" /></div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}><Loader2 style={{ width: "24px", height: "24px", color: "#0055ff" }} className="animate-spin" /></div>
           ) : filteredPayments.length === 0 ? (
-            <div className="text-center py-20 text-[#94a3b8]"><Receipt className="w-10 h-10 mx-auto mb-3 opacity-40" /><p className="text-[13px]">No payments found</p></div>
+            <div style={{ textAlign: "center", padding: "80px 0" }}><Receipt style={{ width: "40px", height: "40px", color: "#cbd5e1", margin: "0 auto 16px" }} /><p style={{ margin: 0, fontSize: "14px", color: "#94a3b8" }}>No payments found</p></div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-[#e2e8f0]">
-                    {["Student", "Class", "Amount", "Method", "Date", "Status"].map(h => (
-                      <th key={h} className="px-5 py-3 text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead><tr>{["Student", "Class", "Amount", "Method", "Date", "Status"].map(h => (<th key={h} style={{ padding: "12px 20px", textAlign: "left" as const, fontSize: "11px", fontWeight: 700, color: "#64748b", textTransform: "uppercase" as const, letterSpacing: "0.05em", borderBottom: "2px solid #f1f5f9" }}>{h}</th>))}</tr></thead>
                 <tbody>
                   {filteredPayments.map((p, i) => (
-                    <motion.tr key={p.id || i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.03 }} className={`border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition ${i % 2 === 1 ? "bg-[#f8fafc]/50" : ""}`}>
-                      <td className="px-5 py-3.5 text-[#475569] text-[13px] font-medium">{p.student ? `${p.student.firstName} ${p.student.lastName}` : (p.studentName || "—")}</td>
-                      <td className="px-5 py-3.5">
-                        <span className="px-2.5 py-0.5 rounded-lg bg-[#f8fafc] text-[#64748b] text-[11px] font-medium">{p.student?.class?.name || p.className || "—"}</span>
-                      </td>
-                      <td className="px-5 py-3.5 text-[#1a1a2e] text-[13px] font-semibold">{formatCurrency(p.amount || 0)}</td>
-                      <td className="px-5 py-3.5 text-[#64748b] text-[12px]">{p.method || "—"}</td>
-                      <td className="px-5 py-3.5 text-[#94a3b8] text-[12px]">{p.paidAt ? new Date(p.paidAt).toLocaleDateString() : (p.date || "—")}</td>
-                      <td className="px-5 py-3.5">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-medium ${p.status === "verified" ? "bg-emerald-500/10 text-[#16a34a]" : "bg-amber-500/10 text-[#d97706]"}`}>
-                          {p.status === "verified" ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
-                          {p.status}
-                        </span>
-                      </td>
-                    </motion.tr>
+                    <tr key={p.id || i} style={{ borderBottom: "1px solid #f1f5f9", transition: "background 0.1s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                      <td style={{ padding: "14px 20px", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{p.student ? `${p.student.firstName} ${p.student.lastName}` : (p.studentName || "\u2014")}</td>
+                      <td style={{ padding: "14px 20px" }}><span style={{ padding: "3px 10px", borderRadius: "6px", background: "#f8fafc", fontSize: "11px", fontWeight: 500, color: "#64748b" }}>{p.student?.class?.name || p.className || "\u2014"}</span></td>
+                      <td style={{ padding: "14px 20px", fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{formatCurrency(p.amount || 0)}</td>
+                      <td style={{ padding: "14px 20px", fontSize: "12px", color: "#64748b" }}>{p.method || "\u2014"}</td>
+                      <td style={{ padding: "14px 20px", fontSize: "12px", color: "#94a3b8" }}>{p.paidAt ? new Date(p.paidAt).toLocaleDateString() : (p.date || "\u2014")}</td>
+                      <td style={{ padding: "14px 20px" }}><span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "3px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 600, background: p.status === "verified" ? "rgba(16,185,129,0.1)" : "rgba(245,158,11,0.1)", color: p.status === "verified" ? "#16a34a" : "#d97706" }}>{p.status === "verified" ? <CheckCircle2 style={{ width: "12px", height: "12px" }} /> : <Clock style={{ width: "12px", height: "12px" }} />}{p.status}</span></td>
+                    </tr>
                   ))}
                 </tbody>
               </table>
@@ -436,48 +278,43 @@ export default function FinancePage() {
       )}
 
       {tab === "invoices" && (
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-[#e2e8f0] flex items-center justify-between">
-            <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Invoices</h3>
-            <div className="relative max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
-              <input type="text" placeholder="Search invoices..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50 transition" />
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+          <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Invoices</h3>
+            <div style={{ position: "relative", maxWidth: "280px" }}>
+              <Search style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", width: "16px", height: "16px", color: "#94a3b8" }} />
+              <input type="text" placeholder="Search invoices..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ ...inputStyle, paddingLeft: "36px", padding: "10px 14px 10px 36px" }} onFocus={inputFocus} onBlur={inputBlur} />
             </div>
           </div>
           {loading ? (
-            <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-[#94a3b8] animate-spin" /></div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}><Loader2 style={{ width: "24px", height: "24px", color: "#0055ff" }} className="animate-spin" /></div>
           ) : filteredInvoices.length === 0 ? (
-            <div className="text-center py-20 text-[#94a3b8]"><Receipt className="w-10 h-10 mx-auto mb-3 opacity-40" /><p className="text-[13px]">No invoices found</p><p className="text-[11px] mt-1 text-[#94a3b8]">Create one to get started</p></div>
+            <div style={{ textAlign: "center", padding: "80px 0" }}><Receipt style={{ width: "40px", height: "40px", color: "#cbd5e1", margin: "0 auto 16px" }} /><p style={{ margin: 0, fontSize: "14px", color: "#94a3b8" }}>No invoices found</p><p style={{ margin: "4px 0 0", fontSize: "12px", color: "#cbd5e1" }}>Create one to get started</p></div>
           ) : (
-            <div className="p-5 space-y-3">
+            <div style={{ padding: "12px" }}>
               {filteredInvoices.map((inv, i) => {
                 const daysLeft = Math.ceil((new Date(inv.dueDate).getTime() - Date.now()) / 86400000);
+                const isUrgent = inv.status !== "paid" && daysLeft <= 7;
                 return (
-                  <div key={inv.id || i} className="flex items-center justify-between px-5 py-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] hover:border-[#e2e8f0] transition">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${inv.status === "paid" ? "bg-emerald-500/10" : daysLeft <= 7 ? "bg-red-500/10" : "bg-amber-500/10"}`}>
-                        <Receipt className={`w-5 h-5 ${inv.status === "paid" ? "text-[#16a34a]" : daysLeft <= 7 ? "text-[#dc2626]" : "text-[#d97706]"}`} />
+                  <div key={inv.id || i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderRadius: "12px", marginBottom: "8px", border: "1px solid #f1f5f9", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                      <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: inv.status === "paid" ? "rgba(16,185,129,0.1)" : isUrgent ? "rgba(239,68,68,0.1)" : "rgba(245,158,11,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Receipt style={{ width: "20px", height: "20px", color: inv.status === "paid" ? "#16a34a" : isUrgent ? "#dc2626" : "#d97706" }} />
                       </div>
                       <div>
-                        <p className="text-[#475569] text-[13px] font-medium">{inv.student ? `${inv.student.firstName} ${inv.student.lastName}` : "—"}</p>
-                        <p className="text-[#94a3b8] text-[11px] mt-0.5">{inv.invoiceNumber} · {inv.schoolFee?.name || "Fee"} · Due {new Date(inv.dueDate).toLocaleDateString()}</p>
+                        <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{inv.student ? `${inv.student.firstName} ${inv.student.lastName}` : "\u2014"}</p>
+                        <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#94a3b8" }}>{inv.invoiceNumber} \u00b7 {inv.schoolFee?.name || "Fee"} \u00b7 Due {new Date(inv.dueDate).toLocaleDateString()}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-right">
-                        <p className="text-[#475569] text-[13px] font-semibold">{formatCurrency(inv.totalAmount || inv.amount)}</p>
-                        <p className={`text-[11px] font-medium mt-0.5 ${inv.status === "paid" ? "text-[#16a34a]" : daysLeft <= 7 ? "text-[#dc2626]" : "text-[#d97706]"}`}>
-                          {inv.status === "paid" ? "Paid" : `${daysLeft} days left`}
-                        </p>
+                    <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                      <div style={{ textAlign: "right" }}>
+                        <p style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#0f172a" }}>{formatCurrency(inv.totalAmount || inv.amount)}</p>
+                        <p style={{ margin: "2px 0 0", fontSize: "11px", fontWeight: 600, color: inv.status === "paid" ? "#16a34a" : isUrgent ? "#dc2626" : "#d97706" }}>{inv.status === "paid" ? "Paid" : `${daysLeft} days left`}</p>
                       </div>
                       {inv.status !== "paid" && (
-                        <div className="flex gap-3">
-                          <button onClick={() => handlePayNow(inv)} className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-[#16a34a] text-[11px] font-medium hover:bg-[#dcfce7] transition">
-                            Pay Now
-                          </button>
-                          <button onClick={() => handleRemind(inv)} className="px-3 py-1.5 rounded-lg bg-[var(--primary)]/10 text-[var(--blue-3)] text-[11px] font-medium hover:bg-[var(--primary)]/20 transition">
-                            Remind
-                          </button>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          <button onClick={() => handlePayNow(inv)} style={{ padding: "6px 14px", borderRadius: "8px", border: "none", background: "rgba(16,185,129,0.1)", color: "#16a34a", fontSize: "11px", fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.1)")}>Pay Now</button>
+                          <button onClick={() => handleRemind(inv)} style={{ padding: "6px 14px", borderRadius: "8px", border: "none", background: "rgba(0,85,255,0.1)", color: "#0055ff", fontSize: "11px", fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0,85,255,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(0,85,255,0.1)")}>Remind</button>
                         </div>
                       )}
                     </div>
@@ -489,115 +326,92 @@ export default function FinancePage() {
         </div>
       )}
 
-      <AnimatePresence>
-        {showModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden">
-              <div className="bg-gradient-to-r from-emerald-500/20 to-emerald-600/5 px-6 py-4 border-b border-[#e2e8f0]">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-[#1a1a2e] font-semibold text-lg">Create Invoice</h3>
-                    <p className="text-[#64748b] text-xs mt-0.5">Generate a new fee invoice for a student</p>
+      {showModal && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} onClick={() => setShowModal(false)} />
+          <div style={{ position: "relative", width: "100%", maxWidth: "560px", background: "#ffffff", borderRadius: "20px", boxShadow: "0 25px 60px rgba(0,0,0,0.2)", overflow: "hidden" }}>
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "24px 28px", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)" }} />
+              <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#ffffff" }}>Create Invoice</h3>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>Generate a new fee invoice for a student</p>
+                </div>
+                <button onClick={() => setShowModal(false)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", transition: "background 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.25)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}>
+                  <X style={{ width: "18px", height: "18px" }} />
+                </button>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} style={{ padding: "24px 28px" }}>
+              <div style={{ marginBottom: "16px", position: "relative" }}>
+                <label style={labelStyle}>Student *</label>
+                <button type="button" onClick={() => setShowStudentDropdown(!showStudentDropdown)} style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1.5px solid #e2e8f0", background: "#f8fafc", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "13px", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#0055ff"; e.currentTarget.style.background = "#ffffff"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.background = "#f8fafc"; }}>
+                  <span style={{ color: selectedStudentName ? "#0f172a" : "#94a3b8" }}>{selectedStudentName || "Select a student..."}</span>
+                  <ChevronDown style={{ width: "16px", height: "16px", color: "#94a3b8", transform: showStudentDropdown ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} />
+                </button>
+                {showStudentDropdown && (
+                  <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: "4px", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", boxShadow: "0 10px 40px rgba(0,0,0,0.12)", zIndex: 50, overflow: "hidden" }}>
+                    <div style={{ padding: "8px", borderBottom: "1px solid #f1f5f9" }}>
+                      <input type="text" placeholder="Search students..." value={studentSearch} onChange={(e) => setStudentSearch(e.target.value)} style={{ ...inputStyle, padding: "8px 12px", fontSize: "12px" }} onFocus={inputFocus} onBlur={inputBlur} autoFocus />
+                    </div>
+                    <div style={{ maxHeight: "200px", overflowY: "auto", padding: "4px" }}>
+                      {filteredStudents.length === 0 ? (
+                        <p style={{ textAlign: "center", padding: "16px", fontSize: "12px", color: "#94a3b8" }}>No students found</p>
+                      ) : filteredStudents.map(s => (
+                        <button key={s.id} type="button" onClick={() => { setForm({ ...form, studentId: s.id }); setSelectedStudentName(`${s.firstName} ${s.lastName} (${s.admissionNumber})`); setShowStudentDropdown(false); setStudentSearch(""); }} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "none", background: form.studentId === s.id ? "rgba(0,85,255,0.06)" : "transparent", cursor: "pointer", textAlign: "left" as const, display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2px", transition: "background 0.1s" }} onMouseEnter={(e) => (e.currentTarget.style.background = form.studentId === s.id ? "rgba(0,85,255,0.06)" : "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = form.studentId === s.id ? "rgba(0,85,255,0.06)" : "transparent")}>
+                          <div><p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{s.firstName} {s.lastName}</p><p style={{ margin: "2px 0 0", fontSize: "11px", color: "#94a3b8" }}>{s.admissionNumber} \u00b7 {s.class?.name || "\u2014"}</p></div>
+                          {form.studentId === s.id && <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#0055ff" }} />}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-colors">
-                    <X className="w-5 h-5" />
-                  </button>
+                )}
+              </div>
+
+              <div style={{ marginBottom: "16px" }}>
+                <label style={{ ...labelStyle, fontSize: "13px" }}>Payment Type</label>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  {["full", "instalment"].map(t => (
+                    <button key={t} type="button" onClick={() => setForm({ ...form, paymentType: t })} style={{ flex: 1, padding: "10px 0", borderRadius: "10px", border: form.paymentType === t ? "1.5px solid #0055ff" : "1.5px solid #e2e8f0", background: form.paymentType === t ? "rgba(0,85,255,0.06)" : "#f8fafc", color: form.paymentType === t ? "#0055ff" : "#64748b", fontSize: "13px", fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}>{t === "full" ? "Full Payment" : "Instalment"}</button>
+                  ))}
                 </div>
               </div>
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <div className="relative">
-                  <label className="block text-[#475569] text-xs font-medium mb-1.5">Student *</label>
-                  <button type="button" onClick={() => setShowStudentDropdown(!showStudentDropdown)} className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-[13px] focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between">
-                    <span className={selectedStudentName ? "text-[#1a1a2e]" : "text-[#64748b]"}>{selectedStudentName || "Select a student..."}</span>
-                    <ChevronDown className={`w-4 h-4 text-[#64748b] transition-transform ${showStudentDropdown ? "rotate-180" : ""}`} />
-                  </button>
-                  {showStudentDropdown && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
-                      <div className="p-2 border-b border-[#e2e8f0]">
-                        <input type="text" placeholder="Search students..." value={studentSearch} onChange={(e) => setStudentSearch(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-xs focus:outline-none focus:border-[var(--primary)]" autoFocus />
-                      </div>
-                      <div className="overflow-y-auto max-h-44">
-                        {filteredStudents.length === 0 ? (
-                          <p className="text-[#64748b] text-xs text-center py-4">No students found</p>
-                        ) : (
-                          filteredStudents.map(s => (
-                            <button key={s.id} type="button" onClick={() => { setForm({ ...form, studentId: s.id }); setSelectedStudentName(`${s.firstName} ${s.lastName} (${s.admissionNumber})`); setShowStudentDropdown(false); setStudentSearch(""); }} className={`w-full px-3 py-2 text-left text-[13px] hover:bg-[#f1f5f9] transition-colors flex items-center justify-between ${form.studentId === s.id ? "bg-emerald-500/10 text-[#1a1a2e]" : "text-[#1a1a2e]"}`}>
-                              <div><p className="font-medium text-xs">{s.firstName} {s.lastName}</p><p className="text-[#64748b] text-[10px]">{s.admissionNumber} · {s.class?.name || "—"}</p></div>
-                              {form.studentId === s.id && <div className="w-2 h-2 rounded-full bg-[var(--accent)]" />}
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
 
-                {form.paymentType === "full" ? (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Amount *</label>
-                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="0" />
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Due Date *</label>
-                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
-                  </div>
-                </div>
-                ) : (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Instalment Amount *</label>
-                    <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Enter instalment amount" />
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Due Date *</label>
-                    <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
-                  </div>
-                </div>
-                )}
-
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "16px" }}>
                 <div>
-                  <label className="block text-[#475569] text-xs font-medium mb-1.5">School Fee *</label>
-                  <select value={form.schoolFeeId} onChange={(e) => { setForm({ ...form, schoolFeeId: e.target.value }); const f = fees.find(fe => fe.id === e.target.value); setSelectedFeeName(f ? `${f.name} (${f.type})` : ""); }} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer" style={{ colorScheme: "light" }}>
-                    <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select fee type</option>
-                    {fees.map(f => (
-                      <option key={f.id} value={f.id} style={{ background: "#ffffff", color: "#1a1a2e" }}>{f.name} — {formatCurrency(f.amount)}</option>
-                    ))}
-                  </select>
+                  <label style={labelStyle}>{form.paymentType === "full" ? "Amount" : "Instalment Amount"} *</label>
+                  <input type="number" required min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} style={inputStyle} placeholder="0" onFocus={inputFocus} onBlur={inputBlur} />
                 </div>
-
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Payment Type</label>
-                  <div className="flex gap-3">
-                    <button type="button" onClick={() => setForm({ ...form, paymentType: "full" })}
-                      className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium transition-all ${form.paymentType === "full" ? "bg-[var(--primary)] text-white" : "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b]"}`}>
-                      Full Payment
-                    </button>
-                    <button type="button" onClick={() => setForm({ ...form, paymentType: "instalment" })}
-                      className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium transition-all ${form.paymentType === "instalment" ? "bg-[var(--primary)] text-white" : "bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b]"}`}>
-                      Instalment
-                    </button>
-                  </div>
+                  <label style={labelStyle}>Due Date *</label>
+                  <input type="date" required value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} style={{ ...inputStyle, colorScheme: "light" }} onFocus={inputFocus} onBlur={inputBlur} />
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-[#475569] text-xs font-medium mb-1.5">Description</label>
-                  <input type="text" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Optional notes..." />
-                </div>
+              <div style={{ marginBottom: "16px" }}>
+                <label style={labelStyle}>School Fee *</label>
+                <select value={form.schoolFeeId} onChange={(e) => { setForm({ ...form, schoolFeeId: e.target.value }); const f = fees.find(fe => fe.id === e.target.value); setSelectedFeeName(f ? `${f.name} (${f.type})` : ""); }} style={{ ...inputStyle, cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
+                  <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">Select fee type</option>
+                  {fees.map(f => (<option key={f.id} value={f.id} style={{ background: "#ffffff", color: "#1a1a2e" }}>{f.name} \u2014 {formatCurrency(f.amount)}</option>))}
+                </select>
+              </div>
 
-                <div className="flex justify-end gap-3 pt-2 border-t border-[#e2e8f0]">
-                  <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] font-medium hover:bg-[#f1f5f9] transition-colors">Cancel</button>
-                  <button type="submit" disabled={submitting} className="px-6 py-2.5 rounded-xl bg-[var(--primary)] text-white text-[13px] font-semibold hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-[var(--primary)]/25">
-                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                    Create Invoice
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+              <div style={{ marginBottom: "20px" }}>
+                <label style={labelStyle}>Description</label>
+                <input type="text" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} style={inputStyle} placeholder="Optional notes..." onFocus={inputFocus} onBlur={inputBlur} />
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", paddingTop: "16px", borderTop: "1px solid #f1f5f9" }}>
+                <button type="button" onClick={() => setShowModal(false)} style={{ padding: "10px 20px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", color: "#475569", fontSize: "13px", fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f1f5f9")} onMouseLeave={(e) => (e.currentTarget.style.background = "#f8fafc")}>Cancel</button>
+                <button type="submit" disabled={submitting} style={btnStyle("#0055ff", submitting)}>
+                  {submitting && <Loader2 style={{ width: "16px", height: "16px" }} className="animate-spin" />} Create Invoice
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
