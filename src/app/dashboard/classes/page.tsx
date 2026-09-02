@@ -1,19 +1,20 @@
 ﻿"use client";
 
 import { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   GraduationCap,
   Users,
   Plus,
   Search,
-  MoreVertical,
   Building,
   UserCheck,
   X,
   Loader2,
   Eye,
   Pencil,
+  MoreHorizontal,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -29,527 +30,330 @@ interface ClassItem {
   classTeacher: { name: string } | null;
 }
 
-interface ClassesResponse {
-  classes: ClassItem[];
-  total: number;
-}
-
 const classOrder = ["Creche", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Primary 3", "Primary 4", "Primary 5", "Primary 6", "JSS 1", "JSS 2", "JSS 3", "SSS 1", "SSS 2", "SSS 3"];
-
-function getClassSortIndex(name: string): number {
-  const idx = classOrder.indexOf(name);
-  return idx === -1 ? classOrder.length : idx;
-}
+function getClassSortIndex(name: string): number { const idx = classOrder.indexOf(name); return idx === -1 ? classOrder.length : idx; }
 
 export default function ClassesPage() {
-  const [data, setData] = useState<ClassesResponse | null>(null);
+  const [classes, setClasses] = useState<ClassItem[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [viewClass, setViewClass] = useState<ClassItem | null>(null);
   const [editClass, setEditClass] = useState<ClassItem | null>(null);
   const [editForm, setEditForm] = useState({ name: "", displayName: "", level: "primary", capacity: "40" });
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [form, setForm] = useState({
-    name: "",
-    displayName: "",
-    level: "primary",
-    capacity: "40",
-    arm: "",
-  });
+  const [form, setForm] = useState({ name: "", displayName: "", level: "primary", capacity: "40", arm: "" });
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const fetchClasses = async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      const res = await fetch(`/api/classes?${params}`);
+      const d = await res.json();
+      setClasses(d.classes || []);
+      setTotal(d.total || 0);
+    } catch { setClasses([]); }
+    setLoading(false);
+  };
 
-    fetch(`/api/classes?${params}`)
-      .then((res) => res.json())
-      .then((d) => setData(d))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [search]);
+  useEffect(() => { fetchClasses(); }, [search]);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    const handler = (e: MouseEvent) => { if (menuRef.current && !menuRef.current.contains(e.target as Node)) setOpenMenu(null); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const sortedClasses = data?.classes
-    ? [...data.classes].sort((a, b) => getClassSortIndex(a.name) - getClassSortIndex(b.name))
-    : [];
-
+  const sortedClasses = [...classes].sort((a, b) => getClassSortIndex(a.name) - getClassSortIndex(b.name));
   const totalStudents = sortedClasses.reduce((sum, c) => sum + c._count.students, 0);
+  const totalCapacity = sortedClasses.reduce((s, c) => s + c.capacity, 0);
   const avgClassSize = sortedClasses.length ? Math.round(totalStudents / sortedClasses.length) : 0;
+  const capacityUsed = totalCapacity ? Math.round((totalStudents / totalCapacity) * 100) : 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim()) {
-      toast.error("Class name is required");
-      return;
-    }
+    if (!form.name.trim()) { toast.error("Class name is required"); return; }
     setSubmitting(true);
     try {
       const levelMap: Record<string, number> = { nursery: 1, primary: 2, junior: 3, secondary: 4 };
-      const res = await fetch("/api/classes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          displayName: form.displayName || form.name,
-          level: levelMap[form.level] || 2,
-          capacity: parseInt(form.capacity) || 40,
-          arm: form.arm || undefined,
-        }),
-      });
-      const cls = await res.json();
-      if (!res.ok) throw new Error(cls.error || "Failed to create class");
+      const res = await fetch("/api/classes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: form.name, displayName: form.displayName || form.name, level: levelMap[form.level] || 2, capacity: parseInt(form.capacity) || 40, arm: form.arm || undefined }) });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Failed"); }
       toast.success("Class created successfully");
       setShowModal(false);
       setForm({ name: "", displayName: "", level: "primary", capacity: "40", arm: "" });
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (search) params.set("search", search);
-      fetch(`/api/classes?${params}`)
-        .then((res) => res.json())
-        .then((d) => setData(d))
-        .catch(() => {})
-        .finally(() => setLoading(false));
-    } catch (err: any) {
-      toast.error(err.message || "Failed to create class");
-    } finally {
-      setSubmitting(false);
-    }
+      fetchClasses();
+    } catch (err: any) { toast.error(err.message); } finally { setSubmitting(false); }
   };
 
-  const kpis = [
-    { label: "Total Classes", value: String(data?.total ?? 0), icon: Building, color: "from-blue-500 to-blue-600" },
-    { label: "Total Students", value: String(totalStudents), icon: Users, color: "from-emerald-500 to-emerald-600" },
-    { label: "Avg. Class Size", value: String(avgClassSize), icon: GraduationCap, color: "from-purple-500 to-purple-600" },
-    { label: "Capacity Used", value: sortedClasses.length ? `${Math.round((totalStudents / (sortedClasses.reduce((s, c) => s + c.capacity, 0) || 1)) * 100)}%` : "0%", icon: UserCheck, color: "from-[var(--accent)] to-emerald-400" },
-  ];
+  const progressColor = (pct: number) => pct >= 90 ? "#ef4444" : pct >= 70 ? "#f59e0b" : "#10b981";
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div style={{ padding: "0 16px 32px", maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "20px" }}>
+      {/* Header */}
+      <div style={{ marginTop: "32px", borderRadius: "20px", padding: "32px 36px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Class Management</h1>
-            <p className="text-[#475569]">
-              Manage classes, streams, arms, and teacher assignments across all levels
-            </p>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", letterSpacing: "-0.02em" }}>Class Management</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Manage classes, streams, arms, and teacher assignments across all levels</p>
           </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="btn btn-primary"
-          >
-            <Plus className="w-4 h-4" />
-            Add Class
+          <button onClick={() => setShowModal(true)} style={{ padding: "10px 20px", borderRadius: "12px", background: "#ffffff", color: "#0055ff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+            <Plus style={{ width: "14px", height: "14px" }} /> Add Class
           </button>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map((kpi, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card shadow-sm"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[#64748b] text-sm mb-1">{kpi.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{kpi.value}</p>
-              </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center`}>
-                <kpi.icon className="w-6 h-6 text-white" />
-              </div>
+      {/* KPI Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+        {[
+          { label: "Total Classes", value: String(total), icon: Building, bg: "linear-gradient(135deg, #0055ff, #0033cc)" },
+          { label: "Total Students", value: String(totalStudents), icon: Users, bg: "linear-gradient(135deg, #10b981, #059669)" },
+          { label: "Avg. Class Size", value: String(avgClassSize), icon: GraduationCap, bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
+          { label: "Capacity Used", value: `${capacityUsed}%`, icon: UserCheck, bg: "linear-gradient(135deg, #f472b6, #ec4899)" },
+        ].map((kpi, i) => (
+          <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+            <div>
+              <p style={{ margin: 0, fontSize: "12px", color: "#64748b", fontWeight: 500 }}>{kpi.label}</p>
+              <p style={{ margin: "6px 0 0", fontSize: "28px", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>{kpi.value}</p>
             </div>
-          </motion.div>
+            <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: kpi.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <kpi.icon style={{ width: "22px", height: "22px", color: "#ffffff" }} />
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-4 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-3 card shadow-sm"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg">All Classes</h3>
-            <div className="flex gap-3">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                <input
-                  type="text"
-                  placeholder="Search classes..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
-                />
-              </div>
+      {/* Main Content */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "20px" }}>
+        {/* Table Card */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+          <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>All Classes</h3>
+            <div style={{ position: "relative" }}>
+              <Search style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", width: "16px", height: "16px", color: "#94a3b8" }} />
+              <input type="text" placeholder="Search classes..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ padding: "10px 14px 10px 38px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "13px", color: "#0f172a", outline: "none", width: "200px", boxSizing: "border-box" }} />
             </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[#e2e8f0]">
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Class</th>
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Section</th>
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Teacher</th>
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Students</th>
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Capacity</th>
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i} className="border-b border-[#e2e8f0]">
-                      <td colSpan={6} className="py-3"><div className="skeleton h-4 w-full" /></td>
-                    </tr>
-                  ))
-                ) :                   data?.classes?.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="text-center py-8 text-[#64748b]">
-                      No classes found
-                    </td>
+
+          {loading ? (
+            <div style={{ padding: "60px", textAlign: "center" }}>
+              <Loader2 style={{ width: "32px", height: "32px", color: "#94a3b8", margin: "0 auto", animation: "spin 1s linear infinite" }} />
+            </div>
+          ) : sortedClasses.length === 0 ? (
+            <div style={{ padding: "60px", textAlign: "center" }}>
+              <Building style={{ width: "40px", height: "40px", color: "#94a3b8", margin: "0 auto 12px" }} />
+              <p style={{ margin: 0, color: "#94a3b8", fontSize: "14px" }}>No classes found</p>
+            </div>
+          ) : (
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    {["Class", "Section", "Teacher", "Students", "Capacity"].map((h) => (
+                      <th key={h} style={{ padding: "14px 20px", textAlign: "left", fontSize: "11px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>{h}</th>
+                    ))}
+                    <th style={{ padding: "14px 20px", textAlign: "right", fontSize: "11px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>Actions</th>
                   </tr>
-                ) : (
-                  sortedClasses.map((cls) => {
-                    const usagePercent = Math.round((cls._count.students / cls.capacity) * 100);
+                </thead>
+                <tbody>
+                  {sortedClasses.map((cls) => {
+                    const usagePct = cls.capacity ? Math.round((cls._count.students / cls.capacity) * 100) : 0;
+                    const barColor = progressColor(usagePct);
                     return (
-                      <tr key={cls.id} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
-                        <td className="py-3 text-[#1a1a2e] font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</td>
-                        <td className="py-3 text-[#475569]">{cls.section || "—"}</td>
-                        <td className="py-3 text-[#475569] text-sm">
-                          {cls.classTeacher ? cls.classTeacher.name : "Unassigned"}
+                      <tr key={cls.id} style={{ borderBottom: "1px solid #f1f5f9", transition: "background 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                        <td style={{ padding: "14px 20px" }}>
+                          <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</span>
                         </td>
-                        <td className="py-3 text-[#475569]">{cls._count.students}/{cls.capacity}</td>
-                        <td className="py-3">
-                          <div className="w-full bg-[#f1f5f9] rounded-full h-2 max-w-[80px]">
-                            <div
-                              className={`h-2 rounded-full progress-bar-fill ${
-                                usagePercent >= 90 ? "bg-red-500" : usagePercent >= 70 ? "bg-yellow-500" : "bg-[var(--accent)]"
-                              }`}
-                              style={{ width: `${Math.min(usagePercent, 100)}%` }}
-                            />
+                        <td style={{ padding: "14px 20px", fontSize: "13px", color: "#64748b" }}>{cls.section || "—"}</td>
+                        <td style={{ padding: "14px 20px", fontSize: "13px", color: cls.classTeacher ? "#0f172a" : "#94a3b8" }}>{cls.classTeacher ? cls.classTeacher.name : "Unassigned"}</td>
+                        <td style={{ padding: "14px 20px", fontSize: "13px", color: "#0f172a", fontWeight: 500 }}>{cls._count.students}<span style={{ color: "#94a3b8" }}>/{cls.capacity}</span></td>
+                        <td style={{ padding: "14px 20px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <div style={{ flex: 1, height: "6px", borderRadius: "3px", background: "#f1f5f9", maxWidth: "80px", overflow: "hidden" }}>
+                              <div style={{ height: "100%", width: `${Math.min(usagePct, 100)}%`, borderRadius: "3px", background: barColor, transition: "width 0.3s" }} />
+                            </div>
+                            <span style={{ fontSize: "11px", fontWeight: 600, color: barColor, minWidth: "32px" }}>{usagePct}%</span>
                           </div>
                         </td>
-                        <td className="py-3">
-                          <div className="relative" ref={dropdownOpen === cls.id ? dropdownRef : undefined}>
-                            <button
-                              onClick={() => setDropdownOpen(dropdownOpen === cls.id ? null : cls.id)}
-                              className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"
-                            >
-                              <MoreVertical className="w-4 h-4" />
+                        <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                          <div style={{ position: "relative", display: "inline-block" }} ref={openMenu === cls.id ? menuRef : undefined}>
+                            <button onClick={() => setOpenMenu(openMenu === cls.id ? null : cls.id)} style={{ padding: "6px", borderRadius: "8px", border: "none", background: "transparent", color: "#94a3b8", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              <MoreHorizontal style={{ width: "16px", height: "16px" }} />
                             </button>
-                            <AnimatePresence>
-                              {dropdownOpen === cls.id && (
-                                <motion.div
-                                  initial={{ opacity: 0, scale: 0.95, y: -4 }}
-                                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                                  exit={{ opacity: 0, scale: 0.95, y: -4 }}
-                                  className="absolute right-0 top-full mt-1 w-36 bg-white border border-[#e2e8f0] rounded-xl shadow-xl z-40 overflow-hidden"
-                                >
-                                  <button
-                                    onClick={() => {
-                                      setDropdownOpen(null);
-                                      setViewClass(cls);
-                                    }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-[#475569] hover:bg-[#f1f5f9] transition"
-                                  >
-                                    <Eye className="w-3.5 h-3.5" /> View
-                                  </button>
-                                  <button
-                                    onClick={() => {
-                                      setDropdownOpen(null);
-                                      setEditClass(cls);
-                                      const levelNames: Record<number, string> = { 1: "nursery", 2: "primary", 3: "junior", 4: "secondary" };
-                                      setEditForm({ name: cls.name, displayName: cls.displayName, level: levelNames[cls.level] || "primary", capacity: String(cls.capacity) });
-                                    }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-[#475569] hover:bg-[#f1f5f9] transition"
-                                  >
-                                    <Pencil className="w-3.5 h-3.5" /> Edit
-                                  </button>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
+                            {openMenu === cls.id && (
+                              <div style={{ position: "absolute", right: 0, top: "32px", width: "144px", borderRadius: "12px", background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0 10px 40px rgba(0,0,0,0.12)", zIndex: 60, overflow: "hidden" }}>
+                                <button onClick={() => { setOpenMenu(null); setViewClass(cls); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", border: "none", background: "transparent", color: "#475569", fontSize: "12px", cursor: "pointer", textAlign: "left" }}>
+                                  <Eye style={{ width: "14px", height: "14px" }} /> View
+                                </button>
+                                <button onClick={() => { setOpenMenu(null); setEditClass(cls); const levelNames: Record<number, string> = { 1: "nursery", 2: "primary", 3: "junior", 4: "secondary" }; setEditForm({ name: cls.name, displayName: cls.displayName, level: levelNames[cls.level] || "primary", capacity: String(cls.capacity) }); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", border: "none", background: "transparent", color: "#475569", fontSize: "12px", cursor: "pointer", textAlign: "left" }}>
+                                  <Pencil style={{ width: "14px", height: "14px" }} /> Edit
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </td>
                       </tr>
                     );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="card shadow-sm"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Capacity Overview</h3>
-          <div className="space-y-3">
-            {sortedClasses.slice(0, 6).map((cls) => {
-              const pct = Math.round((cls._count.students / cls.capacity) * 100);
+        {/* Capacity Overview Sidebar */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", alignSelf: "start" }}>
+          <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Capacity Overview</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {sortedClasses.map((cls) => {
+              const pct = cls.capacity ? Math.round((cls._count.students / cls.capacity) * 100) : 0;
+              const barColor = progressColor(pct);
               return (
-                <div key={cls.id} className="p-3 rounded-xl bg-[#f8fafc] hover:bg-white transition">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[#1a1a2e] text-sm font-medium">{cls.displayName}{cls.arm ? ` - Arm ${cls.arm}` : ""}</span>
-                    <span className="text-[#64748b] text-sm">{pct}%</span>
+                <div key={cls.id} style={{ padding: "10px 14px", borderRadius: "10px", background: "#f8fafc", border: "1px solid #f1f5f9" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 500, color: "#0f172a" }}>{cls.displayName}{cls.arm ? ` - ${cls.arm}` : ""}</span>
+                    <span style={{ fontSize: "11px", fontWeight: 600, color: barColor }}>{pct}%</span>
                   </div>
-                  <div className="w-full bg-[#f1f5f9] rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full progress-bar-fill ${
-                        pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-yellow-500" : "bg-[var(--accent)]"
-                      }`}
-                      style={{ width: `${Math.min(pct, 100)}%` }}
-                    />
+                  <div style={{ height: "4px", borderRadius: "2px", background: "#e2e8f0", overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${Math.min(pct, 100)}%`, borderRadius: "2px", background: barColor, transition: "width 0.3s" }} />
                   </div>
                 </div>
               );
             })}
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      <AnimatePresence>
-        {showModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="modal-overlay">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-white border border-[#e2e8f0] rounded-2xl p-8 shadow-2xl"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Class</h3>
-                <button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]">
-                  <X className="w-5 h-5" />
+      {/* Add Class Modal */}
+      {showModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" }} onClick={() => setShowModal(false)}>
+          <div style={{ background: "#ffffff", borderRadius: "20px", width: "100%", maxWidth: "480px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h3 style={{ margin: 0, fontSize: "17px", fontWeight: 700, color: "#0f172a" }}>Add Class</h3>
+              <button onClick={() => setShowModal(false)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "none", background: "#f1f5f9", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X style={{ width: "16px", height: "16px" }} /></button>
+            </div>
+            <form onSubmit={handleSubmit} style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Name *</label>
+                <input type="text" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. JSS1" style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Display Name</label>
+                <input type="text" value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} placeholder="e.g. Junior Secondary 1A" style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Arm</label>
+                <input type="text" value={form.arm} onChange={(e) => setForm({ ...form, arm: e.target.value })} placeholder="e.g. A, B, C" style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Level</label>
+                  <select value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#475569", outline: "none", boxSizing: "border-box", colorScheme: "light" }}>
+                    <option value="nursery">Nursery</option>
+                    <option value="primary">Primary</option>
+                    <option value="junior">Junior</option>
+                    <option value="secondary">Secondary</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Capacity</label>
+                  <input type="number" min="1" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", paddingTop: "8px" }}>
+                <button type="button" onClick={() => setShowModal(false)} style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>Cancel</button>
+                <button type="submit" disabled={submitting} style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: submitting ? "not-allowed" : "pointer", opacity: submitting ? 0.6 : 1, display: "flex", alignItems: "center", gap: "6px" }}>
+                  {submitting && <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />} Create Class
                 </button>
               </div>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    placeholder="e.g. JSS1"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Display Name</label>
-                  <input
-                    type="text"
-                    value={form.displayName}
-                    onChange={(e) => setForm({ ...form, displayName: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    placeholder="e.g. Junior Secondary 1A"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Arm</label>
-                  <input
-                    type="text"
-                    value={form.arm}
-                    onChange={(e) => setForm({ ...form, arm: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    placeholder="e.g. A, B, C"
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                   <div>
-                     <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
-                     <select
-                       value={form.level}
-                      onChange={(e) => setForm({ ...form, level: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "light" }}
-                    >
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="nursery">Nursery</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="primary">Primary</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="junior">Junior</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="secondary">Secondary</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Capacity</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={form.capacity}
-                      onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                    className="btn btn-secondary"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="btn btn-primary"
-                  >
-                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                    Create Class
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* View Class Modal */}
-      <AnimatePresence>
-        {viewClass && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="modal-overlay">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setViewClass(null)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Class Details</h3>
-                <button onClick={() => setViewClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
-              </div>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                   <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                     <p className="text-[#64748b] text-[11px] mb-1">Class Name</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.displayName}{viewClass.arm ? ` - Arm ${viewClass.arm}` : ""}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <p className="text-[#64748b] text-[11px] mb-1">Section</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.section || "—"}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <p className="text-[#64748b] text-[11px] mb-1">Class Teacher</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass.classTeacher ? viewClass.classTeacher.name : "Unassigned"}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <p className="text-[#64748b] text-[11px] mb-1">Students</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewClass._count.students} / {viewClass.capacity}</p>
-                  </div>
+      {viewClass && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" }} onClick={() => setViewClass(null)}>
+          <div style={{ background: "#ffffff", borderRadius: "20px", width: "100%", maxWidth: "480px", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h3 style={{ margin: 0, fontSize: "17px", fontWeight: 700, color: "#0f172a" }}>Class Details</h3>
+              <button onClick={() => setViewClass(null)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "none", background: "#f1f5f9", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X style={{ width: "16px", height: "16px" }} /></button>
+            </div>
+            <div style={{ padding: "24px 28px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              {[
+                { label: "Class Name", value: `${viewClass.displayName}${viewClass.arm ? ` - Arm ${viewClass.arm}` : ""}` },
+                { label: "Section", value: viewClass.section || "—" },
+                { label: "Class Teacher", value: viewClass.classTeacher?.name || "Unassigned" },
+                { label: "Students", value: `${viewClass._count.students} / ${viewClass.capacity}` },
+              ].map((item, i) => (
+                <div key={i} style={{ padding: "14px 16px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #e2e8f0" }}>
+                  <p style={{ margin: 0, fontSize: "10px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.label}</p>
+                  <p style={{ margin: "6px 0 0", fontSize: "14px", fontWeight: 600, color: "#0f172a" }}>{item.value}</p>
                 </div>
-              </div>
-              <div className="flex justify-end mt-6">
-                <button onClick={() => setViewClass(null)} className="btn btn-secondary">Close</button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              ))}
+            </div>
+            <div style={{ padding: "16px 28px 24px", display: "flex", justifyContent: "flex-end" }}>
+              <button onClick={() => setViewClass(null)} style={{ padding: "10px 24px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Edit Class Modal */}
-      <AnimatePresence>
-        {editClass && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="modal-overlay">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditClass(null)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Class</h3>
-                <button onClick={() => setEditClass(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
+      {editClass && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" }} onClick={() => setEditClass(null)}>
+          <div style={{ background: "#ffffff", borderRadius: "20px", width: "100%", maxWidth: "480px", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h3 style={{ margin: 0, fontSize: "17px", fontWeight: 700, color: "#0f172a" }}>Edit Class</h3>
+              <button onClick={() => setEditClass(null)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "none", background: "#f1f5f9", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X style={{ width: "16px", height: "16px" }} /></button>
+            </div>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                const levelMap: Record<string, number> = { nursery: 1, primary: 2, junior: 3, secondary: 4 };
+                const res = await fetch("/api/classes", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editClass.id, name: editForm.name, displayName: editForm.displayName || editForm.name, level: levelMap[editForm.level] || 2, capacity: parseInt(editForm.capacity) || 40 }) });
+                if (!res.ok) throw new Error("Failed");
+                toast.success("Class updated successfully");
+                setEditClass(null);
+                fetchClasses();
+              } catch { toast.error("Failed to update class"); }
+            }} style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Name *</label>
+                <input type="text" required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
               </div>
-              <form onSubmit={async (e) => {
-                e.preventDefault();
-                try {
-                  const levelMap: Record<string, number> = { nursery: 1, primary: 2, junior: 3, secondary: 4 };
-                  const res = await fetch("/api/classes", {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      id: editClass.id,
-                      name: editForm.name,
-                      displayName: editForm.displayName || editForm.name,
-                      level: levelMap[editForm.level] || 2,
-                      capacity: parseInt(editForm.capacity) || 40,
-                    }),
-                  });
-                  if (!res.ok) throw new Error("Failed");
-                  toast.success("Class updated successfully");
-                  setEditClass(null);
-                  setLoading(true);
-                  const params = new URLSearchParams();
-                  if (search) params.set("search", search);
-                  fetch(`/api/classes?${params}`)
-                    .then((res) => res.json())
-                    .then((d) => setData(d))
-                    .catch(() => {})
-                    .finally(() => setLoading(false));
-                } catch {
-                  toast.error("Failed to update class");
-                }
-              }} className="space-y-4">
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Display Name</label>
+                <input type="text" value={editForm.displayName} onChange={(e) => setEditForm({ ...editForm, displayName: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Name *</label>
-                  <input type="text" required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Level</label>
+                  <select value={editForm.level} onChange={(e) => setEditForm({ ...editForm, level: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#475569", outline: "none", boxSizing: "border-box", colorScheme: "light" }}>
+                    <option value="nursery">Nursery</option>
+                    <option value="primary">Primary</option>
+                    <option value="junior">Junior</option>
+                    <option value="secondary">Secondary</option>
+                  </select>
                 </div>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Display Name</label>
-                  <input type="text" value={editForm.displayName} onChange={(e) => setEditForm({ ...editForm, displayName: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Capacity</label>
+                  <input type="number" min="1" value={editForm.capacity} onChange={(e) => setEditForm({ ...editForm, capacity: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                   <div>
-                     <label className="block text-[#475569] text-[13px] mb-1.5">Level</label>
-                     <select value={editForm.level} onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "light" }}>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="nursery">Nursery</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="primary">Primary</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="junior">Junior</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="secondary">Secondary</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Capacity</label>
-                    <input type="number" min="1" value={editForm.capacity} onChange={(e) => setEditForm({ ...editForm, capacity: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
-                  </div>
-                </div>
-                <div className="flex justify-end gap-3 pt-2">
-                  <button type="button" onClick={() => setEditClass(null)} className="btn btn-secondary">Cancel</button>
-                  <button type="submit" className="btn btn-primary">Save Changes</button>
-                </div>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", paddingTop: "8px" }}>
+                <button type="button" onClick={() => setEditClass(null)} style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>Cancel</button>
+                <button type="submit" style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
