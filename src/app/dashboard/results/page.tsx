@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Award,
   TrendingUp,
@@ -21,45 +20,26 @@ import { downloadCSV } from "@/lib/exports";
 import { toast } from "sonner";
 
 interface GradeRecord {
-  id: string;
-  score: number;
-  maxScore: number;
-  grade: string;
-  type: string;
-  published?: boolean;
+  id: string; score: number; maxScore: number; grade: string; type: string; published?: boolean;
   subject?: { id: string; name: string };
   student?: { id: string; firstName: string; lastName: string; admissionNumber: string };
 }
+interface SubjectResult { subject: string; avgScore: number; highest: number; lowest: number; count: number }
+interface GradingScale { id: string; grade: string; minScore: number; maxScore: number; points: number }
+interface Student { id: string; firstName: string; lastName: string; admissionNumber: string; classId: string | null }
+interface Subject { id: string; name: string; code: string }
 
-interface SubjectResult {
-  subject: string;
-  avgScore: number;
-  highest: number;
-  lowest: number;
-  count: number;
-}
+const inputStyle: React.CSSProperties = { width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1.5px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box", background: "#f8fafc", transition: "border-color 0.2s, box-shadow 0.2s" };
+const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#0055ff"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,85,255,0.1)"; e.currentTarget.style.background = "#ffffff"; };
+const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "#f8fafc"; };
+const labelStyle: React.CSSProperties = { display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" };
+const modalOverlay: React.CSSProperties = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" };
+const modalCard: React.CSSProperties = { background: "#ffffff", borderRadius: "24px", width: "100%", maxWidth: "560px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 25px 80px rgba(0,0,0,0.25)" };
+const modalGradient: React.CSSProperties = { padding: "28px 32px 24px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "24px 24px 0 0", position: "relative", overflow: "hidden" };
+const dropdownItem = (selected: boolean): React.CSSProperties => ({ width: "100%", padding: "10px 14px", textAlign: "left" as const, fontSize: "13px", fontWeight: selected ? 600 : 400, color: "#0f172a", background: selected ? "rgba(0,85,255,0.08)" : "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", transition: "background 0.1s" });
 
-interface GradingScale {
-  id: string;
-  grade: string;
-  minScore: number;
-  maxScore: number;
-  points: number;
-}
-
-interface Student {
-  id: string;
-  firstName: string;
-  lastName: string;
-  admissionNumber: string;
-  classId: string | null;
-}
-
-interface Subject {
-  id: string;
-  name: string;
-  code: string;
-}
+const scaleColors: Record<string, string> = { A: "#16a34a", B: "#2563eb", C: "#ca8a04", D: "#f97316", F: "#dc2626" };
+const typeLabel: Record<string, string> = { ca1: "1st CA", ca2: "2nd CA", exam: "Exam" };
 
 export default function ResultsPage() {
   const { data: session } = useSession();
@@ -79,441 +59,234 @@ export default function ResultsPage() {
   const [editingGrade, setEditingGrade] = useState<GradeRecord | null>(null);
   const [editForm, setEditForm] = useState({ score: "", maxScore: "" });
   const [publishing, setPublishing] = useState(false);
-
   const [students, setStudents] = useState<Student[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [studentSearch, setStudentSearch] = useState("");
   const [subjectSearch, setSubjectSearch] = useState("");
   const [showStudentDropdown, setShowStudentDropdown] = useState(false);
   const [showSubjectDropdown, setShowSubjectDropdown] = useState(false);
-
-  const [form, setForm] = useState({
-    studentId: "",
-    subjectId: "",
-    type: "ca1",
-    score: "",
-    maxScore: "100",
-    term: "",
-    session: "",
-    comments: "",
-  });
-
   const [selectedStudentName, setSelectedStudentName] = useState("");
   const [selectedSubjectName, setSelectedSubjectName] = useState("");
+  const [form, setForm] = useState({ studentId: "", subjectId: "", type: "ca1", score: "", maxScore: "100", term: "", session: "", comments: "" });
 
-  useEffect(() => {
-    fetchGrades();
-  }, []);
-
+  useEffect(() => { fetchGrades(); }, []);
   useEffect(() => {
     if (showModal) {
-      fetch("/api/students?limit=100")
-        .then((r) => r.json())
-        .then((d) => setStudents(d.students || []))
-        .catch(() => {});
-      fetch("/api/subjects")
-        .then((r) => r.json())
-        .then((d) => setSubjects(d.subjects || []))
-        .catch(() => {});
+      fetch("/api/students?limit=100").then(r => r.json()).then(d => setStudents(d.students || [])).catch(() => {});
+      fetch("/api/subjects").then(r => r.json()).then(d => setSubjects(d.subjects || [])).catch(() => {});
     }
   }, [showModal]);
 
-  const filteredStudents = students.filter(
-    (s) =>
-      `${s.firstName} ${s.lastName}`.toLowerCase().includes(studentSearch.toLowerCase()) ||
-      s.admissionNumber.toLowerCase().includes(studentSearch.toLowerCase())
-  );
-
-  const filteredSubjects = subjects.filter(
-    (s) => s.name.toLowerCase().includes(subjectSearch.toLowerCase()) || s.code.toLowerCase().includes(subjectSearch.toLowerCase())
-  );
+  const filteredStudents = students.filter(s => `${s.firstName} ${s.lastName}`.toLowerCase().includes(studentSearch.toLowerCase()) || s.admissionNumber.toLowerCase().includes(studentSearch.toLowerCase()));
+  const filteredSubjects = subjects.filter(s => s.name.toLowerCase().includes(subjectSearch.toLowerCase()) || s.code.toLowerCase().includes(subjectSearch.toLowerCase()));
 
   const fetchGrades = async () => {
     setLoading(true);
-    try {
-      const res = await fetch("/api/grades");
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to fetch grades");
-      setGrades(data.grades || []);
-      setResults(data.results || []);
-      setScales(data.scales || []);
-      setStats(data.stats || { totalGrades: 0, subjects: 0 });
-    } catch (err: any) {
-      toast.error(err.message || "Failed to load results");
-    } finally {
-      setLoading(false);
-    }
+    try { const res = await fetch("/api/grades"); const data = await res.json(); if (!res.ok) throw new Error(data.error); setGrades(data.grades || []); setResults(data.results || []); setScales(data.scales || []); setStats(data.stats || { totalGrades: 0, subjects: 0 }); } catch (err: any) { toast.error(err.message || "Failed"); } finally { setLoading(false); }
   };
 
-  const openEditModal = (grade: GradeRecord) => {
-    setEditingGrade(grade);
-    setEditForm({ score: String(grade.score), maxScore: String(grade.maxScore) });
+  const handlePublishAll = async () => {
+    setPublishing(true);
+    try { const res = await fetch("/api/grades", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ publishAll: true }) }); const data = await res.json(); if (!res.ok) throw new Error(data.error); toast.success("All results published"); fetchGrades(); } catch (err: any) { toast.error(err.message); } finally { setPublishing(false); }
+  };
+
+  const handleExport = () => {
+    if (grades.length > 0) { downloadCSV(grades.map(g => ({ Student: g.student ? `${g.student.firstName} ${g.student.lastName}` : "—", Subject: g.subject?.name || "—", Score: g.score, Max: g.maxScore, Type: g.type, Grade: g.grade })), "results"); toast.success("Exported"); return; }
+    if (filteredResults.length > 0) { downloadCSV(filteredResults.map(r => ({ Subject: r.subject, Avg: r.avgScore, High: r.highest, Low: r.lowest, Count: r.count })), "results_summary"); toast.success("Exported"); return; }
+    toast.info("No results to export");
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.studentId || !form.subjectId || !form.score) { toast.error("Fill all required fields"); return; }
+    setSubmitting(true);
+    try { const res = await fetch("/api/grades", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, score: Number(form.score), maxScore: Number(form.maxScore) || 100, term: form.term || undefined, session: form.session || undefined, comments: form.comments || undefined }) }); const data = await res.json(); if (!res.ok) throw new Error(data.error); toast.success("Grade submitted"); setShowModal(false); setForm({ studentId: "", subjectId: "", type: "ca1", score: "", maxScore: "100", term: "", session: "", comments: "" }); setSelectedStudentName(""); setSelectedSubjectName(""); fetchGrades(); } catch (err: any) { toast.error(err.message); } finally { setSubmitting(false); }
   };
 
   const handleEditSave = async () => {
     if (!editingGrade) return;
     setSubmitting(true);
-    try {
-      const res = await fetch("/api/grades", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: editingGrade.id, score: Number(editForm.score), maxScore: Number(editForm.maxScore) || 100 }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to update grade");
-      toast.success("Grade updated successfully");
-      setEditingGrade(null);
-      fetchGrades();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update grade");
-    } finally {
-      setSubmitting(false);
-    }
+    try { const res = await fetch("/api/grades", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editingGrade.id, score: Number(editForm.score), maxScore: Number(editForm.maxScore) || 100 }) }); const data = await res.json(); if (!res.ok) throw new Error(data.error); toast.success("Grade updated"); setEditingGrade(null); fetchGrades(); } catch (err: any) { toast.error(err.message); } finally { setSubmitting(false); }
   };
 
-  const handlePublishAll = async () => {
-    setPublishing(true);
-    try {
-      const res = await fetch("/api/grades", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ publishAll: true }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to publish results");
-      toast.success("All results published successfully");
-      fetchGrades();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to publish results");
-    } finally {
-      setPublishing(false);
-    }
-  };
+  const filteredResults = results.filter(r => r.subject.toLowerCase().includes(search.toLowerCase()));
+  const avgScore = useMemo(() => results.length === 0 ? 0 : Math.round(results.reduce((s, r) => s + r.avgScore, 0) / results.length), [results]);
+  const topScore = useMemo(() => results.length === 0 ? 0 : Math.max(...results.map(r => r.highest)), [results]);
+  const passRate = useMemo(() => { if (grades.length === 0) return 0; return Math.round((grades.filter(g => (g.score / g.maxScore) * 100 >= 50).length / grades.length) * 100); }, [grades]);
 
-  const filteredResults = results.filter((r) => r.subject.toLowerCase().includes(search.toLowerCase()));
-
-  const avgScore = useMemo(() => {
-    if (results.length === 0) return 0;
-    return Math.round(results.reduce((sum, r) => sum + r.avgScore, 0) / results.length);
-  }, [results]);
-
-  const topScore = useMemo(() => {
-    if (results.length === 0) return 0;
-    return Math.max(...results.map((r) => r.highest));
-  }, [results]);
-
-  const passRate = useMemo(() => {
-    if (grades.length === 0) return 0;
-    const passing = grades.filter((g) => (g.score / g.maxScore) * 100 >= 50).length;
-    return Math.round((passing / grades.length) * 100);
-  }, [grades]);
-
-  const handleExport = () => {
-    if (grades.length > 0) {
-      downloadCSV(
-        grades.map((g) => ({
-          Student: g.student ? `${g.student.firstName} ${g.student.lastName}` : "—",
-          "Admission No": g.student?.admissionNumber || "—",
-          Subject: g.subject?.name || "—",
-          Score: g.score,
-          "Max Score": g.maxScore,
-          Type: g.type,
-          Grade: g.grade,
-        })),
-        "results"
-      );
-      toast.success("Results exported successfully");
-      return;
-    }
-    if (filteredResults.length > 0) {
-      downloadCSV(
-        filteredResults.map((r) => ({
-          Subject: r.subject,
-          "Avg Score": r.avgScore,
-          Highest: r.highest,
-          Lowest: r.lowest,
-          "Total Records": r.count,
-        })),
-        "results_summary"
-      );
-      toast.success("Results summary exported");
-      return;
-    }
-    toast.info("No results to export. Enter some grades first.");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.studentId || !form.subjectId || !form.score) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/grades", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentId: form.studentId,
-          subjectId: form.subjectId,
-          type: form.type,
-          score: Number(form.score),
-          maxScore: Number(form.maxScore) || 100,
-          term: form.term || undefined,
-          session: form.session || undefined,
-          comments: form.comments || undefined,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to submit grade");
-      toast.success("Grade submitted successfully");
-      setShowModal(false);
-      setForm({ studentId: "", subjectId: "", type: "ca1", score: "", maxScore: "100", term: "", session: "", comments: "" });
-      setSelectedStudentName("");
-      setSelectedSubjectName("");
-      fetchGrades();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to submit grade");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const scaleColors: Record<string, string> = {
-    A: "text-[#16a34a]",
-    B: "text-[#2563eb]",
-    C: "text-[#ca8a04]",
-    D: "text-orange-400",
-    F: "text-[#dc2626]",
-  };
-
-  const typeLabel: Record<string, string> = {
-    ca1: "1st CA",
-    ca2: "2nd CA",
-    exam: "Exam",
-  };
+  const kpis = [
+    { label: "Total Grades", value: stats.totalGrades, icon: FileText, bg: "linear-gradient(135deg, #0055ff, #0033cc)" },
+    { label: "Average Score", value: `${avgScore}%`, icon: TrendingUp, bg: "linear-gradient(135deg, #10b981, #059669)" },
+    { label: "Pass Rate", value: `${passRate}%`, icon: Award, bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
+    { label: "Top Score", value: `${topScore}%`, icon: Users, bg: "linear-gradient(135deg, #06b6d4, #0891b2)" },
+  ];
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mt-8 mx-4 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border border-white/10 rounded-2xl p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div style={{ padding: "24px 32px", minHeight: "100vh", background: "#f8fafc" }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "20px", padding: "28px 32px", marginBottom: "28px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.12) 0%, transparent 60%), radial-gradient(circle at 10% 80%, rgba(255,255,255,0.08) 0%, transparent 50%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Results Management</h1>
-            <p className="text-white/70 text-[13px]">Grading, ranking, CA marks, and result analysis</p>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff" }}>Results Management</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Grading, ranking, CA marks, and result analysis</p>
           </div>
-          <div className="flex gap-3 flex-wrap">
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
             {!isReadOnly && (
-              <button
-                onClick={handlePublishAll}
-                disabled={publishing}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all disabled:opacity-50"
-              >
-                {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
-                Publish Results
+              <button onClick={handlePublishAll} disabled={publishing} style={{ padding: "10px 18px", borderRadius: "12px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: publishing ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "8px", backdropFilter: "blur(8px)", opacity: publishing ? 0.6 : 1, transition: "background 0.15s" }} onMouseEnter={(e) => { if (!publishing) e.currentTarget.style.background = "rgba(255,255,255,0.25)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.15)"; }}>
+                {publishing ? <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> : <FileText style={{ width: "16px", height: "16px" }} />} Publish Results
               </button>
             )}
-            <button
-              onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
-            >
-              <Download className="w-4 h-4" />
-              Export
+            <button onClick={handleExport} style={{ padding: "10px 18px", borderRadius: "12px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", backdropFilter: "blur(8px)", transition: "background 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.25)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}>
+              <Download style={{ width: "16px", height: "16px" }} /> Export
             </button>
             {!isReadOnly && (
-              <button
-                onClick={() => setShowModal(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-[#0055ff] text-[13px] font-semibold hover:bg-white/90 transition-all shadow-sm"
-              >
-                <Plus className="w-4 h-4" />
-                Enter Results
+              <button onClick={() => setShowModal(true)} style={{ padding: "10px 18px", borderRadius: "12px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", backdropFilter: "blur(8px)", transition: "background 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.25)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}>
+                <Plus style={{ width: "16px", height: "16px" }} /> Enter Results
               </button>
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Total Grades", value: stats.totalGrades, icon: FileText, color: "from-blue-500 to-blue-600" },
-          { label: "Average Score", value: `${avgScore}%`, icon: TrendingUp, color: "from-emerald-500 to-emerald-600" },
-          { label: "Pass Rate", value: `${passRate}%`, icon: Award, color: "from-purple-500 to-purple-600" },
-          { label: "Top Score", value: `${topScore}%`, icon: Users, color: "from-[var(--accent)] to-emerald-400" },
-        ].map((kpi, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-5 shadow-sm"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[#64748b] text-xs mb-1">{kpi.label}</p>
-                <p className="text-2xl font-bold text-[#1a1a2e]">{kpi.value}</p>
-              </div>
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center`}>
-                <kpi.icon className="w-5 h-5 text-white" />
-              </div>
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "28px" }}>
+        {kpis.map((stat, i) => (
+          <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", transition: "box-shadow 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)")} onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)")}>
+            <div>
+              <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, color: "#64748b" }}>{stat.label}</p>
+              <p style={{ margin: "6px 0 0", fontSize: "28px", fontWeight: 800, color: "#0f172a" }}>{stat.value}</p>
             </div>
-          </motion.div>
+            <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: stat.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <stat.icon style={{ width: "22px", height: "22px", color: "#ffffff" }} />
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-6 shadow-sm"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[#1a1a2e] font-semibold">Subject Results</h3>
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-              <input
-                type="text"
-                placeholder="Search subjects..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] transition-colors w-full sm:w-56"
-              />
+      {/* Main Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "24px" }}>
+        {/* Subject Results */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+          <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Subject Results</h3>
+            <div style={{ position: "relative", width: "220px" }}>
+              <Search style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", width: "16px", height: "16px", color: "#94a3b8" }} />
+              <input type="text" placeholder="Search subjects..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ ...inputStyle, paddingLeft: "36px", padding: "10px 14px 10px 36px" }} onFocus={inputFocus} onBlur={inputBlur} />
             </div>
           </div>
-          {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 text-[#64748b] animate-spin" />
-            </div>
-          ) : filteredResults.length === 0 ? (
-            <div className="text-center py-20 text-[#64748b]">
-              <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-40" />
-              <p className="text-sm">No results found</p>
-              <p className="text-xs mt-1 text-[#94a3b8]">Enter grades to see subject results here</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+          <div style={{ padding: "8px 0" }}>
+            {loading ? (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "60px 0" }}><Loader2 style={{ width: "28px", height: "28px", color: "#94a3b8", animation: "spin 1s linear infinite" }} /></div>
+            ) : filteredResults.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "60px 20px" }}>
+                <div style={{ width: "64px", height: "64px", borderRadius: "16px", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}><BarChart3 style={{ width: "28px", height: "28px", color: "#cbd5e1" }} /></div>
+                <p style={{ margin: 0, fontSize: "14px", color: "#94a3b8" }}>No results found</p>
+                <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#cbd5e1" }}>Enter grades to see subject results here</p>
+              </div>
+            ) : (
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr className="border-b border-[#e2e8f0]">
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold pb-3 uppercase tracking-wider">Subject</th>
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold pb-3 uppercase tracking-wider">Avg</th>
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold pb-3 uppercase tracking-wider">High</th>
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold pb-3 uppercase tracking-wider">Low</th>
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold pb-3 uppercase tracking-wider">Pass</th>
-                    <th className="text-right text-[#64748b] text-[11px] font-semibold pb-3 uppercase tracking-wider">Count</th>
+                  <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    {["SUBJECT", "AVG", "HIGH", "LOW", "PASS", "COUNT"].map((h) => (
+                      <th key={h} style={{ padding: "12px 20px", fontSize: "11px", fontWeight: 700, color: "#94a3b8", textAlign: h === "COUNT" ? "right" : "left", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
                   {filteredResults.map((result, idx) => {
-                    const subjectGrades = grades.filter((g) => g.subject?.name === result.subject);
-                    const passing = subjectGrades.filter((g) => (g.score / g.maxScore) * 100 >= 50).length;
-                    const subjectPassRate = result.count > 0 ? Math.round((passing / result.count) * 100) : 0;
+                    const subjectGrades = grades.filter(g => g.subject?.name === result.subject);
+                    const passing = subjectGrades.filter(g => (g.score / g.maxScore) * 100 >= 50).length;
+                    const spr = result.count > 0 ? Math.round((passing / result.count) * 100) : 0;
                     return (
-                      <tr key={idx} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
-                        <td className="py-3 text-[#1a1a2e] font-medium text-sm">{result.subject}</td>
-                        <td className="py-3 text-[#475569] text-sm">{result.avgScore}%</td>
-                        <td className="py-3 text-[#16a34a] text-sm font-medium">{result.highest}%</td>
-                        <td className="py-3 text-[#dc2626] text-sm font-medium">{result.lowest}%</td>
-                        <td className="py-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-16 bg-[#f1f5f9] rounded-full h-1.5">
-                              <div
-                                className={`h-1.5 rounded-full ${subjectPassRate >= 50 ? "bg-emerald-400" : "bg-red-400"}`}
-                                style={{ width: `${subjectPassRate}%` }}
-                              />
+                      <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9", transition: "background 0.1s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                        <td style={{ padding: "14px 20px", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{result.subject}</td>
+                        <td style={{ padding: "14px 20px", fontSize: "13px", color: "#475569" }}>{result.avgScore}%</td>
+                        <td style={{ padding: "14px 20px", fontSize: "13px", fontWeight: 600, color: "#16a34a" }}>{result.highest}%</td>
+                        <td style={{ padding: "14px 20px", fontSize: "13px", fontWeight: 600, color: "#dc2626" }}>{result.lowest}%</td>
+                        <td style={{ padding: "14px 20px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <div style={{ width: "80px", height: "6px", borderRadius: "3px", background: "#f1f5f9", overflow: "hidden" }}>
+                              <div style={{ height: "100%", borderRadius: "3px", background: spr >= 50 ? "#10b981" : "#ef4444", width: `${spr}%`, transition: "width 0.4s ease" }} />
                             </div>
-                            <span className="text-[#475569] text-xs">{subjectPassRate}%</span>
+                            <span style={{ fontSize: "12px", fontWeight: 600, color: spr >= 50 ? "#16a34a" : "#dc2626", minWidth: "32px" }}>{spr}%</span>
                           </div>
                         </td>
-                        <td className="py-3 text-[#475569] text-sm text-right">{result.count}</td>
+                        <td style={{ padding: "14px 20px", fontSize: "13px", color: "#475569", textAlign: "right" }}>{result.count}</td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
-            </div>
-          )}
-        </motion.div>
+            )}
+          </div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="space-y-6"
-        >
-          <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-6 shadow-sm">
-            <h3 className="text-[#1a1a2e] font-semibold mb-4">Grading Scale</h3>
+        {/* Sidebar */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          {/* Grading Scale */}
+          <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "24px" }}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Grading Scale</h3>
             {loading ? (
-              <div className="flex items-center justify-center py-10">
-                <Loader2 className="w-6 h-6 text-[#64748b] animate-spin" />
-              </div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "32px 0" }}><Loader2 style={{ width: "22px", height: "22px", color: "#94a3b8", animation: "spin 1s linear infinite" }} /></div>
             ) : scales.length === 0 ? (
-              <p className="text-[#64748b] text-sm text-center py-10">No grading scales configured</p>
+              <p style={{ margin: 0, textAlign: "center", padding: "32px 0", fontSize: "13px", color: "#94a3b8" }}>No grading scales configured</p>
             ) : (
-              <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
+              <div style={{ borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
                 {scales.map((scale, idx) => (
-                  <div key={scale.id} className={`flex items-center justify-between px-4 py-3 bg-white hover:bg-[#f8fafc] transition-colors ${idx < scales.length - 1 ? "border-b border-[#e2e8f0]" : ""}`}>
-                    <span className={`text-lg font-bold ${scaleColors[scale.grade] || "text-[#475569]"}`}>{scale.grade}</span>
-                    <span className="text-[#475569] text-sm">{scale.minScore} – {scale.maxScore}</span>
-                    <span className="text-[#64748b] text-xs font-medium">{scale.points} pts</span>
+                  <div key={scale.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: idx < scales.length - 1 ? "1px solid #f1f5f9" : "none", background: "#ffffff", transition: "background 0.1s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "#ffffff")}>
+                    <span style={{ fontSize: "18px", fontWeight: 800, color: scaleColors[scale.grade] || "#64748b", minWidth: "32px" }}>{scale.grade}</span>
+                    <span style={{ fontSize: "13px", color: "#475569", flex: 1, textAlign: "center" }}>{scale.minScore} – {scale.maxScore}</span>
+                    <span style={{ fontSize: "12px", fontWeight: 600, color: "#94a3b8" }}>{scale.points} pts</span>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-6 shadow-sm">
-            <h3 className="text-[#1a1a2e] font-semibold mb-4">Grade Breakdown</h3>
-            <div className="space-y-3">
+          {/* Grade Breakdown */}
+          <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "24px" }}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Grade Breakdown</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               {[
-                { label: "1st CA", pct: 20, color: "bg-blue-500" },
-                { label: "2nd CA", pct: 20, color: "bg-emerald-500" },
-                { label: "Exam", pct: 60, color: "bg-purple-500" },
+                { label: "1st CA", pct: 20, color: "#0055ff" },
+                { label: "2nd CA", pct: 20, color: "#10b981" },
+                { label: "Exam", pct: 60, color: "#8b5cf6" },
               ].map((item, i) => (
-                <div key={i} className="p-3 rounded-xl bg-[#f8fafc]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[#1a1a2e] text-sm">{item.label}</span>
-                    <span className="text-[#64748b] text-xs">{item.pct}%</span>
+                <div key={i}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                    <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{item.label}</span>
+                    <span style={{ fontSize: "12px", fontWeight: 700, color: item.color }}>{item.pct}%</span>
                   </div>
-                  <div className="w-full bg-[#f1f5f9] rounded-full h-1.5">
-                    <div className={`${item.color} h-1.5 rounded-full transition-all duration-500`} style={{ width: `${item.pct}%` }} />
+                  <div style={{ height: "8px", borderRadius: "4px", background: "#f1f5f9", overflow: "hidden" }}>
+                    <div style={{ height: "100%", borderRadius: "4px", background: item.color, width: `${item.pct}%`, transition: "width 0.5s ease" }} />
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* Recent Grades */}
           {grades.length > 0 && (
-            <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-6 shadow-sm">
-              <h3 className="text-[#1a1a2e] font-semibold mb-4">Recent Grades</h3>
-              <div className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin">
-                {grades.slice(0, 8).map((g) => (
-                  <div key={g.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-[#f8fafc] transition-colors">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[#1a1a2e] text-xs font-medium">
-                        {g.student ? `${g.student.firstName} ${g.student.lastName}` : "—"}
-                      </p>
-                      <p className="text-[#64748b] text-[10px]">{g.subject?.name} · {typeLabel[g.type] || g.type}</p>
+            <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "24px" }}>
+              <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Recent Grades</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxHeight: "240px", overflowY: "auto" }}>
+                {grades.slice(0, 8).map(g => (
+                  <div key={g.id} style={{ padding: "10px 12px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "space-between", transition: "background 0.1s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{g.student ? `${g.student.firstName} ${g.student.lastName}` : "—"}</p>
+                      <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#94a3b8" }}>{g.subject?.name} · {typeLabel[g.type] || g.type}</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`px-2 py-0.5 rounded text-[9px] font-semibold ${g.published ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#fef3c7] text-[#d97706]"}`}>
-                        {g.published ? "Published" : "Draft"}
-                      </span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ padding: "2px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: 600, background: g.published ? "#dcfce7" : "#fef3c7", color: g.published ? "#16a34a" : "#d97706" }}>{g.published ? "Published" : "Draft"}</span>
                       {!isReadOnly && (
-                        <button
-                          onClick={() => openEditModal(g)}
-                          className="p-1.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition-all"
-                        >
-                          <Pencil className="w-3 h-3" />
+                        <button onClick={() => { setEditingGrade(g); setEditForm({ score: String(g.score), maxScore: String(g.maxScore) }); }} style={{ width: "28px", height: "28px", borderRadius: "8px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#cbd5e1"; e.currentTarget.style.color = "#0f172a"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.color = "#64748b"; }}>
+                          <Pencil style={{ width: "12px", height: "12px" }} />
                         </button>
                       )}
-                      <div className="text-right">
-                        <p className="text-[#1a1a2e] text-xs font-bold">{g.score}/{g.maxScore}</p>
-                        <p className={`text-[10px] font-bold ${scaleColors[g.grade] || "text-[#64748b]"}`}>{g.grade}</p>
+                      <div style={{ textAlign: "right" }}>
+                        <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{g.score}/{g.maxScore}</p>
+                        <p style={{ margin: 0, fontSize: "10px", fontWeight: 700, color: scaleColors[g.grade] || "#64748b" }}>{g.grade}</p>
                       </div>
                     </div>
                   </div>
@@ -521,314 +294,158 @@ export default function ResultsPage() {
               </div>
             </div>
           )}
-        </motion.div>
+        </div>
       </div>
 
-      <AnimatePresence>
-        {showModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="modal-overlay">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden"
-            >
-              <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] px-6 py-4 border-b border-[#e2e8f0]">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-[#1a1a2e] font-semibold text-lg">Enter Results</h3>
-                    <p className="text-[#64748b] text-xs mt-0.5">Add or update student grades</p>
-                  </div>
-                   <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-colors">
-                     <X className="w-5 h-5" />
-                   </button>
-                 </div>
-               </div>
-
-               <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <div className="relative">
-                  <label className="block text-[#475569] text-xs font-medium mb-1.5">Student *</label>
-                  <button
-                    type="button"
-                    onClick={() => { setShowStudentDropdown(!showStudentDropdown); setShowSubjectDropdown(false); }}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between"
-                  >
-                    <span className={selectedStudentName ? "text-[#1a1a2e]" : "text-[#64748b]"}>
-                      {selectedStudentName || "Select a student..."}
-                    </span>
-                    <ChevronDown className={`w-4 h-4 text-[#64748b] transition-transform ${showStudentDropdown ? "rotate-180" : ""}`} />
-                  </button>
-                  {showStudentDropdown && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
-                      <div className="p-2 border-b border-[#e2e8f0]">
-                        <input
-                          type="text"
-                          placeholder="Search students..."
-                          value={studentSearch}
-                          onChange={(e) => setStudentSearch(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-xs focus:outline-none focus:border-[var(--primary)]"
-                          autoFocus
-                        />
-                      </div>
-                      <div className="overflow-y-auto max-h-44">
-                        {filteredStudents.length === 0 ? (
-                          <p className="text-[#64748b] text-xs text-center py-4">No students found</p>
-                        ) : (
-                          filteredStudents.map((s) => (
-                            <button
-                              key={s.id}
-                              type="button"
-                              onClick={() => {
-                                setForm({ ...form, studentId: s.id });
-                                setSelectedStudentName(`${s.firstName} ${s.lastName} (${s.admissionNumber})`);
-                                setShowStudentDropdown(false);
-                                setStudentSearch("");
-                              }}
-                              className={`w-full px-3 py-2 text-left text-sm hover:bg-[#f1f5f9] transition-colors flex items-center justify-between ${form.studentId === s.id ? "bg-[var(--primary)]/20 text-[#1a1a2e]" : "text-[#1a1a2e]"}`}
-                            >
-                              <div>
-                                <p className="font-medium text-xs">{s.firstName} {s.lastName}</p>
-                                <p className="text-[#64748b] text-[10px]">{s.admissionNumber}</p>
-                              </div>
-                              {form.studentId === s.id && <div className="w-2 h-2 rounded-full bg-[var(--accent)]" />}
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="relative">
-                  <label className="block text-[#475569] text-xs font-medium mb-1.5">Subject *</label>
-                  <button
-                    type="button"
-                    onClick={() => { setShowSubjectDropdown(!showSubjectDropdown); setShowStudentDropdown(false); }}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-left text-sm focus:outline-none focus:border-[var(--primary)] transition-colors flex items-center justify-between"
-                  >
-                    <span className={selectedSubjectName ? "text-[#1a1a2e]" : "text-[#64748b]"}>
-                      {selectedSubjectName || "Select a subject..."}
-                    </span>
-                    <ChevronDown className={`w-4 h-4 text-[#64748b] transition-transform ${showSubjectDropdown ? "rotate-180" : ""}`} />
-                  </button>
-                  {showSubjectDropdown && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#e2e8f0] rounded-xl shadow-xl max-h-60 overflow-hidden">
-                      <div className="p-2 border-b border-[#e2e8f0]">
-                        <input
-                          type="text"
-                          placeholder="Search subjects..."
-                          value={subjectSearch}
-                          onChange={(e) => setSubjectSearch(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-xs focus:outline-none focus:border-[var(--primary)]"
-                          autoFocus
-                        />
-                      </div>
-                      <div className="overflow-y-auto max-h-44">
-                        {filteredSubjects.length === 0 ? (
-                          <p className="text-[#64748b] text-xs text-center py-4">No subjects found</p>
-                        ) : (
-                          filteredSubjects.map((s) => (
-                            <button
-                              key={s.id}
-                              type="button"
-                              onClick={() => {
-                                setForm({ ...form, subjectId: s.id });
-                                setSelectedSubjectName(`${s.name} (${s.code})`);
-                                setShowSubjectDropdown(false);
-                                setSubjectSearch("");
-                              }}
-                              className={`w-full px-3 py-2 text-left text-sm hover:bg-[#f1f5f9] transition-colors flex items-center justify-between ${form.subjectId === s.id ? "bg-[var(--primary)]/20 text-[#1a1a2e]" : "text-[#1a1a2e]"}`}
-                            >
-                              <div>
-                                <p className="font-medium text-xs">{s.name}</p>
-                                <p className="text-[#64748b] text-[10px]">{s.code}</p>
-                              </div>
-                              {form.subjectId === s.id && <div className="w-2 h-2 rounded-full bg-[var(--accent)]" />}
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                   <div>
-                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Type *</label>
-                    <select
-                      value={form.type}
-                      onChange={(e) => setForm({ ...form, type: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)] appearance-none cursor-pointer"
-                      style={{ colorScheme: "light" }}
-                    >
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="ca1">1st CA</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="ca2">2nd CA</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="exam">Exam</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Score *</label>
-                    <input
-                      type="number"
-                      required
-                      min="0"
-                      value={form.score}
-                      onChange={(e) => setForm({ ...form, score: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
-                      placeholder="0"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                   <div>
-                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Max Score</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={form.maxScore}
-                      onChange={(e) => setForm({ ...form, maxScore: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Term</label>
-                    <input
-                      type="text"
-                      value={form.term}
-                      onChange={(e) => setForm({ ...form, term: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
-                      placeholder="e.g. 2nd Term"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                   <div>
-                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Session</label>
-                    <input
-                      type="text"
-                      value={form.session}
-                      onChange={(e) => setForm({ ...form, session: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
-                      placeholder="e.g. 2024/2025"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Comments</label>
-                    <input
-                      type="text"
-                      value={form.comments}
-                      onChange={(e) => setForm({ ...form, comments: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
-                      placeholder="Optional"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-3 pt-2 border-t border-[#e2e8f0]">
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                    className="btn btn-secondary"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="btn btn-primary flex items-center gap-2 disabled:opacity-50"
-                  >
-                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                    Submit Grade
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {editingGrade && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="modal-overlay">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditingGrade(null)} />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-sm bg-white border border-[#e2e8f0] rounded-2xl shadow-2xl overflow-hidden"
-            >
-              <div className="bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] px-6 py-4 border-b border-[#e2e8f0]">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Grade</h3>
-                    <p className="text-[#64748b] text-xs mt-0.5">
-                      {editingGrade.student?.firstName} {editingGrade.student?.lastName} — {editingGrade.subject?.name}
-                    </p>
-                  </div>
-                   <button onClick={() => setEditingGrade(null)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-colors">
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-              <div className="p-6 space-y-4">
+      {/* Enter Results Modal */}
+      {showModal && (
+        <div style={modalOverlay} onClick={() => setShowModal(false)}>
+          <div style={modalCard} onClick={(e) => e.stopPropagation()}>
+            <div style={modalGradient}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
                 <div>
-                  <label className="block text-[#475569] text-xs font-medium mb-1.5">Type</label>
-                  <p className="text-[#1a1a2e] text-sm font-medium">{typeLabel[editingGrade.type] || editingGrade.type}</p>
+                  <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>Enter Results</h3>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>Add or update student grades</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                   <div>
-                     <label className="block text-[#475569] text-xs font-medium mb-1.5">Score *</label>
-                     <input
-                       type="number"
-                       min="0"
-                       value={editForm.score}
-                      onChange={(e) => setEditForm({ ...editForm, score: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
-                    />
+                <button onClick={() => setShowModal(false)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X style={{ width: "18px", height: "18px" }} /></button>
+              </div>
+            </div>
+            <form onSubmit={handleSubmit} style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
+              {/* Student Dropdown */}
+              <div style={{ position: "relative" }}>
+                <label style={labelStyle}>Student <span style={{ color: "#ef4444" }}>*</span></label>
+                <button type="button" onClick={() => { setShowStudentDropdown(!showStudentDropdown); setShowSubjectDropdown(false); }} style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1.5px solid #e2e8f0", background: "#f8fafc", textAlign: "left", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", color: selectedStudentName ? "#0f172a" : "#94a3b8", transition: "border-color 0.2s" }}>
+                  <span>{selectedStudentName || "Select a student..."}</span>
+                  <ChevronDown style={{ width: "16px", height: "16px", color: "#94a3b8", transform: showStudentDropdown ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+                </button>
+                {showStudentDropdown && (
+                  <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: "4px", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", boxShadow: "0 10px 40px rgba(0,0,0,0.12)", zIndex: 60, overflow: "hidden" }}>
+                    <div style={{ padding: "8px", borderBottom: "1px solid #f1f5f9" }}>
+                      <input type="text" placeholder="Search students..." value={studentSearch} onChange={(e) => setStudentSearch(e.target.value)} style={{ ...inputStyle, padding: "8px 12px", fontSize: "12px" }} autoFocus />
+                    </div>
+                    <div style={{ maxHeight: "180px", overflowY: "auto" }}>
+                      {filteredStudents.length === 0 ? <p style={{ textAlign: "center", padding: "16px", fontSize: "12px", color: "#94a3b8" }}>No students found</p> : filteredStudents.map(s => (
+                        <button key={s.id} type="button" onClick={() => { setForm({ ...form, studentId: s.id }); setSelectedStudentName(`${s.firstName} ${s.lastName} (${s.admissionNumber})`); setShowStudentDropdown(false); setStudentSearch(""); }} style={dropdownItem(form.studentId === s.id)} onMouseEnter={(e) => { if (form.studentId !== s.id) e.currentTarget.style.background = "#f8fafc"; }} onMouseLeave={(e) => { if (form.studentId !== s.id) e.currentTarget.style.background = "transparent"; }}>
+                          <div><p style={{ margin: 0, fontSize: "13px", fontWeight: 600 }}>{s.firstName} {s.lastName}</p><p style={{ margin: "1px 0 0", fontSize: "11px", color: "#94a3b8" }}>{s.admissionNumber}</p></div>
+                          {form.studentId === s.id && <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#10b981" }} />}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-[#475569] text-xs font-medium mb-1.5">Max Score</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={editForm.maxScore}
-                      onChange={(e) => setEditForm({ ...editForm, maxScore: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
-                    />
+                )}
+              </div>
+
+              {/* Subject Dropdown */}
+              <div style={{ position: "relative" }}>
+                <label style={labelStyle}>Subject <span style={{ color: "#ef4444" }}>*</span></label>
+                <button type="button" onClick={() => { setShowSubjectDropdown(!showSubjectDropdown); setShowStudentDropdown(false); }} style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1.5px solid #e2e8f0", background: "#f8fafc", textAlign: "left", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", color: selectedSubjectName ? "#0f172a" : "#94a3b8", transition: "border-color 0.2s" }}>
+                  <span>{selectedSubjectName || "Select a subject..."}</span>
+                  <ChevronDown style={{ width: "16px", height: "16px", color: "#94a3b8", transform: showSubjectDropdown ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+                </button>
+                {showSubjectDropdown && (
+                  <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: "4px", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", boxShadow: "0 10px 40px rgba(0,0,0,0.12)", zIndex: 60, overflow: "hidden" }}>
+                    <div style={{ padding: "8px", borderBottom: "1px solid #f1f5f9" }}>
+                      <input type="text" placeholder="Search subjects..." value={subjectSearch} onChange={(e) => setSubjectSearch(e.target.value)} style={{ ...inputStyle, padding: "8px 12px", fontSize: "12px" }} autoFocus />
+                    </div>
+                    <div style={{ maxHeight: "180px", overflowY: "auto" }}>
+                      {filteredSubjects.length === 0 ? <p style={{ textAlign: "center", padding: "16px", fontSize: "12px", color: "#94a3b8" }}>No subjects found</p> : filteredSubjects.map(s => (
+                        <button key={s.id} type="button" onClick={() => { setForm({ ...form, subjectId: s.id }); setSelectedSubjectName(`${s.name} (${s.code})`); setShowSubjectDropdown(false); setSubjectSearch(""); }} style={dropdownItem(form.subjectId === s.id)} onMouseEnter={(e) => { if (form.subjectId !== s.id) e.currentTarget.style.background = "#f8fafc"; }} onMouseLeave={(e) => { if (form.subjectId !== s.id) e.currentTarget.style.background = "transparent"; }}>
+                          <div><p style={{ margin: 0, fontSize: "13px", fontWeight: 600 }}>{s.name}</p><p style={{ margin: "1px 0 0", fontSize: "11px", color: "#94a3b8" }}>{s.code}</p></div>
+                          {form.subjectId === s.id && <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#10b981" }} />}
+                        </button>
+                      ))}
+                    </div>
                   </div>
+                )}
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label style={labelStyle}>Type <span style={{ color: "#ef4444" }}>*</span></label>
+                  <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
+                    <option value="ca1">1st CA</option>
+                    <option value="ca2">2nd CA</option>
+                    <option value="exam">Exam</option>
+                  </select>
                 </div>
-                <div className="flex justify-end gap-3 pt-2 border-t border-[#e2e8f0]">
-                  <button
-                    onClick={() => setEditingGrade(null)}
-                    className="btn btn-secondary"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleEditSave}
-                    disabled={submitting}
-                    className="btn btn-primary flex items-center gap-2 disabled:opacity-50"
-                  >
-                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                    Save Changes
-                  </button>
+                <div>
+                  <label style={labelStyle}>Score <span style={{ color: "#ef4444" }}>*</span></label>
+                  <input type="number" required min="0" value={form.score} onChange={(e) => setForm({ ...form, score: e.target.value })} placeholder="0" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label style={labelStyle}>Max Score</label>
+                  <input type="number" min="1" value={form.maxScore} onChange={(e) => setForm({ ...form, maxScore: e.target.value })} style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Term</label>
+                  <input type="text" value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value })} placeholder="e.g. 2nd Term" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                </div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label style={labelStyle}>Session</label>
+                  <input type="text" value={form.session} onChange={(e) => setForm({ ...form, session: e.target.value })} placeholder="e.g. 2024/2025" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Comments</label>
+                  <input type="text" value={form.comments} onChange={(e) => setForm({ ...form, comments: e.target.value })} placeholder="Optional" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                </div>
+              </div>
+              <div style={{ height: "1px", background: "#f1f5f9" }} />
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                <button type="button" onClick={() => setShowModal(false)} style={{ padding: "12px 24px", borderRadius: "12px", border: "1.5px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+                <button type="submit" disabled={submitting} style={{ padding: "12px 28px", borderRadius: "12px", border: "none", background: submitting ? "#93c5fd" : "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: submitting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: submitting ? "none" : "0 4px 14px rgba(0,85,255,0.3)" }}>
+                  {submitting && <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />} Submit Grade
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Grade Modal */}
+      {editingGrade && (
+        <div style={modalOverlay} onClick={() => setEditingGrade(null)}>
+          <div style={{ ...modalCard, maxWidth: "420px" }} onClick={(e) => e.stopPropagation()}>
+            <div style={modalGradient}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>Edit Grade</h3>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>{editingGrade.student?.firstName} {editingGrade.student?.lastName} — {editingGrade.subject?.name}</p>
+                </div>
+                <button onClick={() => setEditingGrade(null)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X style={{ width: "18px", height: "18px" }} /></button>
+              </div>
+            </div>
+            <div style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
+              <div>
+                <label style={labelStyle}>Type</label>
+                <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "#0f172a" }}>{typeLabel[editingGrade.type] || editingGrade.type}</p>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label style={labelStyle}>Score <span style={{ color: "#ef4444" }}>*</span></label>
+                  <input type="number" min="0" value={editForm.score} onChange={(e) => setEditForm({ ...editForm, score: e.target.value })} style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Max Score</label>
+                  <input type="number" min="1" value={editForm.maxScore} onChange={(e) => setEditForm({ ...editForm, maxScore: e.target.value })} style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                </div>
+              </div>
+              <div style={{ height: "1px", background: "#f1f5f9" }} />
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                <button onClick={() => setEditingGrade(null)} style={{ padding: "12px 24px", borderRadius: "12px", border: "1.5px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+                <button onClick={handleEditSave} disabled={submitting} style={{ padding: "12px 28px", borderRadius: "12px", border: "none", background: submitting ? "#93c5fd" : "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: submitting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "8px", boxShadow: submitting ? "none" : "0 4px 14px rgba(0,85,255,0.3)" }}>
+                  {submitting && <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />} Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
