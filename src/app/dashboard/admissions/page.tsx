@@ -130,7 +130,7 @@ export default function AdmissionsPage() {
 
   useEffect(() => {
     fetchApplicants();
-  }, []);
+  }, [fetchApplicants]);
 
   const workflowSteps = [
     { step: "pending", label: "New", count: applicants.filter((a) => a.status === "pending").length, dot: "#eab308" },
