@@ -70,6 +70,21 @@ body:has(.bg-animated) {
   color: #ffffff;
 }
 
+.bg-animated .card,
+.bg-animated .card h1,
+.bg-animated .card h2,
+.bg-animated .card h3,
+.bg-animated .card h4,
+.bg-animated .card h5,
+.bg-animated .card h6,
+.bg-animated .card p,
+.bg-animated .card span,
+.bg-animated .card label,
+.bg-animated .card a,
+.bg-animated .card li {
+  color: #1a1a2e;
+}
+
 .bg-animated .accent {
   color: #28ff9c;
 }
