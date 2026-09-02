@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { motion } from "framer-motion";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
 import { GRADE_SCALE } from "@/lib/constants";
 import {
@@ -13,9 +12,10 @@ import {
   Award,
   BookOpen,
   Loader2,
-  ChevronDown,
   Stamp,
   PenLine,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 interface Term {
@@ -69,11 +69,68 @@ function getGradeFromScore(score: number): string {
   return match ? match.grade : "F9";
 }
 
-const fadeIn = {
-  initial: { opacity: 0, y: 12 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.35 },
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "12px 16px",
+  borderRadius: "12px",
+  border: "1.5px solid #e2e8f0",
+  fontSize: "13px",
+  color: "#0f172a",
+  outline: "none",
+  boxSizing: "border-box",
+  background: "#f8fafc",
+  transition: "border-color 0.2s, box-shadow 0.2s",
 };
+const inputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  e.currentTarget.style.borderColor = "#0055ff";
+  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,85,255,0.1)";
+  e.currentTarget.style.background = "#ffffff";
+};
+const inputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  e.currentTarget.style.borderColor = "#e2e8f0";
+  e.currentTarget.style.boxShadow = "none";
+  e.currentTarget.style.background = "#f8fafc";
+};
+const btnStyle = (bg: string, disabled?: boolean): React.CSSProperties => ({
+  padding: "10px 20px",
+  borderRadius: "12px",
+  border: "none",
+  background: disabled ? "#94a3b8" : bg,
+  color: "#ffffff",
+  fontSize: "13px",
+  fontWeight: 600,
+  cursor: disabled ? "not-allowed" : "pointer",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "8px",
+  transition: "all 0.15s",
+  opacity: disabled ? 0.6 : 1,
+});
+
+const avatarGradients = [
+  "linear-gradient(135deg, #0055ff, #0033cc)",
+  "linear-gradient(135deg, #8b5cf6, #7c3aed)",
+  "linear-gradient(135deg, #10b981, #059669)",
+  "linear-gradient(135deg, #f59e0b, #d97706)",
+  "linear-gradient(135deg, #ef4444, #dc2626)",
+  "linear-gradient(135deg, #06b6d4, #0891b2)",
+];
+
+function getGradeColor(total: number): { color: string; bg: string } {
+  if (total >= 70) return { color: "#16a34a", bg: "#dcfce7" };
+  if (total >= 50) return { color: "#2563eb", bg: "#eff6ff" };
+  if (total >= 40) return { color: "#ca8a04", bg: "#fef9c3" };
+  return { color: "#dc2626", bg: "#fee2e2" };
+}
+
+function getGradeBadge(grade: string): { color: string; bg: string } {
+  const letter = grade?.[0] || "F";
+  if (letter === "A") return { color: "#16a34a", bg: "#dcfce7" };
+  if (letter === "B") return { color: "#2563eb", bg: "#eff6ff" };
+  if (letter === "C") return { color: "#ca8a04", bg: "#fef9c3" };
+  if (letter === "D") return { color: "#ea580c", bg: "#fff7ed" };
+  return { color: "#dc2626", bg: "#fee2e2" };
+}
 
 export default function TranscriptPage() {
   const [students, setStudents] = useState<Student[]>([]);
@@ -86,6 +143,7 @@ export default function TranscriptPage() {
   const [allGrades, setAllGrades] = useState<Grade[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [printMode, setPrintMode] = useState(false);
+  const [expandedTerms, setExpandedTerms] = useState<Set<string>>(new Set());
   const transcriptRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -145,9 +203,8 @@ export default function TranscriptPage() {
 
   const cumulativeGPA = useMemo(() => {
     if (!termGradesData.length) return 0;
-    const totalTerms = termGradesData.length;
     const sum = termGradesData.reduce((acc, t) => acc + t.termGPA, 0);
-    return Math.round((sum / totalTerms) * 100) / 100;
+    return Math.round((sum / termGradesData.length) * 100) / 100;
   }, [termGradesData]);
 
   const totalSubjects = useMemo(() => {
@@ -171,6 +228,15 @@ export default function TranscriptPage() {
       `${s.firstName} ${s.lastName}`.toLowerCase().includes(studentSearch.toLowerCase()) ||
       s.admissionNumber?.toLowerCase().includes(studentSearch.toLowerCase())
   );
+
+  const toggleTerm = (termId: string) => {
+    setExpandedTerms((prev) => {
+      const next = new Set(prev);
+      if (next.has(termId)) next.delete(termId);
+      else next.add(termId);
+      return next;
+    });
+  };
 
   const handlePrint = () => {
     setPrintMode(true);
@@ -324,299 +390,322 @@ export default function TranscriptPage() {
     printWindow.document.close();
   };
 
-  const getGradeColor = (grade: string) => {
-    if (grade?.startsWith("A")) return "text-[#16a34a] bg-[#dcfce7] border-emerald-500/25";
-    if (grade?.startsWith("B")) return "text-[#2563eb] bg-[#dbeafe] border-blue-500/25";
-    if (grade?.startsWith("C")) return "text-[#ca8a04] bg-yellow-500/15 border-yellow-500/25";
-    if (grade?.startsWith("D")) return "text-orange-400 bg-orange-500/15 border-orange-500/25";
-    return "text-[#dc2626] bg-[#fee2e2] border-red-500/25";
-  };
-
   return (
-    <motion.div {...fadeIn} className={`space-y-5 ${printMode ? "hidden" : ""}`}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-[22px] font-bold text-[#1a1a2e] font-display tracking-tight flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center">
-              <GraduationCap className="w-[18px] h-[18px] text-white" />
+    <div style={{ padding: "24px 32px", minHeight: "100vh", background: "#f8fafc", display: printMode ? "none" : "block" }}>
+      {/* Gradient Header */}
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "20px", padding: "28px 32px", marginBottom: "28px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.12) 0%, transparent 60%), radial-gradient(circle at 10% 80%, rgba(255,255,255,0.08) 0%, transparent 50%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", display: "flex", alignItems: "center", gap: "12px" }}>
+              <GraduationCap style={{ width: "28px", height: "28px" }} /> Academic Transcript
+            </h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Cumulative student transcript with term-by-term breakdown</p>
+          </div>
+          {selectedStudent && termGradesData.length > 0 && (
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <button onClick={handlePrint} style={btnStyle("#ffffff")}>
+                <span style={{ color: "#475569" }}><Printer style={{ width: "16px", height: "16px", display: "inline" }} /></span>
+                <span style={{ color: "#475569" }}>Print</span>
+              </button>
+              <button onClick={handleDownloadPDF} style={btnStyle("#0055ff")}>
+                <Download style={{ width: "16px", height: "16px" }} /> Download PDF
+              </button>
             </div>
-            Academic Transcript
-          </h1>
-          <p className="text-[#64748b] text-[12px] mt-1 ml-[46px]">Cumulative student transcript with term-by-term breakdown</p>
-        </div>
-        {selectedStudent && termGradesData.length > 0 && (
-          <div className="flex gap-3">
-            <button
-              onClick={handlePrint}
-              className="btn btn-secondary flex items-center gap-2"
-            >
-              <Printer className="w-4 h-4" /> Print
-            </button>
-            <button
-              onClick={handleDownloadPDF}
-              className="btn btn-primary flex items-center gap-2"
-            >
-              <Download className="w-4 h-4" /> Download PDF
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-          <p className="text-[#64748b] text-[12px]">Terms Recorded</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{termGradesData.length}</p>
-        </div>
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-          <p className="text-[#64748b] text-[12px]">Subjects</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{totalSubjects}</p>
-        </div>
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-          <p className="text-[#64748b] text-[12px]">Cumulative GPA</p>
-          <p className="text-[28px] font-bold text-[var(--accent)] mt-1">{cumulativeGPA.toFixed(2)}</p>
-        </div>
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-          <p className="text-[#64748b] text-[12px]">Overall Average</p>
-                    <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{overallAvg}%</p>
+          )}
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-5 gap-5">
-        <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-          <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">Select Student</h3>
-          <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
-            <input
-              type="text"
-              placeholder="Search students..."
-              value={studentSearch}
-              onChange={(e) => {
-                setStudentSearch(e.target.value);
-                setShowDropdown(true);
-              }}
-              onFocus={() => setShowDropdown(true)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50"
-            />
+      {/* KPI Stat Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" }}>
+        {[
+          { label: "Terms Recorded", value: termGradesData.length, bg: "linear-gradient(135deg, #0055ff, #0033cc)", icon: <BookOpen style={{ width: "20px", height: "20px", color: "#ffffff" }} /> },
+          { label: "Subjects", value: totalSubjects, bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)", icon: <FileText style={{ width: "20px", height: "20px", color: "#ffffff" }} /> },
+          { label: "Cumulative GPA", value: cumulativeGPA.toFixed(2), bg: "linear-gradient(135deg, #10b981, #059669)", icon: <Award style={{ width: "20px", height: "20px", color: "#ffffff" }} /> },
+          { label: "Overall Average", value: `${overallAvg}%`, bg: "linear-gradient(135deg, #f59e0b, #d97706)", icon: <GraduationCap style={{ width: "20px", height: "20px", color: "#ffffff" }} /> },
+        ].map((stat, i) => (
+          <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 22px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: stat.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                {stat.icon}
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, color: "#64748b" }}>{stat.label}</p>
+                <p style={{ margin: "4px 0 0", fontSize: "24px", fontWeight: 800, color: "#0f172a" }}>{stat.value}</p>
+              </div>
+            </div>
           </div>
-          <div className="space-y-1 max-h-[400px] overflow-y-auto">
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "24px" }}>
+        {/* Student Selector */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+          <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9" }}>
+            <h3 style={{ margin: "0 0 12px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Select Student</h3>
+            <div style={{ position: "relative" }}>
+              <Search style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", width: "16px", height: "16px", color: "#94a3b8" }} />
+              <input
+                type="text"
+                placeholder="Search students..."
+                value={studentSearch}
+                onChange={(e) => { setStudentSearch(e.target.value); setShowDropdown(true); }}
+                onFocus={(e) => { setShowDropdown(true); inputFocus(e); }}
+                onBlur={(e) => { inputBlur(e); }}
+                style={{ ...inputStyle, paddingLeft: "36px", padding: "10px 14px 10px 36px" }}
+              />
+            </div>
+          </div>
+          <div style={{ maxHeight: "480px", overflowY: "auto", padding: "8px" }}>
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-12 rounded-xl bg-[#f8fafc] animate-pulse" />
+                <div key={i} style={{ height: "52px", borderRadius: "12px", background: "#f8fafc", marginBottom: "6px" }} />
               ))
             ) : filteredStudents.length === 0 ? (
-              <p className="text-[#94a3b8] text-[12px] text-center py-8">No students found</p>
+              <p style={{ textAlign: "center", padding: "32px 0", fontSize: "13px", color: "#94a3b8" }}>No students found</p>
             ) : (
-              filteredStudents.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => {
-                    setSelectedStudentId(s.id);
-                    setShowDropdown(false);
-                    setStudentSearch("");
-                  }}
-                  className={`w-full flex items-center gap-3 px-5 py-2.5 rounded-xl text-left transition ${
-                    selectedStudentId === s.id
-                      ? "bg-[var(--primary)]/20 border border-[var(--primary)]/40"
-                      : "hover:bg-[#f8fafc] border border-transparent"
-                  }`}
-                >
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
-                    {s.firstName?.[0]}{s.lastName?.[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[#1a1a2e] text-[12px] font-medium truncate">{s.firstName} {s.lastName}</p>
-                    <p className="text-[#94a3b8] text-[10px]">{s.class?.displayName || s.class?.name || "—"} · {s.admissionNumber}</p>
-                  </div>
-                </button>
-              ))
+              filteredStudents.map((s, idx) => {
+                const isSelected = selectedStudentId === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => { setSelectedStudentId(s.id); setShowDropdown(false); setStudentSearch(""); }}
+                    style={{
+                      width: "100%", padding: "12px 16px", borderRadius: "12px",
+                      border: isSelected ? "1.5px solid rgba(0,85,255,0.3)" : "1.5px solid transparent",
+                      background: isSelected ? "rgba(0,85,255,0.06)" : "transparent",
+                      cursor: "pointer", display: "flex", alignItems: "center", gap: "12px",
+                      textAlign: "left", transition: "all 0.15s", marginBottom: "4px",
+                    }}
+                    onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.background = "#f8fafc"; }}
+                    onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = "transparent"; }}
+                  >
+                    <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: avatarGradients[idx % avatarGradients.length], display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#ffffff" }}>{s.firstName?.[0]}{s.lastName?.[0]}</span>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.firstName} {s.lastName}</p>
+                      <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#94a3b8" }}>{s.class?.displayName || s.class?.name || "—"} · {s.admissionNumber}</p>
+                    </div>
+                    {isSelected && <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#0055ff", flexShrink: 0 }} />}
+                  </button>
+                );
+              })
             )}
           </div>
         </div>
 
-        <div className="lg:col-span-3 space-y-4">
+        {/* Transcript Content */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {selectedStudent && termGradesData.length > 0 ? (
             <>
-              <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center text-white text-[18px] font-bold">
-                    {selectedStudent.firstName?.[0]}{selectedStudent.lastName?.[0]}
+              {/* Student Info Card */}
+              <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "24px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "20px" }}>
+                  <div style={{ width: "64px", height: "64px", borderRadius: "16px", background: "linear-gradient(135deg, #0055ff, #0033cc)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <span style={{ fontSize: "22px", fontWeight: 800, color: "#ffffff" }}>{selectedStudent.firstName?.[0]}{selectedStudent.lastName?.[0]}</span>
                   </div>
                   <div>
-                    <h3 className="text-[#1a1a2e] font-bold text-[16px]">{selectedStudent.firstName} {selectedStudent.lastName}</h3>
-                    <p className="text-[#64748b] text-[12px]">
+                    <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#0f172a" }}>{selectedStudent.firstName} {selectedStudent.lastName}</h2>
+                    <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#64748b" }}>
                       {selectedStudent.admissionNumber} · {selectedStudent.class?.displayName || selectedStudent.class?.name || "—"}
                     </p>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="p-3 rounded-xl bg-[#f8fafc] text-center">
-                    <p className="text-[#64748b] text-[10px]">CGPA</p>
-                    <p className="text-[20px] font-bold text-[var(--accent)]">{cumulativeGPA.toFixed(2)}</p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-[#f8fafc] text-center">
-                    <p className="text-[#64748b] text-[10px]">Overall Avg</p>
-                    <p className="text-[20px] font-bold text-[#1a1a2e]">{overallAvg}%</p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-[#f8fafc] text-center">
-                    <p className="text-[#64748b] text-[10px]">Terms</p>
-                    <p className="text-[20px] font-bold text-[#1a1a2e]">{termGradesData.length}</p>
-                  </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+                  {[
+                    { label: "CGPA", value: cumulativeGPA.toFixed(2), color: "#0055ff" },
+                    { label: "Overall Avg", value: `${overallAvg}%`, color: "#0f172a" },
+                    { label: "Terms", value: termGradesData.length, color: "#0f172a" },
+                    { label: "Subjects", value: totalSubjects, color: "#0f172a" },
+                  ].map((item, i) => (
+                    <div key={i} style={{ padding: "14px 16px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #f1f5f9", textAlign: "center" }}>
+                      <p style={{ margin: 0, fontSize: "10px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.label}</p>
+                      <p style={{ margin: "6px 0 0", fontSize: "22px", fontWeight: 800, color: item.color }}>{item.value}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {termGradesData.map((tg) => (
-                <div key={tg.term.id} className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-[#1a1a2e] font-semibold text-[14px] flex items-center gap-2">
-                        <BookOpen className="w-4 h-4 text-[var(--primary)]" />
-                        {tg.term.name}
-                      </h3>
-                      <p className="text-[#94a3b8] text-[11px] ml-6">{tg.term.academicYear}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-right">
-                        <p className="text-[#64748b] text-[10px]">Term Avg</p>
-                        <p className="text-[#1a1a2e] text-[13px] font-bold">{tg.avgScore}%</p>
+              {/* Term Sections */}
+              {termGradesData.map((tg) => {
+                const isExpanded = expandedTerms.has(tg.term.id);
+                return (
+                  <div key={tg.term.id} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+                    <button
+                      onClick={() => toggleTerm(tg.term.id)}
+                      style={{
+                        width: "100%", padding: "18px 24px", border: "none", background: "#ffffff",
+                        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between",
+                        borderBottom: isExpanded ? "1px solid #f1f5f9" : "none",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                        <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "linear-gradient(135deg, #0055ff, #0033cc)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <BookOpen style={{ width: "18px", height: "18px", color: "#ffffff" }} />
+                        </div>
+                        <div style={{ textAlign: "left" }}>
+                          <p style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#0f172a" }}>{tg.term.name}</p>
+                          <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#94a3b8" }}>{tg.term.academicYear}</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-[#64748b] text-[10px]">GPA</p>
-                        <p className="text-[var(--accent)] text-[13px] font-bold">{tg.termGPA.toFixed(2)}</p>
+                      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                        <div style={{ textAlign: "right" }}>
+                          <p style={{ margin: 0, fontSize: "10px", color: "#94a3b8" }}>AVG</p>
+                          <p style={{ margin: "2px 0 0", fontSize: "14px", fontWeight: 700, color: "#0f172a" }}>{tg.avgScore}%</p>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <p style={{ margin: 0, fontSize: "10px", color: "#94a3b8" }}>GPA</p>
+                          <p style={{ margin: "2px 0 0", fontSize: "14px", fontWeight: 700, color: "#0055ff" }}>{tg.termGPA.toFixed(2)}</p>
+                        </div>
+                        <div style={{ padding: "4px 10px", borderRadius: "8px", background: "#f1f5f9", color: "#64748b" }}>
+                          {tg.grades.length} subjects
+                        </div>
+                        {isExpanded ? <ChevronUp style={{ width: "20px", height: "20px", color: "#94a3b8" }} /> : <ChevronDown style={{ width: "20px", height: "20px", color: "#94a3b8" }} />}
                       </div>
-                    </div>
-                  </div>
+                    </button>
 
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-[#e2e8f0]">
-                           <th className="text-left text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider w-8">#</th>
-                           <th className="text-left text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Subject</th>
-                           <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">CA1</th>
-                           <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">CA2</th>
-                           <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Exam</th>
-                           <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Total</th>
-                           <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Grade</th>
-                           <th className="text-left text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Remark</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {tg.grades.map((g, i) => {
-                          const total = g.total ?? g.score ?? 0;
-                          const gradeStr = g.grade || getGradeFromScore(total);
-                          return (
-                            <tr key={g.id || i} className="border-b border-[#e2e8f0] hover:bg-[#f1f5f9] transition">
-                              <td className="py-2.5 text-[#64748b] text-[11px]">{i + 1}</td>
-                               <td className="py-2.5 text-[#1a1a2e] text-[12px] font-medium">{g.subject?.name || "—"}</td>
-                              <td className="py-2.5 text-[#475569] text-[12px] text-center">{g.ca1 ?? "—"}</td>
-                              <td className="py-2.5 text-[#475569] text-[12px] text-center">{g.ca2 ?? "—"}</td>
-                              <td className="py-2.5 text-[#475569] text-[12px] text-center">{g.exam ?? "—"}</td>
-                               <td className="py-2.5 text-[#1a1a2e] text-[12px] font-bold text-center">{total}</td>
-                              <td className="py-2.5 text-center">
-                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${getGradeColor(gradeStr)}`}>
-                                  {gradeStr}
-                                </span>
-                              </td>
-                              <td className="py-2.5 text-[#64748b] text-[11px]">{g.remark || "—"}</td>
+                    {isExpanded && (
+                      <div style={{ padding: "0 24px 20px" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "16px" }}>
+                          <thead>
+                            <tr>
+                              {["#", "Subject", "CA1", "CA2", "Exam", "Total", "Grade", "Remark"].map((h) => (
+                                <th key={h} style={{ padding: "10px 12px", fontSize: "11px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: h === "#" || h === "Subject" || h === "Remark" ? "left" : "center", borderBottom: "2px solid #e2e8f0" }}>{h}</th>
+                              ))}
                             </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                          </thead>
+                          <tbody>
+                            {tg.grades.map((g, i) => {
+                              const total = g.total ?? g.score ?? 0;
+                              const gradeStr = g.grade || getGradeFromScore(total);
+                              const gc = getGradeBadge(gradeStr);
+                              return (
+                                <tr key={g.id || i} style={{ borderBottom: "1px solid #f1f5f9", transition: "background 0.1s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                                  <td style={{ padding: "12px", fontSize: "12px", color: "#64748b" }}>{i + 1}</td>
+                                  <td style={{ padding: "12px", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{g.subject?.name || "—"}</td>
+                                  <td style={{ padding: "12px", fontSize: "13px", color: "#475569", textAlign: "center" }}>{g.ca1 ?? "—"}</td>
+                                  <td style={{ padding: "12px", fontSize: "13px", color: "#475569", textAlign: "center" }}>{g.ca2 ?? "—"}</td>
+                                  <td style={{ padding: "12px", fontSize: "13px", color: "#475569", textAlign: "center" }}>{g.exam ?? "—"}</td>
+                                  <td style={{ padding: "12px", fontSize: "13px", fontWeight: 700, color: "#0f172a", textAlign: "center" }}>{total}</td>
+                                  <td style={{ padding: "12px", textAlign: "center" }}>
+                                    <span style={{ padding: "3px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 700, background: gc.bg, color: gc.color }}>{gradeStr}</span>
+                                  </td>
+                                  <td style={{ padding: "12px", fontSize: "12px", color: "#64748b" }}>{g.remark || "—"}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                        <div style={{ display: "flex", justifyContent: "flex-end", gap: "24px", marginTop: "12px", padding: "12px 16px", background: "#f8fafc", borderRadius: "10px", border: "1px solid #f1f5f9" }}>
+                          <span style={{ fontSize: "13px", color: "#64748b" }}>Term Average: <strong style={{ color: "#0f172a" }}>{tg.avgScore}%</strong></span>
+                          <span style={{ fontSize: "13px", color: "#64748b" }}>Term GPA: <strong style={{ color: "#0055ff" }}>{tg.termGPA.toFixed(2)}</strong></span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
-              <div className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] p-6 shadow-sm">
-                <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4 flex items-center gap-2">
-                  <Award className="w-5 h-5 text-[var(--accent)]" />
-                  Cumulative Summary
-                </h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full mb-4">
-                    <thead>
-                      <tr className="border-b border-[#e2e8f0]">
-                        <th className="text-left text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Term</th>
-                        <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Session</th>
-                        <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Subjects</th>
-                        <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">Average</th>
-                        <th className="text-center text-[#64748b] text-[11px] font-semibold pb-2 uppercase tracking-wider">GPA</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {termGradesData.map((tg) => (
-                        <tr key={tg.term.id} className="border-b border-[#e2e8f0]">
-                           <td className="py-2.5 text-[#1a1a2e] text-[12px] font-medium">{tg.term.name}</td>
-                          <td className="py-2.5 text-[#64748b] text-[12px] text-center">{tg.term.academicYear}</td>
-                          <td className="py-2.5 text-[#64748b] text-[12px] text-center">{tg.grades.length}</td>
-                           <td className="py-2.5 text-[#1a1a2e] text-[12px] font-bold text-center">{tg.avgScore}%</td>
-                          <td className="py-2.5 text-[var(--accent)] text-[12px] font-bold text-center">{tg.termGPA.toFixed(2)}</td>
-                        </tr>
+              {/* Cumulative Summary */}
+              <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "28px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+                  <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "linear-gradient(135deg, #10b981, #059669)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Award style={{ width: "20px", height: "20px", color: "#ffffff" }} />
+                  </div>
+                  <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 800, color: "#0f172a" }}>Cumulative Summary</h3>
+                </div>
+
+                {/* Summary Table */}
+                <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+                  <thead>
+                    <tr>
+                      {["Term", "Session", "Subjects", "Average", "GPA"].map((h) => (
+                        <th key={h} style={{ padding: "10px 12px", fontSize: "11px", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "left", borderBottom: "2px solid #e2e8f0" }}>{h}</th>
                       ))}
-                    </tbody>
-                  </table>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {termGradesData.map((tg) => (
+                      <tr key={tg.term.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "12px", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{tg.term.name}</td>
+                        <td style={{ padding: "12px", fontSize: "13px", color: "#64748b" }}>{tg.term.academicYear}</td>
+                        <td style={{ padding: "12px", fontSize: "13px", color: "#64748b", textAlign: "center" }}>{tg.grades.length}</td>
+                        <td style={{ padding: "12px", fontSize: "13px", fontWeight: 700, color: "#0f172a", textAlign: "center" }}>{tg.avgScore}%</td>
+                        <td style={{ padding: "12px", fontSize: "13px", fontWeight: 700, color: "#0055ff", textAlign: "center" }}>{tg.termGPA.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Summary Stats */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "28px" }}>
+                  {[
+                    { label: "Cumulative GPA", value: cumulativeGPA.toFixed(2), color: "#0055ff" },
+                    { label: "Overall Average", value: `${overallAvg}%`, color: "#0f172a" },
+                    { label: "Total Subjects", value: totalSubjects, color: "#0f172a" },
+                  ].map((item, i) => (
+                    <div key={i} style={{ padding: "16px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #f1f5f9", textAlign: "center" }}>
+                      <p style={{ margin: 0, fontSize: "10px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.label}</p>
+                      <p style={{ margin: "6px 0 0", fontSize: "26px", fontWeight: 800, color: item.color }}>{item.value}</p>
+                    </div>
+                  ))}
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[#e2e8f0]">
-                  <div className="text-center p-4 rounded-xl bg-[#f8fafc]">
-                    <p className="text-[#64748b] text-[10px] uppercase tracking-wider">Cumulative GPA</p>
-                    <p className="text-[28px] font-bold text-[var(--accent)] mt-1">{cumulativeGPA.toFixed(2)}</p>
+                {/* Signatures */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "60px", paddingTop: "28px", borderTop: "1px solid #e2e8f0" }}>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ width: "200px", margin: "0 auto", borderBottom: "1px solid #94a3b8", marginBottom: "12px" }} />
+                    <PenLine style={{ width: "16px", height: "16px", color: "#94a3b8", marginBottom: "6px" }} />
+                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#475569" }}>Dean of Faculty</p>
+                    <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#94a3b8" }}>Date: _______________</p>
                   </div>
-                  <div className="text-center p-4 rounded-xl bg-[#f8fafc]">
-                    <p className="text-[#64748b] text-[10px] uppercase tracking-wider">Overall Average</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{overallAvg}%</p>
-                  </div>
-                  <div className="text-center p-4 rounded-xl bg-[#f8fafc]">
-                    <p className="text-[#64748b] text-[10px] uppercase tracking-wider">Total Subjects</p>
-                    <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{totalSubjects}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6 mt-8 pt-6 border-t border-[#e2e8f0]">
-                  <div className="text-center">
-                    <div className="w-48 mx-auto border-b border-[#94a3b8] mb-2" />
-                    <PenLine className="w-4 h-4 text-[#94a3b8] mx-auto mb-1" />
-                    <p className="text-[#475569] text-[12px] font-medium">Dean of Faculty</p>
-                    <p className="text-[#94a3b8] text-[10px]">Date: _______________</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-48 mx-auto border-b border-[#94a3b8] mb-2" />
-                    <PenLine className="w-4 h-4 text-[#94a3b8] mx-auto mb-1" />
-                    <p className="text-[#475569] text-[12px] font-medium">School Principal</p>
-                    <p className="text-[#94a3b8] text-[10px]">Date: _______________</p>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ width: "200px", margin: "0 auto", borderBottom: "1px solid #94a3b8", marginBottom: "12px" }} />
+                    <PenLine style={{ width: "16px", height: "16px", color: "#94a3b8", marginBottom: "6px" }} />
+                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#475569" }}>School Principal</p>
+                    <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#94a3b8" }}>Date: _______________</p>
                   </div>
                 </div>
 
-                <div className="mt-6 p-4 border-2 border-dashed border-[#e2e8f0] rounded-xl text-center">
-                  <Stamp className="w-6 h-6 text-[#94a3b8] mx-auto mb-1" />
-                  <p className="text-[#94a3b8] text-[11px]">Official School Stamp</p>
+                {/* Official Stamp */}
+                <div style={{ marginTop: "28px", padding: "20px", border: "2px dashed #e2e8f0", borderRadius: "12px", textAlign: "center" }}>
+                  <Stamp style={{ width: "28px", height: "28px", color: "#94a3b8", marginBottom: "8px" }} />
+                  <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8" }}>Official School Stamp</p>
                 </div>
 
-                <p className="text-center text-[#94a3b8] text-[9px] mt-4">
+                <p style={{ textAlign: "center", fontSize: "11px", color: "#94a3b8", marginTop: "20px" }}>
                   This is an official academic transcript issued by {SCHOOL_CONFIG.name}. Any alteration or forgery is strictly prohibited.
                 </p>
               </div>
             </>
           ) : fetchingGrades ? (
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center shadow-sm">
-              <Loader2 className="w-12 h-12 text-[#94a3b8] mx-auto mb-4 animate-spin" />
-              <p className="text-[#94a3b8] text-[14px]">Loading transcript data...</p>
+            <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "80px 40px", textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+              <div style={{ width: "80px", height: "80px", borderRadius: "20px", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+                <Loader2 style={{ width: "36px", height: "36px", color: "#0055ff" }} className="animate-spin" />
+              </div>
+              <p style={{ margin: 0, fontSize: "16px", fontWeight: 600, color: "#94a3b8" }}>Loading transcript data...</p>
             </div>
           ) : selectedStudent ? (
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center shadow-sm">
-              <FileText className="w-16 h-16 text-[#94a3b8] mx-auto mb-4" />
-              <p className="text-[#94a3b8] text-[14px]">No grade records found for {selectedStudent.firstName}</p>
-              <p className="text-[#94a3b8] text-[11px] mt-1">Grades must be entered across terms to generate a transcript</p>
+            <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "80px 40px", textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+              <div style={{ width: "80px", height: "80px", borderRadius: "20px", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+                <FileText style={{ width: "36px", height: "36px", color: "#cbd5e1" }} />
+              </div>
+              <p style={{ margin: 0, fontSize: "16px", fontWeight: 600, color: "#94a3b8" }}>No grade records found for {selectedStudent.firstName}</p>
+              <p style={{ margin: "6px 0 0", fontSize: "13px", color: "#cbd5e1" }}>Grades must be entered across terms to generate a transcript</p>
             </div>
           ) : (
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center shadow-sm">
-              <GraduationCap className="w-16 h-16 text-[#94a3b8] mx-auto mb-4" />
-              <p className="text-[#94a3b8] text-[14px]">Select a student to view their academic transcript</p>
-              <p className="text-[#94a3b8] text-[11px] mt-1">The transcript displays cumulative performance across all terms</p>
+            <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "80px 40px", textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+              <div style={{ width: "80px", height: "80px", borderRadius: "20px", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+                <GraduationCap style={{ width: "36px", height: "36px", color: "#cbd5e1" }} />
+              </div>
+              <p style={{ margin: 0, fontSize: "16px", fontWeight: 600, color: "#94a3b8" }}>Select a student to view their academic transcript</p>
+              <p style={{ margin: "6px 0 0", fontSize: "13px", color: "#cbd5e1" }}>The transcript displays cumulative performance across all terms</p>
             </div>
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
