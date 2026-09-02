@@ -27,30 +27,56 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    const [guardians, total] = await Promise.all([
-      prisma.guardian.findMany({
-        where,
-        include: {
-          student: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              admissionNumber: true,
-              class: { select: { name: true, displayName: true } },
-            },
+    const allGuardians = await prisma.guardian.findMany({
+      where,
+      include: {
+        student: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            admissionNumber: true,
+            class: { select: { name: true, displayName: true } },
           },
         },
-        skip,
-        take: limit,
-        orderBy: { firstName: "asc" },
-      }),
-      prisma.guardian.count({ where }),
-    ]);
+      },
+      orderBy: { firstName: "asc" },
+    });
+
+    // Group by unique parent (phone is the most reliable key, fallback to email+name)
+    const parentMap = new Map<string, any>();
+    for (const g of allGuardians) {
+      const key = g.phone || `${g.email || ""}:${g.firstName}:${g.lastName}`;
+      if (parentMap.has(key)) {
+        const existing = parentMap.get(key);
+        existing.students.push(g.student);
+        existing.guardianIds.push(g.id);
+        if (g.isPrimary) existing.isPrimary = true;
+      } else {
+        parentMap.set(key, {
+          id: g.id,
+          firstName: g.firstName,
+          lastName: g.lastName,
+          relationship: g.relationship,
+          phone: g.phone,
+          email: g.email,
+          address: g.address,
+          occupation: g.occupation,
+          isPrimary: g.isPrimary,
+          students: [g.student],
+          guardianIds: [g.id],
+        });
+      }
+    }
+
+    const grouped = Array.from(parentMap.values());
+    const total = grouped.length;
+    const pages = Math.ceil(total / limit);
+    const paginated = grouped.slice(skip, skip + limit);
 
     return NextResponse.json({
-      guardians,
-      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+      guardians: paginated,
+      pagination: { page, limit, total, pages },
     });
   } catch (error) {
     console.error("GET /api/guardians error:", error);
