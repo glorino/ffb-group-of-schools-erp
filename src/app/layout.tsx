@@ -13,19 +13,57 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: SCHOOL_CONFIG.name,
-  description:
-    `Excellence, Discipline, Integrity - ${SCHOOL_CONFIG.name} Management Portal`,
+  title: {
+    default: SCHOOL_CONFIG.name,
+    template: `%s | ${SCHOOL_CONFIG.name}`,
+  },
+  description: `Excellence, Discipline, Integrity - ${SCHOOL_CONFIG.name} Management Portal`,
   keywords: [
     SCHOOL_CONFIG.name,
     "school portal",
     "student management",
     "education",
+    "ERP",
+    "Lagos",
   ],
+  authors: [{ name: SCHOOL_CONFIG.name }],
+  creator: SCHOOL_CONFIG.name,
+  publisher: SCHOOL_CONFIG.name,
+  metadataBase: new URL(SCHOOL_CONFIG.website),
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/logo.svg", type: "image/svg+xml" },
     ],
+    apple: [
+      { url: "/og-image.png", type: "image/png", sizes: "512x512" },
+    ],
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_NG",
+    url: SCHOOL_CONFIG.website,
+    siteName: SCHOOL_CONFIG.name,
+    title: SCHOOL_CONFIG.name,
+    description: `Excellence, Discipline, Integrity - ${SCHOOL_CONFIG.name} Management Portal`,
+    images: [
+      {
+        url: "/og-image.png",
+        width: 512,
+        height: 512,
+        alt: SCHOOL_CONFIG.name,
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SCHOOL_CONFIG.name,
+    description: `Excellence, Discipline, Integrity - ${SCHOOL_CONFIG.name} Management Portal`,
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
