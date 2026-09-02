@@ -21,6 +21,11 @@ export async function GET(
     try {
       applicant = await prisma.applicant.findUnique({
         where: { id },
+        include: {
+          documents: {
+            orderBy: { uploadedAt: "asc" },
+          },
+        },
       });
     } catch (qErr: any) {
       console.error("Prisma query failed, trying raw SQL:", qErr?.message);
@@ -34,14 +39,16 @@ export async function GET(
       return NextResponse.json({ error: "Application not found" }, { status: 404 });
     }
 
-    // Always fetch documents via raw SQL for reliability
-    try {
-      applicant.documents = await (prisma as any).$queryRawUnsafe(
-        `SELECT * FROM "ApplicantDocument" WHERE "applicantId" = $1 ORDER BY "uploadedAt" ASC`, id
-      );
-    } catch (docErr: any) {
-      console.error("Failed to fetch documents:", docErr?.message);
-      applicant.documents = [];
+    // If Prisma didn't return documents, fetch via raw SQL
+    if (!applicant.documents) {
+      try {
+        applicant.documents = await (prisma as any).$queryRawUnsafe(
+          `SELECT * FROM "ApplicantDocument" WHERE "applicantId" = $1 ORDER BY "uploadedAt" ASC`, id
+        );
+      } catch (docErr: any) {
+        console.error("Failed to fetch documents:", docErr?.message);
+        applicant.documents = [];
+      }
     }
 
     return NextResponse.json(applicant);

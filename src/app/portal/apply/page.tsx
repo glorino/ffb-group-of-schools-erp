@@ -60,7 +60,7 @@ export default function ApplyPage() {
   });
   const [uploadingDocs, setUploadingDocs] = useState(false);
   const [form, setForm] = useState({
-    firstName: "", lastName: "", middleName: "", dateOfBirth: "", gender: "", bloodGroup: "", nationality: "Nigerian", stateOfOrigin: "", homeAddress: "",
+    firstName: "", lastName: "", middleName: "", email: "", phone: "", dateOfBirth: "", gender: "", bloodGroup: "", nationality: "Nigerian", stateOfOrigin: "", homeAddress: "",
     previousSchool: "", classApplying: "",
     guardianName: "", guardianPhone: "", guardianEmail: "", guardianRelationship: "",
   });
@@ -141,7 +141,7 @@ export default function ApplyPage() {
     try {
       const formPayload: Record<string, string> = {
         firstName: form.firstName, lastName: form.lastName, middleName: form.middleName,
-        email: "", phone: "", dateOfBirth: form.dateOfBirth, gender: form.gender,
+        email: form.email, phone: form.phone, dateOfBirth: form.dateOfBirth, gender: form.gender,
         classAppliedFor: form.classApplying, previousSchool: form.previousSchool,
         guardianName: form.guardianName, guardianPhone: form.guardianPhone,
         guardianEmail: form.guardianEmail, guardianRelationship: form.guardianRelationship,
@@ -165,6 +165,7 @@ export default function ApplyPage() {
       const applicantId = data.applicant?.id;
 
       if (applicantId) {
+        const uploadErrors: string[] = [];
         for (const doc of docFields) {
           const file = fileObjects[doc.key];
           if (!file) continue;
@@ -173,10 +174,17 @@ export default function ApplyPage() {
             formData.append("file", file);
             formData.append("docType", doc.label);
             formData.append("applicantId", applicantId);
-            await fetch("/api/admissions/documents", { method: "POST", body: formData });
+            const uploadRes = await fetch("/api/admissions/documents", { method: "POST", body: formData });
+            if (!uploadRes.ok) {
+              const errData = await uploadRes.json().catch(() => ({}));
+              uploadErrors.push(`${doc.label}: ${errData.error || "Upload failed"}`);
+            }
           } catch {
-            console.warn(`Failed to upload ${doc.label}, skipping`);
+            uploadErrors.push(`${doc.label}: Network error`);
           }
+        }
+        if (uploadErrors.length > 0) {
+          console.warn("Document upload issues:", uploadErrors);
         }
       }
 
@@ -275,6 +283,8 @@ export default function ApplyPage() {
                   <div><label style={labelStyle}>Date of Birth *</label><input style={errors.dateOfBirth ? inputErrorStyle : inputStyle} type="date" value={form.dateOfBirth} onChange={(e) => update("dateOfBirth", e.target.value)} />{errors.dateOfBirth && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.dateOfBirth}</span>}</div>
                   <div><label style={labelStyle}>Gender *</label><select style={errors.gender ? inputErrorStyle : inputStyle} value={form.gender} onChange={(e) => update("gender", e.target.value)}><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select>{errors.gender && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.gender}</span>}</div>
                   <div><label style={labelStyle}>Blood Group</label><select style={inputStyle} value={form.bloodGroup} onChange={(e) => update("bloodGroup", e.target.value)}><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
+                  <div><label style={labelStyle}>Email</label><input style={inputStyle} type="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="student@email.com" /></div>
+                  <div><label style={labelStyle}>Phone</label><input style={inputStyle} value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+234..." /></div>
                   <div><label style={labelStyle}>Nationality</label><input style={inputStyle} value={form.nationality} onChange={(e) => update("nationality", e.target.value)} /></div>
                   <div><label style={labelStyle}>State of Origin</label><input style={inputStyle} value={form.stateOfOrigin} onChange={(e) => update("stateOfOrigin", e.target.value)} /></div>
                 </div>
@@ -342,6 +352,8 @@ export default function ApplyPage() {
                 <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px", color: "#fff" }}>Review Application</h2>
                 {[
                   { label: "Name", value: `${form.firstName} ${form.middleName} ${form.lastName}` },
+                  { label: "Email", value: form.email },
+                  { label: "Phone", value: form.phone },
                   { label: "Date of Birth", value: form.dateOfBirth },
                   { label: "Gender", value: form.gender },
                   { label: "Class Applying", value: form.classApplying },
