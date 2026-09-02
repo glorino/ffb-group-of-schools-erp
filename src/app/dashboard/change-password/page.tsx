@@ -40,33 +40,67 @@ export default function ChangePasswordPage() {
   return (
     <div className="min-h-screen bg-animated flex items-center justify-center p-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <div className="card shadow-sm">
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-[var(--primary)]/20 flex items-center justify-center mx-auto mb-4">
-              <Lock className="w-8 h-8 text-[var(--primary)]" />
+        <div className="card" style={{ padding: "40px 36px" }}>
+          <div style={{ textAlign: "center", marginBottom: "32px" }}>
+            <div style={{ width: "64px", height: "64px", borderRadius: "16px", background: "rgba(0, 85, 255, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px auto" }}>
+              <Lock style={{ width: "32px", height: "32px", color: "var(--primary)" }} />
             </div>
-            <h1 className="text-xl font-bold text-[#1a1a2e]">Change Your Password</h1>
-            <p className="text-[#64748b] text-[13px] mt-1">You must change your default password before continuing</p>
+            <h1 style={{ fontSize: "22px", fontWeight: 700, color: "#1a1a2e", margin: "0 0 8px 0" }}>Change Your Password</h1>
+            <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>You must change your default password before continuing</p>
           </div>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-[#475569] text-[12px] mb-1 block">New Password</label>
-              <div className="relative">
-                <input type={show ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] pr-10" placeholder="Enter new password" />
-                <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#475569]">
-                  {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: "20px" }}>
+              <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#374151", marginBottom: "6px" }}>New Password</label>
+              <div style={{ position: "relative" }}>
+                <input
+                  type={show ? "text" : "password"}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  style={{
+                    width: "100%", padding: "12px 44px 12px 16px", borderRadius: "12px",
+                    border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "14px",
+                    color: "#1a1a2e", outline: "none", boxSizing: "border-box"
+                  }}
+                />
+                <button type="button" onClick={() => setShow(!show)} style={{
+                  position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)",
+                  background: "none", border: "none", cursor: "pointer", padding: "4px", color: "#94a3b8"
+                }}>
+                  {show ? <EyeOff style={{ width: "18px", height: "18px" }} /> : <Eye style={{ width: "18px", height: "18px" }} />}
                 </button>
               </div>
             </div>
-            <div>
-              <label className="text-[#475569] text-[12px] mb-1 block">Confirm Password</label>
-              <input type={show ? "text" : "password"} value={confirm} onChange={e => setConfirm(e.target.value)}
-                className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Confirm new password" />
+
+            <div style={{ marginBottom: "28px" }}>
+              <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#374151", marginBottom: "6px" }}>Confirm Password</label>
+              <input
+                type={show ? "text" : "password"}
+                value={confirm}
+                onChange={e => setConfirm(e.target.value)}
+                placeholder="Confirm new password"
+                style={{
+                  width: "100%", padding: "12px 16px", borderRadius: "12px",
+                  border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "14px",
+                  color: "#1a1a2e", outline: "none", boxSizing: "border-box"
+                }}
+              />
             </div>
-            <button type="submit" disabled={loading}
-              className="w-full btn btn-primary disabled:opacity-50">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: "100%", padding: "12px", borderRadius: "12px",
+                background: "linear-gradient(135deg, var(--primary), #0039a6)",
+                color: "#ffffff", fontSize: "15px", fontWeight: 600,
+                border: "none", cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.5 : 1,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px"
+              }}
+            >
+              {loading ? <Loader2 style={{ width: "18px", height: "18px", animation: "spin 1s linear infinite" }} /> : <Lock style={{ width: "18px", height: "18px" }} />}
               Change Password
             </button>
           </form>
