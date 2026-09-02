@@ -1,62 +1,37 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  TrendingDown,
-  Plus,
-  Search,
-  Filter,
-  Download,
-  Receipt,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Users,
-  Wrench,
-  X,
-  Loader2,
-} from "lucide-react";
+import { TrendingDown, Plus, Search, Filter, Download, Receipt, AlertCircle, CheckCircle, Clock, Wrench, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
 import { formatCurrency } from "@/lib/school-config";
 import { useSession } from "next-auth/react";
 
-interface Expense {
-  id: string;
-  title: string;
-  amount: number;
-  category: string;
-  date: string;
-  status: string;
-  vendor: string | null;
-  notes: string | null;
-  approvedBy: string | null;
-}
+interface Expense { id: string; title: string; amount: number; category: string; date: string; status: string; vendor: string | null; notes: string | null; approvedBy: string | null; }
+interface ExpenseStats { totalAmount: number; pendingAmount: number; totalCount: number; pendingCount: number; }
 
-interface ExpenseStats {
-  totalAmount: number;
-  pendingAmount: number;
-  totalCount: number;
-  pendingCount: number;
-}
+const categories = ["Salaries", "Utilities", "Maintenance", "Academic", "Security", "Transport", "Food & Supplies", "Others"];
+const barColors: Record<string, string> = { Salaries: "#0055ff", Utilities: "#10b981", Maintenance: "#8b5cf6", Academic: "#f59e0b", Security: "#06b6d4", Transport: "#eab308", "Food & Supplies": "#ec4899", Others: "#6b7280" };
 
-const categories = [
-  "Salaries",
-  "Utilities",
-  "Maintenance",
-  "Academic",
-  "Security",
-  "Transport",
-  "Food & Supplies",
-  "Others",
-];
+const inputStyle: React.CSSProperties = { width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1.5px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" as const, background: "#f8fafc", transition: "border-color 0.2s, box-shadow 0.2s" };
+const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => { e.currentTarget.style.borderColor = "#0055ff"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,85,255,0.1)"; e.currentTarget.style.background = "#ffffff"; };
+const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "#f8fafc"; };
+const labelStyle: React.CSSProperties = { display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" };
+const btnStyle = (bg: string, disabled?: boolean): React.CSSProperties => ({ padding: "10px 20px", borderRadius: "12px", border: "none", background: disabled ? "#94a3b8" : bg, color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: disabled ? "not-allowed" : "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s", opacity: disabled ? 0.6 : 1 });
+
+const statusStyle = (s: string) => {
+  if (s === "approved") return { bg: "rgba(16,185,129,0.1)", color: "#16a34a" };
+  if (s === "rejected") return { bg: "rgba(239,68,68,0.1)", color: "#dc2626" };
+  return { bg: "rgba(245,158,11,0.1)", color: "#d97706" };
+};
 
 export default function ExpensesPage() {
   const { data: session } = useSession();
   const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
   const canApprove = userRoles.some((r: string) => ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"].includes(r));
-  const canCreate = userRoles.some((r: string) => ["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"].includes(r));  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const canCreate = userRoles.some((r: string) => ["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"].includes(r));
+
+  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [stats, setStats] = useState<ExpenseStats>({ totalAmount: 0, pendingAmount: 0, totalCount: 0, pendingCount: 0 });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -65,7 +40,6 @@ export default function ExpensesPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
-
   const [formTitle, setFormTitle] = useState("");
   const [formAmount, setFormAmount] = useState("");
   const [formCategory, setFormCategory] = useState("");
@@ -85,483 +59,279 @@ export default function ExpensesPage() {
       const data = await res.json();
       setExpenses(data.expenses || []);
       setStats(data.stats || { totalAmount: 0, pendingAmount: 0, totalCount: 0, pendingCount: 0 });
-    } catch {
-      toast.error("Failed to load expenses");
-    } finally {
-      setLoading(false);
-    }
+    } catch { toast.error("Failed to load expenses"); } finally { setLoading(false); }
   }, [filterCategory, filterStatus]);
-
-  useEffect(() => {
-    fetchExpenses();
-  }, [fetchExpenses]);
+  useEffect(() => { fetchExpenses(); }, [fetchExpenses]);
 
   const handleAddExpense = async () => {
-    if (!formTitle.trim() || !formAmount || !formCategory) {
-      toast.error("Please fill in title, amount, and category");
-      return;
-    }
+    if (!formTitle.trim() || !formAmount || !formCategory) { toast.error("Please fill in title, amount, and category"); return; }
     try {
       setSubmitting(true);
-      const res = await fetch("/api/expenses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: formTitle,
-          amount: parseFloat(formAmount),
-          category: formCategory,
-          date: formDate || undefined,
-          vendor: formVendor || undefined,
-          notes: formNotes || undefined,
-        }),
-      });
-      if (!res.ok) throw new Error("Failed to create expense");
+      const res = await fetch("/api/expenses", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: formTitle, amount: parseFloat(formAmount), category: formCategory, date: formDate || undefined, vendor: formVendor || undefined, notes: formNotes || undefined }) });
+      if (!res.ok) throw new Error("Failed");
       toast.success("Expense recorded successfully");
-      setShowAddModal(false);
-      setFormTitle("");
-      setFormAmount("");
-      setFormCategory("");
-      setFormDate("");
-      setFormVendor("");
-      setFormNotes("");
+      setShowAddModal(false); setFormTitle(""); setFormAmount(""); setFormCategory(""); setFormDate(""); setFormVendor(""); setFormNotes("");
       fetchExpenses();
-    } catch {
-      toast.error("Failed to record expense");
-    } finally {
-      setSubmitting(false);
-    }
+    } catch { toast.error("Failed to record expense"); } finally { setSubmitting(false); }
   };
 
   const handleStatusUpdate = async (id: string, status: string) => {
     try {
       setProcessingId(id);
-      const res = await fetch("/api/expenses", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, status }),
-      });
-      if (!res.ok) throw new Error("Failed to update status");
+      const res = await fetch("/api/expenses", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, status }) });
+      if (!res.ok) throw new Error("Failed");
       toast.success(`Expense ${status === "approved" ? "approved" : "rejected"} successfully`);
       fetchExpenses();
-    } catch {
-      toast.error("Failed to update expense status");
-    } finally {
-      setProcessingId(null);
-    }
+    } catch { toast.error("Failed to update expense status"); } finally { setProcessingId(null); }
   };
 
   const handleExport = () => {
-    if (!expenses.length) {
-      toast.error("No expenses to export");
-      return;
-    }
-    downloadCSV(
-      expenses.map((e) => ({
-        Title: e.title,
-        Amount: e.amount,
-        Category: e.category,
-        Date: new Date(e.date).toLocaleDateString("en-NG"),
-        Status: e.status,
-        Vendor: e.vendor || "",
-        Notes: e.notes || "",
-        "Approved By": e.approvedBy || "",
-      })),
-      "expenses"
-    );
+    if (!expenses.length) { toast.error("No expenses to export"); return; }
+    downloadCSV(expenses.map((e) => ({ Title: e.title, Amount: e.amount, Category: e.category, Date: new Date(e.date).toLocaleDateString("en-NG"), Status: e.status, Vendor: e.vendor || "", Notes: e.notes || "", "Approved By": e.approvedBy || "" })), "expenses");
     toast.success("Expenses exported successfully");
   };
 
-  const filteredExpenses = expenses.filter((e) => {
-    if (!search) return true;
-    const q = search.toLowerCase();
-    return (
-      e.title.toLowerCase().includes(q) ||
-      e.category.toLowerCase().includes(q) ||
-      (e.vendor && e.vendor.toLowerCase().includes(q))
-    );
-  });
-
-  const statCards = [
-    { label: "Total Expenses", value: formatCurrency(stats.totalAmount), icon: TrendingDown, color: "from-blue-500 to-blue-600" },
-    { label: "Pending Amount", value: formatCurrency(stats.pendingAmount), icon: Receipt, color: "from-emerald-500 to-emerald-600" },
-    { label: "Total Count", value: stats.totalCount.toString(), icon: Clock, color: "from-orange-500 to-orange-600" },
-    { label: "Pending Approvals", value: stats.pendingCount.toString(), icon: Wrench, color: "from-purple-500 to-purple-600" },
-  ];
+  const filteredExpenses = expenses.filter((e) => { if (!search) return true; const q = search.toLowerCase(); return e.title.toLowerCase().includes(q) || e.category.toLowerCase().includes(q) || (e.vendor && e.vendor.toLowerCase().includes(q)); });
 
   const categoryBreakdown = categories.map((cat) => {
-    const catExpenses = expenses.filter((e) => e.category === cat && e.status === "approved");
-    const catTotal = catExpenses.reduce((sum, e) => sum + e.amount, 0);
+    const catTotal = expenses.filter((e) => e.category === cat && e.status === "approved").reduce((sum, e) => sum + e.amount, 0);
     const percent = stats.totalAmount > 0 ? Math.round((catTotal / stats.totalAmount) * 100) : 0;
-    const colorMap: Record<string, string> = {
-      Salaries: "bg-blue-500",
-      Utilities: "bg-emerald-500",
-      Maintenance: "bg-purple-500",
-      Academic: "bg-orange-500",
-      Security: "bg-cyan-500",
-      Transport: "bg-yellow-500",
-      "Food & Supplies": "bg-pink-500",
-      Others: "bg-gray-500",
-    };
-    return { label: cat, amount: catTotal, percent, color: colorMap[cat] || "bg-gray-500" };
+    return { label: cat, amount: catTotal, percent, color: barColors[cat] || "#6b7280" };
   }).filter((c) => c.amount > 0);
 
+  const approvedCount = expenses.filter((e) => e.status === "approved").length;
+  const pendingCount = expenses.filter((e) => e.status === "pending").length;
+  const rejectedCount = expenses.filter((e) => e.status === "rejected").length;
+
+  const kpis = [
+    { label: "Total Expenses", value: formatCurrency(stats.totalAmount), bg: "linear-gradient(135deg, #0055ff, #0033cc)", icon: <TrendingDown style={{ width: "20px", height: "20px", color: "#ffffff" }} /> },
+    { label: "Pending Amount", value: formatCurrency(stats.pendingAmount), bg: "linear-gradient(135deg, #10b981, #059669)", icon: <Receipt style={{ width: "20px", height: "20px", color: "#ffffff" }} /> },
+    { label: "Total Count", value: stats.totalCount.toString(), bg: "linear-gradient(135deg, #f59e0b, #d97706)", icon: <Clock style={{ width: "20px", height: "20px", color: "#ffffff" }} /> },
+    { label: "Pending Approvals", value: stats.pendingCount.toString(), bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)", icon: <Wrench style={{ width: "20px", height: "20px", color: "#ffffff" }} /> },
+  ];
+
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div style={{ padding: "24px 32px", minHeight: "100vh", background: "#f8fafc" }}>
+      {/* Gradient Header */}
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "20px", padding: "28px 32px", marginBottom: "28px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.12) 0%, transparent 60%), radial-gradient(circle at 10% 80%, rgba(255,255,255,0.08) 0%, transparent 50%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Expense Management</h1>
-            <p className="text-white/70 text-[13px]">
-              Track and manage all school expenses, approvals, and budgets
-            </p>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", display: "flex", alignItems: "center", gap: "12px" }}><TrendingDown style={{ width: "28px", height: "28px" }} /> Expense Management</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Track and manage all school expenses, approvals, and budgets</p>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleExport}
-              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
-            >
-              <Download className="w-4 h-4" />
-              Export
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <button onClick={handleExport} style={{ padding: "10px 20px", borderRadius: "12px", border: "1.5px solid rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.1)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}>
+              <Download style={{ width: "16px", height: "16px" }} /> Export
             </button>
             {canCreate && (
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                Record Expense
+              <button onClick={() => setShowAddModal(true)} style={{ padding: "10px 20px", borderRadius: "12px", border: "1.5px solid rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.1)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}>
+                <Plus style={{ width: "16px", height: "16px" }} /> Record Expense
               </button>
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card"
-          >
-            <div className="flex items-start justify-between">
+      {/* KPI Stat Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" }}>
+        {kpis.map((stat, i) => (
+          <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 22px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: stat.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{stat.icon}</div>
               <div>
-                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
-              </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+                <p style={{ margin: 0, fontSize: "12px", fontWeight: 500, color: "#64748b" }}>{stat.label}</p>
+                <p style={{ margin: "4px 0 0", fontSize: "22px", fontWeight: 800, color: "#0f172a" }}>{stat.value}</p>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 card"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg">Recent Expenses</h3>
-            <div className="flex gap-3">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                <input
-                  type="text"
-                  placeholder="Search expenses..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
+      {/* Main Content */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px" }}>
+        {/* Expenses Table */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+          <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
+            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Recent Expenses</h3>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ position: "relative", maxWidth: "200px" }}>
+                <Search style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", width: "16px", height: "16px", color: "#94a3b8" }} />
+                <input type="text" placeholder="Search expenses..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ ...inputStyle, paddingLeft: "36px", padding: "10px 14px 10px 36px", fontSize: "12px" }} onFocus={inputFocus} onBlur={inputBlur} />
               </div>
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                style={{ colorScheme: "light" }}
-                className="px-3 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-              >
-                <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>All Status</option>
-                <option value="pending" style={{ background: "#ffffff", color: "#1a1a2e" }}>Pending</option>
-                <option value="approved" style={{ background: "#ffffff", color: "#1a1a2e" }}>Approved</option>
-                <option value="rejected" style={{ background: "#ffffff", color: "#1a1a2e" }}>Rejected</option>
+              <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ ...inputStyle, width: "auto", minWidth: "130px", padding: "10px 14px", cursor: "pointer", fontSize: "12px" }} onFocus={inputFocus} onBlur={inputBlur}>
+                <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">All Status</option>
+                <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="pending">Pending</option>
+                <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="approved">Approved</option>
+                <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="rejected">Rejected</option>
               </select>
-              <button title="Filter using dropdowns above" className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]">
-                <Filter className="w-4 h-4" />
-              </button>
+              <div style={{ width: "36px", height: "36px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#f8fafc", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }} title="Filter using dropdowns above">
+                <Filter style={{ width: "16px", height: "16px", color: "#64748b" }} />
+              </div>
             </div>
           </div>
+
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 text-[var(--primary)] animate-spin" />
-            </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}><Loader2 style={{ width: "24px", height: "24px", color: "#0055ff" }} className="animate-spin" /></div>
           ) : filteredExpenses.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-[#64748b]">
-              <Receipt className="w-12 h-12 mb-3 text-[#94a3b8]" />
-              <p className="text-[13px]">No expenses found</p>
-            </div>
+            <div style={{ textAlign: "center", padding: "80px 0" }}><Receipt style={{ width: "48px", height: "48px", color: "#cbd5e1", margin: "0 auto 16px" }} /><p style={{ margin: 0, fontSize: "14px", color: "#94a3b8" }}>No expenses found</p></div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-[#e2e8f0]">
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Description</th>
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Amount</th>
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Category</th>
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Date</th>
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Status</th>
-                    <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3 px-4">Actions</th>
-                  </tr>
-                </thead>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead><tr>{["Description", "Amount", "Category", "Date", "Status", "Actions"].map(h => (<th key={h} style={{ padding: "12px 20px", textAlign: "left" as const, fontSize: "11px", fontWeight: 700, color: "#64748b", textTransform: "uppercase" as const, letterSpacing: "0.05em", borderBottom: "2px solid #f1f5f9" }}>{h}</th>))}</tr></thead>
                 <tbody>
-                  {filteredExpenses.map((expense) => (
-                    <tr key={expense.id} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
-                      <td className="py-3 px-4">
-                        <p className="text-[#1a1a2e] font-medium text-[13px]">{expense.title}</p>
-                        {expense.vendor && (
-                          <p className="text-[#64748b] text-[12px]">{expense.vendor}</p>
-                        )}
-                      </td>
-                      <td className="py-3 px-4 text-[#1a1a2e] font-medium text-[13px]">{formatCurrency(expense.amount)}</td>
-                      <td className="py-3 px-4">
-                        <span className="px-2 py-1 rounded-lg bg-[#f8fafc] text-[#475569] text-[12px]">{expense.category}</span>
-                      </td>
-                      <td className="py-3 px-4 text-[#475569] text-[13px]">{new Date(expense.date).toLocaleDateString("en-NG")}</td>
-                      <td className="py-3 px-4">
-                        <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                          expense.status === "approved" ? "bg-[#dcfce7] text-[#16a34a]" :
-                          expense.status === "rejected" ? "bg-[#fee2e2] text-[#dc2626]" :
-                          "bg-orange-500/20 text-orange-400"
-                        }`}>
-                          {expense.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4">
-                        {expense.status === "pending" && canApprove && (
-                          <div className="flex gap-1">
-                            <button
-                              onClick={() => handleStatusUpdate(expense.id, "approved")}
-                              disabled={processingId === expense.id}
-                              className="px-2 py-1 rounded-lg bg-emerald-500/10 text-[#16a34a] text-[11px] font-semibold hover:bg-[#dcfce7] transition flex items-center gap-1"
-                            >
-                              {processingId === expense.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => handleStatusUpdate(expense.id, "rejected")}
-                              disabled={processingId === expense.id}
-                              className="px-2 py-1 rounded-lg bg-red-500/10 text-[#dc2626] text-[11px] font-semibold hover:bg-[#fee2e2] transition flex items-center gap-1"
-                            >
-                              <X className="w-3 h-3" />
-                              Reject
-                            </button>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                  {filteredExpenses.map((expense) => {
+                    const sc = statusStyle(expense.status);
+                    return (
+                      <tr key={expense.id} style={{ borderBottom: "1px solid #f1f5f9", transition: "background 0.1s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                        <td style={{ padding: "14px 20px" }}>
+                          <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{expense.title}</p>
+                          {expense.vendor && <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#94a3b8" }}>{expense.vendor}</p>}
+                        </td>
+                        <td style={{ padding: "14px 20px", fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{formatCurrency(expense.amount)}</td>
+                        <td style={{ padding: "14px 20px" }}><span style={{ padding: "3px 10px", borderRadius: "6px", background: "#f8fafc", fontSize: "11px", fontWeight: 500, color: "#475569" }}>{expense.category}</span></td>
+                        <td style={{ padding: "14px 20px", fontSize: "12px", color: "#64748b" }}>{new Date(expense.date).toLocaleDateString("en-NG")}</td>
+                        <td style={{ padding: "14px 20px" }}><span style={{ padding: "3px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 600, background: sc.bg, color: sc.color }}>{expense.status}</span></td>
+                        <td style={{ padding: "14px 20px" }}>
+                          {expense.status === "pending" && canApprove && (
+                            <div style={{ display: "flex", gap: "6px" }}>
+                              <button onClick={() => handleStatusUpdate(expense.id, "approved")} disabled={processingId === expense.id} style={{ padding: "4px 10px", borderRadius: "6px", border: "none", background: "rgba(16,185,129,0.1)", color: "#16a34a", fontSize: "11px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.1)")}>
+                                {processingId === expense.id ? <Loader2 style={{ width: "12px", height: "12px" }} className="animate-spin" /> : <CheckCircle style={{ width: "12px", height: "12px" }} />} Approve
+                              </button>
+                              <button onClick={() => handleStatusUpdate(expense.id, "rejected")} disabled={processingId === expense.id} style={{ padding: "4px 10px", borderRadius: "6px", border: "none", background: "rgba(239,68,68,0.1)", color: "#dc2626", fontSize: "11px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(239,68,68,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(239,68,68,0.1)")}>
+                                <X style={{ width: "12px", height: "12px" }} /> Reject
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
           )}
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="space-y-6"
-        >
-          <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-6">Expense Categories</h3>
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-6 h-6 text-[var(--primary)] animate-spin" />
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {categoryBreakdown.length === 0 ? (
-                  <p className="text-[#64748b] text-[13px] text-center py-6">No approved expenses yet</p>
-                ) : (
-                  categoryBreakdown.map((item, i) => (
+        {/* Sidebar */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {/* Expense Categories */}
+          <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+            <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9" }}>
+              <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Expense Categories</h3>
+            </div>
+            <div style={{ padding: "20px 24px" }}>
+              {loading ? (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 0" }}><Loader2 style={{ width: "20px", height: "20px", color: "#0055ff" }} className="animate-spin" /></div>
+              ) : categoryBreakdown.length === 0 ? (
+                <p style={{ margin: 0, textAlign: "center", padding: "24px 0", fontSize: "13px", color: "#94a3b8" }}>No approved expenses yet</p>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  {categoryBreakdown.map((item, i) => (
                     <div key={i}>
-                      <div className="flex items-center justify-between text-[13px] mb-1">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full ${item.color}`} />
-                          <span className="text-[#475569]">{item.label}</span>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: item.color, flexShrink: 0 }} />
+                          <span style={{ fontSize: "13px", fontWeight: 500, color: "#0f172a" }}>{item.label}</span>
                         </div>
-                        <span className="text-[#64748b] text-[12px]">{formatCurrency(item.amount)}</span>
+                        <span style={{ fontSize: "12px", fontWeight: 600, color: "#64748b" }}>{formatCurrency(item.amount)}</span>
                       </div>
-                      <div className="w-full bg-[#f8fafc] rounded-full h-1.5">
-                        <div className={`${item.color} h-1.5 rounded-full transition-all duration-500`} style={{ width: `${item.percent}%` }} />
+                      <div style={{ width: "100%", height: "6px", borderRadius: "3px", background: "#f1f5f9" }}>
+                        <div style={{ height: "6px", borderRadius: "3px", background: item.color, width: `${item.percent}%`, transition: "width 0.5s" }} />
                       </div>
-                      <span className="text-[#94a3b8] text-[11px]">{item.percent}%</span>
+                      <span style={{ fontSize: "11px", color: "#94a3b8" }}>{item.percent}%</span>
                     </div>
-                  ))
-                )}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Quick Summary</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-4 h-4 text-[#16a34a]" />
-                  <span className="text-[#475569] text-[13px]">Approved</span>
+          {/* Quick Summary */}
+          <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+            <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9" }}>
+              <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Quick Summary</h3>
+            </div>
+            <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: "10px" }}>
+              {[
+                { label: "Approved", count: approvedCount, icon: <CheckCircle style={{ width: "16px", height: "16px", color: "#16a34a" }} />, color: "#16a34a" },
+                { label: "Pending", count: pendingCount, icon: <Clock style={{ width: "16px", height: "16px", color: "#d97706" }} />, color: "#d97706" },
+                { label: "Rejected", count: rejectedCount, icon: <AlertCircle style={{ width: "16px", height: "16px", color: "#dc2626" }} />, color: "#dc2626" },
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderRadius: "12px", background: "#f8fafc" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    {item.icon}
+                    <span style={{ fontSize: "13px", color: "#475569" }}>{item.label}</span>
+                  </div>
+                  <span style={{ fontSize: "14px", fontWeight: 700, color: "#0f172a" }}>{item.count}</span>
                 </div>
-                <span className="text-[#1a1a2e] text-[13px] font-medium">
-                  {expenses.filter((e) => e.status === "approved").length}
-                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Add Expense Modal */}
+      {showAddModal && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} onClick={() => setShowAddModal(false)} />
+          <div style={{ position: "relative", width: "100%", maxWidth: "520px", background: "#ffffff", borderRadius: "20px", boxShadow: "0 25px 60px rgba(0,0,0,0.2)", overflow: "hidden", maxHeight: "85vh", overflowY: "auto" as const }}>
+            {/* Modal Gradient Header */}
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "24px 28px", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)" }} />
+              <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#ffffff" }}>Record New Expense</h3>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>Add a new expense entry for tracking</p>
+                </div>
+                <button onClick={() => setShowAddModal(false)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", transition: "background 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.25)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}>
+                  <X style={{ width: "18px", height: "18px" }} />
+                </button>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
-                <div className="flex items-center gap-3">
-                  <Clock className="w-4 h-4 text-orange-400" />
-                  <span className="text-[#475569] text-[13px]">Pending</span>
-                </div>
-                <span className="text-[#1a1a2e] text-[13px] font-medium">
-                  {expenses.filter((e) => e.status === "pending").length}
-                </span>
+            </div>
+
+            <div style={{ padding: "24px 28px" }}>
+              <div style={{ marginBottom: "16px" }}>
+                <label style={labelStyle}>Title *</label>
+                <input type="text" value={formTitle} onChange={(e) => setFormTitle(e.target.value)} placeholder="e.g. Teacher Salaries" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="w-4 h-4 text-[#dc2626]" />
-                  <span className="text-[#475569] text-[13px]">Rejected</span>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "16px" }}>
+                <div>
+                  <label style={labelStyle}>Amount *</label>
+                  <input type="number" value={formAmount} onChange={(e) => setFormAmount(e.target.value)} placeholder="0.00" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
                 </div>
-                <span className="text-[#1a1a2e] text-[13px] font-medium">
-                  {expenses.filter((e) => e.status === "rejected").length}
-                </span>
+                <div>
+                  <label style={labelStyle}>Category *</label>
+                  <select value={formCategory} onChange={(e) => setFormCategory(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">Select category</option>
+                    {categories.map((cat) => (<option key={cat} value={cat} style={{ background: "#ffffff", color: "#1a1a2e" }}>{cat}</option>))}
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "16px" }}>
+                <div>
+                  <label style={labelStyle}>Date</label>
+                  <input type="date" value={formDate} onChange={(e) => setFormDate(e.target.value)} style={{ ...inputStyle, colorScheme: "light" }} onFocus={inputFocus} onBlur={inputBlur} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Vendor</label>
+                  <input type="text" value={formVendor} onChange={(e) => setFormVendor(e.target.value)} placeholder="Vendor name" style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                </div>
+              </div>
+              <div style={{ marginBottom: "20px" }}>
+                <label style={labelStyle}>Notes</label>
+                <textarea value={formNotes} onChange={(e) => setFormNotes(e.target.value)} placeholder="Additional notes..." rows={3} style={{ ...inputStyle, resize: "none" as const, minHeight: "80px" }} onFocus={inputFocus} onBlur={inputBlur} />
+              </div>
+              <div style={{ display: "flex", gap: "10px", paddingTop: "16px", borderTop: "1px solid #f1f5f9" }}>
+                <button onClick={() => setShowAddModal(false)} style={{ flex: 1, padding: "10px 20px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", color: "#475569", fontSize: "13px", fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f1f5f9")} onMouseLeave={(e) => (e.currentTarget.style.background = "#f8fafc")}>Cancel</button>
+                <button onClick={handleAddExpense} disabled={submitting} style={{ ...btnStyle("#0055ff", submitting), flex: 1, justifyContent: "center" }}>
+                  {submitting && <Loader2 style={{ width: "16px", height: "16px" }} className="animate-spin" />} {submitting ? "Saving..." : "Record Expense"}
+                </button>
               </div>
             </div>
           </div>
-        </motion.div>
-      </div>
-
-      <AnimatePresence>
-        {showAddModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="modal-overlay bg-black/60 backdrop-blur-sm"
-            onClick={() => setShowAddModal(false)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl bg-white border border-[#e2e8f0] rounded-3xl max-h-[85vh] overflow-y-auto"
-              style={{ padding: "32px" }}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-bold text-lg">Record New Expense</h3>
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-                <div>
-                  <label className="block text-[#64748b] text-[12px] mb-1.5">Title *</label>
-                  <input
-                    type="text"
-                    value={formTitle}
-                    onChange={(e) => setFormTitle(e.target.value)}
-                    placeholder="e.g. Teacher Salaries"
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#64748b] text-[12px] mb-1.5">Amount *</label>
-                    <input
-                      type="number"
-                      value={formAmount}
-                      onChange={(e) => setFormAmount(e.target.value)}
-                      placeholder="0.00"
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[#64748b] text-[12px] mb-1.5">Category *</label>
-                    <select
-                      value={formCategory}
-                      onChange={(e) => setFormCategory(e.target.value)}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    >
-                      <option value="" style={{ background: "#ffffff", color: "#1a1a2e" }}>Select category</option>
-                      {categories.map((cat) => (
-                        <option key={cat} value={cat} style={{ background: "#ffffff", color: "#1a1a2e" }}>{cat}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#64748b] text-[12px] mb-1.5">Date</label>
-                    <input
-                      type="date"
-                      value={formDate}
-                      onChange={(e) => setFormDate(e.target.value)}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[#64748b] text-[12px] mb-1.5">Vendor</label>
-                    <input
-                      type="text"
-                      value={formVendor}
-                      onChange={(e) => setFormVendor(e.target.value)}
-                      placeholder="Vendor name"
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-[#64748b] text-[12px] mb-1.5">Notes</label>
-                  <textarea
-                    value={formNotes}
-                    onChange={(e) => setFormNotes(e.target.value)}
-                    placeholder="Additional notes..."
-                    rows={3}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
-                  />
-                </div>
-                <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={() => setShowAddModal(false)}
-                    className="flex-1 btn btn-secondary"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleAddExpense}
-                    disabled={submitting}
-                    className="flex-1 btn btn-primary"
-                  >
-                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                    {submitting ? "Saving..." : "Record Expense"}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 }
