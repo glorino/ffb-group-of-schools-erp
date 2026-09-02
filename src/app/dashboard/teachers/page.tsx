@@ -2,22 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import {
-  GraduationCap,
   Users,
-  Plus,
   Search,
-  Filter,
-  Award,
+  Download,
+  UserPlus,
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+  Eye,
+  Edit3,
+  GraduationCap,
   BookOpen,
+  Award,
   TrendingUp,
-  MoreVertical,
   X,
   Loader2,
-  Download,
 } from "lucide-react";
-import { DataTable } from "@/components/ui/data-table";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
 
@@ -35,17 +36,15 @@ interface Teacher {
   teacherSubjects: { subject: { name: string } }[];
 }
 
-interface TeachersResponse {
-  teachers: Teacher[];
-  total: number;
-}
-
 export default function TeachersPage() {
   const router = useRouter();
-  const [data, setData] = useState<TeachersResponse | null>(null);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
@@ -53,19 +52,28 @@ export default function TeachersPage() {
     qualification: "", specialization: "", password: "",
   });
 
-  useEffect(() => {
+  const fetchTeachers = async () => {
     setLoading(true);
-    const params = new URLSearchParams({ page: String(page), limit: "10" });
-    if (search) params.set("search", search);
+    try {
+      const params = new URLSearchParams({ page: String(page), limit: "20" });
+      if (search) params.set("search", search);
+      const res = await fetch(`/api/teachers?${params}`);
+      const d = await res.json();
+      setTeachers(d.teachers ?? []);
+      setTotal(d.pagination?.total ?? 0);
+      setTotalPages(d.pagination?.pages ?? 1);
+    } catch {
+      setTeachers([]);
+    }
+    setLoading(false);
+  };
 
-    fetch(`/api/teachers?${params}`)
-      .then((res) => res.json())
-      .then((d) => {
-        setData({ teachers: d.teachers ?? [], total: d.pagination?.total ?? 0 });
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+  useEffect(() => {
+    fetchTeachers();
   }, [page, search]);
+
+  const activeCount = teachers.filter((t) => t.status === "active").length;
+  const subjectsSet = new Set(teachers.flatMap((t) => t.teacherSubjects?.map((ts) => ts.subject.name) ?? []));
 
   const handleCreate = async () => {
     if (!form.firstName || !form.lastName || !form.employeeId) {
@@ -95,18 +103,15 @@ export default function TeachersPage() {
             password: form.password, phone: form.phone || undefined, role: "TEACHER",
           }),
         });
-        const userData = await userRes.json();
         if (userRes.ok) {
           try {
             await fetch("/api/emails/send", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                type: "welcome",
-                to: form.email,
+                type: "welcome", to: form.email,
                 name: `${form.firstName} ${form.lastName}`,
-                role: "Teacher",
-                password: form.password,
+                role: "Teacher", password: form.password,
               }),
             });
           } catch {}
@@ -116,11 +121,8 @@ export default function TeachersPage() {
       setShowModal(false);
       setForm({ firstName: "", lastName: "", email: "", phone: "", employeeId: "", qualification: "", specialization: "", password: "" });
       toast.success("Teacher created successfully");
-      setLoading(true);
-      fetch(`/api/teachers?page=${page}&limit=10${search ? `&search=${search}` : ""}`)
-        .then(r => r.json())
-        .then(d => setData({ teachers: d.teachers ?? [], total: d.pagination?.total ?? 0 }))
-        .finally(() => setLoading(false));
+      setPage(1);
+      fetchTeachers();
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -129,11 +131,8 @@ export default function TeachersPage() {
   };
 
   const handleExport = () => {
-    if (!data?.teachers?.length) {
-      toast.info("No data to export");
-      return;
-    }
-    downloadCSV(data.teachers.map(t => ({
+    if (!teachers.length) { toast.info("No data to export"); return; }
+    downloadCSV(teachers.map(t => ({
       Name: `${t.firstName} ${t.lastName}`,
       EmployeeID: t.employeeId,
       Email: t.email || "",
@@ -146,270 +145,235 @@ export default function TeachersPage() {
     toast.success("Exported successfully");
   };
 
-  const columns = [
-    {
-      key: "name",
-      label: "Teacher",
-      render: (row: Teacher) => (
-        <button
-          onClick={() => router.push(`/dashboard/teachers/${row.id}`)}
-          className="flex items-center gap-3 hover:opacity-80 transition-opacity text-left"
-        >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white font-semibold">
-            {row.firstName[0]}{row.lastName[0]}
-          </div>
-          <div>
-            <p className="text-[#1a1a2e] text-sm font-medium">{row.firstName} {row.lastName}</p>
-            <p className="text-[#64748b] text-xs">{row.employeeId}</p>
-          </div>
-        </button>
-      ),
-    },
-    {
-      key: "subjects",
-      label: "Subjects",
-      render: (row: Teacher) =>
-        row.teacherSubjects?.map((ts) => ts.subject.name).join(", ") || "—",
-    },
-    {
-      key: "qualification",
-      label: "Qualification",
-      render: (row: Teacher) => row.qualification || "—",
-    },
-    {
-      key: "email",
-      label: "Contact",
-      render: (row: Teacher) => (
-        <span className="text-[#475569] text-sm">{row.email || row.phone || "—"}</span>
-      ),
-    },
-    {
-      key: "status",
-      label: "Status",
-      render: (row: Teacher) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${
-            row.status === "active"
-              ? "bg-[#dcfce7] text-[#16a34a]"
-              : "bg-[#fee2e2] text-[#dc2626]"
-          }`}
-        >
-          {row.status}
-        </span>
-      ),
-    },
-    {
-      key: "actions",
-      label: "",
-      render: (row: any) => (
-        <div className="relative group">
-          <button className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]">
-            <MoreVertical className="w-4 h-4" />
-          </button>
-          <div className="absolute right-0 top-8 z-[60] hidden group-hover:block bg-white border border-[#e2e8f0] rounded-xl shadow-xl py-1 min-w-[120px]">
-            <button onClick={() => router.push(`/dashboard/teachers/${row.id}`)} className="w-full text-left px-3 py-2 text-[12px] text-[#475569] hover:bg-[#f1f5f9]">View Profile</button>
-            <button onClick={() => router.push(`/dashboard/teachers/${row.id}?edit=true`)} className="w-full text-left px-3 py-2 text-[12px] text-[#475569] hover:bg-[#f1f5f9]">Edit</button>
-          </div>
-        </div>
-      ),
-    },
-  ];
-
   return (
-    <div className="space-y-5">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="dashboard-card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="section-header">
+    <div style={{ padding: "0 16px 32px", maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "20px" }}>
+      {/* Header */}
+      <div style={{ marginTop: "32px", borderRadius: "20px", padding: "32px 36px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
           <div>
-            <h1 className="section-title">Teacher Management</h1>
-            <p className="section-subtitle">Manage employee records, qualifications, and performance tracking</p>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", letterSpacing: "-0.02em" }}>Teacher Management</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Manage employee records, qualifications, and performance tracking</p>
           </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="btn btn-primary"
-          >
-            <Plus className="w-4 h-4" />
-            Add Teacher
-          </button>
-        </div>
-      </motion.div>
-
-      <div className="stats-grid-4">
-        {[
-          { label: "Total Teachers", value: String(data?.total ?? 0), icon: Users, color: "from-blue-500 to-blue-600" },
-          { label: "Active Teachers", value: String(data?.teachers?.filter((t) => t.status === "active").length ?? 0), icon: TrendingUp, color: "from-emerald-500 to-emerald-600" },
-          { label: "Subjects Covered", value: String(new Set(data?.teachers?.flatMap((t) => t.teacherSubjects?.map((ts) => ts.subject.name) ?? [])).size || 0), icon: BookOpen, color: "from-purple-500 to-purple-600" },
-          { label: "Departments", value: "—", icon: Award, color: "from-[var(--accent)] to-emerald-400" },
-        ].map((kpi, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="stat-card"
-          >
-            <div className={`stat-card-icon bg-gradient-to-br ${kpi.color}`}>
-              <kpi.icon className="w-6 h-6 text-white" />
-            </div>
-            <div className="stat-card-content">
-              <p className="stat-card-label">{kpi.label}</p>
-              <p className="stat-card-value">{kpi.value}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="table-container"
-      >
-        <div className="table-header">
-          <h3>Teacher Directory</h3>
-          <div className="flex gap-3">
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-              <input
-                type="text"
-                placeholder="Search teachers..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                className="input-search pl-9 w-full sm:w-48"
-              />
-            </div>
-            <button onClick={handleExport} className="btn btn-secondary">
-              <Download className="w-4 h-4" />
-              Export
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <button onClick={handleExport} style={{ padding: "10px 16px", borderRadius: "12px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff", fontSize: "13px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+              <Download style={{ width: "14px", height: "14px" }} /> Export
+            </button>
+            <button onClick={() => setShowModal(true)} style={{ padding: "10px 20px", borderRadius: "12px", background: "#ffffff", color: "#0055ff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+              <UserPlus style={{ width: "14px", height: "14px" }} /> Add Teacher
             </button>
           </div>
         </div>
-        <DataTable
-          columns={columns}
-          data={data?.teachers ?? []}
-          loading={loading}
-          searchable={false}
-          pagination={false}
-          emptyMessage="No teachers found"
-        />
-        {data && data.total > 10 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-[#e2e8f0]">
-            <p className="text-[#64748b] text-[12px]">
-              Showing {((page - 1) * 10) + 1}–{Math.min(page * 10, data.total)} of {data.total}
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="btn btn-secondary disabled:opacity-30"
-              >
-                Previous
+      </div>
+
+      {/* KPI Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+        {[
+          { label: "Total Teachers", value: String(total), icon: Users, bg: "linear-gradient(135deg, #0055ff, #0033cc)" },
+          { label: "Active Teachers", value: String(activeCount), icon: TrendingUp, bg: "linear-gradient(135deg, #10b981, #059669)" },
+          { label: "Subjects Covered", value: String(subjectsSet.size || 0), icon: BookOpen, bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
+          { label: "Departments", value: "—", icon: Award, bg: "linear-gradient(135deg, #f472b6, #ec4899)" },
+        ].map((kpi, i) => (
+          <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px", display: "flex", alignItems: "center", gap: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+            <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: kpi.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <kpi.icon style={{ width: "22px", height: "22px", color: "#ffffff" }} />
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: "12px", color: "#64748b", fontWeight: 500 }}>{kpi.label}</p>
+              <p style={{ margin: "4px 0 0", fontSize: "24px", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.02em" }}>{kpi.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Search Bar */}
+      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+        <div style={{ flex: 1, position: "relative" }}>
+          <Search style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", width: "16px", height: "16px", color: "#94a3b8" }} />
+          <input type="text" placeholder="Search by name, employee ID, or email..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} style={{ width: "100%", padding: "11px 16px 11px 42px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box", boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }} />
+        </div>
+      </div>
+
+      {/* Table */}
+      <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+        <div style={{ padding: "18px 24px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Teacher Directory</h3>
+          <p style={{ margin: 0, fontSize: "12px", color: "#94a3b8" }}>{total} teachers</p>
+        </div>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                {["Teacher", "Subjects", "Qualification", "Contact", "Status"].map((label) => (
+                  <th key={label} style={{ padding: "14px 20px", textAlign: "left", fontSize: "11px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>
+                    {label}
+                  </th>
+                ))}
+                <th style={{ padding: "14px 20px", textAlign: "right", fontSize: "11px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    <td colSpan={6} style={{ padding: "16px 20px" }}>
+                      <div style={{ height: "16px", borderRadius: "8px", background: "#f1f5f9", animation: "pulse 2s infinite" }} />
+                    </td>
+                  </tr>
+                ))
+              ) : teachers.length === 0 ? (
+                <tr>
+                  <td colSpan={6} style={{ padding: "64px 20px", textAlign: "center" }}>
+                    <Users style={{ width: "40px", height: "40px", color: "#94a3b8", margin: "0 auto 12px" }} />
+                    <p style={{ margin: 0, color: "#94a3b8", fontSize: "14px" }}>No teachers found</p>
+                    <p style={{ margin: "4px 0 0", color: "#94a3b8", fontSize: "12px" }}>Try adjusting your search</p>
+                  </td>
+                </tr>
+              ) : (
+                teachers.map((teacher) => {
+                  const initials = `${teacher.firstName?.[0] || ""}${teacher.lastName?.[0] || ""}`.toUpperCase();
+                  const subjectNames = teacher.teacherSubjects?.map(ts => ts.subject.name).join(", ") || "—";
+                  return (
+                    <tr key={teacher.id} style={{ borderBottom: "1px solid #f1f5f9", cursor: "pointer", transition: "background 0.15s" }} onClick={() => router.push(`/dashboard/teachers/${teacher.id}`)} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                      <td style={{ padding: "14px 20px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: "linear-gradient(135deg, #0055ff, #10b981)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontSize: "13px", fontWeight: 700, flexShrink: 0 }}>
+                            {initials}
+                          </div>
+                          <div>
+                            <p style={{ margin: 0, color: "#0f172a", fontSize: "13px", fontWeight: 500 }}>{teacher.firstName} {teacher.lastName}</p>
+                            <p style={{ margin: "2px 0 0", color: "#94a3b8", fontSize: "11px" }}>{teacher.employeeId}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td style={{ padding: "14px 20px" }}>
+                        <span style={{ color: "#475569", fontSize: "12px", maxWidth: "200px", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{subjectNames}</span>
+                      </td>
+                      <td style={{ padding: "14px 20px", color: "#475569", fontSize: "12px" }}>{teacher.qualification || "—"}</td>
+                      <td style={{ padding: "14px 20px" }}>
+                        <div>
+                          <p style={{ margin: 0, color: "#0f172a", fontSize: "13px" }}>{teacher.email || "—"}</p>
+                          {teacher.phone && <p style={{ margin: "2px 0 0", color: "#94a3b8", fontSize: "11px" }}>{teacher.phone}</p>}
+                        </div>
+                      </td>
+                      <td style={{ padding: "14px 20px" }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "8px", fontSize: "11px", fontWeight: 500, ...(teacher.status === "active" ? { background: "#dcfce7", color: "#16a34a", border: "1px solid #bbf7d0" } : { background: "#fee2e2", color: "#dc2626", border: "1px solid #fecaca" }) }}>
+                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: teacher.status === "active" ? "#16a34a" : "#dc2626" }} />
+                          {teacher.status}
+                        </span>
+                      </td>
+                      <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                        <div style={{ position: "relative", display: "inline-block" }}>
+                          <button onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === teacher.id ? null : teacher.id); }} style={{ padding: "6px", borderRadius: "8px", border: "none", background: "transparent", color: "#94a3b8", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <MoreHorizontal style={{ width: "16px", height: "16px" }} />
+                          </button>
+                          {openMenu === teacher.id && (
+                            <div style={{ position: "absolute", right: 0, top: "32px", width: "144px", borderRadius: "12px", background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0 10px 40px rgba(0,0,0,0.12)", zIndex: 60, overflow: "hidden" }}>
+                              <button onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/teachers/${teacher.id}`); setOpenMenu(null); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", border: "none", background: "transparent", color: "#475569", fontSize: "12px", cursor: "pointer", textAlign: "left" }}>
+                                <Eye style={{ width: "14px", height: "14px" }} /> View Profile
+                              </button>
+                              <button onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/teachers/${teacher.id}?edit=true`); setOpenMenu(null); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", border: "none", background: "transparent", color: "#475569", fontSize: "12px", cursor: "pointer", textAlign: "left" }}>
+                                <Edit3 style={{ width: "14px", height: "14px" }} /> Edit
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div style={{ padding: "14px 20px", borderTop: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <p style={{ margin: 0, color: "#94a3b8", fontSize: "12px" }}>Page {page} of {totalPages} &middot; {total} teachers</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid #e2e8f0", background: page === 1 ? "#f8fafc" : "#ffffff", color: "#94a3b8", cursor: page === 1 ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", opacity: page === 1 ? 0.4 : 1 }}>
+                <ChevronLeft style={{ width: "16px", height: "16px" }} />
               </button>
-              <button
-                onClick={() => setPage((p) => p + 1)}
-                disabled={page * 10 >= data.total}
-                className="btn btn-secondary disabled:opacity-30"
-              >
-                Next
+              {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <button key={pageNum} onClick={() => setPage(pageNum)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: page === pageNum ? "1px solid #0055ff" : "1px solid #e2e8f0", background: page === pageNum ? "#0055ff" : "#ffffff", color: page === pageNum ? "#ffffff" : "#64748b", fontSize: "12px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: page === pageNum ? "0 2px 8px rgba(0,85,255,0.25)" : "none" }}>
+                    {pageNum}
+                  </button>
+                );
+              })}
+              <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid #e2e8f0", background: page === totalPages ? "#f8fafc" : "#ffffff", color: "#94a3b8", cursor: page === totalPages ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", opacity: page === totalPages ? 0.4 : 1 }}>
+                <ChevronRight style={{ width: "16px", height: "16px" }} />
               </button>
             </div>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Add Teacher Modal */}
-      <AnimatePresence>
-        {showModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="modal-overlay"
-            onClick={() => setShowModal(false)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="modal-content max-w-2xl"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3>Add New Teacher</h3>
-                <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e] transition">
-                  <X className="w-5 h-5" />
-                </button>
+      {showModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" }} onClick={() => setShowModal(false)}>
+          <div style={{ background: "#ffffff", borderRadius: "20px", width: "100%", maxWidth: "560px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>Add New Teacher</h3>
+              <button onClick={() => setShowModal(false)} style={{ padding: "8px", borderRadius: "10px", border: "none", background: "#f1f5f9", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <X style={{ width: "18px", height: "18px" }} />
+              </button>
+            </div>
+            <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>First Name *</label>
+                  <input type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Last Name *</label>
+                  <input type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+                </div>
               </div>
-              <div className="modal-body space-y-4">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="input-label">First Name *</label>
-                    <input type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                      className="input-field" />
-                  </div>
-                  <div className="form-group">
-                    <label className="input-label">Last Name *</label>
-                    <input type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                      className="input-field" />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="input-label">Employee ID *</label>
-                  <input type="text" value={form.employeeId} onChange={(e) => setForm({ ...form, employeeId: e.target.value })}
-                    placeholder="e.g. TCH001" className="input-field" />
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="input-label">Email</label>
-                    <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      placeholder="teacher@ffb.edu.ng" className="input-field" />
-                  </div>
-                  <div className="form-group">
-                    <label className="input-label">Phone</label>
-                    <input type="text" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      placeholder="+234..." className="input-field" />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="input-label">Qualification</label>
-                    <input type="text" value={form.qualification} onChange={(e) => setForm({ ...form, qualification: e.target.value })}
-                      placeholder="e.g. B.Sc, PGDE" className="input-field" />
-                  </div>
-                  <div className="form-group">
-                    <label className="input-label">Specialization</label>
-                    <input type="text" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })}
-                      placeholder="e.g. Mathematics" className="input-field" />
-                  </div>
-                </div>
-                {form.email && (
-                  <div className="form-group">
-                    <label className="input-label">Login Password</label>
-                    <input type="text" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
-                      className="input-field" />
-                    <p className="text-[#94a3b8] text-[10px] mt-1">Login credentials will be created for this teacher</p>
-                  </div>
-                )}
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Employee ID *</label>
+                <input type="text" value={form.employeeId} onChange={(e) => setForm({ ...form, employeeId: e.target.value })} placeholder="e.g. TCH001" style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
               </div>
-              <div className="modal-footer">
-                <button onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
-                <button onClick={handleCreate} disabled={submitting}
-                  className="btn btn-primary disabled:opacity-50">
-                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Create Teacher
-                </button>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Email</label>
+                  <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="teacher@ffb.edu.ng" style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Phone</label>
+                  <input type="text" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+234..." style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+                </div>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Qualification</label>
+                  <input type="text" value={form.qualification} onChange={(e) => setForm({ ...form, qualification: e.target.value })} placeholder="e.g. B.Sc, PGDE" style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Specialization</label>
+                  <input type="text" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} placeholder="e.g. Mathematics" style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+                </div>
+              </div>
+              {form.email && (
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Login Password</label>
+                  <input type="text" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
+                  <p style={{ margin: "4px 0 0", color: "#94a3b8", fontSize: "11px" }}>Login credentials will be created for this teacher</p>
+                </div>
+              )}
+            </div>
+            <div style={{ padding: "20px 28px", borderTop: "1px solid #f1f5f9", display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+              <button onClick={() => setShowModal(false)} style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>Cancel</button>
+              <button onClick={handleCreate} disabled={submitting} style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: submitting ? "not-allowed" : "pointer", opacity: submitting ? 0.6 : 1, display: "flex", alignItems: "center", gap: "6px" }}>
+                {submitting && <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />}
+                Create Teacher
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

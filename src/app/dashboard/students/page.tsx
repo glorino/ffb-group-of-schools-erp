@@ -68,7 +68,7 @@ export default function StudentsPage() {
   const fetchStudents = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page: String(page), limit: "10" });
+      const params = new URLSearchParams({ page: String(page), limit: "20" });
       if (search) params.set("search", search);
       if (classFilter) params.set("classId", classFilter);
       if (statusFilter) params.set("status", statusFilter);
@@ -153,252 +153,151 @@ export default function StudentsPage() {
   };
 
   return (
-    <motion.div {...fadeIn} className="space-y-5">
+    <div style={{ padding: "0 16px 32px", maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "20px" }}>
       {/* Header */}
-      <div className="mt-8 mx-4 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+      <div style={{ marginTop: "32px", borderRadius: "20px", padding: "32px 36px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Students</h1>
-            <p className="text-white/70 text-[13px]">Manage student records and profiles</p>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", letterSpacing: "-0.02em" }}>Students</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Manage student records and profiles</p>
           </div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <button
-              onClick={async () => {
-                try {
-                  const res = await fetch("/api/students/graduate", { method: "POST" });
-                  const data = await res.json();
-                  if (!res.ok) throw new Error(data.error || "Failed");
-                  if (data.graduated === 0) toast.info(data.message || "No SSS 3 students to graduate");
-                  else toast.success(data.message || `${data.graduated} students graduated to alumni`);
-                } catch (err: any) {
-                  toast.error(err.message || "Graduation failed");
-                }
-              }}
-              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
-            >
-              <GraduationCap className="w-4 h-4" />
-            Graduate SSS 3
-          </button>
-          <button
-            onClick={() => downloadCSV(students.map(s => ({
-              Name: `${s.firstName} ${s.lastName}`,
-              "Admission No": s.admissionNumber,
-              Class: s.class?.name || "—",
-              Email: s.email || "—",
-              Status: s.status,
-              "Date Added": new Date(s.createdAt).toLocaleDateString(),
-            })), "students_list")}
-            className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
-          >
-            <Download className="w-4 h-4" />
-            Export
-          </button>
-          <button
-            onClick={() => { setEditingStudent(null); setForm({ firstName: "", lastName: "", email: "", phone: "", admissionNumber: "", guardianName: "", guardianPhone: "", classId: "" }); setShowModal(true); }}
-            className="px-4 py-2 rounded-xl bg-white text-[#0055ff] text-[13px] font-semibold hover:bg-white/90 transition-all shadow-sm"
-          >
-            <UserPlus className="w-4 h-4" />
-            Add Student
-          </button>
-        </div>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <button onClick={async () => { try { const res = await fetch("/api/students/graduate", { method: "POST" }); const data = await res.json(); if (!res.ok) throw new Error(data.error || "Failed"); if (data.graduated === 0) toast.info(data.message || "No SSS 3 students to graduate"); else toast.success(data.message || `${data.graduated} students graduated to alumni`); } catch (err: any) { toast.error(err.message || "Graduation failed"); } }} style={{ padding: "10px 16px", borderRadius: "12px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff", fontSize: "13px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+              <GraduationCap style={{ width: "14px", height: "14px" }} /> Graduate SSS 3
+            </button>
+            <button onClick={() => downloadCSV(students.map(s => ({ Name: `${s.firstName} ${s.lastName}`, "Admission No": s.admissionNumber, Class: s.class?.name || "—", Email: s.email || "—", Status: s.status, "Date Added": new Date(s.createdAt).toLocaleDateString() })), "students_list")} style={{ padding: "10px 16px", borderRadius: "12px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff", fontSize: "13px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+              <Download style={{ width: "14px", height: "14px" }} /> Export
+            </button>
+            <button onClick={() => { setEditingStudent(null); setForm({ firstName: "", lastName: "", email: "", phone: "", admissionNumber: "", guardianName: "", guardianPhone: "", classId: "" }); setShowModal(true); }} style={{ padding: "10px 20px", borderRadius: "12px", background: "#ffffff", color: "#0055ff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+              <UserPlus style={{ width: "14px", height: "14px" }} /> Add Student
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Filters Bar */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#ffffff]" />
-          <input
-            type="text"
-            placeholder="Search by name, admission number, or email..."
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="input-search pl-10"
-          />
+      {/* Filters */}
+      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+        <div style={{ flex: 1, position: "relative" }}>
+          <Search style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", width: "16px", height: "16px", color: "#94a3b8" }} />
+          <input type="text" placeholder="Search by name, admission number, or email..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} style={{ width: "100%", padding: "11px 16px 11px 42px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box", boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }} />
         </div>
-        <select
-          value={classFilter}
-          onChange={(e) => { setClassFilter(e.target.value); setPage(1); }}
-          className="select-field"
-        >
+        <select value={classFilter} onChange={(e) => { setClassFilter(e.target.value); setPage(1); }} style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "13px", color: "#475569", outline: "none", cursor: "pointer", minWidth: "130px", colorScheme: "light" }}>
           <option value="">All Classes</option>
-          {classes.map((c) => (
-            <option key={c.id} value={c.id}>{c.name}</option>
-          ))}
+          {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="select-field"
-        >
+        <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "13px", color: "#475569", outline: "none", cursor: "pointer", minWidth: "120px", colorScheme: "light" }}>
           <option value="">All Status</option>
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
           <option value="graduated">Graduated</option>
         </select>
-        <div className="flex items-center gap-1 bg-[#001f5f] border border-[#0a1428] rounded-xl p-1">
-          <button
-            onClick={() => setViewMode("table")}
-            className={`p-2 rounded-lg transition ${viewMode === "table" ? "bg-[#001f5f] text-[#ffffff]" : "text-[#ffffff] hover:text-[#64748b]"}`}
-          >
-            <List className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setViewMode("grid")}
-            className={`p-2 rounded-lg transition ${viewMode === "grid" ? "bg-[#001f5f] text-[#ffffff]" : "text-[#ffffff] hover:text-[#64748b]"}`}
-          >
-            <Grid3X3 className="w-4 h-4" />
-          </button>
+        <div style={{ display: "flex", gap: "2px", padding: "4px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff" }}>
+          <button onClick={() => setViewMode("table")} style={{ width: "34px", height: "34px", borderRadius: "8px", border: "none", background: viewMode === "table" ? "#0055ff" : "transparent", color: viewMode === "table" ? "#ffffff" : "#94a3b8", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}><List style={{ width: "16px", height: "16px" }} /></button>
+          <button onClick={() => setViewMode("grid")} style={{ width: "34px", height: "34px", borderRadius: "8px", border: "none", background: viewMode === "grid" ? "#0055ff" : "transparent", color: viewMode === "grid" ? "#ffffff" : "#94a3b8", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}><Grid3X3 style={{ width: "16px", height: "16px" }} /></button>
         </div>
       </div>
 
       {/* Table View */}
       {viewMode === "table" && (
-        <div className="table-container">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-<thead>
-                <tr className="border-b border-[#0a1428]">
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
                   {[
                     { key: "name" as const, label: "Student" },
                     { key: "class" as const, label: "Class" },
                     { key: "date" as const, label: "Admitted" },
                   ].map((col) => (
-                    <th
-                      key={col.key}
-                      onClick={() => toggleSort(col.key)}
-                      className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#ffffff] uppercase tracking-wider cursor-pointer hover:text-[#64748b] transition select-none"
-                    >
-                      <span className="flex items-center gap-1.5">
+                    <th key={col.key} onClick={() => toggleSort(col.key)} style={{ padding: "14px 20px", textAlign: "left", fontSize: "11px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", cursor: "pointer", userSelect: "none", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>
+                      <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         {col.label}
                         {sortField === col.key && (
-                          <span className="text-[var(--accent)]">{sortDir === "asc" ? "▲" : "▼"}</span>
+                          <span style={{ color: "#0055ff", fontSize: "10px" }}>{sortDir === "asc" ? "▲" : "▼"}</span>
                         )}
                       </span>
                     </th>
                   ))}
-                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#ffffff] uppercase tracking-wider">Guardian</th>
-                  <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-[#ffffff] uppercase tracking-wider">Status</th>
-                  <th className="px-5 py-3.5 text-right text-[#ffffff] uppercase tracking-wider">Actions</th>
+                  <th style={{ padding: "14px 20px", textAlign: "left", fontSize: "11px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>Guardian</th>
+                  <th style={{ padding: "14px 20px", textAlign: "left", fontSize: "11px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>Status</th>
+                  <th style={{ padding: "14px 20px", textAlign: "right", fontSize: "11px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i} className="border-b border-[#f1f5f9]">
-                      <td colSpan={6} className="px-5 py-4">
-                        <div className="h-4 rounded-lg bg-[#f8fafc] animate-pulse" />
+                    <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                      <td colSpan={6} style={{ padding: "16px 20px" }}>
+                        <div style={{ height: "16px", borderRadius: "8px", background: "#f1f5f9", animation: "pulse 2s infinite" }} />
                       </td>
                     </tr>
                   ))
                 ) : sortedStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-5 py-16 text-center">
-                      <Users className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" />
-                      <p className="text-[#94a3b8] text-sm">No students found</p>
-                      <p className="text-[#94a3b8] text-[11px] mt-1">Try adjusting your filters</p>
+                    <td colSpan={6} style={{ padding: "64px 20px", textAlign: "center" }}>
+                      <Users style={{ width: "40px", height: "40px", color: "#94a3b8", margin: "0 auto 12px" }} />
+                      <p style={{ margin: 0, color: "#94a3b8", fontSize: "14px" }}>No students found</p>
+                      <p style={{ margin: "4px 0 0", color: "#94a3b8", fontSize: "12px" }}>Try adjusting your filters</p>
                     </td>
                   </tr>
                 ) : (
                   sortedStudents.map((student, i) => {
                     const initials = `${student.firstName?.[0] || ""}${student.lastName?.[0] || ""}`.toUpperCase();
                     return (
-                      <motion.tr
-                        key={student.id}
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.03 }}
-                        className="border-b border-[#f1f5f9] hover:bg-[#f1f5f9] transition cursor-pointer group"
-                        onClick={() => router.push(`/dashboard/students/${student.id}`)}
-                      >
-                        <td className="px-5 py-3.5">
-                          <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-[11px] font-bold border border-[#e2e8f0] flex-shrink-0">
+                      <tr key={student.id} style={{ borderBottom: "1px solid #f1f5f9", cursor: "pointer", transition: "background 0.15s" }} onClick={() => router.push(`/dashboard/students/${student.id}`)} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                        <td style={{ padding: "14px 20px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <div style={{ width: "36px", height: "36px", borderRadius: "12px", background: "linear-gradient(135deg, #0055ff, #0a2a6e)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontSize: "12px", fontWeight: 700, flexShrink: 0, border: "1px solid rgba(255,255,255,0.2)" }}>
                               {initials}
                             </div>
                             <div>
-                              <p className="text-[#1a1a2e] text-[13px] font-medium">{student.lastName} {student.firstName}</p>
-                              <p className="text-[#94a3b8] text-[11px]">{student.admissionNumber}</p>
+                              <p style={{ margin: 0, color: "#0f172a", fontSize: "13px", fontWeight: 500 }}>{student.lastName} {student.firstName}</p>
+                              <p style={{ margin: "2px 0 0", color: "#94a3b8", fontSize: "11px" }}>{student.admissionNumber}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-5 py-3.5">
-                          <span className="px-2.5 py-1 rounded-lg bg-[#f8fafc] text-[#64748b] text-[12px] font-medium border border-[#e2e8f0]">
+                        <td style={{ padding: "14px 20px" }}>
+                          <span style={{ display: "inline-block", padding: "4px 10px", borderRadius: "8px", background: "#f8fafc", color: "#475569", fontSize: "12px", fontWeight: 500, border: "1px solid #e2e8f0" }}>
                             {student.class?.name || "—"}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 text-[#1a1a2e] text-[13px]">
+                        <td style={{ padding: "14px 20px", color: "#0f172a", fontSize: "13px" }}>
                           {new Date(student.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                         </td>
-                        <td className="px-5 py-3.5">
+                        <td style={{ padding: "14px 20px" }}>
                           <div>
-                            <p className="text-[#1a1a2e] text-[13px]">{student.guardianName || "—"}</p>
-                            <p className="text-[#94a3b8] text-[10px]">{student.guardianPhone || ""}</p>
+                            <p style={{ margin: 0, color: "#0f172a", fontSize: "13px" }}>{student.guardianName || "—"}</p>
+                            <p style={{ margin: "2px 0 0", color: "#94a3b8", fontSize: "10px" }}>{student.guardianPhone || ""}</p>
                           </div>
                         </td>
-                        <td className="px-5 py-3.5">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium ${
-                            student.status === "active"
-                              ? "bg-[#dcfce7] text-[#16a34a] border border-[#dcfce7]"
-                              : student.status === "graduated"
-                              ? "bg-[#dbeafe] text-[#2563eb] border border-[#dbeafe]"
-                              : "bg-[#f8fafc] text-[#94a3b8] border border-[#e2e8f0]"
-                          }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${
-                              student.status === "active" ? "bg-[#16a34a]" :
-                              student.status === "graduated" ? "bg-[#2563eb]" : "bg-[#94a3b8]"
-                            }`} />
+                        <td style={{ padding: "14px 20px" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "8px", fontSize: "11px", fontWeight: 500, ...(student.status === "active" ? { background: "#dcfce7", color: "#16a34a", border: "1px solid #bbf7d0" } : student.status === "graduated" ? { background: "#dbeafe", color: "#2563eb", border: "1px solid #bfdbfe" } : { background: "#f1f5f9", color: "#94a3b8", border: "1px solid #e2e8f0" }) }}>
+                            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: student.status === "active" ? "#16a34a" : student.status === "graduated" ? "#2563eb" : "#94a3b8" }} />
                             {student.status}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 text-right">
-                          <div className="relative">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === student.id ? null : student.id); }}
-                              className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] transition opacity-0 group-hover:opacity-100"
-                            >
-                              <MoreHorizontal className="w-4 h-4" />
+                        <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                          <div style={{ position: "relative", display: "inline-block" }}>
+                            <button onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === student.id ? null : student.id); }} style={{ padding: "6px", borderRadius: "8px", border: "none", background: "transparent", color: "#94a3b8", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              <MoreHorizontal style={{ width: "16px", height: "16px" }} />
                             </button>
                             {openMenu === student.id && (
-                              <div className="absolute right-0 top-8 w-36 rounded-xl bg-white/95 backdrop-blur-2xl border border-[#e2e8f0] shadow-2xl z-[60] overflow-hidden">
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/students/${student.id}`); setOpenMenu(null); }}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] text-[12px]"
-                                >
-                                  <Eye className="w-3.5 h-3.5" /> View Profile
+                              <div style={{ position: "absolute", right: 0, top: "32px", width: "144px", borderRadius: "12px", background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0 10px 40px rgba(0,0,0,0.12)", zIndex: 60, overflow: "hidden" }}>
+                                <button onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/students/${student.id}`); setOpenMenu(null); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", border: "none", background: "transparent", color: "#475569", fontSize: "12px", cursor: "pointer", textAlign: "left" }}>
+                                  <Eye style={{ width: "14px", height: "14px" }} /> View Profile
                                 </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEditingStudent(student);
-                                    setForm({
-                                      firstName: student.firstName,
-                                      lastName: student.lastName,
-                                      email: student.email || "",
-                                      phone: "",
-                                      admissionNumber: student.admissionNumber || "",
-                                      guardianName: student.guardianName || "",
-                                      guardianPhone: student.guardianPhone || "",
-                                      classId: student.class ? (classes.find(c => c.name === student.class?.name)?.id || "") : "",
-                                    });
-                                    setShowModal(true);
-                                    setOpenMenu(null);
-                                  }}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] text-[12px]"
-                                >
-                                  <Edit3 className="w-3.5 h-3.5" /> Edit
+                                <button onClick={(e) => { e.stopPropagation(); setEditingStudent(student); setForm({ firstName: student.firstName, lastName: student.lastName, email: student.email || "", phone: "", admissionNumber: student.admissionNumber || "", guardianName: student.guardianName || "", guardianPhone: student.guardianPhone || "", classId: student.class ? (classes.find(c => c.name === student.class?.name)?.id || "") : "" }); setShowModal(true); setOpenMenu(null); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", border: "none", background: "transparent", color: "#475569", fontSize: "12px", cursor: "pointer", textAlign: "left" }}>
+                                  <Edit3 style={{ width: "14px", height: "14px" }} /> Edit
                                 </button>
-                                <button
-                                  onClick={async (e) => { e.stopPropagation(); if (confirm(`Remove ${student.firstName} ${student.lastName}?`)) { await fetch(`/api/students?id=${student.id}`, { method: "DELETE" }); toast.success("Student removed"); fetchStudents(); } setOpenMenu(null); }}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-[#dc2626]/70 hover:text-[#dc2626] hover:bg-[#fee2e2]/30 text-[12px]"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" /> Remove
+                                <button onClick={async (e) => { e.stopPropagation(); if (confirm(`Remove ${student.firstName} ${student.lastName}?`)) { await fetch(`/api/students?id=${student.id}`, { method: "DELETE" }); toast.success("Student removed"); fetchStudents(); } setOpenMenu(null); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", border: "none", background: "transparent", color: "#dc2626", fontSize: "12px", cursor: "pointer", textAlign: "left" }}>
+                                  <Trash2 style={{ width: "14px", height: "14px" }} /> Remove
                                 </button>
                               </div>
                             )}
                           </div>
                         </td>
-                      </motion.tr>
+                      </tr>
                     );
                   })
                 )}
@@ -408,38 +307,22 @@ export default function StudentsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-5 py-3.5 border-t border-[#f8fafc] flex items-center justify-between">
-              <p className="text-[#94a3b8] text-[11px]">Page {page} of {totalPages}</p>
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => setPage(Math.max(1, page - 1))}
-                  disabled={page === 1}
-                  className="p-1.5 rounded-lg bg-[#f8fafc] text-[#94a3b8] hover:text-[#475569] hover:bg-[#e2e8f0] disabled:opacity-30 disabled:cursor-not-allowed transition"
-                >
-                  <ChevronLeft className="w-4 h-4" />
+            <div style={{ padding: "14px 20px", borderTop: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <p style={{ margin: 0, color: "#94a3b8", fontSize: "12px" }}>Page {page} of {totalPages}</p>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid #e2e8f0", background: page === 1 ? "#f8fafc" : "#ffffff", color: "#94a3b8", cursor: page === 1 ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", opacity: page === 1 ? 0.4 : 1 }}>
+                  <ChevronLeft style={{ width: "16px", height: "16px" }} />
                 </button>
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
                   const pageNum = i + 1;
                   return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setPage(pageNum)}
-                      className={`w-8 h-8 rounded-lg text-[12px] font-medium transition ${
-                        page === pageNum
-                          ? "bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)]/20"
-                          : "bg-[#f8fafc] text-[#94a3b8] hover:text-[#475569] hover:bg-[#e2e8f0]"
-                      }`}
-                    >
+                    <button key={pageNum} onClick={() => setPage(pageNum)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: page === pageNum ? "1px solid #0055ff" : "1px solid #e2e8f0", background: page === pageNum ? "#0055ff" : "#ffffff", color: page === pageNum ? "#ffffff" : "#64748b", fontSize: "12px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: page === pageNum ? "0 2px 8px rgba(0,85,255,0.25)" : "none" }}>
                       {pageNum}
                     </button>
                   );
                 })}
-                <button
-                  onClick={() => setPage(Math.min(totalPages, page + 1))}
-                  disabled={page === totalPages}
-                  className="p-1.5 rounded-lg bg-[#f8fafc] text-[#94a3b8] hover:text-[#475569] hover:bg-[#e2e8f0] disabled:opacity-30 disabled:cursor-not-allowed transition"
-                >
-                  <ChevronRight className="w-4 h-4" />
+                <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid #e2e8f0", background: page === totalPages ? "#f8fafc" : "#ffffff", color: "#94a3b8", cursor: page === totalPages ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", opacity: page === totalPages ? 0.4 : 1 }}>
+                  <ChevronRight style={{ width: "16px", height: "16px" }} />
                 </button>
               </div>
             </div>
@@ -449,75 +332,64 @@ export default function StudentsPage() {
 
       {/* Grid View */}
       {viewMode === "grid" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "16px" }}>
           {loading ? (
             Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="dashboard-card animate-pulse">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-[#e2e8f0]" />
-                  <div className="space-y-1.5 flex-1">
-                    <div className="h-3.5 rounded bg-[#e2e8f0] w-2/3" />
-                    <div className="h-2.5 rounded bg-[#f1f5f9] w-1/2" />
+              <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px", animation: "pulse 2s infinite" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+                  <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "#e2e8f0" }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ height: "14px", borderRadius: "6px", background: "#e2e8f0", width: "60%", marginBottom: "6px" }} />
+                    <div style={{ height: "10px", borderRadius: "6px", background: "#f1f5f9", width: "40%" }} />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="h-2.5 rounded bg-[#f1f5f9]" />
-                  <div className="h-2.5 rounded bg-[#f1f5f9] w-3/4" />
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div style={{ height: "10px", borderRadius: "6px", background: "#f1f5f9" }} />
+                  <div style={{ height: "10px", borderRadius: "6px", background: "#f1f5f9", width: "75%" }} />
                 </div>
               </div>
             ))
-          ) : sortedStudents.map((student, i) => {
+          ) : sortedStudents.map((student) => {
             const initials = `${student.firstName?.[0] || ""}${student.lastName?.[0] || ""}`.toUpperCase();
             return (
-              <motion.div
-                key={student.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.03 }}
-                onClick={() => router.push(`/dashboard/students/${student.id}`)}
-                className="dashboard-card hover:border-[#e2e8f0] hover:bg-[#f1f5f9] transition-all cursor-pointer group"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--blue-3)] to-[var(--blue-1)] flex items-center justify-center text-white text-[13px] font-bold border border-[#e2e8f0]">
+              <div key={student.id} onClick={() => router.push(`/dashboard/students/${student.id}`)} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px", cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#0055ff"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,85,255,0.08)"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+                  <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "linear-gradient(135deg, #0055ff, #0a2a6e)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontSize: "13px", fontWeight: 700, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }}>
                     {initials}
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[#1a1a2e] text-[14px] font-medium truncate">{student.lastName} {student.firstName}</p>
-                    <p className="text-[#94a3b8] text-[11px]">{student.admissionNumber}</p>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <p style={{ margin: 0, color: "#0f172a", fontSize: "14px", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{student.lastName} {student.firstName}</p>
+                    <p style={{ margin: "2px 0 0", color: "#94a3b8", fontSize: "11px" }}>{student.admissionNumber}</p>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-[12px]">
-                    <GraduationCap className="w-3.5 h-3.5 text-[#94a3b8]" />
-                    <span className="text-[#64748b]">{student.class?.name || "Unassigned"}</span>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px" }}>
+                    <GraduationCap style={{ width: "14px", height: "14px", color: "#94a3b8", flexShrink: 0 }} />
+                    <span style={{ color: "#475569", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{student.class?.name || "Unassigned"}</span>
                   </div>
                   {student.guardianName && (
-                    <div className="flex items-center gap-2 text-[12px]">
-                      <Phone className="w-3.5 h-3.5 text-[#94a3b8]" />
-                      <span className="text-[#64748b] truncate">{student.guardianName}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px" }}>
+                      <Phone style={{ width: "14px", height: "14px", color: "#94a3b8", flexShrink: 0 }} />
+                      <span style={{ color: "#475569", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{student.guardianName}</span>
                     </div>
                   )}
                   {student.email && (
-                    <div className="flex items-center gap-2 text-[12px]">
-                      <Mail className="w-3.5 h-3.5 text-[#94a3b8]" />
-                      <span className="text-[#64748b] truncate">{student.email}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px" }}>
+                      <Mail style={{ width: "14px", height: "14px", color: "#94a3b8", flexShrink: 0 }} />
+                      <span style={{ color: "#475569", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{student.email}</span>
                     </div>
                   )}
                 </div>
-                <div className="mt-4 pt-3 border-t border-[#f8fafc] flex items-center justify-between">
-                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-medium ${
-                    student.status === "active"
-                      ? "bg-[#dcfce7] text-[#16a34a]"
-                      : "bg-[#f8fafc] text-[#94a3b8]"
-                  }`}>
-                    <span className={`w-1 h-1 rounded-full ${student.status === "active" ? "bg-[#16a34a]" : "bg-[#94a3b8]"}`} />
+                <div style={{ marginTop: "16px", paddingTop: "12px", borderTop: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "3px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: 500, ...(student.status === "active" ? { background: "#dcfce7", color: "#16a34a" } : { background: "#f1f5f9", color: "#94a3b8" }) }}>
+                    <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: student.status === "active" ? "#16a34a" : "#94a3b8" }} />
                     {student.status}
                   </span>
-                  <span className="text-[#94a3b8] text-[10px]">
+                  <span style={{ color: "#94a3b8", fontSize: "10px" }}>
                     {new Date(student.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}
                   </span>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
@@ -526,86 +398,64 @@ export default function StudentsPage() {
       {/* Add Student Modal */}
       <AnimatePresence>
         {showModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="modal-overlay"
-            onClick={() => setShowModal(false)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="modal-content"
-            >
-              <div className="modal-header">
-                <h3>{editingStudent ? "Edit Student" : "Add New Student"}</h3>
-                <button onClick={() => { setShowModal(false); setEditingStudent(null); }} className="text-[#64748b] hover:text-[#1a1a2e] transition">
-                  <X className="w-5 h-5" />
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" }} onClick={() => setShowModal(false)}>
+            <div style={{ background: "#ffffff", borderRadius: "20px", width: "100%", maxWidth: "560px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
+              <div style={{ padding: "24px 28px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>{editingStudent ? "Edit Student" : "Add New Student"}</h3>
+                <button onClick={() => { setShowModal(false); setEditingStudent(null); }} style={{ padding: "8px", borderRadius: "10px", border: "none", background: "#f1f5f9", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <X style={{ width: "18px", height: "18px" }} />
                 </button>
               </div>
-              <div className="modal-body space-y-4">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="input-label">First Name *</label>
-                    <input type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                      className="input-field" />
+              <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>First Name *</label>
+                    <input type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
                   </div>
-                  <div className="form-group">
-                    <label className="input-label">Last Name *</label>
-                    <input type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                      className="input-field" />
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Last Name *</label>
+                    <input type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
                   </div>
                 </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="input-label">Admission No.</label>
-                    <input type="text" value={form.admissionNumber} onChange={(e) => setForm({ ...form, admissionNumber: e.target.value })}
-                      placeholder="Auto-generated if empty" className="input-field" />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Admission No.</label>
+                    <input type="text" value={form.admissionNumber} onChange={(e) => setForm({ ...form, admissionNumber: e.target.value })} placeholder="Auto-generated if empty" style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
                   </div>
-                  <div className="form-group">
-                    <label className="input-label">Email</label>
-                    <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      placeholder="student@email.com" className="input-field" />
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Email</label>
+                    <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="student@email.com" style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
                   </div>
                 </div>
-                <div className="form-group">
-                  <label className="input-label">Class</label>
-                  <select value={form.classId} onChange={(e) => setForm({ ...form, classId: e.target.value })}
-                    className="select-field">
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Class</label>
+                  <select value={form.classId} onChange={(e) => setForm({ ...form, classId: e.target.value })} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#475569", outline: "none", cursor: "pointer", boxSizing: "border-box", colorScheme: "light" }}>
                     <option value="">Select Class</option>
-                    {classes.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
+                    {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="input-label">Guardian Name</label>
-                    <input type="text" value={form.guardianName} onChange={(e) => setForm({ ...form, guardianName: e.target.value })}
-                      placeholder="Parent/Guardian name" className="input-field" />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Guardian Name</label>
+                    <input type="text" value={form.guardianName} onChange={(e) => setForm({ ...form, guardianName: e.target.value })} placeholder="Parent/Guardian name" style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
                   </div>
-                  <div className="form-group">
-                    <label className="input-label">Guardian Phone</label>
-                    <input type="text" value={form.guardianPhone} onChange={(e) => setForm({ ...form, guardianPhone: e.target.value })}
-                      placeholder="+234..." className="input-field" />
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "6px" }}>Guardian Phone</label>
+                    <input type="text" value={form.guardianPhone} onChange={(e) => setForm({ ...form, guardianPhone: e.target.value })} placeholder="+234..." style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }} />
                   </div>
                 </div>
               </div>
-              <div className="modal-footer">
-                <button onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
-                <button onClick={handleCreate} disabled={submitting}
-                  className="btn btn-primary disabled:opacity-50">
-                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+              <div style={{ padding: "20px 28px", borderTop: "1px solid #f1f5f9", display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                <button onClick={() => setShowModal(false)} style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>Cancel</button>
+                <button onClick={handleCreate} disabled={submitting} style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: submitting ? "not-allowed" : "pointer", opacity: submitting ? 0.6 : 1, display: "flex", alignItems: "center", gap: "6px" }}>
+                  {submitting && <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />}
                   {editingStudent ? "Update Student" : "Add Student"}
                 </button>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
