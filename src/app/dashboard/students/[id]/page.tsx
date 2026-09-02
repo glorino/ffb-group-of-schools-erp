@@ -204,26 +204,26 @@ export default function StudentDetailPage() {
 
       {/* Profile Header */}
       <div style={{ borderRadius: "20px", border: "1px solid #e2e8f0", overflow: "hidden", background: "#ffffff" }}>
-        <div style={{ height: "120px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", position: "relative" }}>
+        <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", position: "relative", padding: "32px 28px 0" }}>
           <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 50%, rgba(16,185,129,0.15) 0%, transparent 60%)" }} />
-        </div>
-        <div style={{ padding: "0 28px 28px", position: "relative" }}>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: "20px", marginTop: "-48px", flexWrap: "wrap" }}>
-            <div style={{ width: "96px", height: "96px", borderRadius: "20px", background: "linear-gradient(135deg, #0055ff, #0a2a6e)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontSize: "32px", fontWeight: 800, border: "4px solid #ffffff", boxShadow: "0 4px 20px rgba(0,0,0,0.15)", flexShrink: 0, letterSpacing: "-0.02em" }}>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: "20px", position: "relative", zIndex: 1, paddingBottom: "20px" }}>
+            <div style={{ width: "96px", height: "96px", borderRadius: "20px", background: "linear-gradient(135deg, #ffffff, #e2e8f0)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0055ff", fontSize: "32px", fontWeight: 800, border: "4px solid #ffffff", boxShadow: "0 4px 20px rgba(0,0,0,0.15)", flexShrink: 0, letterSpacing: "-0.02em" }}>
               {initials}
             </div>
-            <div style={{ flex: 1, minWidth: 0, paddingBottom: "4px" }}>
-              <h1 style={{ margin: 0, fontSize: "22px", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>{student.firstName} {student.lastName}</h1>
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "10px", marginTop: "8px" }}>
-                <span style={{ padding: "4px 10px", borderRadius: "8px", background: "#f1f5f9", color: "#475569", fontSize: "12px", fontWeight: 500, border: "1px solid #e2e8f0" }}>{student.admissionNumber}</span>
-                <span style={{ padding: "4px 10px", borderRadius: "8px", background: "#f1f5f9", color: "#475569", fontSize: "12px", fontWeight: 500, border: "1px solid #e2e8f0" }}>{student.class?.name || "Unassigned"}</span>
-                {statusBadge(student.status)}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h1 style={{ margin: 0, fontSize: "22px", fontWeight: 800, color: "#ffffff", letterSpacing: "-0.02em" }}>{student.firstName} {student.lastName}</h1>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "10px", marginTop: "10px" }}>
+                <span style={{ padding: "4px 10px", borderRadius: "8px", background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)", fontSize: "12px", fontWeight: 500, border: "1px solid rgba(255,255,255,0.2)" }}>{student.admissionNumber}</span>
+                <span style={{ padding: "4px 10px", borderRadius: "8px", background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)", fontSize: "12px", fontWeight: 500, border: "1px solid rgba(255,255,255,0.2)" }}>{student.class?.name || "Unassigned"}</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "8px", fontSize: "11px", fontWeight: 500, background: student.status === "active" ? "rgba(16,185,129,0.2)" : "rgba(255,255,255,0.15)", color: student.status === "active" ? "#6ee7b7" : "rgba(255,255,255,0.7)", border: `1px solid ${student.status === "active" ? "rgba(16,185,129,0.3)" : "rgba(255,255,255,0.2)"}` }}>
+                  <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: student.status === "active" ? "#6ee7b7" : "rgba(255,255,255,0.5)" }} /> {student.status}
+                </span>
               </div>
             </div>
             <div style={{ display: "flex", gap: "8px", paddingBottom: "4px" }}>
-              <button title="Print" onClick={() => window.print()} style={{ width: "40px", height: "40px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Printer style={{ width: "16px", height: "16px" }} /></button>
-              <button title="Download" onClick={() => window.print()} style={{ width: "40px", height: "40px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Download style={{ width: "16px", height: "16px" }} /></button>
-              <button onClick={() => router.push(`/dashboard/students?edit=${student.id}`)} style={{ padding: "10px 20px", borderRadius: "12px", background: "#0055ff", color: "#ffffff", fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 2px 8px rgba(0,85,255,0.25)" }}><Edit3 style={{ width: "14px", height: "14px" }} /> Edit Profile</button>
+              <button title="Print" onClick={() => window.print()} style={{ width: "40px", height: "40px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.12)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Printer style={{ width: "16px", height: "16px" }} /></button>
+              <button title="Download" onClick={() => window.print()} style={{ width: "40px", height: "40px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.12)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Download style={{ width: "16px", height: "16px" }} /></button>
+              <button onClick={() => router.push(`/dashboard/students?edit=${student.id}`)} style={{ padding: "10px 20px", borderRadius: "12px", background: "#ffffff", color: "#0055ff", fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}><Edit3 style={{ width: "14px", height: "14px" }} /> Edit Profile</button>
             </div>
           </div>
         </div>
