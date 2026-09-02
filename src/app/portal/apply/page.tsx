@@ -184,7 +184,7 @@ export default function ApplyPage() {
           }
         }
         if (uploadErrors.length > 0) {
-          console.warn("Document upload issues:", uploadErrors);
+          setSubmitError(`Documents uploaded with issues:\n${uploadErrors.join("\n")}`);
         }
       }
 

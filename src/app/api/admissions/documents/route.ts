@@ -34,8 +34,9 @@ export async function POST(request: NextRequest) {
     const base64 = Buffer.from(bytes).toString("base64");
     const dataUrl = `data:${file.type};base64,${base64}`;
 
+    let docId = "";
     if (applicantId) {
-      await prisma.applicantDocument.create({
+      const doc = await prisma.applicantDocument.create({
         data: {
           applicantId,
           name: file.name,
@@ -44,11 +45,12 @@ export async function POST(request: NextRequest) {
           size: file.size,
         },
       });
+      docId = doc.id;
     }
 
     return NextResponse.json({
       success: true,
-      url: dataUrl,
+      id: docId,
       name: file.name,
       type: docType || file.type,
       mimeType: file.type,

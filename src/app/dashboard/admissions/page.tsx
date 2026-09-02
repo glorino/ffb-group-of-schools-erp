@@ -22,11 +22,13 @@ import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
 
 interface ApplicantDocument {
+  id?: string;
   name: string;
   type: string;
-  url: string;
+  url?: string;
   size: number | null;
   uploadedAt?: string;
+  hasContent?: boolean;
 }
 
 interface Applicant {
@@ -194,7 +196,7 @@ export default function AdmissionsPage() {
   };
 
   const isImageDoc = (doc: ApplicantDocument): boolean => {
-    return doc.url.startsWith("data:image/") || getDocFileType(doc.name) === "image";
+    return (doc.url && doc.url.startsWith("data:image/")) || doc.url?.startsWith("blob:") || getDocFileType(doc.name) === "image";
   };
 
   return (
@@ -380,6 +382,7 @@ export default function AdmissionsPage() {
                             const iconBg = fileType === "pdf" ? "#fef2f2" : fileType === "image" ? "#eff6ff" : "#f0fdf4";
                             const iconColor = fileType === "pdf" ? "#dc2626" : fileType === "image" ? "#2563eb" : "#16a34a";
                             const typeLabel = fileType === "pdf" ? "PDF" : fileType === "image" ? "IMG" : fileType === "doc" ? "DOC" : "FILE";
+                            const docUrl = `/api/admissions/documents/${doc.id}`;
                             return (
                               <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #e2e8f0", gap: "12px" }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0, flex: 1 }}>
@@ -393,14 +396,21 @@ export default function AdmissionsPage() {
                                 </div>
                                 <div style={{ display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }}>
                                   <span style={{ padding: "3px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: 700, background: iconBg, color: iconColor }}>{typeLabel}</span>
-                                  <button onClick={() => setDocPreview(doc)} style={{ width: "30px", height: "30px", borderRadius: "8px", border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", transition: "all 0.15s" }} title="Preview" onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#475569"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94a3b8"; }}>
+                                  <button onClick={async () => {
+                                    try {
+                                      const res = await fetch(docUrl);
+                                      if (res.ok) {
+                                        const blob = await res.blob();
+                                        const url = URL.createObjectURL(blob);
+                                        setDocPreview({ ...doc, url } as any);
+                                      }
+                                    } catch {}
+                                  }} style={{ width: "30px", height: "30px", borderRadius: "8px", border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", transition: "all 0.15s" }} title="Preview" onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#475569"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94a3b8"; }}>
                                     <Eye style={{ width: "15px", height: "15px" }} />
                                   </button>
-                                  {doc.url && !doc.url.startsWith("data:") && (
-                                    <a href={doc.url} download={doc.name} style={{ width: "30px", height: "30px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", textDecoration: "none", transition: "all 0.15s" }} title="Download" onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#475569"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94a3b8"; }}>
-                                      <Download style={{ width: "15px", height: "15px" }} />
-                                    </a>
-                                  )}
+                                  <a href={docUrl} download={doc.name} style={{ width: "30px", height: "30px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", textDecoration: "none", transition: "all 0.15s" }} title="Download" onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#475569"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#94a3b8"; }}>
+                                    <Download style={{ width: "15px", height: "15px" }} />
+                                  </a>
                                 </div>
                               </div>
                             );
@@ -449,7 +459,7 @@ export default function AdmissionsPage() {
       {/* Document Preview Modal */}
       <AnimatePresence>
         {docPreview && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", backgroundColor: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }} onClick={() => setDocPreview(null)}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", backgroundColor: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }} onClick={() => { if (docPreview?.url?.startsWith("blob:")) URL.revokeObjectURL(docPreview.url); setDocPreview(null); }}>
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "900px", maxHeight: "90vh", background: "#ffffff", borderRadius: "16px", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 25px 60px rgba(0,0,0,0.4)" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -463,7 +473,7 @@ export default function AdmissionsPage() {
                       <Download style={{ width: "12px", height: "12px" }} /> Download
                     </a>
                   )}
-                  <button onClick={() => setDocPreview(null)} style={{ width: "28px", height: "28px", borderRadius: "6px", border: "none", background: "#f1f5f9", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e2e8f0"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f1f5f9"; }}>
+                  <button onClick={() => { if (docPreview?.url?.startsWith("blob:")) URL.revokeObjectURL(docPreview.url); setDocPreview(null); }} style={{ width: "28px", height: "28px", borderRadius: "6px", border: "none", background: "#f1f5f9", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e2e8f0"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f1f5f9"; }}>
                     <X style={{ width: "14px", height: "14px" }} />
                   </button>
                 </div>
@@ -471,7 +481,7 @@ export default function AdmissionsPage() {
               <div style={{ flex: 1, overflow: "auto", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px", background: "#f8fafc", minHeight: "300px" }}>
                 {isImageDoc(docPreview) ? (
                   <img src={docPreview.url} alt={docPreview.name} style={{ maxWidth: "100%", maxHeight: "70vh", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
-                ) : docPreview.url.startsWith("data:application/pdf") ? (
+                ) : (docPreview.url?.startsWith("data:application/pdf") || docPreview.url?.startsWith("blob:")) && getDocFileType(docPreview.name) === "pdf" ? (
                   <iframe src={docPreview.url} style={{ width: "100%", height: "70vh", border: "none", borderRadius: "8px", background: "#ffffff" }} title={docPreview.name} />
                 ) : (
                   <div style={{ textAlign: "center", padding: "40px" }}>

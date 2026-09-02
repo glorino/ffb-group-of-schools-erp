@@ -51,6 +51,18 @@ export async function GET(
       }
     }
 
+    // Strip base64 from documents to keep response small
+    if (applicant.documents && Array.isArray(applicant.documents)) {
+      applicant.documents = applicant.documents.map((doc: any) => ({
+        id: doc.id,
+        name: doc.name,
+        type: doc.type,
+        size: doc.size,
+        uploadedAt: doc.uploadedAt,
+        hasContent: !!doc.url,
+      }));
+    }
+
     return NextResponse.json(applicant);
   } catch (error) {
     console.error("GET /api/admissions/[id] error:", error);
