@@ -12,23 +12,36 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
+    const authResult = await requireAuth(["OWNER", "SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
     if (authResult.error) return authResult.error;
 
     const { id } = await params;
 
-    const applicant = await prisma.applicant.findUnique({
-      where: { id },
-      include: {
-        documents: true,
-        exams: true,
-        student: true,
-        school: true,
-      },
-    });
+    let applicant: any = null;
+    try {
+      applicant = await prisma.applicant.findUnique({
+        where: { id },
+      });
+    } catch (qErr: any) {
+      console.error("Prisma query failed, trying raw SQL:", qErr?.message);
+      const rows: any[] = await (prisma as any).$queryRawUnsafe(
+        `SELECT * FROM "Applicant" WHERE "id" = $1`, id
+      );
+      applicant = rows?.[0] || null;
+    }
 
     if (!applicant) {
       return NextResponse.json({ error: "Application not found" }, { status: 404 });
+    }
+
+    // Always fetch documents via raw SQL for reliability
+    try {
+      applicant.documents = await (prisma as any).$queryRawUnsafe(
+        `SELECT * FROM "ApplicantDocument" WHERE "applicantId" = $1 ORDER BY "uploadedAt" ASC`, id
+      );
+    } catch (docErr: any) {
+      console.error("Failed to fetch documents:", docErr?.message);
+      applicant.documents = [];
     }
 
     return NextResponse.json(applicant);
@@ -43,7 +56,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
+    const authResult = await requireAuth(["OWNER", "SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
     if (authResult.error) return authResult.error;
     const session = authResult.session;
 
