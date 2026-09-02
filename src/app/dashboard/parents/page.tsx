@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
   Search,
@@ -11,7 +10,8 @@ import {
   X,
   Loader2,
   GraduationCap,
-  Link,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -39,52 +39,21 @@ export default function ParentsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [viewGuardian, setViewGuardian] = useState<Guardian | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  useEffect(() => {
-    fetchGuardians();
-  }, []);
-
-  useEffect(() => {
-    setCurrentPage(1);
-    const timeout = setTimeout(() => fetchGuardians(), 300);
-    return () => clearTimeout(timeout);
-  }, [search]);
-
-  const rowsPerPage = 10;
-  const totalPages = Math.ceil(guardians.length / rowsPerPage);
-  const displayedGuardians = guardians.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
-  const startIndex = (currentPage - 1) * rowsPerPage + 1;
-  const endIndex = Math.min(currentPage * rowsPerPage, guardians.length);
-
-  const getPageNumbers = () => {
-    const pages: (number | "...")[] = [];
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push("...");
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
-      for (let i = start; i <= end; i++) pages.push(i);
-      if (currentPage < totalPages - 2) pages.push("...");
-      pages.push(totalPages);
-    }
-    return pages;
-  };
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
   const fetchGuardians = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
+      const params = new URLSearchParams({ page: String(page), limit: "20" });
       if (search) params.set("search", search);
       const res = await fetch(`/api/guardians?${params}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to fetch guardians");
       setGuardians(data.guardians || []);
+      setTotal(data.pagination?.total || 0);
+      setTotalPages(data.pagination?.pages || 1);
     } catch (err: any) {
       toast.error(err.message || "Failed to load guardians");
     } finally {
@@ -92,258 +61,189 @@ export default function ParentsPage() {
     }
   };
 
+  useEffect(() => { fetchGuardians(); }, [page, search]);
+
   const uniqueParents = guardians.reduce((acc, g) => {
     const key = g.email || g.id;
     if (!acc.find((p) => (p.email || p.id) === key)) acc.push(g);
     return acc;
   }, [] as Guardian[]);
 
-  return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Parents & Guardians</h1>
-            <p className="text-[#475569]">
-              View all guardians and their linked students
-            </p>
-          </div>
-        </div>
-      </motion.div>
+  const primaryCount = guardians.filter(g => g.isPrimary).length;
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+  return (
+    <div style={{ padding: "0 16px 32px", maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "20px" }}>
+      {/* Header */}
+      <div style={{ marginTop: "32px", borderRadius: "20px", padding: "32px 36px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", letterSpacing: "-0.02em" }}>Parents & Guardians</h1>
+          <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>View all guardians and their linked students</p>
+        </div>
+      </div>
+
+      {/* KPI Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
         {[
-          { label: "Total Guardians", value: guardians.length, icon: Users, color: "from-blue-500 to-blue-600" },
-          { label: "Unique Parents", value: uniqueParents.length, icon: GraduationCap, color: "from-emerald-500 to-emerald-600" },
-          { label: "Primary Contacts", value: guardians.filter((g) => g.isPrimary).length, icon: Phone, color: "from-purple-500 to-purple-600" },
+          { label: "Total Guardians", value: total, icon: Users, bg: "linear-gradient(135deg, #0055ff, #0033cc)" },
+          { label: "Unique Parents", value: uniqueParents.length, icon: GraduationCap, bg: "linear-gradient(135deg, #10b981, #059669)" },
+          { label: "Primary Contacts", value: primaryCount, icon: Phone, bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
         ].map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[#64748b] text-[13px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
-              </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
-              </div>
+          <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+            <div>
+              <p style={{ margin: 0, fontSize: "12px", color: "#64748b", fontWeight: 500 }}>{stat.label}</p>
+              <p style={{ margin: "6px 0 0", fontSize: "28px", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>{stat.value}</p>
             </div>
-          </motion.div>
+            <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: stat.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <stat.icon style={{ width: "22px", height: "22px", color: "#ffffff" }} />
+            </div>
+          </div>
         ))}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="card"
-      >
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-[#1a1a2e] font-semibold text-lg">All Guardians</h3>
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-            <input
-              type="text"
-              placeholder="Search guardians..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-sm focus:outline-none focus:border-[var(--primary)]"
-            />
+      {/* Table Card */}
+      <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+        {/* Table Header */}
+        <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>All Guardians</h3>
+          <div style={{ position: "relative" }}>
+            <Search style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", width: "16px", height: "16px", color: "#94a3b8" }} />
+            <input type="text" placeholder="Search guardians..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} style={{ padding: "10px 14px 10px 38px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "13px", color: "#0f172a", outline: "none", width: "240px", boxSizing: "border-box" }} />
           </div>
         </div>
 
+        {/* Table */}
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-[#64748b] animate-spin" />
+          <div style={{ padding: "80px", textAlign: "center" }}>
+            <Loader2 style={{ width: "32px", height: "32px", color: "#94a3b8", margin: "0 auto", animation: "spin 1s linear infinite" }} />
           </div>
         ) : guardians.length === 0 ? (
-          <div className="text-center py-20 text-[#64748b]">
-            <Users className="w-12 h-12 mx-auto mb-3 opacity-40" />
-            <p className="text-[13px]">No guardians found</p>
+          <div style={{ padding: "80px", textAlign: "center" }}>
+            <Users style={{ width: "40px", height: "40px", color: "#94a3b8", margin: "0 auto 12px" }} />
+            <p style={{ margin: 0, color: "#94a3b8", fontSize: "14px" }}>No guardians found</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr className="border-b border-[#e2e8f0]">
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Guardian</th>
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Relationship</th>
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Student</th>
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Class</th>
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Contact</th>
-                  <th className="text-left text-[#64748b] text-[11px] font-semibold uppercase tracking-wider pb-3">Actions</th>
+                <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                  {["Guardian", "Relationship", "Student", "Class", "Contact"].map((h) => (
+                    <th key={h} style={{ padding: "14px 20px", textAlign: "left", fontSize: "11px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>{h}</th>
+                  ))}
+                  <th style={{ padding: "14px 20px", textAlign: "right", fontSize: "11px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {displayedGuardians.map((g) => (
-                  <tr key={g.id} className="border-b border-[#e2e8f0] hover:bg-[#f8fafc] transition-all">
-                    <td className="py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--primary)]/30 to-[var(--accent)]/30 flex items-center justify-center text-white text-[13px] font-bold">
-                          {g.firstName[0]}{g.lastName[0]}
+                {guardians.map((g) => {
+                  const initials = `${g.firstName?.[0] || ""}${g.lastName?.[0] || ""}`.toUpperCase();
+                  return (
+                    <tr key={g.id} style={{ borderBottom: "1px solid #f1f5f9", cursor: "pointer", transition: "background 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                      <td style={{ padding: "14px 20px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "linear-gradient(135deg, #10b981, #059669)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontSize: "12px", fontWeight: 700, flexShrink: 0 }}>
+                            {initials}
+                          </div>
+                          <div>
+                            <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, color: "#0f172a" }}>{g.firstName} {g.lastName}</p>
+                            {g.isPrimary && (
+                              <span style={{ display: "inline-block", marginTop: "2px", padding: "1px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: 600, background: "#dcfce7", color: "#16a34a" }}>Primary</span>
+                            )}
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[#1a1a2e] font-medium text-[13px]">{g.firstName} {g.lastName}</p>
-                          {g.isPrimary && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-[var(--accent)]/20 text-[var(--accent)]">Primary</span>
-                          )}
+                      </td>
+                      <td style={{ padding: "14px 20px", fontSize: "13px", color: "#0f172a" }}>{g.relationship}</td>
+                      <td style={{ padding: "14px 20px", fontSize: "13px", color: "#0f172a" }}>{g.student.firstName} {g.student.lastName}</td>
+                      <td style={{ padding: "14px 20px", fontSize: "13px", color: "#0f172a" }}>{g.student.class?.displayName || g.student.class?.name || "—"}</td>
+                      <td style={{ padding: "14px 20px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px", fontSize: "12px", color: "#64748b" }}>
+                          {g.phone && <span style={{ display: "flex", alignItems: "center", gap: "4px" }}><Phone style={{ width: "12px", height: "12px" }} /> {g.phone}</span>}
+                          {g.email && <span style={{ display: "flex", alignItems: "center", gap: "4px" }}><Mail style={{ width: "12px", height: "12px" }} /> {g.email}</span>}
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-3 text-[#1a1a2e] text-[13px]">{g.relationship}</td>
-                    <td className="py-3 text-[#1a1a2e] text-[13px]">{g.student.firstName} {g.student.lastName}</td>
-                    <td className="py-3 text-[#1a1a2e] text-[13px]">{g.student.class?.displayName || g.student.class?.name || "—"}</td>
-                    <td className="py-3">
-                      <div className="flex items-center gap-2 text-[13px]">
-                        {g.phone && (
-                          <span className="flex items-center gap-1 text-[#64748b]">
-                            <Phone className="w-3 h-3" /> {g.phone}
-                          </span>
-                        )}
-                        {g.email && (
-                          <span className="flex items-center gap-1 text-[#64748b]">
-                            <Mail className="w-3 h-3" /> {g.email}
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <button
-                        onClick={() => setViewGuardian(g)}
-                        className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                        <button onClick={() => setViewGuardian(g)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "none", background: "transparent", color: "#94a3b8", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Eye style={{ width: "16px", height: "16px" }} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         )}
 
-        {!loading && guardians.length > 0 && totalPages > 0 && (
-          <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#e2e8f0]">
-            <p className="text-[13px] text-[#64748b]">
-              Showing {startIndex}-{endIndex} of {guardians.length}
-            </p>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-[#1a1a2e] hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              >
-                Previous
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div style={{ padding: "14px 20px", borderTop: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <p style={{ margin: 0, color: "#94a3b8", fontSize: "12px" }}>Page {page} of {totalPages} &middot; {total} guardians</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid #e2e8f0", background: page === 1 ? "#f8fafc" : "#ffffff", color: "#94a3b8", cursor: page === 1 ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", opacity: page === 1 ? 0.4 : 1 }}>
+                <ChevronLeft style={{ width: "16px", height: "16px" }} />
               </button>
-              {getPageNumbers().map((page, i) =>
-                page === "..." ? (
-                  <span key={`ellipsis-${i}`} className="px-2 py-1.5 text-[13px] text-[#64748b]">
-                    ...
-                  </span>
-                ) : (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page as number)}
-                    className={`w-8 h-8 text-[13px] rounded-lg border transition-all ${
-                      currentPage === page
-                        ? "bg-[var(--primary)] text-white border-[var(--primary)]"
-                        : "bg-white text-[#1a1a2e] border-[#e2e8f0] hover:bg-[#f8fafc]"
-                    }`}
-                  >
-                    {page}
+              {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <button key={pageNum} onClick={() => setPage(pageNum)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: page === pageNum ? "1px solid #0055ff" : "1px solid #e2e8f0", background: page === pageNum ? "#0055ff" : "#ffffff", color: page === pageNum ? "#ffffff" : "#64748b", fontSize: "12px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: page === pageNum ? "0 2px 8px rgba(0,85,255,0.25)" : "none" }}>
+                    {pageNum}
                   </button>
-                )
-              )}
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="px-3 py-1.5 text-[13px] rounded-lg border border-[#e2e8f0] bg-white text-[#1a1a2e] hover:bg-[#f8fafc] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              >
-                Next
+                );
+              })}
+              <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid #e2e8f0", background: page === totalPages ? "#f8fafc" : "#ffffff", color: "#94a3b8", cursor: page === totalPages ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", opacity: page === totalPages ? 0.4 : 1 }}>
+                <ChevronRight style={{ width: "16px", height: "16px" }} />
               </button>
             </div>
           </div>
         )}
-      </motion.div>
+      </div>
 
-      <AnimatePresence>
-        {viewGuardian && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="modal-overlay">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setViewGuardian(null)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-8 shadow-xl">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-lg font-bold">
-                    {viewGuardian.firstName[0]}{viewGuardian.lastName[0]}
-                  </div>
-                  <h3 className="text-[#1a1a2e] font-semibold text-lg">Guardian Details</h3>
+      {/* Guardian Detail Modal */}
+      {viewGuardian && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" }} onClick={() => setViewGuardian(null)}>
+          <div style={{ background: "#ffffff", borderRadius: "20px", width: "100%", maxWidth: "520px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "linear-gradient(135deg, #0055ff, #10b981)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontSize: "16px", fontWeight: 700 }}>
+                  {viewGuardian.firstName[0]}{viewGuardian.lastName[0]}
                 </div>
-                <button onClick={() => setViewGuardian(null)} className="btn btn-secondary"><X className="w-5 h-5" /></button>
+                <h3 style={{ margin: 0, fontSize: "17px", fontWeight: 700, color: "#0f172a" }}>Guardian Details</h3>
               </div>
-              <div className="border-t border-[#e2e8f0] mb-6"></div>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <p className="text-[#64748b] text-[11px] mb-1">Full Name</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.firstName} {viewGuardian.lastName}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <p className="text-[#64748b] text-[11px] mb-1">Relationship</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.relationship}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <p className="text-[#64748b] text-[11px] mb-1">Phone</p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.phone}</p>
-                      <a href={`tel:${viewGuardian.phone}`} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 text-[11px] font-medium hover:bg-blue-100 transition-all">
-                        <Phone className="w-3 h-3" /> Call
+              <button onClick={() => setViewGuardian(null)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <X style={{ width: "18px", height: "18px" }} />
+              </button>
+            </div>
+            <div style={{ padding: "24px 28px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              {[
+                { label: "Full Name", value: `${viewGuardian.firstName} ${viewGuardian.lastName}` },
+                { label: "Relationship", value: viewGuardian.relationship },
+                { label: "Phone", value: viewGuardian.phone, action: { label: "Call", href: `tel:${viewGuardian.phone}`, color: "#0055ff", bg: "#eff6ff" } },
+                { label: "Email", value: viewGuardian.email || "—", action: viewGuardian.email ? { label: "Email", href: `mailto:${viewGuardian.email}`, color: "#16a34a", bg: "#f0fdf4" } : undefined },
+                { label: "Occupation", value: viewGuardian.occupation || "—" },
+                { label: "Linked Student", value: `${viewGuardian.student.firstName} ${viewGuardian.student.lastName}`, sub: `${viewGuardian.student.admissionNumber} · ${viewGuardian.student.class?.displayName || "—"}` },
+              ].map((item, i) => (
+                <div key={i} style={{ padding: "14px 16px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #e2e8f0", gridColumn: i === 5 ? "1 / -1" : undefined }}>
+                  <p style={{ margin: 0, fontSize: "10px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.label}</p>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "6px" }}>
+                    <div>
+                      <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "#0f172a" }}>{item.value}</p>
+                      {"sub" in item && item.sub && <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#94a3b8" }}>{item.sub}</p>}
+                    </div>
+                    {"action" in item && item.action && (
+                      <a href={item.action.href} style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "20px", background: item.action.bg, color: item.action.color, fontSize: "11px", fontWeight: 500, textDecoration: "none" }}>
+                        {item.action.label === "Call" ? <Phone style={{ width: "12px", height: "12px" }} /> : <Mail style={{ width: "12px", height: "12px" }} />}
+                        {item.action.label}
                       </a>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <p className="text-[#64748b] text-[11px] mb-1">Email</p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-[#1a1a2e] font-semibold text-[15px] truncate">{viewGuardian.email || "—"}</p>
-                      {viewGuardian.email && (
-                        <a href={`mailto:${viewGuardian.email}`} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-medium hover:bg-emerald-100 transition-all">
-                          <Mail className="w-3 h-3" /> Email
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <p className="text-[#64748b] text-[11px] mb-1">Occupation</p>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.occupation || "—"}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Link className="w-3 h-3 text-[#64748b]" />
-                      <p className="text-[#64748b] text-[11px]">Linked Student</p>
-                    </div>
-                    <p className="text-[#1a1a2e] font-semibold text-[15px]">{viewGuardian.student.firstName} {viewGuardian.student.lastName}</p>
-                    <p className="text-[#64748b] text-[11px] mt-0.5">{viewGuardian.student.admissionNumber} &middot; {viewGuardian.student.class?.displayName || "—"}</p>
+                    )}
                   </div>
                 </div>
-              </div>
-              <div className="flex justify-end mt-6">
-                <button onClick={() => setViewGuardian(null)} className="btn btn-secondary px-5 py-2.5 text-[13px] font-medium">Close</button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              ))}
+            </div>
+            <div style={{ padding: "16px 28px 24px", display: "flex", justifyContent: "flex-end" }}>
+              <button onClick={() => setViewGuardian(null)} style={{ padding: "10px 24px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

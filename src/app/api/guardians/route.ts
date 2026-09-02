@@ -10,6 +10,9 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const skip = (page - 1) * limit;
 
     const where: any = {};
 
@@ -19,26 +22,36 @@ export async function GET(request: NextRequest) {
         { lastName: { contains: search, mode: "insensitive" } },
         { email: { contains: search, mode: "insensitive" } },
         { phone: { contains: search, mode: "insensitive" } },
+        { student: { firstName: { contains: search, mode: "insensitive" } } },
+        { student: { lastName: { contains: search, mode: "insensitive" } } },
       ];
     }
 
-    const guardians = await prisma.guardian.findMany({
-      where,
-      include: {
-        student: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            admissionNumber: true,
-            class: { select: { name: true, displayName: true } },
+    const [guardians, total] = await Promise.all([
+      prisma.guardian.findMany({
+        where,
+        include: {
+          student: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              admissionNumber: true,
+              class: { select: { name: true, displayName: true } },
+            },
           },
         },
-      },
-      orderBy: { firstName: "asc" },
-    });
+        skip,
+        take: limit,
+        orderBy: { firstName: "asc" },
+      }),
+      prisma.guardian.count({ where }),
+    ]);
 
-    return NextResponse.json({ guardians });
+    return NextResponse.json({
+      guardians,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+    });
   } catch (error) {
     console.error("GET /api/guardians error:", error);
     return NextResponse.json({ error: "Failed to fetch guardians" }, { status: 500 });
