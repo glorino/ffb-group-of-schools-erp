@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { auth } from "@/auth";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
 
@@ -52,21 +51,20 @@ export async function POST() {
     }
 
     // 3. Users
-    const generatePassword = () => crypto.randomBytes(24).toString("base64url");
     const pw = async (p: string) => bcrypt.hash(p, 12);
     const accounts = [
-      { email: "owner@ffb.edu.ng", name: "Chief Okonkwo", password: await pw(generatePassword()), phone: "+2348000000001", role: "OWNER" },
-      { email: "admin@ffb.edu.ng", name: "Admin User", password: await pw(generatePassword()), phone: "+2348012345678", role: "ADMINISTRATOR" },
-      { email: "principal@ffb.edu.ng", name: "Dr. Aisha Bello", password: await pw(generatePassword()), phone: "+2348012345679", role: "PRINCIPAL" },
-      { email: "vp@ffb.edu.ng", name: "Mr. Chinedu Okafor", password: await pw(generatePassword()), phone: "+2348012345680", role: "VICE_PRINCIPAL" },
-      { email: "accountant@ffb.edu.ng", name: "Mrs. Funke Adeyemi", password: await pw(generatePassword()), phone: "+2348012345681", role: "ACCOUNTANT" },
-      { email: "auditor@ffb.edu.ng", name: "Mr. Tunde Williams", password: await pw(generatePassword()), phone: "+2348012345682", role: "AUDITOR" },
-      { email: "teacher@ffb.edu.ng", name: "Fatima Bello", password: await pw(generatePassword()), phone: "+2348023456789", role: "TEACHER" },
-      { email: "librarian@ffb.edu.ng", name: "Grace Nwosu", password: await pw(generatePassword()), phone: "+2348012345683", role: "LIBRARIAN" },
-      { email: "porter@ffb.edu.ng", name: "Ibrahim Musa", password: await pw(generatePassword()), phone: "+2348012345684", role: "PORTER" },
-      { email: "parent@ffb.edu.ng", name: "Mrs. Ngozi Johnson", password: await pw(generatePassword()), phone: "+2348012345685", role: "PARENT" },
-      { email: "alumni@ffb.edu.ng", name: "Emeka Obi", password: await pw(generatePassword()), phone: "+2348012345686", role: "ALUMNI" },
-      { email: "adebayo.johnson@student.ffb.edu.ng", name: "Adebayo Johnson", password: await pw(generatePassword()), phone: "+2348034567890", role: "STUDENT" },
+      { email: "owner@ffb.edu.ng", name: "Chief Okonkwo", password: await pw("owner123"), phone: "+2348000000001", role: "OWNER" },
+      { email: "admin@ffb.edu.ng", name: "Admin User", password: await pw("admin123"), phone: "+2348012345678", role: "ADMINISTRATOR" },
+      { email: "principal@ffb.edu.ng", name: "Dr. Aisha Bello", password: await pw("principal123"), phone: "+2348012345679", role: "PRINCIPAL" },
+      { email: "vp@ffb.edu.ng", name: "Mr. Chinedu Okafor", password: await pw("vp123"), phone: "+2348012345680", role: "VICE_PRINCIPAL" },
+      { email: "accountant@ffb.edu.ng", name: "Mrs. Funke Adeyemi", password: await pw("accountant123"), phone: "+2348012345681", role: "ACCOUNTANT" },
+      { email: "auditor@ffb.edu.ng", name: "Mr. Tunde Williams", password: await pw("auditor123"), phone: "+2348012345682", role: "AUDITOR" },
+      { email: "teacher@ffb.edu.ng", name: "Fatima Bello", password: await pw("teacher123"), phone: "+2348023456789", role: "TEACHER" },
+      { email: "librarian@ffb.edu.ng", name: "Grace Nwosu", password: await pw("librarian123"), phone: "+2348012345683", role: "LIBRARIAN" },
+      { email: "porter@ffb.edu.ng", name: "Ibrahim Musa", password: await pw("porter123"), phone: "+2348012345684", role: "PORTER" },
+      { email: "parent@ffb.edu.ng", name: "Mrs. Ngozi Johnson", password: await pw("parent123"), phone: "+2348012345685", role: "PARENT" },
+      { email: "alumni@ffb.edu.ng", name: "Emeka Obi", password: await pw("alumni123"), phone: "+2348012345686", role: "ALUMNI" },
+      { email: "adebayo.johnson@student.ffb.edu.ng", name: "Adebayo Johnson", password: await pw("student123"), phone: "+2348034567890", role: "STUDENT" },
     ];
 
     const userIds: Record<string, string> = {};
@@ -482,7 +480,7 @@ export async function POST() {
       const tUser = await prisma.user.upsert({
         where: { email: t.email },
         update: {},
-        create: { email: t.email, name: t.name, password: await pw(generatePassword()), phone: t.phone, schoolId: school.id },
+        create: { email: t.email, name: t.name, password: await pw("teacher123"), phone: t.phone, schoolId: school.id },
       });
       await prisma.userRole.upsert({
         where: { userId_roleId_schoolId: { userId: tUser.id, roleId: roles.TEACHER, schoolId: school.id } },
@@ -502,7 +500,7 @@ export async function POST() {
     // Extra parent accounts
     const parent2User = await prisma.user.upsert({
       where: { email: "chidi.nwosu@ffb.edu.ng" }, update: {},
-      create: { email: "chidi.nwosu@ffb.edu.ng", name: "Mr. Chidi Nwosu", password: await pw(generatePassword()), phone: "+2348090002001", schoolId: school.id },
+      create: { email: "chidi.nwosu@ffb.edu.ng", name: "Mr. Chidi Nwosu", password: await pw("parent123"), phone: "+2348090002001", schoolId: school.id },
     });
     await prisma.userRole.upsert({
       where: { userId_roleId_schoolId: { userId: parent2User.id, roleId: roles.PARENT, schoolId: school.id } },
@@ -511,7 +509,7 @@ export async function POST() {
 
     const parent3User = await prisma.user.upsert({
       where: { email: "fatima.bello.parent@ffb.edu.ng" }, update: {},
-      create: { email: "fatima.bello.parent@ffb.edu.ng", name: "Hajia Fatima Bello", password: await pw(generatePassword()), phone: "+2348090002002", schoolId: school.id },
+      create: { email: "fatima.bello.parent@ffb.edu.ng", name: "Hajia Fatima Bello", password: await pw("parent123"), phone: "+2348090002002", schoolId: school.id },
     });
     await prisma.userRole.upsert({
       where: { userId_roleId_schoolId: { userId: parent3User.id, roleId: roles.PARENT, schoolId: school.id } },
