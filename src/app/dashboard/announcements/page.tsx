@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { motion } from "framer-motion";
 import {
   Megaphone,
   Plus,
@@ -32,6 +31,8 @@ interface Announcement {
   target?: any;
 }
 
+const ROWS_PER_PAGE = 20;
+
 function AnnouncementsPageInner() {
   const { data: session } = useSession();
   const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
@@ -48,12 +49,15 @@ function AnnouncementsPageInner() {
   const [showModal, setShowModal] = useState(false);
   const [editAnnouncement, setEditAnnouncement] = useState<Announcement | null>(null);
   const [saving, setSaving] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [type, setType] = useState("general");
   const [priority, setPriority] = useState("medium");
   const [targetAudience, setTargetAudience] = useState<string[]>(["all"]);
+
+  const [searchFocused, setSearchFocused] = useState(false);
 
   const fetchAnnouncements = async () => {
     setLoading(true);
@@ -79,6 +83,11 @@ function AnnouncementsPageInner() {
     if (filterStatus === "pinned") return matchesSearch && a.target?.pinned;
     return matchesSearch;
   });
+
+  const totalPages = Math.ceil(filtered.length / ROWS_PER_PAGE);
+  const paginated = filtered.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
+
+  useEffect(() => { setCurrentPage(1); }, [search, filterStatus]);
 
   const draftCount = announcements.filter(a => !a.published).length;
   const stats = {
@@ -162,70 +171,109 @@ function AnnouncementsPageInner() {
     }
   };
 
+  const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 16px", borderRadius: "12px", backgroundColor: "#ffffff", border: "1px solid #e2e8f0", color: "#1a1a2e", fontSize: "13px", outline: "none" };
+  const labelStyle: React.CSSProperties = { color: "#475569", fontSize: "13px", marginBottom: "6px", display: "block" };
+  const btnStyle = (bg: string, disabled?: boolean): React.CSSProperties => ({
+    padding: "8px 16px",
+    borderRadius: "12px",
+    backgroundColor: bg,
+    color: "#ffffff",
+    fontSize: "13px",
+    fontWeight: 500,
+    border: "none",
+    cursor: disabled ? "not-allowed" : "pointer",
+    opacity: disabled ? 0.5 : 1,
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+  });
+
+  const statCardConfigs = [
+    { label: "Total Announcements", value: stats.total, icon: Megaphone, gradient: "linear-gradient(135deg, #3b82f6, #2563eb)" },
+    { label: "Published", value: stats.published, icon: Eye, gradient: "linear-gradient(135deg, #10b981, #059669)" },
+    { label: "Drafts", value: stats.draft, icon: Edit, gradient: "linear-gradient(135deg, #f97316, #ea580c)" },
+    { label: "Types", value: stats.types, icon: Users, gradient: "linear-gradient(135deg, #a855f7, #9333ea)" },
+  ];
+
+  const filterOptions = ["all", "published", "draft", "pinned"];
+
   return (
-    <div className="space-y-6">
-      <div className="mt-8 mx-4 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
-        <div>
-          <h1 className="text-2xl font-bold text-white">Announcements</h1>
-          <p className="text-white/70 text-[13px]">View and manage school announcements</p>
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "16px", padding: "32px", margin: "32px 16px 0", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-50%", right: "-20%", width: "300px", height: "300px", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", bottom: "-30%", left: "-10%", width: "200px", height: "200px", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <h1 style={{ color: "#ffffff", fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Announcements</h1>
+            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>View and manage school announcements</p>
+          </div>
+          {canManage && (
+            <button onClick={openCreate} style={{ padding: "10px 20px", borderRadius: "12px", backgroundColor: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff", fontSize: "13px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+              <Plus style={{ width: "16px", height: "16px" }} />
+              New Announcement
+            </button>
+          )}
         </div>
-        {canManage && (
-          <button onClick={openCreate} className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all">
-            <Plus className="w-4 h-4" />
-            New Announcement
-          </button>
-        )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Total Announcements", value: stats.total, icon: Megaphone, color: "from-blue-500 to-blue-600" },
-          { label: "Published", value: stats.published, icon: Eye, color: "from-emerald-500 to-emerald-600" },
-          { label: "Drafts", value: stats.draft, icon: Edit, color: "from-orange-500 to-orange-600" },
-          { label: "Types", value: stats.types, icon: Users, color: "from-purple-500 to-purple-600" },
-        ].map((stat, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="card shadow-sm">
-            <div className="flex items-start justify-between">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", padding: "0 16px" }}>
+        {statCardConfigs.map((stat, i) => (
+          <div key={i} style={{ backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
               <div>
-                <p className="text-[#64748b] text-[13px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
+                <p style={{ color: "#64748b", fontSize: "13px", marginBottom: "4px" }}>{stat.label}</p>
+                <p style={{ fontSize: "30px", fontWeight: 700, color: "#1a1a2e" }}>{stat.value}</p>
               </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+              <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: stat.gradient, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <stat.icon style={{ width: "24px", height: "24px", color: "#ffffff" }} />
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="card shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-[#1a1a2e] font-semibold text-lg">All Announcements</h3>
-          <div className="flex gap-3">
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+      <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", margin: "0 16px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+          <h3 style={{ color: "#1a1a2e", fontSize: "18px", fontWeight: 600 }}>All Announcements</h3>
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            <div style={{ position: "relative" }}>
+              <Search style={{ width: "16px", height: "16px", position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
               <input
                 type="text"
                 placeholder="Search announcements..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+                style={{ ...inputStyle, paddingLeft: "36px", width: "220px", borderColor: searchFocused ? "#0055ff" : "#e2e8f0" }}
               />
             </div>
-            <div className="relative">
+            <div style={{ position: "relative" }}>
               <button
                 onClick={() => setShowFilter(!showFilter)}
-                className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]"
+                style={{ padding: "10px 12px", borderRadius: "12px", backgroundColor: "#f8fafc", border: "1px solid #e2e8f0", color: "#475569", cursor: "pointer", display: "flex", alignItems: "center" }}
               >
-                <Filter className="w-4 h-4" />
+                <Filter style={{ width: "16px", height: "16px" }} />
               </button>
               {showFilter && (
-                <div className="absolute right-0 top-full mt-2 z-40 w-44 rounded-xl bg-white border border-[#e2e8f0] shadow-2xl p-1">
-                  {["all", "published", "draft", "pinned"].map((opt) => (
+                <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", zIndex: 40, width: "176px", borderRadius: "12px", backgroundColor: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0 10px 25px rgba(0,0,0,0.1)", padding: "4px" }}>
+                  {filterOptions.map((opt) => (
                     <button
                       key={opt}
                       onClick={() => { setFilterStatus(opt); setShowFilter(false); }}
-                      className={`w-full text-left px-5 py-2.5 rounded-lg text-[13px] capitalize transition-all ${filterStatus === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-[#475569] hover:bg-[#f1f5f9]"}`}
+                      style={{
+                        width: "100%",
+                        textAlign: "left",
+                        padding: "10px 20px",
+                        borderRadius: "8px",
+                        fontSize: "13px",
+                        textTransform: "capitalize",
+                        border: "none",
+                        cursor: "pointer",
+                        backgroundColor: filterStatus === opt ? "rgba(0,85,255,0.1)" : "transparent",
+                        color: filterStatus === opt ? "#0055ff" : "#475569",
+                        fontWeight: filterStatus === opt ? 500 : 400,
+                      }}
                     >
                       {opt === "all" ? "All" : opt}
                     </button>
@@ -237,85 +285,163 @@ function AnnouncementsPageInner() {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-[#64748b] animate-spin" />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}>
+            <Loader2 style={{ width: "32px", height: "32px", color: "#64748b", animation: "spin 1s linear infinite" }} />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-20 text-[#64748b]">
-            <Megaphone className="w-12 h-12 mx-auto mb-3 opacity-40" />
-            <p className="text-[13px]">No announcements found</p>
+          <div style={{ textAlign: "center", padding: "80px 0", color: "#64748b" }}>
+            <Megaphone style={{ width: "48px", height: "48px", margin: "0 auto 12px", opacity: 0.4 }} />
+            <p style={{ fontSize: "13px" }}>No announcements found</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {filtered.map((announcement) => (
-              <div key={announcement.id} className="p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    {!announcement.published && <Pin className="w-4 h-4 text-[#94a3b8]" />}
-                    <h4 className="text-[#1a1a2e] font-medium text-[13px]">{announcement.title}</h4>
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            {paginated.map((announcement) => (
+              <div key={announcement.id} style={{ padding: "16px", borderRadius: "12px", backgroundColor: "#f8fafc", transition: "background-color 0.15s" }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f1f5f9")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#f8fafc")}
+              >
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "12px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    {!announcement.published && <Pin style={{ width: "16px", height: "16px", color: "#94a3b8" }} />}
+                    <h4 style={{ color: "#1a1a2e", fontSize: "14px", fontWeight: 500 }}>{announcement.title}</h4>
                   </div>
-                  <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                    announcement.priority === "high" ? "bg-[#fee2e2] text-[#dc2626]" :
-                    announcement.priority === "medium" ? "bg-orange-500/20 text-orange-400" :
-                    "bg-[#f1f5f9] text-[#64748b]"
-                  }`}>
+                  <span style={{
+                    padding: "4px 8px",
+                    borderRadius: "8px",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    backgroundColor: announcement.priority === "high" ? "#fee2e2" : announcement.priority === "medium" ? "rgba(249,115,22,0.15)" : "#f1f5f9",
+                    color: announcement.priority === "high" ? "#dc2626" : announcement.priority === "medium" ? "#f97316" : "#64748b",
+                  }}>
                     {announcement.priority}
                   </span>
                 </div>
-                <p className="text-[#475569] text-[13px] mb-3 line-clamp-2">{announcement.content}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4 text-[12px]">
-                    <span className="text-[#64748b]">Type: {announcement.type}</span>
-                    <span className={`px-1.5 py-0.5 rounded text-[11px] ${
-                      announcement.published ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#f1f5f9] text-[#64748b]"
-                    }`}>
+                <p style={{ color: "#475569", fontSize: "13px", marginBottom: "12px", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{announcement.content}</p>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "16px", fontSize: "12px" }}>
+                    <span style={{ color: "#64748b" }}>Type: {announcement.type}</span>
+                    <span style={{
+                      padding: "2px 6px",
+                      borderRadius: "4px",
+                      fontSize: "11px",
+                      backgroundColor: announcement.published ? "#dcfce7" : "#f1f5f9",
+                      color: announcement.published ? "#16a34a" : "#64748b",
+                    }}>
                       {announcement.published ? "Published" : "Draft"}
                     </span>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-[#94a3b8]" />
-                      <span className="text-[#94a3b8]">{new Date(announcement.createdAt).toLocaleDateString()}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      <Calendar style={{ width: "12px", height: "12px", color: "#94a3b8" }} />
+                      <span style={{ color: "#94a3b8" }}>{new Date(announcement.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                   {!isReadOnly && (
-                    <div className="flex items-center gap-3">
-                      <button onClick={() => openEdit(announcement)} className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-all">
-                        <Edit className="w-4 h-4" />
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <button
+                        onClick={() => openEdit(announcement)}
+                        style={{ padding: "6px", borderRadius: "8px", backgroundColor: "transparent", border: "none", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#f1f5f9"; e.currentTarget.style.color = "#1a1a2e"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#64748b"; }}
+                      >
+                        <Edit style={{ width: "16px", height: "16px" }} />
                       </button>
-                      <button onClick={() => handleDelete(announcement.id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-[#64748b] hover:text-[#dc2626] transition-all">
-                        <Trash2 className="w-4 h-4" />
+                      <button
+                        onClick={() => handleDelete(announcement.id)}
+                        style={{ padding: "6px", borderRadius: "8px", backgroundColor: "transparent", border: "none", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(220,38,38,0.1)"; e.currentTarget.style.color = "#dc2626"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#64748b"; }}
+                      >
+                        <Trash2 style={{ width: "16px", height: "16px" }} />
                       </button>
                     </div>
                   )}
                 </div>
               </div>
             ))}
+
+            {totalPages > 1 && (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "8px", paddingTop: "16px", borderTop: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "13px", color: "#64748b" }}>
+                  Showing {((currentPage - 1) * ROWS_PER_PAGE) + 1}–{Math.min(currentPage * ROWS_PER_PAGE, filtered.length)} of {filtered.length}
+                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid #e2e8f0", backgroundColor: "#ffffff", color: "#475569", fontSize: "13px", cursor: currentPage === 1 ? "not-allowed" : "pointer", opacity: currentPage === 1 ? 0.5 : 1 }}
+                  >
+                    Prev
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: "8px",
+                        border: "1px solid #e2e8f0",
+                        backgroundColor: currentPage === page ? "#0055ff" : "#ffffff",
+                        color: currentPage === page ? "#ffffff" : "#475569",
+                        fontSize: "13px",
+                        fontWeight: currentPage === page ? 500 : 400,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid #e2e8f0", backgroundColor: "#ffffff", color: "#475569", fontSize: "13px", cursor: currentPage === totalPages ? "not-allowed" : "pointer", opacity: currentPage === totalPages ? 0.5 : 1 }}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
-      </motion.div>
+      </div>
 
       {showModal && (
-        <div className="modal-overlay">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="modal-content shadow-sm">
-            <div className="modal-header">
-              <h3 className="text-[#1a1a2e] font-semibold text-lg">{editAnnouncement ? "Edit Announcement" : "New Announcement"}</h3>
-              <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ width: "100%", maxWidth: "500px", backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 600 }}>{editAnnouncement ? "Edit Announcement" : "New Announcement"}</h2>
+              <button onClick={() => setShowModal(false)} style={{ color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center" }}>
+                <X style={{ width: "20px", height: "20px" }} />
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1.5">Title *</label>
-                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Enter title" />
+                <label style={labelStyle}>Title *</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  style={inputStyle}
+                  placeholder="Enter title"
+                />
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1.5">Content *</label>
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none" placeholder="Write content..." />
+                <label style={labelStyle}>Content *</label>
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={4}
+                  style={{ ...inputStyle, resize: "none" }}
+                  placeholder="Write content..."
+                />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Type</label>
-                  <select value={type} onChange={(e) => setType(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
+                  <label style={labelStyle}>Type</label>
+                  <select
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    style={{ ...inputStyle, colorScheme: "light" }}
+                  >
                     <option value="general" style={{ background: "#ffffff", color: "#1a1a2e" }}>General</option>
                     <option value="academic" style={{ background: "#ffffff", color: "#1a1a2e" }}>Academic</option>
                     <option value="sports" style={{ background: "#ffffff", color: "#1a1a2e" }}>Sports</option>
@@ -323,8 +449,12 @@ function AnnouncementsPageInner() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Priority</label>
-                  <select value={priority} onChange={(e) => setPriority(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }}>
+                  <label style={labelStyle}>Priority</label>
+                  <select
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value)}
+                    style={{ ...inputStyle, colorScheme: "light" }}
+                  >
                     <option value="low" style={{ background: "#ffffff", color: "#1a1a2e" }}>Low</option>
                     <option value="medium" style={{ background: "#ffffff", color: "#1a1a2e" }}>Medium</option>
                     <option value="high" style={{ background: "#ffffff", color: "#1a1a2e" }}>High</option>
@@ -332,44 +462,54 @@ function AnnouncementsPageInner() {
                 </div>
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1.5">Target Audience</label>
-                <div className="flex flex-wrap gap-2">
-                  {["all", "students", "parents", "teachers", "staff"].map((aud) => (
-                    <button
-                      key={aud}
-                      onClick={() => {
-                        if (aud === "all") {
-                          setTargetAudience(["all"]);
-                        } else {
-                          const next = targetAudience.filter(a => a !== "all");
-                          if (next.includes(aud)) {
-                            setTargetAudience(next.filter(a => a !== aud));
+                <label style={labelStyle}>Target Audience</label>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                  {["all", "students", "parents", "teachers", "staff"].map((aud) => {
+                    const active = targetAudience.includes(aud);
+                    return (
+                      <button
+                        key={aud}
+                        onClick={() => {
+                          if (aud === "all") {
+                            setTargetAudience(["all"]);
                           } else {
-                            setTargetAudience([...next, aud]);
+                            const next = targetAudience.filter(a => a !== "all");
+                            if (next.includes(aud)) {
+                              setTargetAudience(next.filter(a => a !== aud));
+                            } else {
+                              setTargetAudience([...next, aud]);
+                            }
                           }
-                        }
-                      }}
-                      className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
-                        targetAudience.includes(aud)
-                          ? "bg-[var(--primary)]/20 text-[var(--primary)] border border-[var(--primary)]/30"
-                          : "bg-[#f8fafc] text-[#64748b] border border-[#e2e8f0] hover:bg-[#f1f5f9]"
-                      }`}
-                    >
-                      {aud.charAt(0).toUpperCase() + aud.slice(1)}
-                    </button>
-                  ))}
+                        }}
+                        style={{
+                          padding: "6px 12px",
+                          borderRadius: "8px",
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          cursor: "pointer",
+                          backgroundColor: active ? "rgba(0,85,255,0.1)" : "#f8fafc",
+                          color: active ? "#0055ff" : "#64748b",
+                          border: `1px solid ${active ? "rgba(0,85,255,0.3)" : "#e2e8f0"}`,
+                        }}
+                      >
+                        {aud.charAt(0).toUpperCase() + aud.slice(1)}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
-            <div className="modal-footer">
-              <button onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="btn btn-primary disabled:opacity-50 flex items-center gap-2">
-                {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+            <div style={{ padding: "16px 24px", borderTop: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "12px" }}>
+              <button onClick={() => setShowModal(false)} style={btnStyle("#f1f5f9", false)}>
+                <span style={{ color: "#475569" }}>Cancel</span>
+              </button>
+              <button onClick={handleSave} disabled={saving} style={btnStyle("#0055ff", saving)}>
+                {saving && <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} />}
                 {editAnnouncement ? "Update" : "Create"}
               </button>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
     </div>
@@ -378,7 +518,7 @@ function AnnouncementsPageInner() {
 
 export default function AnnouncementsPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-[#64748b] animate-spin" /></div>}>
+    <Suspense fallback={<div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}><Loader2 style={{ width: "32px", height: "32px", color: "#64748b", animation: "spin 1s linear infinite" }} /></div>}>
       <AnnouncementsPageInner />
     </Suspense>
   );

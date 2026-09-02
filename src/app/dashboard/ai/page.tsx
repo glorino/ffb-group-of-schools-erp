@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Brain,
   TrendingUp,
@@ -72,6 +71,24 @@ interface LessonPlan {
   assignment: string;
 }
 
+const inputStyle: React.CSSProperties = { width: '100%', padding: '10px 16px', borderRadius: '12px', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', color: '#1a1a2e', fontSize: '13px', outline: 'none' };
+const labelStyle: React.CSSProperties = { color: '#475569', fontSize: '13px', marginBottom: '6px', display: 'block' };
+
+const btnStyle = (bg: string, disabled?: boolean): React.CSSProperties => ({
+  padding: '8px 16px',
+  borderRadius: '12px',
+  backgroundColor: bg,
+  color: '#ffffff',
+  fontSize: '13px',
+  fontWeight: 500,
+  border: 'none',
+  cursor: disabled ? 'not-allowed' : 'pointer',
+  opacity: disabled ? 0.5 : 1,
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '6px',
+});
+
 export default function AIPage() {
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
@@ -115,6 +132,9 @@ export default function AIPage() {
   const [heatmapData, setHeatmapData] = useState<HeatmapCell[]>([]);
   const [subjectPerformance, setSubjectPerformance] = useState<SubjectPerf[]>([]);
   const [selectedHeatCell, setSelectedHeatCell] = useState<HeatmapCell | null>(null);
+
+  const [predPage, setPredPage] = useState(1);
+  const PAGE_SIZE = 20;
 
   const subjects = ["Mathematics", "English", "Physics", "Chemistry", "Biology", "Economics"];
   const topics: Record<string, string[]> = {
@@ -320,131 +340,117 @@ export default function AIPage() {
   };
 
   const getHeatColor = (score: number) => {
-    if (score >= 70) return "bg-emerald-500";
-    if (score >= 50) return "bg-amber-400";
-    if (score >= 35) return "bg-orange-500";
-    return "bg-red-500";
+    if (score >= 70) return "#10b981";
+    if (score >= 50) return "#fbbf24";
+    if (score >= 35) return "#f97316";
+    return "#ef4444";
   };
 
-  const getHeatTextColor = (score: number) => {
-    if (score >= 50) return "text-white";
-    return "text-white";
-  };
-
-  const getRiskBadge = (level: string) => {
-    if (level === "high") return <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-100 text-red-700">High Risk</span>;
-    if (level === "medium") return <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">Medium</span>;
-    return <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">Low Risk</span>;
+  const getRiskBadgeStyle = (level: string): React.CSSProperties => {
+    const base: React.CSSProperties = { padding: '2px 8px', borderRadius: '9999px', fontSize: '10px', fontWeight: 600 };
+    if (level === "high") return { ...base, backgroundColor: '#fee2e2', color: '#dc2626' };
+    if (level === "medium") return { ...base, backgroundColor: '#fef3c7', color: '#d97706' };
+    return { ...base, backgroundColor: '#d1fae5', color: '#059669' };
   };
 
   const statCards = [
-    { label: "Students at Risk", value: stats.atRisk, icon: AlertTriangle, color: "from-red-500 to-rose-600" },
-    { label: "AI Reports Generated", value: stats.reports, icon: FileText, color: "from-blue-500 to-indigo-600" },
-    { label: "Predictions Made", value: stats.predictionsMade, icon: Target, color: "from-violet-500 to-purple-600" },
-    { label: "Content Generated", value: stats.contentGenerated, icon: Sparkles, color: "from-emerald-500 to-teal-600" },
+    { label: "Students at Risk", value: stats.atRisk, icon: AlertTriangle, gradient: "linear-gradient(135deg, #ef4444, #e11d48)" },
+    { label: "AI Reports Generated", value: stats.reports, icon: FileText, gradient: "linear-gradient(135deg, #3b82f6, #4f46e5)" },
+    { label: "Predictions Made", value: stats.predictionsMade, icon: Target, gradient: "linear-gradient(135deg, #8b5cf6, #9333ea)" },
+    { label: "Content Generated", value: stats.contentGenerated, icon: Sparkles, gradient: "linear-gradient(135deg, #10b981, #0d9488)" },
   ];
+
+  const totalPredPages = Math.max(1, Math.ceil(predictions.length / PAGE_SIZE));
+  const pagedPredictions = predictions.slice((predPage - 1) * PAGE_SIZE, predPage * PAGE_SIZE);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 text-[var(--primary)] animate-spin" />
-          <p className="text-[#64748b] text-[13px]">Loading AI Intelligence Hub...</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <Loader2 style={{ width: '32px', height: '32px', color: '#0055ff', animation: 'spin 1s linear infinite' }} />
+          <p style={{ color: '#64748b', fontSize: '13px' }}>Loading AI Intelligence Hub...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="dashboard-card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="section-header">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Gradient Header */}
+      <div style={{ background: 'linear-gradient(135deg, #0a2a6e, #0055ff)', borderRadius: '16px', padding: '32px', margin: '32px 16px 0', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '-50%', right: '-20%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', bottom: '-30%', left: '-10%', width: '200px', height: '200px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)' }} />
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <h1 className="section-title">AI Intelligence Hub</h1>
-            <p className="section-subtitle">OpenAI-powered student analysis, predictions, and content generation</p>
+            <h1 style={{ color: '#ffffff', fontSize: '24px', fontWeight: 700, marginBottom: '4px' }}>AI Intelligence Hub</h1>
+            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>OpenAI-powered student analysis, predictions, and content generation</p>
           </div>
-          <div className="flex gap-3">
-            <button onClick={fetchInsights} className="btn btn-secondary">
-              <RefreshCw className="w-4 h-4" /> Refresh
-            </button>
-          </div>
+          <button onClick={fetchInsights} style={btnStyle('#ffffff')}>
+            <RefreshCw style={{ width: '16px', height: '16px' }} /> Refresh
+          </button>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="stats-grid-4">
+      {/* KPI Stats Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', padding: '0 16px' }}>
         {statCards.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="stat-card"
-          >
-            <div className={`stat-card-icon bg-gradient-to-br ${stat.color}`}>
-              <stat.icon className="w-6 h-6 text-white" />
+          <div key={i} style={{ backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <div>
+              <p style={{ color: '#64748b', fontSize: '12px', marginBottom: '4px' }}>{stat.label}</p>
+              <p style={{ fontSize: '30px', fontWeight: 700, color: '#1a1a2e' }}>{stat.value}</p>
             </div>
-            <div className="stat-card-content">
-              <p className="stat-card-label">{stat.label}</p>
-              <p className="stat-card-value">{stat.value}</p>
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: stat.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <stat.icon style={{ width: '24px', height: '24px', color: '#ffffff' }} />
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="dashboard-card"
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px]">AI Student Analysis</h3>
-          <button onClick={handleAnalyze} disabled={analyzing} className="btn btn-primary">
+      {/* AI Student Analysis */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', margin: '0 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <h3 style={{ color: '#1a1a2e', fontWeight: 600, fontSize: '16px' }}>AI Student Analysis</h3>
+          <button onClick={handleAnalyze} disabled={analyzing} style={btnStyle('#0055ff', analyzing)}>
             {analyzing ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing...</>
+              <><Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> Analyzing...</>
             ) : (
-              <><Brain className="w-4 h-4" /> Analyze All Students</>
+              <><Brain style={{ width: '16px', height: '16px' }} /> Analyze All Students</>
             )}
           </button>
         </div>
 
         {predictions.length > 0 ? (
-          <div className="table-container">
-            <div className="table-scroll">
-              <table className="table-glass">
+          <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr>
-                    <th>Student</th>
-                    <th>Admission #</th>
-                    <th>Risk Level</th>
-                    <th>Predicted Score</th>
-                    <th>Risk Factors</th>
-                    <th>Recommendations</th>
+                  <tr style={{ borderBottom: '2px solid #e2e8f0', backgroundColor: '#f8fafc' }}>
+                    <th style={{ textAlign: 'left', padding: '12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#64748b' }}>Student</th>
+                    <th style={{ textAlign: 'left', padding: '12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#64748b' }}>Admission #</th>
+                    <th style={{ textAlign: 'left', padding: '12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#64748b' }}>Risk Level</th>
+                    <th style={{ textAlign: 'left', padding: '12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#64748b' }}>Predicted Score</th>
+                    <th style={{ textAlign: 'left', padding: '12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#64748b' }}>Risk Factors</th>
+                    <th style={{ textAlign: 'left', padding: '12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#64748b' }}>Recommendations</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {predictions.slice(0, 20).map((pred) => (
-                    <tr key={pred.studentId}>
-                      <td className="font-medium text-[#1a1a2e]">{pred.name}</td>
-                      <td className="text-[#64748b]">{pred.admissionNumber}</td>
-                      <td>{getRiskBadge(pred.riskLevel)}</td>
-                      <td className="font-semibold text-[#1a1a2e]">{pred.predictedScore}%</td>
-                      <td>
-                        <div className="flex flex-wrap gap-1">
+                  {pagedPredictions.map((pred) => (
+                    <tr key={pred.studentId} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '12px', fontSize: '13px', color: '#1a1a2e', fontWeight: 500 }}>{pred.name}</td>
+                      <td style={{ padding: '12px', fontSize: '13px', color: '#64748b' }}>{pred.admissionNumber}</td>
+                      <td style={{ padding: '12px' }}><span style={getRiskBadgeStyle(pred.riskLevel)}>{pred.riskLevel === "high" ? "High Risk" : pred.riskLevel === "medium" ? "Medium" : "Low Risk"}</span></td>
+                      <td style={{ padding: '12px', fontSize: '13px', color: '#1a1a2e', fontWeight: 600 }}>{pred.predictedScore}%</td>
+                      <td style={{ padding: '12px' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                           {pred.factors?.slice(0, 2).map((f, i) => (
-                            <span key={i} className="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded">{f}</span>
+                            <span key={i} style={{ fontSize: '10px', backgroundColor: '#fef2f2', color: '#dc2626', padding: '2px 6px', borderRadius: '4px' }}>{f}</span>
                           ))}
                         </div>
                       </td>
-                      <td>
-                        <div className="flex flex-wrap gap-1">
+                      <td style={{ padding: '12px' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                           {pred.recommendations?.slice(0, 1).map((r, i) => (
-                            <span key={i} className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{r}</span>
+                            <span key={i} style={{ fontSize: '10px', backgroundColor: '#eff6ff', color: '#2563eb', padding: '2px 6px', borderRadius: '4px' }}>{r}</span>
                           ))}
                         </div>
                       </td>
@@ -453,183 +459,271 @@ export default function AIPage() {
                 </tbody>
               </table>
             </div>
+            {predictions.length > PAGE_SIZE && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderTop: '1px solid #e2e8f0', backgroundColor: '#f8fafc' }}>
+                <p style={{ fontSize: '12px', color: '#64748b' }}>Showing {((predPage - 1) * PAGE_SIZE) + 1}–{Math.min(predPage * PAGE_SIZE, predictions.length)} of {predictions.length}</p>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button
+                    onClick={() => setPredPage((p) => Math.max(1, p - 1))}
+                    disabled={predPage === 1}
+                    style={btnStyle('#e2e8f0', predPage === 1)}
+                  >
+                    <span style={{ color: '#334155' }}>Prev</span>
+                  </button>
+                  {Array.from({ length: Math.min(totalPredPages, 5) }, (_, i) => {
+                    let pageNum: number;
+                    if (totalPredPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (predPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (predPage >= totalPredPages - 2) {
+                      pageNum = totalPredPages - 4 + i;
+                    } else {
+                      pageNum = predPage - 2 + i;
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setPredPage(pageNum)}
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          backgroundColor: pageNum === predPage ? '#0055ff' : '#f1f5f9',
+                          color: pageNum === predPage ? '#ffffff' : '#64748b',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => setPredPage((p) => Math.min(totalPredPages, p + 1))}
+                    disabled={predPage === totalPredPages}
+                    style={btnStyle('#e2e8f0', predPage === totalPredPages)}
+                  >
+                    <span style={{ color: '#334155' }}>Next</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
-          <div className="empty-state py-8">
-            <div className="empty-state-icon"><Brain className="w-8 h-8 text-[#94a3b8]" /></div>
-            <p className="empty-state-title">No Analysis Yet</p>
-            <p className="empty-state-desc">Click &quot;Analyze All Students&quot; to run AI-powered risk assessment</p>
+          <div style={{ textAlign: 'center', padding: '32px 0' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}><Brain style={{ width: '32px', height: '32px', color: '#94a3b8' }} /></div>
+            <p style={{ fontSize: '14px', fontWeight: 600, color: '#1a1a2e', marginBottom: '4px' }}>No Analysis Yet</p>
+            <p style={{ fontSize: '13px', color: '#64748b' }}>Click &quot;Analyze All Students&quot; to run AI-powered risk assessment</p>
           </div>
         )}
-      </motion.div>
+      </div>
 
-      <div className="dashboard-card">
-        <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-4">AI Performance Heatmap</h3>
+      {/* AI Performance Heatmap */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', margin: '0 16px' }}>
+        <h3 style={{ color: '#1a1a2e', fontWeight: 600, fontSize: '16px', marginBottom: '16px' }}>AI Performance Heatmap</h3>
         {heatmapData.length > 0 ? (
-          <div className="space-y-3">
-            <div className="flex items-center gap-4 mb-3">
-              <span className="text-[11px] text-[#64748b]">Score Legend:</span>
-              <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-red-500" /><span className="text-[10px] text-[#64748b]">&lt;35 Weak</span></div>
-              <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-orange-500" /><span className="text-[10px] text-[#64748b]">35-49</span></div>
-              <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-amber-400" /><span className="text-[10px] text-[#64748b]">50-69</span></div>
-              <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-emerald-500" /><span className="text-[10px] text-[#64748b]">70+ Strong</span></div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
+              <span style={{ fontSize: '11px', color: '#64748b' }}>Score Legend:</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: '#ef4444' }} /><span style={{ fontSize: '10px', color: '#64748b' }}>&lt;35 Weak</span></div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: '#f97316' }} /><span style={{ fontSize: '10px', color: '#64748b' }}>35-49</span></div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: '#fbbf24' }} /><span style={{ fontSize: '10px', color: '#64748b' }}>50-69</span></div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: '#10b981' }} /><span style={{ fontSize: '10px', color: '#64748b' }}>70+ Strong</span></div>
             </div>
-            <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(heatmapData.length, 8)}, 1fr)` }}>
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(heatmapData.length, 8)}, 1fr)`, gap: '8px' }}>
               {heatmapData.map((cell, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedHeatCell(cell)}
-                  className={`${getHeatColor(cell.score)} ${getHeatTextColor(cell.score)} rounded-lg p-3 text-center transition-all hover:scale-105 hover:shadow-lg cursor-pointer`}
+                  style={{
+                    backgroundColor: getHeatColor(cell.score),
+                    color: '#ffffff',
+                    borderRadius: '10px',
+                    padding: '12px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    border: 'none',
+                    transition: 'transform 0.15s, box-shadow 0.15s',
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.05)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)'; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none'; }}
                 >
-                  <p className="text-[11px] font-semibold truncate">{cell.subject}</p>
-                  <p className="text-[18px] font-bold">{cell.score}%</p>
-                  <p className="text-[9px] opacity-80 truncate">{cell.topic}</p>
+                  <p style={{ fontSize: '11px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{cell.subject}</p>
+                  <p style={{ fontSize: '18px', fontWeight: 700 }}>{cell.score}%</p>
+                  <p style={{ fontSize: '9px', opacity: 0.8, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{cell.topic}</p>
                 </button>
               ))}
             </div>
           </div>
         ) : (
-          <div className="empty-state py-6">
-            <p className="empty-state-desc">No heatmap data available</p>
+          <div style={{ textAlign: 'center', padding: '24px 0' }}>
+            <p style={{ fontSize: '13px', color: '#64748b' }}>No heatmap data available</p>
           </div>
         )}
       </div>
 
-      <AnimatePresence>
-        {selectedHeatCell && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="dashboard-card border-[var(--primary)]/30 bg-[var(--primary)]/5">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-[#1a1a2e] font-semibold text-[14px]">
-                  Study Plan: {selectedHeatCell.subject} - {selectedHeatCell.topic}
-                </h4>
-                <button onClick={() => setSelectedHeatCell(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-3 bg-white rounded-xl border border-[#e2e8f0]">
-                  <p className="text-[12px] font-semibold text-[#1a1a2e] mb-1">Current Score</p>
-                  <p className={`text-2xl font-bold ${selectedHeatCell.score >= 60 ? "text-emerald-600" : selectedHeatCell.score >= 40 ? "text-amber-600" : "text-red-600"}`}>
-                    {selectedHeatCell.score}%
-                  </p>
-                </div>
-                <div className="p-3 bg-white rounded-xl border border-[#e2e8f0]">
-                  <p className="text-[12px] font-semibold text-[#1a1a2e] mb-1">Target Score</p>
-                  <p className="text-2xl font-bold text-[var(--primary)]">75%</p>
-                </div>
-                <div className="p-3 bg-white rounded-xl border border-[#e2e8f0]">
-                  <p className="text-[12px] font-semibold text-[#1a1a2e] mb-1">Priority</p>
-                  <p className={`text-2xl font-bold ${selectedHeatCell.score < 40 ? "text-red-600" : "text-amber-600"}`}>
-                    {selectedHeatCell.score < 40 ? "Urgent" : "Moderate"}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-3 p-3 bg-white rounded-xl border border-[#e2e8f0]">
-                <p className="text-[12px] font-semibold text-[#1a1a2e] mb-2">Recommended Actions:</p>
-                <ul className="space-y-1">
-                  {selectedHeatCell.score < 50 && (
-                    <li className="text-[11px] text-[#64748b] flex items-center gap-2">
-                      <Zap className="w-3 h-3 text-amber-500" /> Schedule remedial classes for {selectedHeatCell.topic}
-                    </li>
-                  )}
-                  <li className="text-[11px] text-[#64748b] flex items-center gap-2">
-                    <BookOpen className="w-3 h-3 text-blue-500" /> Focus on {selectedHeatCell.topic} fundamentals
-                  </li>
-                  <li className="text-[11px] text-[#64748b] flex items-center gap-2">
-                    <Target className="w-3 h-3 text-violet-500" /> Assign practice exercises and quizzes
-                  </li>
-                  {selectedHeatCell.score < 40 && (
-                    <li className="text-[11px] text-[#64748b] flex items-center gap-2">
-                      <Users className="w-3 h-3 text-red-500" /> Consider peer tutoring for this topic
-                    </li>
-                  )}
-                </ul>
-              </div>
+      {/* Study Plan Detail */}
+      {selectedHeatCell && (
+        <div style={{ backgroundColor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', margin: '0 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <h4 style={{ color: '#1a1a2e', fontWeight: 600, fontSize: '14px' }}>
+              Study Plan: {selectedHeatCell.subject} - {selectedHeatCell.topic}
+            </h4>
+            <button onClick={() => setSelectedHeatCell(null)} style={{ color: '#64748b', background: 'none', border: 'none', cursor: 'pointer' }}>
+              <X style={{ width: '16px', height: '16px' }} />
+            </button>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+            <div style={{ padding: '12px', backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <p style={{ fontSize: '12px', fontWeight: 600, color: '#1a1a2e', marginBottom: '4px' }}>Current Score</p>
+              <p style={{ fontSize: '24px', fontWeight: 700, color: selectedHeatCell.score >= 60 ? '#059669' : selectedHeatCell.score >= 40 ? '#d97706' : '#dc2626' }}>
+                {selectedHeatCell.score}%
+              </p>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <div style={{ padding: '12px', backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <p style={{ fontSize: '12px', fontWeight: 600, color: '#1a1a2e', marginBottom: '4px' }}>Target Score</p>
+              <p style={{ fontSize: '24px', fontWeight: 700, color: '#0055ff' }}>75%</p>
+            </div>
+            <div style={{ padding: '12px', backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <p style={{ fontSize: '12px', fontWeight: 600, color: '#1a1a2e', marginBottom: '4px' }}>Priority</p>
+              <p style={{ fontSize: '24px', fontWeight: 700, color: selectedHeatCell.score < 40 ? '#dc2626' : '#d97706' }}>
+                {selectedHeatCell.score < 40 ? "Urgent" : "Moderate"}
+              </p>
+            </div>
+          </div>
+          <div style={{ marginTop: '12px', padding: '12px', backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+            <p style={{ fontSize: '12px', fontWeight: 600, color: '#1a1a2e', marginBottom: '8px' }}>Recommended Actions:</p>
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              {selectedHeatCell.score < 50 && (
+                <li style={{ fontSize: '11px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Zap style={{ width: '12px', height: '12px', color: '#f59e0b' }} /> Schedule remedial classes for {selectedHeatCell.topic}
+                </li>
+              )}
+              <li style={{ fontSize: '11px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <BookOpen style={{ width: '12px', height: '12px', color: '#3b82f6' }} /> Focus on {selectedHeatCell.topic} fundamentals
+              </li>
+              <li style={{ fontSize: '11px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Target style={{ width: '12px', height: '12px', color: '#8b5cf6' }} /> Assign practice exercises and quizzes
+              </li>
+              {selectedHeatCell.score < 40 && (
+                <li style={{ fontSize: '11px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Users style={{ width: '12px', height: '12px', color: '#ef4444' }} /> Consider peer tutoring for this topic
+                </li>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
 
-      <div className="dashboard-card">
-        <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-4">AI Content Generator</h3>
-        <div className="tabs mb-5">
-          <button className={`tab ${activeTab === "questions" ? "active" : ""}`} onClick={() => setActiveTab("questions")}>
-            <FileText className="w-3.5 h-3.5 inline mr-1" /> Exam Questions
-          </button>
-          <button className={`tab ${activeTab === "comments" ? "active" : ""}`} onClick={() => setActiveTab("comments")}>
-            <GraduationCap className="w-3.5 h-3.5 inline mr-1" /> Report Comments
-          </button>
-          <button className={`tab ${activeTab === "lessonplans" ? "active" : ""}`} onClick={() => setActiveTab("lessonplans")}>
-            <BookOpen className="w-3.5 h-3.5 inline mr-1" /> Lesson Plans
-          </button>
+      {/* AI Content Generator */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', margin: '0 16px' }}>
+        <h3 style={{ color: '#1a1a2e', fontWeight: 600, fontSize: '16px', marginBottom: '20px' }}>AI Content Generator</h3>
+
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: '4px', marginBottom: '20px', backgroundColor: '#f1f5f9', borderRadius: '12px', padding: '4px' }}>
+          {([
+            { key: "questions" as const, label: "Exam Questions", icon: FileText },
+            { key: "comments" as const, label: "Report Comments", icon: GraduationCap },
+            { key: "lessonplans" as const, label: "Lesson Plans", icon: BookOpen },
+          ]).map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '10px',
+                fontSize: '13px',
+                fontWeight: 500,
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: activeTab === tab.key ? '#ffffff' : 'transparent',
+                color: activeTab === tab.key ? '#0055ff' : '#64748b',
+                boxShadow: activeTab === tab.key ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              }}
+            >
+              <tab.icon style={{ width: '14px', height: '14px' }} /> {tab.label}
+            </button>
+          ))}
         </div>
 
+        {/* Questions Tab */}
         {activeTab === "questions" && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
               <div>
-                <label className="input-label">Subject</label>
-                <select value={questionSubject} onChange={(e) => { setQuestionSubject(e.target.value); setQuestionTopic(topics[e.target.value]?.[0] || ""); }} className="select-field">
+                <label style={labelStyle}>Subject</label>
+                <select value={questionSubject} onChange={(e) => { setQuestionSubject(e.target.value); setQuestionTopic(topics[e.target.value]?.[0] || ""); }} style={inputStyle}>
                   {subjects.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="input-label">Topic</label>
-                <select value={questionTopic} onChange={(e) => setQuestionTopic(e.target.value)} className="select-field">
+                <label style={labelStyle}>Topic</label>
+                <select value={questionTopic} onChange={(e) => setQuestionTopic(e.target.value)} style={inputStyle}>
                   {(topics[questionSubject] || []).map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
-                <label className="input-label">Count</label>
-                <select value={questionCount} onChange={(e) => setQuestionCount(Number(e.target.value))} className="select-field">
+                <label style={labelStyle}>Count</label>
+                <select value={questionCount} onChange={(e) => setQuestionCount(Number(e.target.value))} style={inputStyle}>
                   {[3, 5, 10, 15, 20].map((n) => <option key={n} value={n}>{n} Questions</option>)}
                 </select>
               </div>
               <div>
-                <label className="input-label">Difficulty</label>
-                <select value={questionDifficulty} onChange={(e) => setQuestionDifficulty(e.target.value)} className="select-field">
+                <label style={labelStyle}>Difficulty</label>
+                <select value={questionDifficulty} onChange={(e) => setQuestionDifficulty(e.target.value)} style={inputStyle}>
                   {["Easy", "Medium", "Hard"].map((d) => <option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
               <div>
-                <label className="input-label">Exam Type</label>
-                <select value={questionExamType} onChange={(e) => setQuestionExamType(e.target.value)} className="select-field">
+                <label style={labelStyle}>Exam Type</label>
+                <select value={questionExamType} onChange={(e) => setQuestionExamType(e.target.value)} style={inputStyle}>
                   {["WAEC", "NECO", "JAMB", "School Exam"].map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
             </div>
-            <button onClick={handleGenerateQuestions} disabled={generatingQuestions} className="btn btn-primary">
-              {generatingQuestions ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate Questions</>}
+            <button onClick={handleGenerateQuestions} disabled={generatingQuestions} style={btnStyle('#0055ff', generatingQuestions)}>
+              {generatingQuestions ? <><Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> Generating...</> : <><Sparkles style={{ width: '16px', height: '16px' }} /> Generate Questions</>}
             </button>
             {generatedQuestions.length > 0 && (
-              <div className="space-y-3 mt-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-[13px] font-semibold text-[#1a1a2e]">{generatedQuestions.length} Questions Generated</p>
-                  <button onClick={() => copyToClipboard(generatedQuestions.map((q, i) => `${i + 1}. ${q.question}\nA. ${q.options.A}\nB. ${q.options.B}\nC. ${q.options.C}\nD. ${q.options.D}\nAnswer: ${q.answer}\n`).join("\n"))} className="btn btn-ghost btn-sm">
-                    <Copy className="w-3.5 h-3.5" /> Copy All
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <p style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e' }}>{generatedQuestions.length} Questions Generated</p>
+                  <button onClick={() => copyToClipboard(generatedQuestions.map((q, i) => `${i + 1}. ${q.question}\nA. ${q.options.A}\nB. ${q.options.B}\nC. ${q.options.C}\nD. ${q.options.D}\nAnswer: ${q.answer}\n`).join("\n"))} style={{ ...btnStyle('transparent'), color: '#64748b', fontSize: '12px', padding: '6px 12px' }}>
+                    <Copy style={{ width: '14px', height: '14px' }} /> Copy All
                   </button>
                 </div>
                 {generatedQuestions.map((q, i) => (
-                  <div key={i} className="p-4 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
-                    <p className="text-[13px] font-medium text-[#1a1a2e] mb-2">
-                      <span className="text-[var(--primary)] font-bold">Q{i + 1}.</span> {q.question}
+                  <div key={i} style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <p style={{ fontSize: '13px', fontWeight: 500, color: '#1a1a2e', marginBottom: '8px' }}>
+                      <span style={{ color: '#0055ff', fontWeight: 700 }}>Q{i + 1}.</span> {q.question}
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 mb-2">
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', marginBottom: '8px' }}>
                       {(["A", "B", "C", "D"] as const).map((opt) => (
-                        <span key={opt} className={`text-[12px] px-2 py-1 rounded-lg ${opt === q.answer ? "bg-emerald-100 text-emerald-700 font-semibold" : "bg-white text-[#475569] border border-[#e2e8f0]"}`}>
+                        <span key={opt} style={{
+                          fontSize: '12px',
+                          padding: '6px 8px',
+                          borderRadius: '8px',
+                          backgroundColor: opt === q.answer ? '#d1fae5' : '#ffffff',
+                          color: opt === q.answer ? '#059669' : '#475569',
+                          border: opt === q.answer ? 'none' : '1px solid #e2e8f0',
+                          fontWeight: opt === q.answer ? 600 : 400,
+                        }}>
                           {opt}. {q.options[opt]}
                         </span>
                       ))}
                     </div>
                     {q.explanation && (
-                      <p className="text-[11px] text-[#64748b] mt-2 bg-blue-50 p-2 rounded-lg">
-                        <Lightbulb className="w-3 h-3 inline mr-1 text-blue-500" /> {q.explanation}
+                      <p style={{ fontSize: '11px', color: '#64748b', marginTop: '8px', backgroundColor: '#eff6ff', padding: '8px', borderRadius: '8px' }}>
+                        <Lightbulb style={{ width: '12px', height: '12px', color: '#3b82f6', display: 'inline', marginRight: '4px' }} /> {q.explanation}
                       </p>
                     )}
                   </div>
@@ -639,144 +733,146 @@ export default function AIPage() {
           </div>
         )}
 
+        {/* Comments Tab */}
         {activeTab === "comments" && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
               <div>
-                <label className="input-label">Student Name</label>
-                <input type="text" value={commentStudent} onChange={(e) => setCommentStudent(e.target.value)} placeholder="e.g. Adebayo Olamide" className="input-field" />
+                <label style={labelStyle}>Student Name</label>
+                <input type="text" value={commentStudent} onChange={(e) => setCommentStudent(e.target.value)} placeholder="e.g. Adebayo Olamide" style={inputStyle} />
               </div>
               <div>
-                <label className="input-label">Attendance %</label>
-                <input type="number" value={commentAttendance} onChange={(e) => setCommentAttendance(e.target.value)} className="input-field" min="0" max="100" />
+                <label style={labelStyle}>Attendance %</label>
+                <input type="number" value={commentAttendance} onChange={(e) => setCommentAttendance(e.target.value)} style={inputStyle} min="0" max="100" />
               </div>
               <div>
-                <label className="input-label">Subjects (Name: Score Grade, ...)</label>
-                <input type="text" value={commentSubjects} onChange={(e) => setCommentSubjects(e.target.value)} placeholder="Mathematics: 75 A, English: 68 B" className="input-field" />
+                <label style={labelStyle}>Subjects (Name: Score Grade, ...)</label>
+                <input type="text" value={commentSubjects} onChange={(e) => setCommentSubjects(e.target.value)} placeholder="Mathematics: 75 A, English: 68 B" style={inputStyle} />
               </div>
               <div>
-                <label className="input-label">Behavior</label>
-                <select value={commentBehavior} onChange={(e) => setCommentBehavior(e.target.value)} className="select-field">
+                <label style={labelStyle}>Behavior</label>
+                <select value={commentBehavior} onChange={(e) => setCommentBehavior(e.target.value)} style={inputStyle}>
                   {["Excellent", "Good", "Satisfactory", "Needs Improvement"].map((b) => <option key={b} value={b}>{b}</option>)}
                 </select>
               </div>
             </div>
-            <button onClick={handleGenerateComment} disabled={generatingComment} className="btn btn-primary">
-              {generatingComment ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate Comment</>}
+            <button onClick={handleGenerateComment} disabled={generatingComment} style={btnStyle('#0055ff', generatingComment)}>
+              {generatingComment ? <><Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> Generating...</> : <><Sparkles style={{ width: '16px', height: '16px' }} /> Generate Comment</>}
             </button>
             {generatedComment && (
-              <div className="p-4 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-[13px] font-semibold text-[#1a1a2e]">Generated Report Card Comment</p>
-                  <button onClick={() => copyToClipboard(generatedComment)} className="btn btn-ghost btn-sm">
-                    <Copy className="w-3.5 h-3.5" /> Copy
+              <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <p style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e' }}>Generated Report Card Comment</p>
+                  <button onClick={() => copyToClipboard(generatedComment)} style={{ ...btnStyle('transparent'), color: '#64748b', fontSize: '12px', padding: '6px 12px' }}>
+                    <Copy style={{ width: '14px', height: '14px' }} /> Copy
                   </button>
                 </div>
-                <p className="text-[13px] text-[#475569] leading-relaxed whitespace-pre-wrap">{generatedComment}</p>
+                <p style={{ fontSize: '13px', color: '#475569', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{generatedComment}</p>
               </div>
             )}
           </div>
         )}
 
+        {/* Lesson Plans Tab */}
         {activeTab === "lessonplans" && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
               <div>
-                <label className="input-label">Subject</label>
-                <select value={lessonSubject} onChange={(e) => setLessonSubject(e.target.value)} className="select-field">
+                <label style={labelStyle}>Subject</label>
+                <select value={lessonSubject} onChange={(e) => setLessonSubject(e.target.value)} style={inputStyle}>
                   {subjects.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="input-label">Topic</label>
-                <select value={lessonTopic} onChange={(e) => setLessonTopic(e.target.value)} className="select-field">
+                <label style={labelStyle}>Topic</label>
+                <select value={lessonTopic} onChange={(e) => setLessonTopic(e.target.value)} style={inputStyle}>
                   {(topics[lessonSubject] || []).map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
-                <label className="input-label">Class Level</label>
-                <select value={lessonClass} onChange={(e) => setLessonClass(e.target.value)} className="select-field">
+                <label style={labelStyle}>Class Level</label>
+                <select value={lessonClass} onChange={(e) => setLessonClass(e.target.value)} style={inputStyle}>
                   {["JSS1", "JSS2", "JSS3", "SS1", "SS2", "SS3"].map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label className="input-label">Duration</label>
-                <select value={lessonDuration} onChange={(e) => setLessonDuration(e.target.value)} className="select-field">
+                <label style={labelStyle}>Duration</label>
+                <select value={lessonDuration} onChange={(e) => setLessonDuration(e.target.value)} style={inputStyle}>
                   {["30 minutes", "45 minutes", "60 minutes", "90 minutes"].map((d) => <option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
             </div>
-            <button onClick={handleGenerateLesson} disabled={generatingLesson} className="btn btn-primary">
-              {generatingLesson ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate Lesson Plan</>}
+            <button onClick={handleGenerateLesson} disabled={generatingLesson} style={btnStyle('#0055ff', generatingLesson)}>
+              {generatingLesson ? <><Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> Generating...</> : <><Sparkles style={{ width: '16px', height: '16px' }} /> Generate Lesson Plan</>}
             </button>
             {generatedLesson && (
-              <div className="space-y-4 mt-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-[13px] font-semibold text-[#1a1a2e]">Generated Lesson Plan</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <p style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e' }}>Generated Lesson Plan</p>
                   <button onClick={() => {
                     const text = `LESSON PLAN\nSubject: ${lessonSubject}\nTopic: ${lessonTopic}\nClass: ${lessonClass}\nDuration: ${lessonDuration}\n\nOBJECTIVES:\n${generatedLesson.objectives.map((o) => `- ${o}`).join("\n")}\n\nMATERIALS:\n${generatedLesson.materials.map((m) => `- ${m}`).join("\n")}\n\nINTRODUCTION:\n${generatedLesson.introduction}\n\nMAIN CONTENT:\n${generatedLesson.mainContent.map((s, i) => `${i + 1}. ${s.step} (${s.time})\n   Activity: ${s.activity}`).join("\n\n")}\n\nEVALUATION:\n${generatedLesson.evaluation}\n\nASSIGNMENT:\n${generatedLesson.assignment}`;
                     copyToClipboard(text);
-                  }} className="btn btn-ghost btn-sm">
-                    <Copy className="w-3.5 h-3.5" /> Copy All
+                  }} style={{ ...btnStyle('transparent'), color: '#64748b', fontSize: '12px', padding: '6px 12px' }}>
+                    <Copy style={{ width: '14px', height: '14px' }} /> Copy All
                   </button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-[#f0fdf4] rounded-xl border border-emerald-200">
-                    <h4 className="text-[13px] font-semibold text-[#1a1a2e] mb-2 flex items-center gap-1.5">
-                      <Target className="w-3.5 h-3.5 text-emerald-600" /> Learning Objectives
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                  <div style={{ padding: '16px', backgroundColor: '#f0fdf4', borderRadius: '12px', border: '1px solid #a7f3d0' }}>
+                    <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Target style={{ width: '14px', height: '14px', color: '#059669' }} /> Learning Objectives
                     </h4>
-                    <ul className="space-y-1">
+                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       {generatedLesson.objectives.map((obj, i) => (
-                        <li key={i} className="text-[12px] text-[#475569] flex items-start gap-1.5">
-                          <CheckCircle className="w-3 h-3 text-emerald-500 mt-0.5 flex-shrink-0" /> {obj}
+                        <li key={i} style={{ fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                          <CheckCircle style={{ width: '12px', height: '12px', color: '#10b981', marginTop: '2px', flexShrink: 0 }} /> {obj}
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
-                    <h4 className="text-[13px] font-semibold text-[#1a1a2e] mb-2 flex items-center gap-1.5">
-                      <BookOpen className="w-3.5 h-3.5 text-blue-600" /> Materials Needed
+                  <div style={{ padding: '16px', backgroundColor: '#eff6ff', borderRadius: '12px', border: '1px solid #bfdbfe' }}>
+                    <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <BookOpen style={{ width: '14px', height: '14px', color: '#2563eb' }} /> Materials Needed
                     </h4>
-                    <ul className="space-y-1">
+                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       {generatedLesson.materials.map((mat, i) => (
-                        <li key={i} className="text-[12px] text-[#475569] flex items-start gap-1.5">
-                          <span className="text-blue-500">&#x2022;</span> {mat}
+                        <li key={i} style={{ fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                          <span style={{ color: '#3b82f6' }}>&#x2022;</span> {mat}
                         </li>
                       ))}
                     </ul>
                   </div>
                 </div>
-                <div className="p-4 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
-                  <h4 className="text-[13px] font-semibold text-[#1a1a2e] mb-2">Introduction</h4>
-                  <p className="text-[12px] text-[#475569] leading-relaxed">{generatedLesson.introduction}</p>
+                <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e', marginBottom: '8px' }}>Introduction</h4>
+                  <p style={{ fontSize: '12px', color: '#475569', lineHeight: 1.6 }}>{generatedLesson.introduction}</p>
                 </div>
-                <div className="p-4 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
-                  <h4 className="text-[13px] font-semibold text-[#1a1a2e] mb-3">Lesson Steps</h4>
-                  <div className="space-y-3">
+                <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e', marginBottom: '12px' }}>Lesson Steps</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {generatedLesson.mainContent.map((step, i) => (
-                      <div key={i} className="flex gap-3">
-                        <div className="w-7 h-7 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-[11px] font-bold flex-shrink-0">
+                      <div key={i} style={{ display: 'flex', gap: '12px' }}>
+                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#0055ff', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, flexShrink: 0 }}>
                           {i + 1}
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <p className="text-[12px] font-semibold text-[#1a1a2e]">{step.step}</p>
-                            <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">{step.time}</span>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <p style={{ fontSize: '12px', fontWeight: 600, color: '#1a1a2e' }}>{step.step}</p>
+                            <span style={{ fontSize: '10px', backgroundColor: '#dbeafe', color: '#2563eb', padding: '2px 6px', borderRadius: '4px' }}>{step.time}</span>
                           </div>
-                          <p className="text-[11px] text-[#64748b]">{step.activity}</p>
+                          <p style={{ fontSize: '11px', color: '#64748b' }}>{step.activity}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
-                    <h4 className="text-[13px] font-semibold text-[#1a1a2e] mb-2">Evaluation</h4>
-                    <p className="text-[12px] text-[#475569]">{generatedLesson.evaluation}</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                  <div style={{ padding: '16px', backgroundColor: '#fffbeb', borderRadius: '12px', border: '1px solid #fde68a' }}>
+                    <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e', marginBottom: '8px' }}>Evaluation</h4>
+                    <p style={{ fontSize: '12px', color: '#475569' }}>{generatedLesson.evaluation}</p>
                   </div>
-                  <div className="p-4 bg-violet-50 rounded-xl border border-violet-200">
-                    <h4 className="text-[13px] font-semibold text-[#1a1a2e] mb-2">Assignment</h4>
-                    <p className="text-[12px] text-[#475569]">{generatedLesson.assignment}</p>
+                  <div style={{ padding: '16px', backgroundColor: '#f5f3ff', borderRadius: '12px', border: '1px solid #ddd6fe' }}>
+                    <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e', marginBottom: '8px' }}>Assignment</h4>
+                    <p style={{ fontSize: '12px', color: '#475569' }}>{generatedLesson.assignment}</p>
                   </div>
                 </div>
               </div>
@@ -785,97 +881,132 @@ export default function AIPage() {
         )}
       </div>
 
-      <AnimatePresence>
-        {chatOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 w-[380px] h-[500px] bg-white rounded-2xl shadow-2xl border border-[#e2e8f0] flex flex-col z-50 overflow-hidden"
-          >
-            <div className="bg-gradient-to-r from-[var(--primary)] to-blue-600 p-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                  <Brain className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-white text-[13px] font-semibold">AI School Assistant</p>
-                  <p className="text-white/70 text-[10px]">Ask about fees, schedules, policies</p>
+      {/* Floating AI Chat Widget */}
+      {chatOpen && (
+        <div style={{ position: 'fixed', bottom: '96px', right: '24px', width: '380px', height: '500px', backgroundColor: '#ffffff', borderRadius: '16px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', zIndex: 50, overflow: 'hidden' }}>
+          {/* Chat Header */}
+          <div style={{ background: 'linear-gradient(135deg, #0055ff, #2563eb)', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '32px', height: '32px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Brain style={{ width: '16px', height: '16px', color: '#ffffff' }} />
+              </div>
+              <div>
+                <p style={{ color: '#ffffff', fontSize: '13px', fontWeight: 600 }}>AI School Assistant</p>
+                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '10px' }}>Ask about fees, schedules, policies</p>
+              </div>
+            </div>
+            <button onClick={() => setChatOpen(false)} style={{ color: 'rgba(255,255,255,0.7)', background: 'none', border: 'none', cursor: 'pointer' }}>
+              <X style={{ width: '20px', height: '20px' }} />
+            </button>
+          </div>
+
+          {/* Chat Messages */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {chatMessages.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '32px 0' }}>
+                <Brain style={{ width: '40px', height: '40px', color: '#cbd5e1', margin: '0 auto 12px' }} />
+                <p style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>How can I help you today?</p>
+                <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {["When are school fees due?", "What are the school hours?", "What subjects are offered?"].map((q) => (
+                    <button key={q} onClick={() => { setChatInput(q); }} style={{ display: 'block', width: '100%', textAlign: 'left', fontSize: '11px', color: '#0055ff', backgroundColor: '#eff6ff', padding: '8px 12px', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
+                      {q}
+                    </button>
+                  ))}
                 </div>
               </div>
-              <button onClick={() => setChatOpen(false)} className="text-white/70 hover:text-white">
-                <X className="w-5 h-5" />
+            )}
+            {chatMessages.map((msg, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: msg.role === "user" ? "flex-end" : "flex-start" }}>
+                <div style={{
+                  maxWidth: '85%',
+                  padding: '8px 12px',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  lineHeight: 1.6,
+                  backgroundColor: msg.role === "user" ? '#0055ff' : '#f1f5f9',
+                  color: msg.role === "user" ? '#ffffff' : '#1a1a2e',
+                  borderBottomRightRadius: msg.role === "user" ? '4px' : '12px',
+                  borderBottomLeftRadius: msg.role === "user" ? '12px' : '4px',
+                }}>
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+            {chatLoading && (
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <div style={{ backgroundColor: '#f1f5f9', padding: '10px 16px', borderRadius: '12px', borderBottomLeftRadius: '4px' }}>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <div style={{ width: '6px', height: '6px', backgroundColor: '#94a3b8', borderRadius: '50%', animation: 'bounce 1s infinite', animationDelay: '0ms' }} />
+                    <div style={{ width: '6px', height: '6px', backgroundColor: '#94a3b8', borderRadius: '50%', animation: 'bounce 1s infinite', animationDelay: '150ms' }} />
+                    <div style={{ width: '6px', height: '6px', backgroundColor: '#94a3b8', borderRadius: '50%', animation: 'bounce 1s infinite', animationDelay: '300ms' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+
+          {/* Chat Input */}
+          <div style={{ padding: '12px', borderTop: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleChat()}
+                placeholder="Ask a question..."
+                style={{ flex: 1, padding: '8px 12px', borderRadius: '12px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', fontSize: '13px', color: '#1a1a2e', outline: 'none' }}
+                disabled={chatLoading}
+              />
+              <button
+                onClick={handleChat}
+                disabled={!chatInput.trim() || chatLoading}
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '12px',
+                  backgroundColor: '#0055ff',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: 'none',
+                  cursor: (!chatInput.trim() || chatLoading) ? 'not-allowed' : 'pointer',
+                  opacity: (!chatInput.trim() || chatLoading) ? 0.5 : 1,
+                  flexShrink: 0,
+                }}
+              >
+                {chatLoading ? <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> : <Send style={{ width: '16px', height: '16px' }} />}
               </button>
             </div>
+          </div>
+        </div>
+      )}
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              {chatMessages.length === 0 && (
-                <div className="text-center py-8">
-                  <Brain className="w-10 h-10 text-[#cbd5e1] mx-auto mb-3" />
-                  <p className="text-[13px] text-[#64748b] font-medium">How can I help you today?</p>
-                  <div className="mt-3 space-y-2">
-                    {["When are school fees due?", "What are the school hours?", "What subjects are offered?"].map((q) => (
-                      <button key={q} onClick={() => { setChatInput(q); }} className="block w-full text-left text-[11px] text-[var(--primary)] bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition">
-                        {q}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {chatMessages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[85%] px-3 py-2 rounded-xl text-[12px] leading-relaxed ${
-                    msg.role === "user"
-                      ? "bg-[var(--primary)] text-white rounded-br-sm"
-                      : "bg-[#f1f5f9] text-[#1a1a2e] rounded-bl-sm"
-                  }`}>
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-              {chatLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-[#f1f5f9] px-4 py-2.5 rounded-xl rounded-bl-sm">
-                    <div className="flex gap-1">
-                      <div className="w-1.5 h-1.5 bg-[#94a3b8] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <div className="w-1.5 h-1.5 bg-[#94a3b8] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <div className="w-1.5 h-1.5 bg-[#94a3b8] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={chatEndRef} />
-            </div>
-
-            <div className="p-3 border-t border-[#e2e8f0]">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleChat()}
-                  placeholder="Ask a question..."
-                  className="flex-1 px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[13px] text-[#1a1a2e] focus:outline-none focus:border-[var(--primary)]"
-                  disabled={chatLoading}
-                />
-                <button
-                  onClick={handleChat}
-                  disabled={!chatInput.trim() || chatLoading}
-                  className="w-9 h-9 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center disabled:opacity-50 hover:bg-blue-700 transition flex-shrink-0"
-                >
-                  {chatLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      {/* Floating Chat Button */}
       <button
         onClick={() => setChatOpen(!chatOpen)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-[var(--primary)] to-blue-600 text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition z-50"
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          width: '56px',
+          height: '56px',
+          background: 'linear-gradient(135deg, #0055ff, #2563eb)',
+          color: '#ffffff',
+          borderRadius: '50%',
+          boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: 'none',
+          cursor: 'pointer',
+          zIndex: 50,
+        }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.1)'; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)'; }}
       >
-        {chatOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
+        {chatOpen ? <X style={{ width: '24px', height: '24px' }} /> : <MessageSquare style={{ width: '24px', height: '24px' }} />}
       </button>
     </div>
   );

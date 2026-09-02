@@ -1,7 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import {
   Settings,
   School,
@@ -84,22 +83,22 @@ const settingSections = [
 ];
 
 const defaultGradingConfig: GradingGrade[] = [
-  { grade: "A", min: 70, max: 100, points: 5, color: "text-[#16a34a]" },
-  { grade: "B", min: 60, max: 69, points: 4, color: "text-[#2563eb]" },
-  { grade: "C", min: 50, max: 59, points: 3, color: "text-[#ca8a04]" },
-  { grade: "D", min: 40, max: 49, points: 2, color: "text-orange-400" },
-  { grade: "F", min: 0, max: 39, points: 0, color: "text-[#dc2626]" },
+  { grade: "A", min: 70, max: 100, points: 5, color: "#16a34a" },
+  { grade: "B", min: 60, max: 69, points: 4, color: "#2563eb" },
+  { grade: "C", min: 50, max: 59, points: 3, color: "#ca8a04" },
+  { grade: "D", min: 40, max: 49, points: 2, color: "#f97316" },
+  { grade: "F", min: 0, max: 39, points: 0, color: "#dc2626" },
 ];
 
 const defaultRoles: RoleAssignment[] = [
-  { id: "1", role: "Owner", desc: "Full access to all modules and settings", color: "from-red-500 to-red-600", permissions: ["All Access"] },
-  { id: "2", role: "Admin", desc: "Manage staff, students, academics, and finance", color: "from-blue-500 to-blue-600", permissions: ["Students", "Teachers", "Finance", "Settings"] },
-  { id: "3", role: "Principal", desc: "Academic oversight and staff management", color: "from-purple-500 to-purple-600", permissions: ["Academics", "Teachers", "Reports"] },
-  { id: "4", role: "Vice Principal", desc: "Student discipline and academic support", color: "from-emerald-500 to-emerald-600", permissions: ["Students", "Attendance", "Discipline"] },
-  { id: "5", role: "Teacher", desc: "Class management, grades, and lesson plans", color: "from-amber-500 to-amber-600", permissions: ["My Classes", "Grades", "Lesson Plans"] },
-  { id: "6", role: "Accountant", desc: "Finance, payments, and invoicing", color: "from-teal-500 to-teal-600", permissions: ["Finance", "Payments", "Reports"] },
-  { id: "7", role: "Parent", desc: "View child progress and communications", color: "from-pink-500 to-pink-600", permissions: ["Child Progress", "Messages", "Fees"] },
-  { id: "8", role: "Student", desc: "View grades, timetable, and assignments", color: "from-cyan-500 to-cyan-600", permissions: ["Grades", "Timetable", "Assignments"] },
+  { id: "1", role: "Owner", desc: "Full access to all modules and settings", color: "#dc2626", permissions: ["All Access"] },
+  { id: "2", role: "Admin", desc: "Manage staff, students, academics, and finance", color: "#2563eb", permissions: ["Students", "Teachers", "Finance", "Settings"] },
+  { id: "3", role: "Principal", desc: "Academic oversight and staff management", color: "#9333ea", permissions: ["Academics", "Teachers", "Reports"] },
+  { id: "4", role: "Vice Principal", desc: "Student discipline and academic support", color: "#059669", permissions: ["Students", "Attendance", "Discipline"] },
+  { id: "5", role: "Teacher", desc: "Class management, grades, and lesson plans", color: "#d97706", permissions: ["My Classes", "Grades", "Lesson Plans"] },
+  { id: "6", role: "Accountant", desc: "Finance, payments, and invoicing", color: "#0d9488", permissions: ["Finance", "Payments", "Reports"] },
+  { id: "7", role: "Parent", desc: "View child progress and communications", color: "#ec4899", permissions: ["Child Progress", "Messages", "Fees"] },
+  { id: "8", role: "Student", desc: "View grades, timetable, and assignments", color: "#06b6d4", permissions: ["Grades", "Timetable", "Assignments"] },
 ];
 
 function loadFromStorage<T>(key: string, fallback: T): T {
@@ -121,10 +120,167 @@ function saveToStorage(key: string, value: unknown) {
   }
 }
 
-export default function SettingsPage() {
+const ROLES_PER_PAGE = 20;
+
+const headerStyle: React.CSSProperties = {
+  marginTop: "32px",
+  borderRadius: "20px",
+  padding: "32px 36px",
+  background: "linear-gradient(135deg, #0a2a6e, #0055ff)",
+  position: "relative",
+  overflow: "hidden",
+};
+
+const cardStyle: React.CSSProperties = {
+  background: "#ffffff",
+  borderRadius: "16px",
+  border: "1px solid #e2e8f0",
+  padding: "24px 28px",
+  boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+};
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "12px",
+  borderRadius: "10px",
+  border: "2px solid #e5e7eb",
+  background: "#ffffff",
+  fontSize: "13px",
+  color: "#0f172a",
+  outline: "none",
+  boxSizing: "border-box",
+  transition: "border-color 0.2s",
+};
+
+const labelStyle: React.CSSProperties = {
+  fontSize: "13px",
+  color: "#475569",
+  marginBottom: "6px",
+  display: "block",
+  fontWeight: 500,
+};
+
+const smallLabelStyle: React.CSSProperties = {
+  fontSize: "11px",
+  color: "#475569",
+  marginBottom: "4px",
+  display: "block",
+  fontWeight: 500,
+};
+
+const sectionTitleStyle: React.CSSProperties = {
+  fontSize: "15px",
+  fontWeight: 700,
+  color: "#0f172a",
+  margin: "0 0 18px",
+};
+
+const btnPrimaryStyle: React.CSSProperties = {
+  padding: "10px 20px",
+  borderRadius: "12px",
+  background: "linear-gradient(135deg, #0a2a6e, #0055ff)",
+  color: "#ffffff",
+  fontSize: "13px",
+  fontWeight: 600,
+  border: "none",
+  cursor: "pointer",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "8px",
+  boxShadow: "0 2px 8px rgba(0,85,255,0.25)",
+  transition: "transform 0.15s, box-shadow 0.15s",
+};
+
+const btnSecondaryStyle: React.CSSProperties = {
+  padding: "10px 20px",
+  borderRadius: "12px",
+  background: "#f8fafc",
+  color: "#475569",
+  fontSize: "13px",
+  fontWeight: 600,
+  border: "1px solid #e2e8f0",
+  cursor: "pointer",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "8px",
+  transition: "background 0.15s",
+};
+
+const tabStyle = (isActive: boolean): React.CSSProperties => ({
+  width: "100%",
+  display: "flex",
+  alignItems: "center",
+  gap: "12px",
+  padding: "10px 12px",
+  borderRadius: "10px",
+  cursor: "pointer",
+  textAlign: "left" as const,
+  border: isActive ? "1px solid rgba(0,85,255,0.2)" : "1px solid transparent",
+  background: isActive ? "rgba(0,85,255,0.08)" : "transparent",
+  transition: "all 0.15s",
+  fontSize: "13px",
+  fontWeight: 500,
+});
+
+const tableThStyle: React.CSSProperties = {
+  textAlign: "left",
+  fontSize: "11px",
+  fontWeight: 600,
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+  color: "#64748b",
+  padding: "10px 12px",
+  borderBottom: "2px solid #e2e8f0",
+  background: "#f8fafc",
+};
+
+const tableTdStyle: React.CSSProperties = {
+  padding: "10px 12px",
+  borderBottom: "1px solid #f1f5f9",
+};
+
+const toggleTrackStyle: React.CSSProperties = {
+  width: "44px",
+  height: "24px",
+  borderRadius: "12px",
+  position: "relative",
+  cursor: "pointer",
+  transition: "background 0.2s",
+  flexShrink: 0,
+};
+
+const toggleThumbStyle: React.CSSProperties = {
+  width: "18px",
+  height: "18px",
+  borderRadius: "50%",
+  background: "#ffffff",
+  position: "absolute",
+  top: "3px",
+  transition: "transform 0.2s, left 0.2s",
+  boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
+};
+
+function Toggle({ checked, onChange, disabled }: { checked: boolean; onChange: () => void; disabled?: boolean }) {
+  return (
+    <div
+      onClick={disabled ? undefined : onChange}
+      style={{
+        ...toggleTrackStyle,
+        background: checked ? "#0055ff" : "#e2e8f0",
+        opacity: disabled ? 0.5 : 1,
+        cursor: disabled ? "not-allowed" : "pointer",
+      }}
+    >
+      <div style={{ ...toggleThumbStyle, left: checked ? "23px" : "3px" }} />
+    </div>
+  );
+}
+
+export function SettingsPageInner() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeSection, setActiveSection] = useState(0);
+  const [rolesPage, setRolesPage] = useState(1);
 
   const [schoolProfile, setSchoolProfile] = useState<SchoolProfileData>({
     schoolName: "",
@@ -177,7 +333,6 @@ export default function SettingsPage() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        // Load from API first
         try {
           const res = await fetch("/api/settings");
           if (res.ok) {
@@ -196,7 +351,6 @@ export default function SettingsPage() {
           }
         } catch {}
 
-        // Fallback to localStorage
         const savedProfile = loadFromStorage<SchoolProfileData>("schoolProfile", schoolProfile);
         const savedAcademicYear = loadFromStorage<AcademicYearData>("academicYear", academicYear);
         const savedGrading = loadFromStorage<GradingGrade[]>("gradingConfig", defaultGradingConfig);
@@ -226,9 +380,7 @@ export default function SettingsPage() {
             if (data.session) setAcademicYear((a) => ({ ...a, session: data.session! }));
             if (data.term) setAcademicYear((a) => ({ ...a, term: data.term! }));
           }
-        } catch {
-          // keep localStorage values
-        }
+        } catch {}
 
         try {
           const res = await fetch("/api/roles");
@@ -236,9 +388,7 @@ export default function SettingsPage() {
             const data = await res.json();
             if (Array.isArray(data) && data.length > 0) setRoles(data);
           }
-        } catch {
-          // keep localStorage values
-        }
+        } catch {}
       } catch {
         // keep defaults
       } finally {
@@ -267,9 +417,7 @@ export default function SettingsPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ schoolProfile, academicYear, gradingConfig, notifications, roles }),
         });
-      } catch {
-        // localStorage already saved
-      }
+      } catch {}
 
       toast.success("All settings saved successfully");
     } catch {
@@ -298,7 +446,6 @@ export default function SettingsPage() {
   const handleSaveSchoolProfile = () => saveSection("schoolProfile", schoolProfile as unknown as Record<string, unknown>);
   const handleSaveAcademicYear = () => saveSection("academicYear", academicYear);
   const handleSaveGrading = () => saveSection("gradingConfig", gradingConfig);
-
   const handleSaveNotifications = () => saveSection("notifications", notifications);
   const handleSaveRoles = () => saveSection("roles", roles);
 
@@ -362,10 +509,7 @@ export default function SettingsPage() {
   };
 
   const toggleNotification = (key: keyof NotificationSettings) => {
-    setNotifications((prev) => {
-      const updated = { ...prev, [key]: !prev[key] };
-      return updated;
-    });
+    setNotifications((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const updateGradingRow = (index: number, field: string, value: string) => {
@@ -378,7 +522,7 @@ export default function SettingsPage() {
     const newGrade = String.fromCharCode(65 + gradingConfig.length);
     setGradingConfig((prev) => [
       ...prev,
-      { grade: newGrade, min: 0, max: 0, points: 0, color: "text-[#475569]" },
+      { grade: newGrade, min: 0, max: 0, points: 0, color: "#475569" },
     ]);
   };
 
@@ -420,134 +564,107 @@ export default function SettingsPage() {
     );
   };
 
+  const rolesTotalPages = Math.max(1, Math.ceil(roles.length / ROLES_PER_PAGE));
+  const rolesStartIdx = (rolesPage - 1) * ROLES_PER_PAGE;
+  const pagedRoles = roles.slice(rolesStartIdx, rolesStartIdx + ROLES_PER_PAGE);
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-[var(--primary)] animate-spin" />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+        <Loader2 style={{ width: "32px", height: "32px", color: "#0055ff", animation: "spin 1s linear infinite" }} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mt-8 mx-4 card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div style={{ padding: "0 16px 32px", maxWidth: "1400px", margin: "0 auto" }}>
+      {/* Header */}
+      <div style={headerStyle}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 10% 80%, rgba(255,255,255,0.05) 0%, transparent 50%)" }} />
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: "16px", position: "relative", zIndex: 1 }}>
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">System Settings</h1>
-            <p className="text-[#475569] text-[13px]">
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", letterSpacing: "-0.02em" }}>System Settings</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>
               Configure school profile, academic year, grading, and notifications
             </p>
           </div>
           <button
             onClick={saveAll}
             disabled={saving}
-            className="btn btn-primary shadow-lg shadow-[var(--primary)]/25"
+            style={{
+              ...btnPrimaryStyle,
+              opacity: saving ? 0.7 : 1,
+              padding: "12px 28px",
+              fontSize: "14px",
+            }}
           >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            {saving ? "Saving..." : "Save Changes"}
+            {saving ? <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> : <Save style={{ width: "16px", height: "16px" }} />}
+            {saving ? "Saving..." : "Save All Changes"}
           </button>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="card shadow-sm"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Settings Menu</h3>
-          <div className="space-y-2">
-            {settingSections.map((section, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveSection(i)}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
-                  i === activeSection ? "bg-[var(--primary)]/20 border border-[var(--primary)]/30" : "hover:bg-[#f8fafc]"
-                }`}
-              >
-                <section.icon className={`w-5 h-5 ${i === activeSection ? "text-[var(--accent)]" : "text-[#64748b]"}`} />
-                <div>
-                  <p className={`text-[13px] font-medium ${i === activeSection ? "text-[#1a1a2e]" : "text-[#475569]"}`}>{section.title}</p>
-                  <p className="text-[#64748b] text-[12px]">{section.description}</p>
-                </div>
-              </button>
-            ))}
+      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: "20px", marginTop: "20px" }}>
+        {/* Sidebar Menu */}
+        <div style={{ ...cardStyle, padding: "20px", alignSelf: "start", position: "sticky", top: "20px" }}>
+          <h3 style={{ margin: "0 0 14px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Settings Menu</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            {settingSections.map((section, i) => {
+              const Icon = section.icon;
+              const isActive = i === activeSection;
+              return (
+                <button
+                  key={i}
+                  onClick={() => setActiveSection(i)}
+                  style={tabStyle(isActive)}
+                >
+                  <Icon style={{ width: "18px", height: "18px", color: isActive ? "#0055ff" : "#94a3b8", flexShrink: 0 }} />
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, color: isActive ? "#0f172a" : "#64748b" }}>{section.title}</p>
+                    <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#94a3b8" }}>{section.description}</p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="lg:col-span-2 card shadow-sm"
-        >
+        {/* Content Area */}
+        <div style={{ ...cardStyle, padding: "28px", minHeight: "500px" }}>
           {/* School Profile */}
           {activeSection === 0 && (
             <>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">School Profile</h3>
-                <button
-                  onClick={handleSaveSchoolProfile}
-                  className="btn btn-primary"
-                >
-                  <Save className="w-4 h-4" />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+                <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>School Profile</h3>
+                <button onClick={handleSaveSchoolProfile} style={btnPrimaryStyle}>
+                  <Save style={{ width: "14px", height: "14px" }} />
                   Save Profile
                 </button>
               </div>
-              <div className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">School Name</label>
-                    <input
-                      type="text"
-                      value={schoolProfile.schoolName}
-                      onChange={(e) => setSchoolProfile((p) => ({ ...p, schoolName: e.target.value }))}
-                      className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>School Name</label>
+                    <input type="text" value={schoolProfile.schoolName} onChange={(e) => setSchoolProfile((p) => ({ ...p, schoolName: e.target.value }))} style={inputStyle} />
                   </div>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">Motto</label>
-                    <input
-                      type="text"
-                      value={schoolProfile.motto}
-                      onChange={(e) => setSchoolProfile((p) => ({ ...p, motto: e.target.value }))}
-                      className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>Motto</label>
+                    <input type="text" value={schoolProfile.motto} onChange={(e) => setSchoolProfile((p) => ({ ...p, motto: e.target.value }))} style={inputStyle} />
                   </div>
                 </div>
                 <div>
-                  <label className="text-[#475569] text-[13px] mb-2 block">Address</label>
-                  <input
-                    type="text"
-                    value={schoolProfile.address}
-                    onChange={(e) => setSchoolProfile((p) => ({ ...p, address: e.target.value }))}
-                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                  />
+                  <label style={labelStyle}>Address</label>
+                  <input type="text" value={schoolProfile.address} onChange={(e) => setSchoolProfile((p) => ({ ...p, address: e.target.value }))} style={inputStyle} />
                 </div>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">Phone</label>
-                    <input
-                      type="text"
-                      value={schoolProfile.phone}
-                      onChange={(e) => setSchoolProfile((p) => ({ ...p, phone: e.target.value }))}
-                      className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>Phone</label>
+                    <input type="text" value={schoolProfile.phone} onChange={(e) => setSchoolProfile((p) => ({ ...p, phone: e.target.value }))} style={inputStyle} />
                   </div>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">Email</label>
-                    <input
-                      type="email"
-                      value={schoolProfile.email}
-                      onChange={(e) => setSchoolProfile((p) => ({ ...p, email: e.target.value }))}
-                      className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>Email</label>
+                    <input type="email" value={schoolProfile.email} onChange={(e) => setSchoolProfile((p) => ({ ...p, email: e.target.value }))} style={inputStyle} />
                   </div>
                 </div>
               </div>
@@ -557,34 +674,25 @@ export default function SettingsPage() {
           {/* Academic Year */}
           {activeSection === 1 && (
             <>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Academic Year</h3>
-                <button
-                  onClick={handleSaveAcademicYear}
-                  className="btn btn-primary"
-                >
-                  <Save className="w-4 h-4" />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+                <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>Academic Year</h3>
+                <button onClick={handleSaveAcademicYear} style={btnPrimaryStyle}>
+                  <Save style={{ width: "14px", height: "14px" }} />
                   Save Schedule
                 </button>
               </div>
-              <div className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">Academic Session</label>
-                    <input
-                      type="text"
-                      value={academicYear.session}
-                      onChange={(e) => setAcademicYear((a) => ({ ...a, session: e.target.value }))}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>Academic Session</label>
+                    <input type="text" value={academicYear.session} onChange={(e) => setAcademicYear((a) => ({ ...a, session: e.target.value }))} style={inputStyle} />
                   </div>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">Current Term</label>
+                    <label style={labelStyle}>Current Term</label>
                     <select
                       value={academicYear.term}
                       onChange={(e) => setAcademicYear((a) => ({ ...a, term: e.target.value }))}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                      style={{ ...inputStyle, cursor: "pointer", colorScheme: "light" }}
                     >
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }}>First Term</option>
                       <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Second Term</option>
@@ -592,89 +700,41 @@ export default function SettingsPage() {
                     </select>
                   </div>
                 </div>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">First Term Start</label>
-                    <input
-                      type="date"
-                      value={academicYear.firstTermStart}
-                      onChange={(e) => setAcademicYear((a) => ({ ...a, firstTermStart: e.target.value }))}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>First Term Start</label>
+                    <input type="date" value={academicYear.firstTermStart} onChange={(e) => setAcademicYear((a) => ({ ...a, firstTermStart: e.target.value }))} style={{ ...inputStyle, colorScheme: "light" }} />
                   </div>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">First Term End</label>
-                    <input
-                      type="date"
-                      value={academicYear.firstTermEnd}
-                      onChange={(e) => setAcademicYear((a) => ({ ...a, firstTermEnd: e.target.value }))}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>First Term End</label>
+                    <input type="date" value={academicYear.firstTermEnd} onChange={(e) => setAcademicYear((a) => ({ ...a, firstTermEnd: e.target.value }))} style={{ ...inputStyle, colorScheme: "light" }} />
                   </div>
                 </div>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">Second Term Start</label>
-                    <input
-                      type="date"
-                      value={academicYear.secondTermStart}
-                      onChange={(e) => setAcademicYear((a) => ({ ...a, secondTermStart: e.target.value }))}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>Second Term Start</label>
+                    <input type="date" value={academicYear.secondTermStart} onChange={(e) => setAcademicYear((a) => ({ ...a, secondTermStart: e.target.value }))} style={{ ...inputStyle, colorScheme: "light" }} />
                   </div>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">Second Term End</label>
-                    <input
-                      type="date"
-                      value={academicYear.secondTermEnd}
-                      onChange={(e) => setAcademicYear((a) => ({ ...a, secondTermEnd: e.target.value }))}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>Second Term End</label>
+                    <input type="date" value={academicYear.secondTermEnd} onChange={(e) => setAcademicYear((a) => ({ ...a, secondTermEnd: e.target.value }))} style={{ ...inputStyle, colorScheme: "light" }} />
                   </div>
                 </div>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">Third Term Start</label>
-                    <input
-                      type="date"
-                      value={academicYear.thirdTermStart}
-                      onChange={(e) => setAcademicYear((a) => ({ ...a, thirdTermStart: e.target.value }))}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>Third Term Start</label>
+                    <input type="date" value={academicYear.thirdTermStart} onChange={(e) => setAcademicYear((a) => ({ ...a, thirdTermStart: e.target.value }))} style={{ ...inputStyle, colorScheme: "light" }} />
                   </div>
                   <div>
-                    <label className="text-[#475569] text-[13px] mb-2 block">Third Term End</label>
-                    <input
-                      type="date"
-                      value={academicYear.thirdTermEnd}
-                      onChange={(e) => setAcademicYear((a) => ({ ...a, thirdTermEnd: e.target.value }))}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                    <label style={labelStyle}>Third Term End</label>
+                    <input type="date" value={academicYear.thirdTermEnd} onChange={(e) => setAcademicYear((a) => ({ ...a, thirdTermEnd: e.target.value }))} style={{ ...inputStyle, colorScheme: "light" }} />
                   </div>
                 </div>
                 <div>
-                  <label className="text-[#475569] text-[13px] mb-2 block">Mid-Term Break</label>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <input
-                      type="date"
-                      value={academicYear.midTermBreakStart}
-                      onChange={(e) => setAcademicYear((a) => ({ ...a, midTermBreakStart: e.target.value }))}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
-                    <input
-                      type="date"
-                      value={academicYear.midTermBreakEnd}
-                      onChange={(e) => setAcademicYear((a) => ({ ...a, midTermBreakEnd: e.target.value }))}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
+                  <label style={labelStyle}>Mid-Term Break</label>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                    <input type="date" value={academicYear.midTermBreakStart} onChange={(e) => setAcademicYear((a) => ({ ...a, midTermBreakStart: e.target.value }))} style={{ ...inputStyle, colorScheme: "light" }} />
+                    <input type="date" value={academicYear.midTermBreakEnd} onChange={(e) => setAcademicYear((a) => ({ ...a, midTermBreakEnd: e.target.value }))} style={{ ...inputStyle, colorScheme: "light" }} />
                   </div>
                 </div>
               </div>
@@ -684,77 +744,73 @@ export default function SettingsPage() {
           {/* Grading System */}
           {activeSection === 2 && (
             <>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Grading System</h3>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={addGradingRow}
-                    className="btn btn-secondary"
-                  >
-                    <Plus className="w-4 h-4" />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+                <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>Grading System</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <button onClick={addGradingRow} style={btnSecondaryStyle}>
+                    <Plus style={{ width: "14px", height: "14px" }} />
                     Add Grade
                   </button>
-                  <button
-                    onClick={handleSaveGrading}
-                    className="btn btn-primary"
-                  >
-                    <Save className="w-4 h-4" />
+                  <button onClick={handleSaveGrading} style={btnPrimaryStyle}>
+                    <Save style={{ width: "14px", height: "14px" }} />
                     Save Grades
                   </button>
                 </div>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse" as const }}>
                   <thead>
-                    <tr className="border-b-2 border-[#e2e8f0] bg-[#f8fafc]">
-                      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Grade</th>
-                      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Min %</th>
-                      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Max %</th>
-                      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Points</th>
-                      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3 w-10"></th>
+                    <tr>
+                      <th style={tableThStyle}>Grade</th>
+                      <th style={tableThStyle}>Min %</th>
+                      <th style={tableThStyle}>Max %</th>
+                      <th style={tableThStyle}>Points</th>
+                      <th style={{ ...tableThStyle, width: "48px" }}></th>
                     </tr>
                   </thead>
                   <tbody>
                     {gradingConfig.map((grade, i) => (
-                      <tr key={i} className="border-b border-[#f1f5f9] hover:bg-[#f8fafc] transition-colors">
-                        <td className="py-2 px-3">
+                      <tr key={i} style={{ borderBottom: "1px solid #f1f5f9", transition: "background 0.15s" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#f8fafc"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+                        <td style={tableTdStyle}>
                           <input
                             type="text"
                             value={grade.grade}
                             onChange={(e) => updateGradingRow(i, "grade", e.target.value)}
-                            className="w-16 px-3 py-1 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] font-bold focus:outline-none focus:border-[var(--primary)]"
+                            style={{ width: "60px", padding: "8px 12px", borderRadius: "8px", border: "2px solid #e5e7eb", background: "#ffffff", fontSize: "13px", fontWeight: 700, color: "#0f172a", outline: "none" }}
                           />
                         </td>
-                        <td className="py-2">
+                        <td style={tableTdStyle}>
                           <input
                             type="number"
                             value={grade.min}
                             onChange={(e) => updateGradingRow(i, "min", e.target.value)}
-                            className="w-20 px-3 py-1 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                            style={{ width: "80px", padding: "8px 12px", borderRadius: "8px", border: "2px solid #e5e7eb", background: "#ffffff", fontSize: "13px", color: "#0f172a", outline: "none" }}
                           />
                         </td>
-                        <td className="py-2">
+                        <td style={tableTdStyle}>
                           <input
                             type="number"
                             value={grade.max}
                             onChange={(e) => updateGradingRow(i, "max", e.target.value)}
-                            className="w-20 px-3 py-1 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                            style={{ width: "80px", padding: "8px 12px", borderRadius: "8px", border: "2px solid #e5e7eb", background: "#ffffff", fontSize: "13px", color: "#0f172a", outline: "none" }}
                           />
                         </td>
-                        <td className="py-2">
+                        <td style={tableTdStyle}>
                           <input
                             type="number"
                             value={grade.points}
                             onChange={(e) => updateGradingRow(i, "points", e.target.value)}
-                            className="w-20 px-3 py-1 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                            style={{ width: "80px", padding: "8px 12px", borderRadius: "8px", border: "2px solid #e5e7eb", background: "#ffffff", fontSize: "13px", color: "#0f172a", outline: "none" }}
                           />
                         </td>
-                        <td className="py-2">
+                        <td style={tableTdStyle}>
                           <button
                             onClick={() => removeGradingRow(i)}
-                            className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#dc2626] hover:bg-red-400/10 transition-all"
+                            style={{ width: "32px", height: "32px", borderRadius: "8px", border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", transition: "all 0.15s" }}
+                            onMouseEnter={(e) => { e.currentTarget.style.color = "#dc2626"; e.currentTarget.style.background = "rgba(220,38,38,0.08)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.color = "#94a3b8"; e.currentTarget.style.background = "transparent"; }}
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 style={{ width: "14px", height: "14px" }} />
                           </button>
                         </td>
                       </tr>
@@ -768,17 +824,14 @@ export default function SettingsPage() {
           {/* Notifications */}
           {activeSection === 3 && (
             <>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Notification Settings</h3>
-                <button
-                  onClick={handleSaveNotifications}
-                  className="btn btn-primary"
-                >
-                  <Save className="w-4 h-4" />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+                <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>Notification Settings</h3>
+                <button onClick={handleSaveNotifications} style={btnPrimaryStyle}>
+                  <Save style={{ width: "14px", height: "14px" }} />
                   Save Notifications
                 </button>
               </div>
-              <div className="space-y-4">
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {([
                   { key: "emailNotifications" as const, label: "Email Notifications", desc: "Receive email alerts for important updates" },
                   { key: "smsNotifications" as const, label: "SMS Notifications", desc: "Send SMS alerts to parents and students" },
@@ -788,20 +841,26 @@ export default function SettingsPage() {
                   { key: "attendanceAlerts" as const, label: "Attendance Alerts", desc: "Notify parents of student absences" },
                   { key: "reportCardAlerts" as const, label: "Report Card Alerts", desc: "Notify when report cards are ready" },
                 ]).map((item, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition">
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "16px 20px",
+                      borderRadius: "12px",
+                      background: "#f8fafc",
+                      border: "1px solid #f1f5f9",
+                      transition: "background 0.15s",
+                    }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#f1f5f9"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "#f8fafc"; }}
+                  >
                     <div>
-                      <p className="text-[#1a1a2e] text-[13px] font-medium">{item.label}</p>
-                      <p className="text-[#64748b] text-[11px] mt-0.5">{item.desc}</p>
+                      <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{item.label}</p>
+                      <p style={{ margin: "3px 0 0", fontSize: "11px", color: "#94a3b8" }}>{item.desc}</p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={notifications[item.key]}
-                        onChange={() => toggleNotification(item.key)}
-                        className="sr-only peer"
-                      />
-                      <div className="w-9 h-5 bg-[#f1f5f9] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/40 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent)] peer-checked:after:bg-white"></div>
-                    </label>
+                    <Toggle checked={notifications[item.key]} onChange={() => toggleNotification(item.key)} />
                   </div>
                 ))}
               </div>
@@ -811,117 +870,234 @@ export default function SettingsPage() {
           {/* User Roles */}
           {activeSection === 4 && (
             <>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">User Roles & Permissions</h3>
-                <button
-                  onClick={handleSaveRoles}
-                  className="btn btn-primary"
-                >
-                  <Save className="w-4 h-4" />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+                <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>User Roles & Permissions</h3>
+                <button onClick={handleSaveRoles} style={btnPrimaryStyle}>
+                  <Save style={{ width: "14px", height: "14px" }} />
                   Save Roles
                 </button>
               </div>
-              <div className="space-y-3">
-                {roles.map((item) => (
-                  <div key={item.id} className="p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center text-white text-[11px] font-bold`}>
-                        {item.role.slice(0, 2).toUpperCase()}
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-[#1a1a2e] text-[13px] font-medium">{item.role}</p>
-                        <p className="text-[#64748b] text-[11px] mt-0.5">{item.desc}</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2 ml-12">
-                      {item.permissions.map((perm, j) => (
-                        <div key={j} className="flex items-center gap-1">
-                          <input
-                            type="text"
-                            value={perm}
-                            onChange={(e) => updateRolePermissions(item.id, j, e.target.value)}
-                            className="px-2 py-0.5 rounded-md bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[10px] font-medium focus:outline-none focus:border-[var(--primary)] w-28"
-                          />
-                          <button
-                            onClick={() => removeRolePermission(item.id, j)}
-                            className="p-0.5 rounded text-[#94a3b8] hover:text-[#dc2626] transition"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ))}
-                      <button
-                        onClick={() => addRolePermission(item.id)}
-                        className="px-2 py-0.5 rounded-md bg-[#f8fafc] border border-dashed border-[#e2e8f0] text-[#94a3b8] text-[10px] hover:text-[#475569] hover:border-[#e2e8f0] transition"
-                      >
-                        + Add
-                      </button>
-                    </div>
-                  </div>
-                ))}
+
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse" as const }}>
+                  <thead>
+                    <tr>
+                      <th style={tableThStyle}>Role</th>
+                      <th style={tableThStyle}>Description</th>
+                      <th style={tableThStyle}>Permissions</th>
+                      <th style={{ ...tableThStyle, width: "48px" }}></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pagedRoles.map((item) => (
+                      <tr key={item.id} style={{ borderBottom: "1px solid #f1f5f9", transition: "background 0.15s" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#f8fafc"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+                        <td style={tableTdStyle}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <div style={{
+                              width: "36px",
+                              height: "36px",
+                              borderRadius: "10px",
+                              background: `linear-gradient(135deg, ${item.color}, ${item.color}cc)`,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "#ffffff",
+                              fontSize: "11px",
+                              fontWeight: 700,
+                              flexShrink: 0,
+                              boxShadow: `0 2px 8px ${item.color}33`,
+                            }}>
+                              {item.role.slice(0, 2).toUpperCase()}
+                            </div>
+                            <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{item.role}</span>
+                          </div>
+                        </td>
+                        <td style={tableTdStyle}>
+                          <span style={{ fontSize: "12px", color: "#64748b" }}>{item.desc}</span>
+                        </td>
+                        <td style={tableTdStyle}>
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                            {item.permissions.map((perm, j) => (
+                              <div key={j} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                <input
+                                  type="text"
+                                  value={perm}
+                                  onChange={(e) => updateRolePermissions(item.id, j, e.target.value)}
+                                  style={{ padding: "4px 8px", borderRadius: "6px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "10px", fontWeight: 500, outline: "none", width: "100px" }}
+                                />
+                                <button
+                                  onClick={() => removeRolePermission(item.id, j)}
+                                  style={{ width: "20px", height: "20px", borderRadius: "4px", border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", transition: "color 0.15s" }}
+                                  onMouseEnter={(e) => { e.currentTarget.style.color = "#dc2626"; }}
+                                  onMouseLeave={(e) => { e.currentTarget.style.color = "#94a3b8"; }}
+                                >
+                                  <Trash2 style={{ width: "10px", height: "10px" }} />
+                                </button>
+                              </div>
+                            ))}
+                            <button
+                              onClick={() => addRolePermission(item.id)}
+                              style={{ padding: "4px 8px", borderRadius: "6px", border: "1px dashed #e2e8f0", background: "#f8fafc", color: "#94a3b8", fontSize: "10px", cursor: "pointer", transition: "all 0.15s" }}
+                              onMouseEnter={(e) => { e.currentTarget.style.color = "#475569"; e.currentTarget.style.borderColor = "#cbd5e1"; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.color = "#94a3b8"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
+                            >
+                              + Add
+                            </button>
+                          </div>
+                        </td>
+                        <td style={tableTdStyle}></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
+
+              {/* Pagination */}
+              {rolesTotalPages > 1 && (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f1f5f9" }}>
+                  <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>
+                    Showing {rolesStartIdx + 1} to {Math.min(rolesStartIdx + ROLES_PER_PAGE, roles.length)} of {roles.length} roles
+                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    <button
+                      disabled={rolesPage === 1}
+                      onClick={() => setRolesPage((p) => Math.max(1, p - 1))}
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "8px",
+                        border: "1px solid #e2e8f0",
+                        background: rolesPage === 1 ? "#f8fafc" : "#ffffff",
+                        color: rolesPage === 1 ? "#cbd5e1" : "#475569",
+                        cursor: rolesPage === 1 ? "not-allowed" : "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        opacity: rolesPage === 1 ? 0.4 : 1,
+                        fontSize: "12px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Prev
+                    </button>
+                    {Array.from({ length: Math.min(rolesTotalPages, 5) }, (_, i) => {
+                      let pageNum: number;
+                      if (rolesTotalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (rolesPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (rolesPage >= rolesTotalPages - 2) {
+                        pageNum = rolesTotalPages - 4 + i;
+                      } else {
+                        pageNum = rolesPage - 2 + i;
+                      }
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setRolesPage(pageNum)}
+                          style={{
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "8px",
+                            border: rolesPage === pageNum ? "none" : "1px solid #e2e8f0",
+                            background: rolesPage === pageNum ? "#0055ff" : "#f8fafc",
+                            color: rolesPage === pageNum ? "#ffffff" : "#64748b",
+                            fontSize: "12px",
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            transition: "all 0.15s",
+                          }}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                    <button
+                      disabled={rolesPage === rolesTotalPages}
+                      onClick={() => setRolesPage((p) => Math.min(rolesTotalPages, p + 1))}
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "8px",
+                        border: "1px solid #e2e8f0",
+                        background: rolesPage === rolesTotalPages ? "#f8fafc" : "#ffffff",
+                        color: rolesPage === rolesTotalPages ? "#cbd5e1" : "#475569",
+                        cursor: rolesPage === rolesTotalPages ? "not-allowed" : "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        opacity: rolesPage === rolesTotalPages ? 0.4 : 1,
+                        fontSize: "12px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           )}
 
           {/* Security */}
           {activeSection === 5 && (
             <>
-              <h3 className="text-[#1a1a2e] font-semibold text-lg mb-6">Security Settings</h3>
-              <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-[#f8fafc]">
-                  <div className="flex items-center justify-between mb-3">
+              <h3 style={{ margin: "0 0 24px", fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>Security Settings</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {/* Two-Factor Auth */}
+                <div style={{ padding: "20px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #f1f5f9" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div>
-                      <p className="text-[#1a1a2e] text-[13px] font-medium">Two-Factor Authentication</p>
-                      <p className="text-[#64748b] text-[11px] mt-0.5">Add an extra layer of security to admin accounts</p>
+                      <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>Two-Factor Authentication</p>
+                      <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#94a3b8" }}>Add an extra layer of security to admin accounts</p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer opacity-50">
-                      <input
-                        type="checkbox"
-                        checked={false}
-                        disabled
-                        className="sr-only peer"
-                      />
-                      <div className="w-9 h-5 bg-[#f1f5f9] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/40 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent)] peer-checked:after:bg-white"></div>
-                    </label>
+                    <Toggle checked={twoFactorEnabled} onChange={() => setTwoFactorEnabled((p) => !p)} />
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#f8fafc]">
-                  <div className="flex items-center gap-2 mb-3">
-                    <p className="text-[#1a1a2e] text-[13px] font-medium">Password Policy</p>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="grid sm:grid-cols-2 gap-4">
+                {/* Password Policy */}
+                <div style={{ padding: "20px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #f1f5f9" }}>
+                  <p style={{ margin: "0 0 14px", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>Password Policy</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                       <div>
-                        <label className="text-[#475569] text-[11px] mb-1 block">Minimum Length</label>
+                        <label style={smallLabelStyle}>Minimum Length</label>
                         <input
                           type="number"
                           value={passwordPolicy.minLength}
                           onChange={(e) => setPasswordPolicy((p) => ({ ...p, minLength: Number(e.target.value) }))}
                           min={6}
-                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                          style={{ ...inputStyle, padding: "10px 12px" }}
                         />
                       </div>
                       <div>
-                        <label className="text-[#475569] text-[11px] mb-1 block">Password Expiry (days)</label>
+                        <label style={smallLabelStyle}>Password Expiry (days)</label>
                         <input
                           type="number"
                           value={passwordPolicy.expiryDays}
                           onChange={(e) => setPasswordPolicy((p) => ({ ...p, expiryDays: Number(e.target.value) }))}
                           min={30}
-                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                          style={{ ...inputStyle, padding: "10px 12px" }}
                         />
                       </div>
                     </div>
                     {(["requireUppercase", "requireLowercase", "requireNumber", "requireSpecial"] as const).map((rule, i) => (
-                      <label key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#f8fafc] cursor-pointer">
+                      <label
+                        key={i}
+                        style={{ display: "flex", alignItems: "center", gap: "12px", padding: "8px", borderRadius: "8px", cursor: "pointer", transition: "background 0.15s" }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#ffffff"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+                      >
                         <input
                           type="checkbox"
                           checked={passwordPolicy[rule]}
                           onChange={() => setPasswordPolicy((p) => ({ ...p, [rule]: !p[rule] }))}
-                          className="w-4 h-4 rounded bg-[#f8fafc] border-[#e2e8f0] text-[var(--primary)] focus:ring-[var(--primary)]"
+                          style={{ width: "16px", height: "16px", accentColor: "#0055ff" }}
                         />
-                        <span className="text-[#475569] text-[12px]">
+                        <span style={{ fontSize: "12px", color: "#475569" }}>
                           {["Require uppercase letter", "Require lowercase letter", "Require number", "Require special character"][i]}
                         </span>
                       </label>
@@ -929,92 +1105,108 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#1a1a2e] text-[13px] font-medium mb-3">Session Management</p>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#475569] text-[12px]">Max login attempts before lockout</span>
+                {/* Session Management */}
+                <div style={{ padding: "20px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #f1f5f9" }}>
+                  <p style={{ margin: "0 0 14px", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>Session Management</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: "12px", color: "#475569" }}>Max login attempts before lockout</span>
                       <input
                         type="number"
                         value={sessionPolicy.maxAttempts}
                         onChange={(e) => setSessionPolicy((p) => ({ ...p, maxAttempts: Number(e.target.value) }))}
                         min={3}
-                        className="w-20 px-3 py-1.5 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] text-right focus:outline-none focus:border-[var(--primary)]"
+                        style={{ width: "80px", padding: "8px 12px", borderRadius: "8px", border: "2px solid #e5e7eb", background: "#ffffff", fontSize: "13px", color: "#0f172a", textAlign: "right" as const, outline: "none" }}
                       />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#475569] text-[12px]">Session timeout (minutes)</span>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: "12px", color: "#475569" }}>Session timeout (minutes)</span>
                       <input
                         type="number"
                         value={sessionPolicy.timeoutMinutes}
                         onChange={(e) => setSessionPolicy((p) => ({ ...p, timeoutMinutes: Number(e.target.value) }))}
                         min={15}
-                        className="w-20 px-3 py-1.5 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] text-right focus:outline-none focus:border-[var(--primary)]"
+                        style={{ width: "80px", padding: "8px 12px", borderRadius: "8px", border: "2px solid #e5e7eb", background: "#ffffff", fontSize: "13px", color: "#0f172a", textAlign: "right" as const, outline: "none" }}
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#1a1a2e] text-[13px] font-medium mb-3">Change Password</p>
-                  <div className="space-y-3">
+                {/* Change Password */}
+                <div style={{ padding: "20px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #f1f5f9" }}>
+                  <p style={{ margin: "0 0 14px", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>Change Password</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     <div>
-                      <label className="text-[#475569] text-[11px] mb-1 block">Current Password</label>
+                      <label style={smallLabelStyle}>Current Password</label>
                       <input
                         type="password"
                         value={passwords.currentPassword}
                         onChange={(e) => setPasswords((p) => ({ ...p, currentPassword: e.target.value }))}
                         placeholder="Enter current password"
-                        className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder:text-[#94a3b8] focus:outline-none focus:border-[var(--primary)]"
+                        style={{ ...inputStyle, padding: "10px 12px", colorScheme: "light" }}
                       />
                     </div>
-                    <div className="grid sm:grid-cols-2 gap-4">
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                       <div>
-                        <label className="text-[#475569] text-[11px] mb-1 block">New Password</label>
+                        <label style={smallLabelStyle}>New Password</label>
                         <input
                           type="password"
                           value={passwords.newPassword}
                           onChange={(e) => setPasswords((p) => ({ ...p, newPassword: e.target.value }))}
                           placeholder="Enter new password"
-                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder:text-[#94a3b8] focus:outline-none focus:border-[var(--primary)]"
+                          style={{ ...inputStyle, padding: "10px 12px", colorScheme: "light" }}
                         />
                       </div>
                       <div>
-                        <label className="text-[#475569] text-[11px] mb-1 block">Confirm New Password</label>
+                        <label style={smallLabelStyle}>Confirm New Password</label>
                         <input
                           type="password"
                           value={passwords.confirmPassword}
                           onChange={(e) => setPasswords((p) => ({ ...p, confirmPassword: e.target.value }))}
                           placeholder="Confirm new password"
-                          className="w-full px-3 py-2 rounded-lg bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] placeholder:text-[#94a3b8] focus:outline-none focus:border-[var(--primary)]"
+                          style={{ ...inputStyle, padding: "10px 12px", colorScheme: "light" }}
                         />
                       </div>
                     </div>
                     <button
                       onClick={handleChangePassword}
                       disabled={changingPassword}
-                      className="btn btn-primary disabled:opacity-50"
+                      style={{
+                        ...btnPrimaryStyle,
+                        opacity: changingPassword ? 0.7 : 1,
+                        alignSelf: "flex-start",
+                      }}
                     >
-                      {changingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
+                      {changingPassword ? <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} /> : <Shield style={{ width: "14px", height: "14px" }} />}
                       {changingPassword ? "Changing..." : "Change Password"}
                     </button>
                   </div>
                 </div>
 
-                <div className="flex justify-end">
-                  <button
-                    onClick={handleSavePasswordPolicy}
-                    className="btn btn-primary"
-                  >
-                    <Save className="w-4 h-4" />
+                {/* Save Security */}
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <button onClick={handleSavePasswordPolicy} style={btnPrimaryStyle}>
+                    <Save style={{ width: "14px", height: "14px" }} />
                     Save Security Settings
                   </button>
                 </div>
               </div>
             </>
           )}
-        </motion.div>
+        </div>
       </div>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}>
+        <Loader2 style={{ width: "32px", height: "32px", color: "#64748b", animation: "spin 1s linear infinite" }} />
+      </div>
+    }>
+      <SettingsPageInner />
+    </Suspense>
   );
 }

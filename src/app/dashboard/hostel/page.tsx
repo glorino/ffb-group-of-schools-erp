@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import {
   Building,
   Users,
@@ -46,6 +45,15 @@ interface HostelStats {
   allocations: number;
 }
 
+const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 16px", borderRadius: "12px", backgroundColor: "#ffffff", border: "1px solid #e2e8f0", color: "#1a1a2e", fontSize: "13px", outline: "none" };
+const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#0055ff"; };
+const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; };
+const labelStyle: React.CSSProperties = { color: "#475569", fontSize: "13px", marginBottom: "6px", display: "block" };
+const btnStyle = (bg: string, disabled?: boolean): React.CSSProperties => ({ padding: "8px 16px", borderRadius: "12px", backgroundColor: bg, color: "#ffffff", fontSize: "13px", fontWeight: 500, border: "none", cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1, display: "inline-flex", alignItems: "center", gap: "6px" });
+const modalOverlay: React.CSSProperties = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" };
+const cardStyle: React.CSSProperties = { background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "24px" };
+const cardHover = (enter: boolean) => ({ boxShadow: enter ? "0 4px 16px rgba(0,0,0,0.08)" : "0 1px 3px rgba(0,0,0,0.04)" });
+
 export default function HostelPage() {
   const [hostels, setHostels] = useState<Hostel[]>([]);
   const [stats, setStats] = useState<HostelStats>({ totalHostels: 0, totalRooms: 0, totalBeds: 0, occupiedBeds: 0, allocations: 0 });
@@ -59,6 +67,8 @@ export default function HostelPage() {
   const [editForm, setEditForm] = useState({ name: "", type: "Boys", capacity: "" });
   const [showQRScanner, setShowQRScanner] = useState(false);
   const [qrAdmission, setQrAdmission] = useState("");
+  const [roomsPage, setRoomsPage] = useState(1);
+  const ROOMS_PER_PAGE = 20;
 
   useEffect(() => {
     fetchData();
@@ -112,11 +122,14 @@ export default function HostelPage() {
     b.type.toLowerCase().includes(search.toLowerCase())
   );
 
+  const totalRoomsPages = Math.max(1, Math.ceil(allRooms.length / ROOMS_PER_PAGE));
+  const paginatedRooms = allRooms.slice((roomsPage - 1) * ROOMS_PER_PAGE, roomsPage * ROOMS_PER_PAGE);
+
   const statCards = [
-    { label: "Total Beds", value: stats.totalBeds, icon: Bed, color: "from-blue-500 to-blue-600" },
-    { label: "Occupied", value: stats.occupiedBeds, icon: Users, color: "from-emerald-500 to-emerald-600" },
-    { label: "Available", value: stats.totalBeds - stats.occupiedBeds, icon: CheckCircle, color: "from-purple-500 to-purple-600" },
-    { label: "Occupancy Rate", value: stats.totalBeds ? `${Math.round((stats.occupiedBeds / stats.totalBeds) * 100)}%` : "0%", icon: Building, color: "from-[var(--accent)] to-emerald-400" },
+    { label: "Total Beds", value: stats.totalBeds, icon: Bed, bg: "linear-gradient(135deg, #0055ff, #0033cc)" },
+    { label: "Occupied", value: stats.occupiedBeds, icon: Users, bg: "linear-gradient(135deg, #10b981, #059669)" },
+    { label: "Available", value: stats.totalBeds - stats.occupiedBeds, icon: CheckCircle, bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
+    { label: "Occupancy Rate", value: stats.totalBeds ? `${Math.round((stats.occupiedBeds / stats.totalBeds) * 100)}%` : "0%", icon: Building, bg: "linear-gradient(135deg, #0055ff, #10b981)" },
   ];
 
   const handleExport = () => {
@@ -136,411 +149,349 @@ export default function HostelPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--primary)]" />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "400px" }}>
+        <Loader2 style={{ width: "32px", height: "32px", color: "#0055ff", animation: "spin 1s linear infinite" }} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div style={{ padding: "24px 32px", minHeight: "100vh", background: "#f8fafc" }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "20px", padding: "28px 32px", marginBottom: "28px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.12) 0%, transparent 60%), radial-gradient(circle at 10% 80%, rgba(255,255,255,0.08) 0%, transparent 50%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Hostel Management</h1>
-            <p className="text-[#475569] text-[13px]">
-              Manage blocks, rooms, beds, allocation, and QR attendance
-            </p>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff" }}>Hostel Management</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Manage blocks, rooms, beds, allocation, and QR attendance</p>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleExport}
-              className="btn btn-secondary"
-            >
-              <Download className="w-4 h-4" />
-              Export
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+            <button onClick={handleExport} style={btnStyle("#475569")}>
+              <Download style={{ width: "14px", height: "14px" }} /> Export
             </button>
-            <button
-              onClick={() => setShowQRScanner(true)}
-              className="btn btn-secondary"
-            >
-              <QrCode className="w-4 h-4" />
-              QR Attendance
+            <button onClick={() => setShowQRScanner(true)} style={btnStyle("#475569")}>
+              <QrCode style={{ width: "14px", height: "14px" }} /> QR Attendance
             </button>
-            <button
-              onClick={() => setShowModal(true)}
-              className="btn btn-primary"
-            >
-              <Plus className="w-4 h-4" />
-              Add Block
+            <button onClick={() => setShowModal(true)} style={btnStyle("#0055ff")}>
+              <Plus style={{ width: "14px", height: "14px" }} /> Add Block
             </button>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" }}>
         {statCards.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
-              </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
-              </div>
+          <div key={i} style={{ ...cardStyle, display: "flex", alignItems: "center", justifyContent: "space-between", transition: "box-shadow 0.15s" }} onMouseEnter={(e) => { Object.assign(e.currentTarget.style, cardHover(true)); }} onMouseLeave={(e) => { Object.assign(e.currentTarget.style, cardHover(false)); }}>
+            <div>
+              <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, color: "#64748b" }}>{stat.label}</p>
+              <p style={{ margin: "6px 0 0", fontSize: "28px", fontWeight: 800, color: "#0f172a" }}>{stat.value}</p>
             </div>
-          </motion.div>
+            <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: stat.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <stat.icon style={{ width: "22px", height: "22px", color: "#ffffff" }} />
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 card"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg">Hostel Blocks</h3>
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-              <input
-                type="text"
-                placeholder="Search blocks..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-              />
+      {/* Main Content */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "24px" }}>
+        {/* Blocks Grid */}
+        <div style={{ ...cardStyle }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Hostel Blocks</h3>
+            <div style={{ position: "relative" }}>
+              <Search style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", width: "14px", height: "14px", color: "#94a3b8" }} />
+              <input type="text" placeholder="Search blocks..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ ...inputStyle, paddingLeft: "38px", padding: "10px 14px 10px 38px", width: "220px" }} onFocus={inputFocus} onBlur={inputBlur} />
             </div>
           </div>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             {filteredBlocks.map((block) => {
               const occupied = block.rooms.reduce((acc, r) => acc + r.beds.length, 0);
               const totalRoomBeds = block.rooms.reduce((acc, r) => acc + r.capacity, 0);
+              const pct = totalRoomBeds ? (occupied / totalRoomBeds) * 100 : block.capacity ? (occupied / block.capacity) * 100 : 0;
               return (
-                <div key={block.id} className="p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all">
-                  <div className="flex items-center justify-between mb-3">
+                <div key={block.id} style={{ padding: "16px", borderRadius: "14px", background: "#f8fafc", border: "1px solid transparent", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.borderColor = "#e2e8f0"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.borderColor = "transparent"; }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
                     <div>
-                      <h4 className="text-[#1a1a2e] font-medium text-[13px]">{block.name}</h4>
-                      <p className="text-[#64748b] text-[12px]">{block.type} • {block.rooms.length} rooms</p>
+                      <h4 style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{block.name}</h4>
+                      <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#64748b" }}>{block.type} &bull; {block.rooms.length} rooms</p>
                     </div>
-                    <span className="px-2 py-1 rounded-lg bg-[#dcfce7] text-[#16a34a] text-[12px]">active</span>
+                    <span style={{ padding: "3px 10px", borderRadius: "8px", background: "#dcfce7", color: "#16a34a", fontSize: "11px", fontWeight: 600 }}>active</span>
                   </div>
-                  <div className="mb-3">
-                    <div className="flex items-center justify-between text-[13px] mb-1">
-                      <span className="text-[#475569]">Occupancy</span>
-                      <span className="text-[#64748b]">{occupied}/{totalRoomBeds || block.capacity}</span>
+                  <div style={{ marginBottom: "12px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "13px", marginBottom: "6px" }}>
+                      <span style={{ color: "#475569" }}>Occupancy</span>
+                      <span style={{ color: "#64748b" }}>{occupied}/{totalRoomBeds || block.capacity}</span>
                     </div>
-                    <div className="w-full bg-[#f1f5f9] rounded-full h-2">
-                      <div
-                        className="bg-[var(--accent)] h-2 rounded-full"
-                        style={{ width: `${totalRoomBeds ? (occupied / totalRoomBeds) * 100 : block.capacity ? (occupied / block.capacity) * 100 : 0}%` }}
-                      />
+                    <div style={{ width: "100%", height: "8px", borderRadius: "4px", background: "#e2e8f0", overflow: "hidden" }}>
+                      <div style={{ height: "100%", borderRadius: "4px", background: "linear-gradient(90deg, #0055ff, #10b981)", width: `${pct}%`, transition: "width 0.3s" }} />
                     </div>
                   </div>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setViewBlock(block)}
-                      className="flex-1 py-1.5 rounded-lg bg-[#f8fafc] text-[#475569] text-[12px] hover:bg-[#f1f5f9] transition-all"
-                    >
-                      <Eye className="w-3 h-3 inline mr-1" />
-                      View
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <button onClick={() => setViewBlock(block)} style={{ flex: 1, padding: "6px 12px", borderRadius: "10px", background: "#ffffff", border: "1px solid #e2e8f0", color: "#475569", fontSize: "12px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; }}>
+                      <Eye style={{ width: "12px", height: "12px" }} /> View
                     </button>
-                    <button
-                      onClick={() => {
-                        setEditBlock(block);
-                        setEditForm({ name: block.name, type: block.type, capacity: String(block.capacity) });
-                      }}
-                      className="flex-1 py-1.5 rounded-lg bg-[#f8fafc] text-[#475569] text-[12px] hover:bg-[#f1f5f9] transition-all"
-                    >
-                      <Edit className="w-3 h-3 inline mr-1" />
-                      Edit
+                    <button onClick={() => { setEditBlock(block); setEditForm({ name: block.name, type: block.type, capacity: String(block.capacity) }); }} style={{ flex: 1, padding: "6px 12px", borderRadius: "10px", background: "#ffffff", border: "1px solid #e2e8f0", color: "#475569", fontSize: "12px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; }}>
+                      <Edit style={{ width: "12px", height: "12px" }} /> Edit
                     </button>
                   </div>
                 </div>
               );
             })}
             {filteredBlocks.length === 0 && (
-              <div className="col-span-2 text-center py-8 text-[#64748b] text-[13px]">No hostel blocks found</div>
+              <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 16px", color: "#94a3b8", fontSize: "13px" }}>No hostel blocks found</div>
             )}
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="space-y-6"
-        >
-          <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Room Status</h3>
-            <div className="space-y-3">
-              {allRooms.slice(0, 6).map((room) => (
-                <div key={room.id} className="p-3 rounded-xl bg-[#f8fafc]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[#1a1a2e] text-[13px] font-medium">{room.blockName} - Room {room.number}</span>
-                    <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                      room.status === "full" ? "bg-[#fee2e2] text-[#dc2626]" : "bg-[#dcfce7] text-[#16a34a]"
-                    }`}>
+        {/* Sidebar */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          {/* Room Status */}
+          <div style={{ ...cardStyle }}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Room Status</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {paginatedRooms.map((room) => (
+                <div key={room.id} style={{ padding: "12px", borderRadius: "12px", background: "#f8fafc" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+                    <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{room.blockName} - Room {room.number}</span>
+                    <span style={{ padding: "3px 10px", borderRadius: "8px", fontSize: "11px", fontWeight: 600, background: room.status === "full" ? "#fef2f2" : "#dcfce7", color: room.status === "full" ? "#dc2626" : "#16a34a" }}>
                       {room.status}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-[12px]">
-                    <span className="text-[#64748b]">{room.beds.length}/{room.capacity} beds</span>
-                    <span className="text-[#94a3b8]">{room.capacity - room.beds.length} available</span>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "12px" }}>
+                    <span style={{ color: "#64748b" }}>{room.beds.length}/{room.capacity} beds</span>
+                    <span style={{ color: "#94a3b8" }}>{room.capacity - room.beds.length} available</span>
                   </div>
                 </div>
               ))}
               {allRooms.length === 0 && (
-                <p className="text-center py-4 text-[#64748b] text-[13px]">No rooms yet</p>
+                <p style={{ textAlign: "center", padding: "16px", color: "#94a3b8", fontSize: "13px", margin: 0 }}>No rooms yet</p>
               )}
             </div>
+            {allRooms.length > ROOMS_PER_PAGE && (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "14px", paddingTop: "14px", borderTop: "1px solid #f1f5f9" }}>
+                <span style={{ fontSize: "12px", color: "#94a3b8" }}>
+                  {(roomsPage - 1) * ROOMS_PER_PAGE + 1}-{Math.min(roomsPage * ROOMS_PER_PAGE, allRooms.length)} of {allRooms.length}
+                </span>
+                <div style={{ display: "flex", gap: "4px" }}>
+                  <button disabled={roomsPage === 1} onClick={() => setRoomsPage((p) => p - 1)} style={{ padding: "4px 10px", borderRadius: "8px", border: "1px solid #e2e8f0", background: "#ffffff", color: roomsPage === 1 ? "#cbd5e1" : "#475569", fontSize: "12px", cursor: roomsPage === 1 ? "not-allowed" : "pointer" }}>
+                    Prev
+                  </button>
+                  <span style={{ padding: "4px 10px", fontSize: "12px", color: "#64748b" }}>{roomsPage}/{totalRoomsPages}</span>
+                  <button disabled={roomsPage === totalRoomsPages} onClick={() => setRoomsPage((p) => p + 1)} style={{ padding: "4px 10px", borderRadius: "8px", border: "1px solid #e2e8f0", background: "#ffffff", color: roomsPage === totalRoomsPages ? "#cbd5e1" : "#475569", fontSize: "12px", cursor: roomsPage === totalRoomsPages ? "not-allowed" : "pointer" }}>
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Facilities</h3>
-            <div className="grid grid-cols-2 gap-3">
+          {/* Facilities */}
+          <div style={{ ...cardStyle }}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Facilities</h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
               {[
                 { icon: Wifi, label: "WiFi", status: "Active" },
                 { icon: Thermometer, label: "AC", status: "Active" },
                 { icon: AlertCircle, label: "Security", status: "Active" },
                 { icon: Building, label: "Water", status: "Active" },
               ].map((facility, i) => (
-                <div key={i} className="p-3 rounded-xl bg-[#f8fafc] flex items-center gap-2">
-                  <facility.icon className="w-4 h-4 text-[var(--accent)]" />
+                <div key={i} style={{ padding: "12px", borderRadius: "12px", background: "#f8fafc", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <facility.icon style={{ width: "16px", height: "16px", color: "#0055ff", flexShrink: 0 }} />
                   <div>
-                    <p className="text-[#1a1a2e] text-[13px] font-medium">{facility.label}</p>
-                    <p className="text-[#64748b] text-[12px]">{facility.status}</p>
+                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{facility.label}</p>
+                    <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#64748b" }}>{facility.status}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
+      {/* Add Block Modal */}
       {showModal && (
-        <div className="modal-overlay bg-black/60 backdrop-blur-sm">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="modal-content"
-          >
-            <div className="modal-header">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Hostel Block</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
-              </button>
+        <div style={modalOverlay} onClick={() => setShowModal(false)}>
+          <div style={{ background: "#ffffff", borderRadius: "24px", width: "100%", maxWidth: "480px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 25px 80px rgba(0,0,0,0.25)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "24px 24px 0 0", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>Add Hostel Block</h2>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>Create a new hostel block</p>
+                </div>
+                <button onClick={() => setShowModal(false)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <X style={{ width: "18px", height: "18px" }} />
+                </button>
+              </div>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} style={{ padding: "24px 28px 28px", display: "flex", flexDirection: "column", gap: "18px" }}>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Block Name</label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                  placeholder="e.g. Block E"
-                />
+                <label style={labelStyle}>Block Name</label>
+                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} placeholder="e.g. Block E" onFocus={inputFocus} onBlur={inputBlur} />
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Type</label>
-                <select
-                  value={form.type}
-                  onChange={(e) => setForm({ ...form, type: e.target.value })}
-                  style={{ colorScheme: "light" }}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                >
+                <label style={labelStyle}>Type</label>
+                <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Boys</option>
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Girls</option>
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Staff</option>
                 </select>
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Capacity</label>
-                <input
-                  type="number"
-                  value={form.capacity}
-                  onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                  placeholder="e.g. 80"
-                />
+                <label style={labelStyle}>Capacity</label>
+                <input type="number" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} style={inputStyle} placeholder="e.g. 80" onFocus={inputFocus} onBlur={inputBlur} />
               </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 btn btn-secondary"
-                >
+              <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
+                <button type="button" onClick={() => setShowModal(false)} style={{ ...btnStyle("#e2e8f0"), flex: 1, color: "#475569" }}>
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 btn btn-primary"
-                >
-                  {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Create Block"}
+                <button type="submit" disabled={submitting} style={{ ...btnStyle("#0055ff"), flex: 1 }}>
+                  {submitting ? <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} /> : "Create Block"}
                 </button>
               </div>
             </form>
-          </motion.div>
+          </div>
         </div>
       )}
 
+      {/* View Block Modal */}
       {viewBlock && (
-        <div className="modal-overlay">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg rounded-2xl bg-white border border-[#e2e8f0] p-6"
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewBlock.name} — Rooms</h2>
-              <button onClick={() => setViewBlock(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
-              </button>
+        <div style={modalOverlay} onClick={() => setViewBlock(null)}>
+          <div style={{ background: "#ffffff", borderRadius: "24px", width: "100%", maxWidth: "520px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 25px 80px rgba(0,0,0,0.25)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "24px 24px 0 0", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>{viewBlock.name} &mdash; Rooms</h2>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>{viewBlock.rooms.length} rooms in this block</p>
+                </div>
+                <button onClick={() => setViewBlock(null)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <X style={{ width: "18px", height: "18px" }} />
+                </button>
+              </div>
             </div>
-            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+            <div style={{ padding: "20px 28px 28px", display: "flex", flexDirection: "column", gap: "10px", maxHeight: "400px", overflowY: "auto" }}>
               {viewBlock.rooms.length === 0 && (
-                <p className="text-[#64748b] text-[13px] text-center py-4">No rooms in this block</p>
+                <p style={{ color: "#94a3b8", fontSize: "13px", textAlign: "center", padding: "16px", margin: 0 }}>No rooms in this block</p>
               )}
               {viewBlock.rooms.map((room) => (
-                <div key={room.id} className="p-3 rounded-xl bg-[#f8fafc]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[#1a1a2e] text-[13px] font-medium">Room {room.number}</span>
-                    <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                      room.status === "full" ? "bg-[#fee2e2] text-[#dc2626]" : "bg-[#dcfce7] text-[#16a34a]"
-                    }`}>
+                <div key={room.id} style={{ padding: "12px", borderRadius: "12px", background: "#f8fafc" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+                    <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>Room {room.number}</span>
+                    <span style={{ padding: "3px 10px", borderRadius: "8px", fontSize: "11px", fontWeight: 600, background: room.status === "full" ? "#fef2f2" : "#dcfce7", color: room.status === "full" ? "#dc2626" : "#16a34a" }}>
                       {room.status}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-[12px]">
-                    <span className="text-[#64748b]">Beds: {room.beds.length}/{room.capacity}</span>
-                    <span className="text-[#94a3b8]">{room.capacity - room.beds.length} available</span>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "12px" }}>
+                    <span style={{ color: "#64748b" }}>Beds: {room.beds.length}/{room.capacity}</span>
+                    <span style={{ color: "#94a3b8" }}>{room.capacity - room.beds.length} available</span>
                   </div>
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
 
+      {/* Edit Block Modal */}
       {editBlock && (
-        <div className="modal-overlay bg-black/60 backdrop-blur-sm">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="modal-content"
-          >
-            <div className="modal-header">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">Edit {editBlock.name}</h2>
-              <button onClick={() => setEditBlock(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
-              </button>
+        <div style={modalOverlay} onClick={() => setEditBlock(null)}>
+          <div style={{ background: "#ffffff", borderRadius: "24px", width: "100%", maxWidth: "480px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 25px 80px rgba(0,0,0,0.25)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "24px 24px 0 0", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>Edit {editBlock.name}</h2>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>Update block details</p>
+                </div>
+                <button onClick={() => setEditBlock(null)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <X style={{ width: "18px", height: "18px" }} />
+                </button>
+              </div>
             </div>
-            <div className="space-y-4">
+            <div style={{ padding: "24px 28px 28px", display: "flex", flexDirection: "column", gap: "18px" }}>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Block Name</label>
-                <input
-                  type="text"
-                  value={editForm.name}
-                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
+                <label style={labelStyle}>Block Name</label>
+                <input type="text" value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Type</label>
-                <select
-                  value={editForm.type}
-                  onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
-                  style={{ colorScheme: "light" }}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                >
+                <label style={labelStyle}>Type</label>
+                <select value={editForm.type} onChange={(e) => setEditForm({ ...editForm, type: e.target.value })} style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Boys</option>
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Girls</option>
                   <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Staff</option>
                 </select>
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Capacity</label>
-                <input
-                  type="number"
-                  value={editForm.capacity}
-                  onChange={(e) => setEditForm({ ...editForm, capacity: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
+                <label style={labelStyle}>Capacity</label>
+                <input type="number" value={editForm.capacity} onChange={(e) => setEditForm({ ...editForm, capacity: e.target.value })} style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
               </div>
-              <div className="modal-footer">
-                <button
-                  onClick={() => setEditBlock(null)}
-                  className="flex-1 btn btn-secondary"
-                >
+              <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
+                <button onClick={() => setEditBlock(null)} style={{ ...btnStyle("#e2e8f0"), flex: 1, color: "#475569" }}>
                   Cancel
                 </button>
-                <button
-                  onClick={async () => {
-                    if (!editBlock) return;
-                    try {
-                      const res = await fetch("/api/hostel", {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ id: editBlock.id, ...editForm, capacity: Number(editForm.capacity) }),
-                      });
-                      if (!res.ok) throw new Error("Failed");
-                      toast.success("Hostel updated");
-                      setEditBlock(null);
-                      fetchData();
-                    } catch { toast.error("Failed to update"); }
-                  }}
-                  className="flex-1 btn btn-primary"
-                >
+                <button onClick={async () => {
+                  if (!editBlock) return;
+                  try {
+                    const res = await fetch("/api/hostel", {
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ id: editBlock.id, ...editForm, capacity: Number(editForm.capacity) }),
+                    });
+                    if (!res.ok) throw new Error("Failed");
+                    toast.success("Hostel updated");
+                    setEditBlock(null);
+                    fetchData();
+                  } catch { toast.error("Failed to update"); }
+                }} style={{ ...btnStyle("#0055ff"), flex: 1 }}>
                   Save Changes
                 </button>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
 
+      {/* QR Scanner Modal */}
       {showQRScanner && (
-        <div className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowQRScanner(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            onClick={(e) => e.stopPropagation()}
-            className="modal-content">
-            <div className="modal-header">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">QR Attendance</h2>
-              <button onClick={() => setShowQRScanner(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
+        <div style={modalOverlay} onClick={() => setShowQRScanner(false)}>
+          <div style={{ background: "#ffffff", borderRadius: "24px", width: "100%", maxWidth: "440px", boxShadow: "0 25px 80px rgba(0,0,0,0.25)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "24px 24px 0 0", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>QR Attendance</h2>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>Check in student to hostel</p>
+                </div>
+                <button onClick={() => setShowQRScanner(false)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <X style={{ width: "18px", height: "18px" }} />
+                </button>
+              </div>
             </div>
-            <p className="text-[#475569] text-[13px] mb-4">Scan or type the student admission number to check in to the hostel.</p>
-            <input
-              type="text"
-              autoFocus
-              value={qrAdmission}
-              onChange={(e) => setQrAdmission(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && qrAdmission.trim()) {
-                  toast.success(`Student ${qrAdmission} checked into hostel`);
-                  setQrAdmission("");
-                  setShowQRScanner(false);
-                }
-              }}
-              placeholder="Scan or type admission number..."
-              className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-            />
-            <p className="text-[#94a3b8] text-[12px] mt-2">Press Enter to submit</p>
-          </motion.div>
+            <div style={{ padding: "24px 28px 28px", display: "flex", flexDirection: "column", gap: "14px" }}>
+              <p style={{ margin: 0, color: "#475569", fontSize: "13px" }}>Scan or type the student admission number to check in to the hostel.</p>
+              <input
+                type="text"
+                autoFocus
+                value={qrAdmission}
+                onChange={(e) => setQrAdmission(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && qrAdmission.trim()) {
+                    toast.success(`Student ${qrAdmission} checked into hostel`);
+                    setQrAdmission("");
+                    setShowQRScanner(false);
+                  }
+                }}
+                placeholder="Scan or type admission number..."
+                style={inputStyle}
+                onFocus={inputFocus}
+                onBlur={inputBlur}
+              />
+              <p style={{ margin: 0, color: "#94a3b8", fontSize: "12px" }}>Press Enter to submit</p>
+            </div>
+          </div>
         </div>
       )}
     </div>

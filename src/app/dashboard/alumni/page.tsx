@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { motion } from "framer-motion";
 import {
   Users,
   Heart,
@@ -18,12 +17,22 @@ import {
   Calendar,
   Loader2,
   X,
-  School,
-  BookOpen,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
 import { formatCurrency, formatCurrencyCompact } from "@/lib/school-config";
+
+const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 16px", borderRadius: "12px", backgroundColor: "#ffffff", border: "1px solid #e2e8f0", color: "#1a1a2e", fontSize: "13px", outline: "none" };
+const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => { e.currentTarget.style.borderColor = "#0055ff"; };
+const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; };
+const labelStyle: React.CSSProperties = { color: "#475569", fontSize: "13px", marginBottom: "6px", display: "block" };
+const btnStyle = (bg: string, disabled?: boolean): React.CSSProperties => ({ padding: "8px 16px", borderRadius: "12px", backgroundColor: bg, color: "#ffffff", fontSize: "13px", fontWeight: 500, border: "none", cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1, display: "inline-flex", alignItems: "center", gap: "6px" });
+const cardStyle: React.CSSProperties = { background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" };
+const modalOverlay: React.CSSProperties = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" };
+const modalCard: React.CSSProperties = { background: "#ffffff", borderRadius: "20px", width: "100%", maxWidth: "500px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 25px 80px rgba(0,0,0,0.25)" };
+const ROWS_PER_PAGE = 20;
 
 interface AlumniRecord {
   id: string;
@@ -67,6 +76,7 @@ export default function AlumniPage() {
   const [showFilter, setShowFilter] = useState(false);
   const [filterCategory, setFilterCategory] = useState("all");
   const [messageModal, setMessageModal] = useState<{ alumni: AlumniRecord; subject: string; body: string } | null>(null);
+  const [page, setPage] = useState(1);
 
   const fetchAlumni = useCallback(async () => {
     try {
@@ -107,11 +117,27 @@ export default function AlumniPage() {
     0
   );
 
+  const filteredAlumni = alumni.filter((person) => {
+    if (filterCategory === "all") return true;
+    if (filterCategory === "mentoring") return person.mentorships.length > 0;
+    if (filterCategory === "donating") return person.donations.length > 0;
+    if (filterCategory === "recent") return person.graduationYear >= new Date().getFullYear() - 5;
+    return true;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filteredAlumni.length / ROWS_PER_PAGE));
+  const safePage = Math.max(1, Math.min(page, totalPages));
+  const paginatedAlumni = filteredAlumni.slice((safePage - 1) * ROWS_PER_PAGE, safePage * ROWS_PER_PAGE);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filterCategory, search]);
+
   const stats = [
-    { label: "Total Alumni", value: alumni.length.toLocaleString(), icon: Users, color: "from-blue-500 to-blue-600" },
-    { label: "Active Members", value: alumni.length.toLocaleString(), icon: Star, color: "from-emerald-500 to-emerald-600" },
-    { label: "Total Donations", value: formatCurrencyCompact(totalDonations), icon: DollarSign, color: "from-purple-500 to-purple-600" },
-    { label: "Mentorship Pairs", value: totalMentorships.toString(), icon: Handshake, color: "from-[var(--accent)] to-emerald-400" },
+    { label: "Total Alumni", value: alumni.length.toLocaleString(), icon: Users, gradient: "linear-gradient(135deg, #3b82f6, #2563eb)" },
+    { label: "Active Members", value: alumni.length.toLocaleString(), icon: Star, gradient: "linear-gradient(135deg, #10b981, #059669)" },
+    { label: "Total Donations", value: formatCurrencyCompact(totalDonations), icon: DollarSign, gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
+    { label: "Mentorship Pairs", value: totalMentorships.toString(), icon: Handshake, gradient: "linear-gradient(135deg, #0055ff, #10b981)" },
   ];
 
   const handleAddAlumni = async () => {
@@ -164,94 +190,83 @@ export default function AlumniPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mt-8 mx-4 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 p-8 shadow-sm"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+      {/* Gradient Header */}
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "16px", padding: "32px", margin: "32px 16px 0", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-50%", right: "-20%", width: "300px", height: "300px", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", bottom: "-30%", left: "-10%", width: "200px", height: "200px", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Alumni Portal</h1>
-            <p className="text-[#475569] text-[13px]">
-              Connect with alumni, manage networking, donations, and mentorship
-            </p>
+            <h1 style={{ color: "#ffffff", fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Alumni Portal</h1>
+            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>Connect with alumni, manage networking, donations, and mentorship</p>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleExport}
-              className="btn btn-secondary"
-            >
+          <div style={{ display: "flex", gap: "12px" }}>
+            <button onClick={handleExport} style={btnStyle("#ffffff")}>
+              <Download style={{ width: "16px", height: "16px" }} />
               Export CSV
             </button>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="btn btn-primary"
-            >
-              <Plus className="w-4 h-4" />
+            <button onClick={() => setShowAddModal(true)} style={btnStyle("#10b981")}>
+              <Plus style={{ width: "16px", height: "16px" }} />
               Add Alumni
             </button>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "16px", padding: "0 16px" }}>
         {stats.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5 shadow-sm"
-          >
-            <div className="flex items-start justify-between">
+          <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
               <div>
-                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
+                <p style={{ color: "#64748b", fontSize: "12px", marginBottom: "4px" }}>{stat.label}</p>
+                <p style={{ color: "#1a1a2e", fontSize: "28px", fontWeight: 700, margin: 0 }}>{stat.value}</p>
               </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+              <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: stat.gradient, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <stat.icon style={{ width: "24px", height: "24px", color: "#ffffff" }} />
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-6 shadow-sm"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg">Alumni Directory</h3>
-          <div className="flex gap-3 flex-wrap">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+      {/* Main Content Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "24px", padding: "0 16px" }}>
+        {/* Alumni Directory */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+            <h3 style={{ color: "#1a1a2e", fontWeight: 600, fontSize: "18px", margin: 0 }}>Alumni Directory</h3>
+            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", position: "relative" }}>
+              <div style={{ position: "relative" }}>
+                <Search style={{ width: "16px", height: "16px", position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
                 <input
                   type="text"
                   placeholder="Search alumni..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={{ ...inputStyle, paddingLeft: "36px", width: "200px" }}
+                  onFocus={inputFocus}
+                  onBlur={inputBlur}
                 />
               </div>
-              <div className="relative">
+              <div style={{ position: "relative" }}>
                 <button
                   onClick={() => setShowFilter(!showFilter)}
-                  className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]"
+                  style={{ padding: "10px 12px", borderRadius: "12px", backgroundColor: "#f8fafc", border: "1px solid #e2e8f0", color: "#475569", cursor: "pointer" }}
                 >
-                  <Filter className="w-4 h-4" />
+                  <Filter style={{ width: "16px", height: "16px" }} />
                 </button>
                 {showFilter && (
-                  <div className="absolute right-0 top-full mt-2 z-40 w-48 rounded-xl bg-white border border-[#e2e8f0] shadow-2xl p-1">
+                  <div style={{ position: "absolute", right: 0, top: "100%", marginTop: "8px", zIndex: 40, width: "192px", borderRadius: "12px", backgroundColor: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0 10px 40px rgba(0,0,0,0.12)", padding: "4px" }}>
                     {["all", "mentoring", "donating", "recent"].map((opt) => (
                       <button
                         key={opt}
                         onClick={() => { setFilterCategory(opt); setShowFilter(false); }}
-                        className={`w-full text-left px-5 py-2.5 rounded-lg text-[13px] capitalize transition-all ${filterCategory === opt ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "text-[#475569] hover:bg-[#f1f5f9]"}`}
+                        style={{
+                          width: "100%", textAlign: "left", padding: "10px 20px", borderRadius: "8px", fontSize: "13px", textTransform: "capitalize", border: "none", cursor: "pointer",
+                          backgroundColor: filterCategory === opt ? "rgba(0,85,255,0.1)" : "transparent",
+                          color: filterCategory === opt ? "#0055ff" : "#475569",
+                        }}
                       >
                         {opt === "all" ? "All" : opt === "recent" ? "Recent Graduates" : opt === "mentoring" ? "Mentoring" : "Donating"}
                       </button>
@@ -261,81 +276,102 @@ export default function AlumniPage() {
               </div>
             </div>
           </div>
+
           {loading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 className="w-6 h-6 text-[#64748b] animate-spin" />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "64px 0" }}>
+              <Loader2 style={{ width: "24px", height: "24px", color: "#64748b", animation: "spin 1s linear infinite" }} />
             </div>
-          ) : alumni.length === 0 ? (
-            <div className="text-center py-16">
-              <Users className="w-10 h-10 text-[#94a3b8] mx-auto mb-3" />
-              <p className="text-[#94a3b8] text-[13px]">No alumni records found</p>
+          ) : filteredAlumni.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "64px 0" }}>
+              <Users style={{ width: "40px", height: "40px", color: "#94a3b8", margin: "0 auto 12px" }} />
+              <p style={{ color: "#94a3b8", fontSize: "13px", margin: 0 }}>No alumni records found</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {alumni.filter((person) => {
-                if (filterCategory === "all") return true;
-                if (filterCategory === "mentoring") return person.mentorships.length > 0;
-                if (filterCategory === "donating") return person.donations.length > 0;
-                if (filterCategory === "recent") return person.graduationYear >= new Date().getFullYear() - 5;
-                return true;
-              }).map((person) => {
-                const name = person.user?.name || "Unknown";
-                const initials = name.split(" ").map((n) => n[0]).join("").slice(0, 2);
-                const totalDonation = person.donations.reduce((s, d) => s + d.amount, 0);
-                return (
-                  <div key={person.id} className="flex items-center gap-4 p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all border border-[#e2e8f0]">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-                      {initials}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[#1a1a2e] text-[13px] font-medium truncate">{name}</p>
-                      <p className="text-[#64748b] text-[12px] truncate">
-                        {person.currentPosition || person.industry || "—"} • Class of {person.graduationYear}
-                      </p>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-[#64748b]" />
-                        <span className="text-[#64748b] text-[12px] truncate max-w-[80px]">{person.university || "—"}</span>
+            <>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {paginatedAlumni.map((person) => {
+                  const name = person.user?.name || "Unknown";
+                  const initials = name.split(" ").map((n) => n[0]).join("").slice(0, 2);
+                  const totalDonation = person.donations.reduce((s, d) => s + d.amount, 0);
+                  return (
+                    <div key={person.id} style={{ display: "flex", alignItems: "center", gap: "16px", padding: "16px", borderRadius: "12px", backgroundColor: "#f8fafc", border: "1px solid #e2e8f0" }}>
+                      <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: "linear-gradient(135deg, #0055ff, #10b981)", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffffff", fontWeight: 600, fontSize: "13px", flexShrink: 0 }}>
+                        {initials}
                       </div>
-                      {totalDonation > 0 && (
-                        <p className="text-[var(--accent)] text-[12px] font-medium">{formatCurrency(totalDonation)}</p>
-                      )}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ color: "#1a1a2e", fontSize: "13px", fontWeight: 500, margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</p>
+                        <p style={{ color: "#64748b", fontSize: "12px", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {person.currentPosition || person.industry || "—"} • Class of {person.graduationYear}
+                        </p>
+                      </div>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "4px", justifyContent: "flex-end" }}>
+                          <MapPin style={{ width: "12px", height: "12px", color: "#64748b" }} />
+                          <span style={{ color: "#64748b", fontSize: "12px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "80px" }}>{person.university || "—"}</span>
+                        </div>
+                        {totalDonation > 0 && (
+                          <p style={{ color: "#10b981", fontSize: "12px", fontWeight: 500, margin: "2px 0 0" }}>{formatCurrency(totalDonation)}</p>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => setMessageModal({ alumni: person, subject: "", body: "" })}
+                        style={{ padding: "8px", borderRadius: "8px", backgroundColor: "transparent", border: "none", color: "#64748b", cursor: "pointer", flexShrink: 0 }}
+                      >
+                        <MessageCircle style={{ width: "16px", height: "16px" }} />
+                      </button>
                     </div>
+                  );
+                })}
+              </div>
+
+              {filteredAlumni.length > ROWS_PER_PAGE && (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "20px", paddingTop: "16px", borderTop: "1px solid #f1f5f9" }}>
+                  <span style={{ fontSize: "12px", color: "#94a3b8" }}>
+                    Showing {(safePage - 1) * ROWS_PER_PAGE + 1}–{Math.min(safePage * ROWS_PER_PAGE, filteredAlumni.length)} of {filteredAlumni.length}
+                  </span>
+                  <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                     <button
-                      onClick={() => setMessageModal({ alumni: person, subject: "", body: "" })}
-                      className="p-2 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] flex-shrink-0"
+                      disabled={safePage <= 1}
+                      onClick={() => setPage(safePage - 1)}
+                      style={{ ...btnStyle(safePage <= 1 ? "#e2e8f0" : "#f8fafc"), color: safePage <= 1 ? "#cbd5e1" : "#475569", border: "1px solid #e2e8f0", padding: "6px 10px", opacity: 1 }}
                     >
-                      <MessageCircle className="w-4 h-4" />
+                      <ChevronLeft style={{ width: "14px", height: "14px" }} />
+                    </button>
+                    <span style={{ padding: "6px 12px", fontSize: "12px", color: "#475569", fontWeight: 500, display: "flex", alignItems: "center" }}>
+                      {safePage} / {totalPages}
+                    </span>
+                    <button
+                      disabled={safePage >= totalPages}
+                      onClick={() => setPage(safePage + 1)}
+                      style={{ ...btnStyle(safePage >= totalPages ? "#e2e8f0" : "#f8fafc"), color: safePage >= totalPages ? "#cbd5e1" : "#475569", border: "1px solid #e2e8f0", padding: "6px 10px", opacity: 1 }}
+                    >
+                      <ChevronRight style={{ width: "14px", height: "14px" }} />
                     </button>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              )}
+            </>
           )}
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="space-y-6"
-        >
-          <div className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-6 shadow-sm">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Upcoming Events</h3>
-            <div className="space-y-3">
+        {/* Sidebar */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          {/* Upcoming Events */}
+          <div style={cardStyle}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#1a1a2e" }}>Upcoming Events</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {events.length === 0 ? (
-                <p className="text-[#94a3b8] text-[13px] text-center py-4">No upcoming events</p>
+                <p style={{ textAlign: "center", padding: "16px 0", color: "#94a3b8", fontSize: "13px", margin: 0 }}>No upcoming events</p>
               ) : (
                 events.slice(0, 5).map((event, i) => (
-                  <div key={event.id || i} className="p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[#1a1a2e] text-[13px] font-medium truncate">{event.title}</span>
-                      <span className="px-2 py-1 rounded-lg bg-[#dbeafe] text-[#2563eb] text-[11px] flex-shrink-0">{event.type}</span>
+                  <div key={event.id || i} style={{ padding: "12px", borderRadius: "12px", backgroundColor: "#f8fafc", border: "1px solid #e2e8f0" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                      <span style={{ color: "#1a1a2e", fontSize: "13px", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: "8px" }}>{event.title}</span>
+                      <span style={{ padding: "4px 8px", borderRadius: "8px", backgroundColor: "#dbeafe", color: "#2563eb", fontSize: "11px", flexShrink: 0 }}>{event.type}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-[12px]">
-                      <Calendar className="w-3 h-3 text-[#94a3b8]" />
-                      <span className="text-[#64748b]">
+                    <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "12px" }}>
+                      <Calendar style={{ width: "12px", height: "12px", color: "#94a3b8" }} />
+                      <span style={{ color: "#64748b" }}>
                         {new Date(event.start).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                       </span>
                     </div>
@@ -345,193 +381,206 @@ export default function AlumniPage() {
             </div>
           </div>
 
-          <div className="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-6 shadow-sm">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Donation Summary</h3>
-            <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">
-              <div className="text-center mb-4">
-                <p className="text-3xl font-bold text-[var(--accent)]">{formatCurrency(totalDonations)}</p>
-                <p className="text-[#64748b] text-[12px]">Total Raised</p>
+          {/* Donation Summary */}
+          <div style={cardStyle}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#1a1a2e" }}>Donation Summary</h3>
+            <div style={{ padding: "16px", borderRadius: "12px", backgroundColor: "#f8fafc", border: "1px solid #e2e8f0" }}>
+              <div style={{ textAlign: "center", marginBottom: "16px" }}>
+                <p style={{ color: "#10b981", fontSize: "28px", fontWeight: 700, margin: 0 }}>{formatCurrency(totalDonations)}</p>
+                <p style={{ color: "#64748b", fontSize: "12px", margin: "4px 0 0" }}>Total Raised</p>
               </div>
-              <div className="space-y-2">
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {[
                   { label: "Building Fund", amount: Math.round(totalDonations * 0.53), percent: 53 },
                   { label: "Scholarship", amount: Math.round(totalDonations * 0.27), percent: 27 },
                   { label: "Equipment", amount: Math.round(totalDonations * 0.20), percent: 20 },
                 ].map((item, i) => (
                   <div key={i}>
-                    <div className="flex items-center justify-between text-[13px] mb-1">
-                      <span className="text-[#475569]">{item.label}</span>
-                      <span className="text-[#64748b] text-[12px]">{formatCurrency(item.amount)}</span>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "13px", marginBottom: "4px" }}>
+                      <span style={{ color: "#475569" }}>{item.label}</span>
+                      <span style={{ color: "#64748b", fontSize: "12px" }}>{formatCurrency(item.amount)}</span>
                     </div>
-                    <div className="w-full bg-[#f1f5f9] rounded-full h-1.5">
-                      <div className="bg-[var(--accent)] h-1.5 rounded-full" style={{ width: `${item.percent}%` }} />
+                    <div style={{ width: "100%", backgroundColor: "#f1f5f9", borderRadius: "999px", height: "6px" }}>
+                      <div style={{ backgroundColor: "#10b981", height: "6px", borderRadius: "999px", width: `${item.percent}%` }} />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
+      {/* Add Alumni Modal */}
       {showAddModal && (
-        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-8 max-h-[85vh] overflow-y-auto shadow-sm"
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-[#1a1a2e] font-bold text-lg">Add Alumni Record</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition">
-                <X className="w-5 h-5" />
+        <div style={modalOverlay} onClick={() => setShowAddModal(false)}>
+          <div onClick={(e) => e.stopPropagation()} style={modalCard}>
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 600 }}>Add Alumni Record</h2>
+              <button onClick={() => setShowAddModal(false)} style={{ color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer" }}>
+                <X style={{ width: "20px", height: "20px" }} />
               </button>
             </div>
-            <div className="space-y-4">
-              <div>
-                <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Graduation Year *</label>
-                <input
-                  type="number"
-                  value={form.graduationYear}
-                  onChange={(e) => setForm({ ...form, graduationYear: e.target.value })}
-                  placeholder="e.g. 2015"
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
-              </div>
-              <div>
-                <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">University</label>
-                <input
-                  type="text"
-                  value={form.university}
-                  onChange={(e) => setForm({ ...form, university: e.target.value })}
-                  placeholder="University name"
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
-              </div>
-              <div>
-                <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Degree</label>
-                <input
-                  type="text"
-                  value={form.degree}
-                  onChange={(e) => setForm({ ...form, degree: e.target.value })}
-                  placeholder="e.g. B.Sc Computer Science"
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
-              </div>
-              <div>
-                <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Industry</label>
-                <input
-                  type="text"
-                  value={form.industry}
-                  onChange={(e) => setForm({ ...form, industry: e.target.value })}
-                  placeholder="e.g. Technology"
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+            <div style={{ padding: "24px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 <div>
-                  <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Current Employer</label>
+                  <label style={labelStyle}>Graduation Year *</label>
                   <input
-                    type="text"
-                    value={form.currentEmployer}
-                    onChange={(e) => setForm({ ...form, currentEmployer: e.target.value })}
-                    placeholder="Company name"
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    type="number"
+                    value={form.graduationYear}
+                    onChange={(e) => setForm({ ...form, graduationYear: e.target.value })}
+                    placeholder="e.g. 2015"
+                    style={inputStyle}
+                    onFocus={inputFocus}
+                    onBlur={inputBlur}
                   />
                 </div>
                 <div>
-                  <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Current Position</label>
+                  <label style={labelStyle}>University</label>
                   <input
                     type="text"
-                    value={form.currentPosition}
-                    onChange={(e) => setForm({ ...form, currentPosition: e.target.value })}
-                    placeholder="Job title"
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    value={form.university}
+                    onChange={(e) => setForm({ ...form, university: e.target.value })}
+                    placeholder="University name"
+                    style={inputStyle}
+                    onFocus={inputFocus}
+                    onBlur={inputBlur}
                   />
                 </div>
-              </div>
-              <div>
-                <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Biography</label>
-                <textarea
-                  value={form.biography}
-                  onChange={(e) => setForm({ ...form, biography: e.target.value })}
-                  placeholder="Brief bio..."
-                  rows={3}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
-                />
-              </div>
-              <div className="flex gap-2 mt-4">
-                <button
-                  onClick={handleAddAlumni}
-                  disabled={submitting}
-                  className="flex-1 btn btn-primary"
-                >
-                  {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                  {submitting ? "Creating..." : "Add Alumni"}
-                </button>
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="px-5 py-2.5 rounded-xl bg-[#f8fafc] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition"
-                >
-                  Cancel
-                </button>
+                <div>
+                  <label style={labelStyle}>Degree</label>
+                  <input
+                    type="text"
+                    value={form.degree}
+                    onChange={(e) => setForm({ ...form, degree: e.target.value })}
+                    placeholder="e.g. B.Sc Computer Science"
+                    style={inputStyle}
+                    onFocus={inputFocus}
+                    onBlur={inputBlur}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Industry</label>
+                  <input
+                    type="text"
+                    value={form.industry}
+                    onChange={(e) => setForm({ ...form, industry: e.target.value })}
+                    placeholder="e.g. Technology"
+                    style={inputStyle}
+                    onFocus={inputFocus}
+                    onBlur={inputBlur}
+                  />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                  <div>
+                    <label style={labelStyle}>Current Employer</label>
+                    <input
+                      type="text"
+                      value={form.currentEmployer}
+                      onChange={(e) => setForm({ ...form, currentEmployer: e.target.value })}
+                      placeholder="Company name"
+                      style={inputStyle}
+                      onFocus={inputFocus}
+                      onBlur={inputBlur}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Current Position</label>
+                    <input
+                      type="text"
+                      value={form.currentPosition}
+                      onChange={(e) => setForm({ ...form, currentPosition: e.target.value })}
+                      placeholder="Job title"
+                      style={inputStyle}
+                      onFocus={inputFocus}
+                      onBlur={inputBlur}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label style={labelStyle}>Biography</label>
+                  <textarea
+                    value={form.biography}
+                    onChange={(e) => setForm({ ...form, biography: e.target.value })}
+                    placeholder="Brief bio..."
+                    rows={3}
+                    style={{ ...inputStyle, resize: "none" }}
+                    onFocus={inputFocus}
+                    onBlur={inputBlur}
+                  />
+                </div>
+                <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                  <button
+                    onClick={handleAddAlumni}
+                    disabled={submitting}
+                    style={{ ...btnStyle("#10b981", submitting), flex: 1, justifyContent: "center" }}
+                  >
+                    {submitting ? <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> : <Plus style={{ width: "16px", height: "16px" }} />}
+                    {submitting ? "Creating..." : "Add Alumni"}
+                  </button>
+                  <button onClick={() => setShowAddModal(false)} style={{ padding: "10px 20px", borderRadius: "12px", backgroundColor: "#f8fafc", color: "#64748b", fontSize: "13px", fontWeight: 500, border: "1px solid #e2e8f0", cursor: "pointer" }}>
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
 
+      {/* Message Modal */}
       {messageModal && (
-        <div className="modal-overlay" onClick={() => setMessageModal(null)}>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-8 shadow-sm"
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-[#1a1a2e] font-bold text-lg">Send Message</h3>
-              <button onClick={() => setMessageModal(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#1a1a2e] hover:bg-[#f1f5f9] transition">
-                <X className="w-5 h-5" />
+        <div style={modalOverlay} onClick={() => setMessageModal(null)}>
+          <div onClick={(e) => e.stopPropagation()} style={modalCard}>
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 600 }}>Send Message</h2>
+              <button onClick={() => setMessageModal(null)} style={{ color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer" }}>
+                <X style={{ width: "20px", height: "20px" }} />
               </button>
             </div>
-            <div className="space-y-4">
-              <div>
-                <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">To</label>
-                <input type="text" readOnly value={messageModal.alumni.user?.name || "Unknown"}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[13px] outline-none" />
-              </div>
-              <div>
-                <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Subject</label>
-                <input type="text" value={messageModal.subject}
-                  onChange={(e) => setMessageModal({ ...messageModal, subject: e.target.value })}
-                  placeholder="e.g. Mentorship Inquiry"
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
-              </div>
-              <div>
-                <label className="text-[#64748b] text-[12px] uppercase tracking-wider font-medium mb-1 block">Message</label>
-                <textarea rows={4} value={messageModal.body}
-                  onChange={(e) => setMessageModal({ ...messageModal, body: e.target.value })}
-                  placeholder="Type your message..."
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none" />
-              </div>
-              <div className="flex gap-2 mt-4">
-                <button onClick={() => {
-                  toast.success(`Message sent to ${messageModal.alumni.user?.name || "alumni"}`);
-                  setMessageModal(null);
-                }} disabled={!messageModal.subject || !messageModal.body}
-                  className="flex-1 btn btn-primary disabled:opacity-50">
-                  Send Message
-                </button>
-                <button onClick={() => setMessageModal(null)}
-                  className="px-5 py-2.5 rounded-xl bg-[#f8fafc] text-[#64748b] text-[13px] font-medium hover:bg-[#f1f5f9] transition">
-                  Cancel
-                </button>
+            <div style={{ padding: "24px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div>
+                  <label style={labelStyle}>To</label>
+                  <input type="text" readOnly value={messageModal.alumni.user?.name || "Unknown"}
+                    style={{ ...inputStyle, backgroundColor: "#f8fafc", color: "#475569" }} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Subject</label>
+                  <input type="text" value={messageModal.subject}
+                    onChange={(e) => setMessageModal({ ...messageModal, subject: e.target.value })}
+                    placeholder="e.g. Mentorship Inquiry"
+                    style={inputStyle}
+                    onFocus={inputFocus}
+                    onBlur={inputBlur}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Message</label>
+                  <textarea rows={4} value={messageModal.body}
+                    onChange={(e) => setMessageModal({ ...messageModal, body: e.target.value })}
+                    placeholder="Type your message..."
+                    style={{ ...inputStyle, resize: "none" }}
+                    onFocus={inputFocus}
+                    onBlur={inputBlur}
+                  />
+                </div>
+                <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                  <button onClick={() => {
+                    toast.success(`Message sent to ${messageModal.alumni.user?.name || "alumni"}`);
+                    setMessageModal(null);
+                  }} disabled={!messageModal.subject || !messageModal.body}
+                    style={{ ...btnStyle("#10b981", !messageModal.subject || !messageModal.body), flex: 1, justifyContent: "center" }}>
+                    Send Message
+                  </button>
+                  <button onClick={() => setMessageModal(null)}
+                    style={{ padding: "10px 20px", borderRadius: "12px", backgroundColor: "#f8fafc", color: "#64748b", fontSize: "13px", fontWeight: 500, border: "1px solid #e2e8f0", cursor: "pointer" }}>
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
     </div>

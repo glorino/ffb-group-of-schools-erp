@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
   Plus,
@@ -15,6 +14,7 @@ import {
 } from "lucide-react";
 import { downloadCSV } from "@/lib/exports";
 import { toast } from "sonner";
+import { Suspense } from "react";
 
 interface CalendarEvent {
   id: string;
@@ -35,16 +35,38 @@ interface SchoolEvent {
   type?: string;
 }
 
-const eventColorMap: Record<string, string> = {
-  exam: "bg-[#fee2e2] text-[#dc2626]",
-  meeting: "bg-[#dbeafe] text-[#2563eb]",
-  event: "bg-[#dcfce7] text-[#16a34a]",
-  admin: "bg-[#f3e8ff] text-[#7c3aed]",
-  holiday: "bg-yellow-500/20 text-[#ca8a04]",
-  sports: "bg-orange-500/20 text-orange-400",
+const eventColorMap: Record<string, { bg: string; color: string }> = {
+  exam: { bg: "#fee2e2", color: "#dc2626" },
+  meeting: { bg: "#dbeafe", color: "#2563eb" },
+  event: { bg: "#dcfce7", color: "#16a34a" },
+  admin: { bg: "#f3e8ff", color: "#7c3aed" },
+  holiday: { bg: "#fef9c3", color: "#ca8a04" },
+  sports: { bg: "#ffedd5", color: "#f97316" },
 };
 
-export default function CalendarPage() {
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "12px 16px",
+  borderRadius: "10px",
+  border: "2px solid #e5e7eb",
+  fontSize: "13px",
+  color: "#0f172a",
+  outline: "none",
+  boxSizing: "border-box",
+  background: "#ffffff",
+  transition: "border-color 0.2s, box-shadow 0.2s",
+};
+
+const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  e.currentTarget.style.borderColor = "#0055ff";
+  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,85,255,0.1)";
+};
+const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  e.currentTarget.style.borderColor = "#e5e7eb";
+  e.currentTarget.style.boxShadow = "none";
+};
+
+function CalendarPageInner() {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [schoolEvents, setSchoolEvents] = useState<SchoolEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -176,87 +198,88 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8 shadow-sm"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div style={{ padding: "24px 32px", minHeight: "100vh", background: "#f8fafc" }}>
+      {/* Gradient Header Banner */}
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "20px", padding: "28px 32px", marginBottom: "28px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.12) 0%, transparent 60%), radial-gradient(circle at 10% 80%, rgba(255,255,255,0.08) 0%, transparent 50%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Calendar</h1>
-            <p className="text-[#475569]">
-              View and manage school events, exams, and activities
-            </p>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff" }}>Calendar</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>View and manage school events, exams, and activities</p>
           </div>
-          <div className="flex gap-3">
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
             <button
               onClick={() => {
                 handleExport();
                 toast.success("Exported successfully");
               }}
-              className="btn btn-secondary"
+              style={{ padding: "10px 20px", borderRadius: "12px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", backdropFilter: "blur(8px)", transition: "background 0.15s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.25)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}
             >
-              <Download className="w-4 h-4" />
-              Export
+              <Download style={{ width: "16px", height: "16px" }} /> Export
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="btn btn-primary"
+              style={{ padding: "10px 20px", borderRadius: "12px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", backdropFilter: "blur(8px)", transition: "background 0.15s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.25)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}
             >
-              <Plus className="w-4 h-4" />
-              Add Event
+              <Plus style={{ width: "16px", height: "16px" }} /> Add Event
             </button>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 card shadow-sm"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg">
+      {/* Main Grid: Calendar + Sidebar */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "24px" }}>
+        {/* Calendar Grid */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "24px", overflow: "hidden" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>
               {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
             </h3>
-            <div className="flex gap-3">
+            <div style={{ display: "flex", gap: "12px" }}>
               <button
                 onClick={prevMonth}
-                className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]"
+                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #e2e8f0", background: "#f8fafc", color: "#475569", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.borderColor = "#cbd5e1"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft style={{ width: "16px", height: "16px" }} />
               </button>
               <button
                 onClick={() => setCurrentMonth(new Date())}
-                className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] text-[12px] hover:bg-[#f1f5f9]"
+                style={{ padding: "8px 14px", borderRadius: "10px", border: "1.5px solid #e2e8f0", background: "#f8fafc", color: "#475569", fontSize: "12px", cursor: "pointer", transition: "all 0.15s" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.borderColor = "#cbd5e1"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
               >
                 Today
               </button>
               <button
                 onClick={nextMonth}
-                className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]"
+                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #e2e8f0", background: "#f8fafc", color: "#475569", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.borderColor = "#cbd5e1"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight style={{ width: "16px", height: "16px" }} />
               </button>
             </div>
           </div>
-          <div className="grid grid-cols-7 gap-2 mb-4">
+          {/* Day-of-week headers */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "8px", marginBottom: "12px" }}>
             {daysOfWeek.map((day) => (
-              <div key={day} className="text-center text-[#64748b] text-[13px] font-medium py-2">
+              <div key={day} style={{ textAlign: "center", color: "#64748b", fontSize: "13px", fontWeight: 500, padding: "8px 0" }}>
                 {day}
               </div>
             ))}
           </div>
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 text-[#64748b] animate-spin" />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}>
+              <Loader2 style={{ width: "32px", height: "32px", color: "#94a3b8", animation: "spin 1s linear infinite" }} />
             </div>
           ) : (
-            <div className="grid grid-cols-7 gap-2">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "8px" }}>
               {calendarDays.map((day, idx) => {
                 if (day === null) return <div key={`empty-${idx}`} />;
                 const dayEvents = getEventsForDay(day);
@@ -264,25 +287,61 @@ export default function CalendarPage() {
                   day === today.getDate() &&
                   currentMonth.getMonth() === today.getMonth() &&
                   currentMonth.getFullYear() === today.getFullYear();
+
+                let cellBg = "transparent";
+                let cellColor = "#475569";
+                let cellBorder = "1px solid transparent";
+                let cellFontWeight: string | number = 400;
+                if (isToday) {
+                  cellBg = "#0055ff";
+                  cellColor = "#ffffff";
+                  cellBorder = "1px solid #0055ff";
+                  cellFontWeight = 700;
+                } else if (dayEvents.length > 0) {
+                  cellBg = "#f8fafc";
+                  cellColor = "#0f172a";
+                  cellBorder = "1px solid #e2e8f0";
+                }
+
                 return (
                   <div
                     key={day}
-                    className={`aspect-square rounded-xl flex flex-col items-center justify-center text-[13px] cursor-pointer transition-colors relative border border-transparent ${
-                      isToday
-                        ? "bg-[var(--primary)] text-white font-bold border-[var(--primary)]"
-                        : dayEvents.length > 0
-                        ? "bg-[#f8fafc] text-[#1a1a2e] hover:bg-[#f1f5f9] border-[#e2e8f0]"
-                        : "text-[#475569] hover:bg-[#f8fafc] hover:border-[#f1f5f9]"
-                    }`}
+                    style={{
+                      aspectRatio: "1",
+                      borderRadius: "12px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      position: "relative",
+                      background: cellBg,
+                      color: cellColor,
+                      border: cellBorder,
+                      fontWeight: cellFontWeight,
+                      transition: "background 0.15s, border-color 0.15s",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isToday) {
+                        e.currentTarget.style.background = "#f1f5f9";
+                        e.currentTarget.style.borderColor = "#f1f5f9";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isToday) {
+                        e.currentTarget.style.background = dayEvents.length > 0 ? "#f8fafc" : "transparent";
+                        e.currentTarget.style.borderColor = dayEvents.length > 0 ? "#e2e8f0" : "transparent";
+                      }
+                    }}
                   >
                     <span>{day}</span>
                     {dayEvents.length > 0 && !isToday && (
-                      <div className="flex gap-0.5 mt-1">
+                      <div style={{ display: "flex", gap: "2px", marginTop: "4px" }}>
                         {dayEvents.slice(0, 3).map((e, i) => (
                           <div
                             key={i}
-                            className="w-1 h-1 rounded-full"
-                            style={{ background: e.color || "var(--accent)" }}
+                            style={{ width: "5px", height: "5px", borderRadius: "50%", background: e.color || "#a855f7" }}
                           />
                         ))}
                       </div>
@@ -292,208 +351,245 @@ export default function CalendarPage() {
               })}
             </div>
           )}
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="space-y-6"
-        >
-          <div className="card shadow-sm">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Upcoming Events</h3>
+        {/* Sidebar */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          {/* Upcoming Events */}
+          <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "24px" }}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Upcoming Events</h3>
             {loading ? (
-              <div className="flex items-center justify-center py-10">
-                <Loader2 className="w-6 h-6 text-[#64748b] animate-spin" />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 0" }}>
+                <Loader2 style={{ width: "24px", height: "24px", color: "#94a3b8", animation: "spin 1s linear infinite" }} />
               </div>
             ) : upcomingEvents.length === 0 ? (
-              <p className="text-[#64748b] text-[13px] text-center py-10">No upcoming events</p>
+              <div style={{ textAlign: "center", padding: "40px 16px" }}>
+                <div style={{ width: "56px", height: "56px", borderRadius: "14px", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+                  <Calendar style={{ width: "26px", height: "26px", color: "#cbd5e1" }} />
+                </div>
+                <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8" }}>No upcoming events</p>
+              </div>
             ) : (
-              <div className="space-y-3">
-                {upcomingEvents.map((event) => (
-                  <div key={event.id} className="p-3 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${eventColorMap[event.type] || "bg-[#f1f5f9] text-[#64748b]"}`}>
-                        {event.type}
-                      </span>
-                    </div>
-                    <p className="text-[#1a1a2e] text-[13px] font-medium mb-1">{event.title}</p>
-                    <div className="flex items-center gap-3 text-[12px]">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-[#94a3b8]" />
-                        <span className="text-[#64748b]">
-                          {new Date(event.start).toLocaleDateString()}
-                          {event.end && event.start !== event.end
-                            ? ` - ${new Date(event.end).toLocaleDateString()}`
-                            : ""}
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {upcomingEvents.map((event) => {
+                  const ec = eventColorMap[event.type] || { bg: "#f1f5f9", color: "#64748b" };
+                  return (
+                    <div
+                      key={event.id}
+                      style={{ padding: "14px 16px", borderRadius: "12px", background: "#f8fafc", transition: "background 0.15s", cursor: "pointer" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#f1f5f9")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "#f8fafc")}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                        <span style={{ padding: "3px 10px", borderRadius: "8px", fontSize: "11px", fontWeight: 600, background: ec.bg, color: ec.color, textTransform: "capitalize" }}>
+                          {event.type}
                         </span>
                       </div>
-                      {event.allDay && (
-                        <span className="text-[#94a3b8]">All Day</span>
+                      <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a", marginBottom: "6px" }}>{event.title}</p>
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px", fontSize: "12px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                          <Calendar style={{ width: "12px", height: "12px", color: "#94a3b8" }} />
+                          <span style={{ color: "#64748b" }}>
+                            {new Date(event.start).toLocaleDateString()}
+                            {event.end && event.start !== event.end
+                              ? ` - ${new Date(event.end).toLocaleDateString()}`
+                              : ""}
+                          </span>
+                        </div>
+                        {event.allDay && (
+                          <span style={{ color: "#94a3b8" }}>All Day</span>
+                        )}
+                      </div>
+                      {event.description && (
+                        <p style={{ margin: "6px 0 0", fontSize: "12px", color: "#94a3b8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{event.description}</p>
                       )}
                     </div>
-                    {event.description && (
-                      <p className="text-[#94a3b8] text-[12px] mt-1 line-clamp-1">{event.description}</p>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
 
-          <div className="card shadow-sm">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Event Categories</h3>
-            <div className="space-y-2">
-              {eventCategories.length === 0 ? (
-                <p className="text-[#64748b] text-[13px] text-center py-4">No categories</p>
-              ) : (
-                eventCategories.map((category, i) => (
-                  <div key={i} className="flex items-center justify-between p-2 rounded-xl hover:bg-[#f8fafc]">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ background: category.type === "exam" ? "#ef4444" : category.type === "meeting" ? "#3b82f6" : category.type === "event" ? "#10b981" : "#a855f7" }}
-                      />
-                      <span className="text-[#475569] text-[13px]">{category.type}</span>
+          {/* Event Categories */}
+          <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "24px" }}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Event Categories</h3>
+            {eventCategories.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "24px 16px" }}>
+                <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8" }}>No categories</p>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                {eventCategories.map((category, i) => {
+                  const dotColor = category.type === "exam" ? "#ef4444"
+                    : category.type === "meeting" ? "#3b82f6"
+                    : category.type === "event" ? "#10b981"
+                    : category.type === "holiday" ? "#eab308"
+                    : category.type === "sports" ? "#f97316"
+                    : "#a855f7";
+                  return (
+                    <div
+                      key={i}
+                      style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", borderRadius: "10px", transition: "background 0.15s" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: dotColor }} />
+                        <span style={{ fontSize: "13px", color: "#475569" }}>{category.type}</span>
+                      </div>
+                      <span style={{ fontSize: "13px", color: "#64748b", fontWeight: 500 }}>{category.count}</span>
                     </div>
-                    <span className="text-[#64748b] text-[13px]">{category.count}</span>
-                  </div>
-                ))
-              )}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      <AnimatePresence>
-        {showModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="modal-overlay" onClick={() => setShowModal(false)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
-              className="modal-content shadow-sm"
-            >
-              <div className="modal-header">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Add Event</h3>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="text-[#64748b] hover:text-[#1a1a2e]"
-                >
-                  <X className="w-5 h-5" />
+      {/* Add Event Modal */}
+      {showModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" }} onClick={() => setShowModal(false)}>
+          <div style={{ background: "#ffffff", borderRadius: "24px", width: "100%", maxWidth: "540px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 25px 80px rgba(0,0,0,0.25)" }} onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div style={{ padding: "28px 32px 24px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "24px 24px 0 0", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>Add Event</h3>
+                  <p style={{ margin: "4px 0 0", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>Create a new calendar event</p>
+                </div>
+                <button onClick={() => setShowModal(false)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <X style={{ width: "18px", height: "18px" }} />
                 </button>
               </div>
-              <form onSubmit={handleCreate} className="space-y-4">
+            </div>
+            {/* Modal Form */}
+            <form onSubmit={handleCreate} style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "20px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>Title <span style={{ color: "#ef4444" }}>*</span></label>
+                <input
+                  type="text"
+                  required
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  style={inputStyle}
+                  placeholder="e.g. Parent-Teacher Meeting"
+                  onFocus={inputFocus}
+                  onBlur={inputBlur}
+                />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Title *</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>Start <span style={{ color: "#ef4444" }}>*</span></label>
                   <input
-                    type="text"
+                    type="datetime-local"
                     required
-                    value={form.title}
-                    onChange={(e) => setForm({ ...form, title: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    placeholder="e.g. Parent-Teacher Meeting"
+                    value={form.start}
+                    onChange={(e) => setForm({ ...form, start: e.target.value })}
+                    style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }}
+                    onFocus={inputFocus}
+                    onBlur={inputBlur}
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Start *</label>
-                    <input
-                      type="datetime-local"
-                      required
-                      value={form.start}
-                      onChange={(e) => setForm({ ...form, start: e.target.value })}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">End</label>
-                    <input
-                      type="datetime-local"
-                      value={form.end}
-                      onChange={(e) => setForm({ ...form, end: e.target.value })}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Type</label>
-                    <select
-                      value={form.type}
-                      onChange={(e) => setForm({ ...form, type: e.target.value })}
-                      style={{ colorScheme: "light" }}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    >
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="event">Event</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="exam">Exam</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="meeting">Meeting</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="admin">Administrative</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="holiday">Holiday</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="sports">Sports</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Color</label>
-                    <input
-                      type="color"
-                      value={form.color}
-                      onChange={(e) => setForm({ ...form, color: e.target.value })}
-                      className="w-full h-[38px] rounded-xl bg-[#f8fafc] border border-[#e2e8f0] cursor-pointer"
-                    />
-                  </div>
-                </div>
                 <div>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.allDay}
-                      onChange={(e) => setForm({ ...form, allDay: e.target.checked })}
-                      className="w-4 h-4 rounded"
-                    />
-                    <span className="text-[#475569] text-[13px]">All Day Event</span>
-                  </label>
-                </div>
-                <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Description</label>
-                  <textarea
-                    rows={2}
-                    value={form.description}
-                    onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none"
-                    placeholder="Optional description..."
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>End</label>
+                  <input
+                    type="datetime-local"
+                    value={form.end}
+                    onChange={(e) => setForm({ ...form, end: e.target.value })}
+                    style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }}
+                    onFocus={inputFocus}
+                    onBlur={inputBlur}
                   />
                 </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                    className="flex-1 btn btn-secondary"
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>Type</label>
+                  <select
+                    value={form.type}
+                    onChange={(e) => setForm({ ...form, type: e.target.value })}
+                    style={{ ...inputStyle, colorScheme: "light", cursor: "pointer" }}
+                    onFocus={inputFocus}
+                    onBlur={inputBlur}
                   >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="flex-1 btn btn-primary"
-                  >
-                    {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                    Add Event
-                  </button>
+                    <option value="event">Event</option>
+                    <option value="exam">Exam</option>
+                    <option value="meeting">Meeting</option>
+                    <option value="admin">Administrative</option>
+                    <option value="holiday">Holiday</option>
+                    <option value="sports">Sports</option>
+                  </select>
                 </div>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>Color</label>
+                  <input
+                    type="color"
+                    value={form.color}
+                    onChange={(e) => setForm({ ...form, color: e.target.value })}
+                    style={{ width: "100%", height: "42px", borderRadius: "10px", border: "2px solid #e5e7eb", cursor: "pointer", background: "#ffffff", padding: "4px" }}
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                  <input
+                    type="checkbox"
+                    checked={form.allDay}
+                    onChange={(e) => setForm({ ...form, allDay: e.target.checked })}
+                    style={{ width: "16px", height: "16px", borderRadius: "4px", accentColor: "#0055ff" }}
+                  />
+                  <span style={{ fontSize: "13px", color: "#475569" }}>All Day Event</span>
+                </label>
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>Description</label>
+                <textarea
+                  rows={2}
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  style={{ ...inputStyle, resize: "none" }}
+                  placeholder="Optional description..."
+                  onFocus={inputFocus}
+                  onBlur={inputBlur}
+                />
+              </div>
+              <div style={{ height: "1px", background: "#f1f5f9" }} />
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  style={{ flex: 1, padding: "12px 24px", borderRadius: "12px", border: "1.5px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.borderColor = "#cbd5e1"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  style={{ flex: 1, padding: "12px 28px", borderRadius: "12px", border: "none", background: submitting ? "#93c5fd" : "#0055ff", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: submitting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: submitting ? "none" : "0 4px 14px rgba(0,85,255,0.3)", transition: "all 0.15s" }}
+                >
+                  {submitting && <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />} Add Event
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+export default function CalendarPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ padding: "24px 32px", minHeight: "100vh", background: "#f8fafc", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Loader2 style={{ width: "32px", height: "32px", color: "#94a3b8", animation: "spin 1s linear infinite" }} />
+      </div>
+    }>
+      <CalendarPageInner />
+    </Suspense>
   );
 }

@@ -1,8 +1,7 @@
 ﻿"use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
 import {
   User,
@@ -12,7 +11,6 @@ import {
   Calendar,
   Edit,
   Shield,
-  Bell,
   Key,
   Camera,
   Save,
@@ -30,7 +28,11 @@ interface ActivityLog {
   [key: string]: unknown;
 }
 
-export default function ProfilePage() {
+const spinnerStyle: React.CSSProperties = {
+  animation: "spin 1s linear infinite",
+};
+
+function ProfilePageInner() {
   const { data: session, status, update } = useSession();
   const [loading, setLoading] = useState(true);
   const [activityLoading, setActivityLoading] = useState(true);
@@ -173,60 +175,294 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-[var(--primary)] animate-spin" />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+        <Loader2 style={{ width: 32, height: 32, color: "#0a2a6e", ...spinnerStyle }} />
       </div>
     );
   }
 
+  const headerStyle: React.CSSProperties = {
+    background: "linear-gradient(135deg, #0a2a6e, #0055ff)",
+    borderRadius: 16,
+    padding: 32,
+    marginTop: 32,
+    marginLeft: 16,
+    marginRight: 16,
+    position: "relative",
+    overflow: "hidden",
+    boxShadow: "0 4px 24px rgba(10,42,110,0.18)",
+  };
+
+  const headerOverlayRadial1: React.CSSProperties = {
+    position: "absolute",
+    top: -40,
+    right: -40,
+    width: 180,
+    height: 180,
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%)",
+    pointerEvents: "none",
+  };
+
+  const headerOverlayRadial2: React.CSSProperties = {
+    position: "absolute",
+    bottom: -30,
+    left: 30,
+    width: 140,
+    height: 140,
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)",
+    pointerEvents: "none",
+  };
+
+  const cardStyle: React.CSSProperties = {
+    background: "#fff",
+    borderRadius: 16,
+    padding: 24,
+    boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+    border: "1px solid #e5e7eb",
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    padding: 12,
+    borderRadius: 10,
+    border: "2px solid #e5e7eb",
+    background: "#fff",
+    color: "#1a1a2e",
+    fontSize: 13,
+    outline: "none",
+    transition: "border-color 0.2s",
+  };
+
+  const labelStyle: React.CSSProperties = {
+    color: "#475569",
+    fontSize: 13,
+    marginBottom: 8,
+    display: "block",
+  };
+
+  const sectionHeaderStyle: React.CSSProperties = {
+    background: "linear-gradient(135deg, #0a2a6e, #0055ff)",
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
+    position: "relative",
+    overflow: "hidden",
+  };
+
+  const sectionOverlayRadial: React.CSSProperties = {
+    position: "absolute",
+    top: -20,
+    right: -20,
+    width: 100,
+    height: 100,
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)",
+    pointerEvents: "none",
+  };
+
+  const toggleBg = (on: boolean): React.CSSProperties => ({
+    width: 40,
+    height: 20,
+    borderRadius: 10,
+    position: "relative",
+    cursor: "pointer",
+    transition: "all 0.2s",
+    background: on ? "#10b981" : "#e2e8f0",
+    border: "none",
+    padding: 0,
+    flexShrink: 0,
+  });
+
+  const toggleDot = (on: boolean): React.CSSProperties => ({
+    position: "absolute",
+    top: 2,
+    width: 16,
+    height: 16,
+    borderRadius: "50%",
+    background: "#fff",
+    transition: "all 0.2s",
+    left: on ? 22 : 2,
+  });
+
+  const modalOverlayStyle: React.CSSProperties = {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.55)",
+    backdropFilter: "blur(4px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999,
+  };
+
+  const modalCardStyle: React.CSSProperties = {
+    width: "100%",
+    maxWidth: 520,
+    margin: "0 16px",
+    background: "#fff",
+    borderRadius: 16,
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+    overflow: "hidden",
+  };
+
+  const modalHeaderBannerStyle: React.CSSProperties = {
+    background: "linear-gradient(135deg, #0a2a6e, #0055ff)",
+    padding: "20px 24px",
+    position: "relative",
+    overflow: "hidden",
+  };
+
+  const modalCloseBtnStyle: React.CSSProperties = {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    border: "none",
+    background: "rgba(255,255,255,0.2)",
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+  };
+
+  const btnPrimaryStyle: React.CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "10px 20px",
+    borderRadius: 10,
+    border: "none",
+    background: "linear-gradient(135deg, #0a2a6e, #0055ff)",
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "all 0.2s",
+  };
+
+  const btnSecondaryStyle: React.CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "10px 20px",
+    borderRadius: 10,
+    border: "1px solid #e2e8f0",
+    background: "#f8fafc",
+    color: "#475569",
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "all 0.2s",
+  };
+
+  const activityItemStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: 16,
+    padding: 12,
+    borderRadius: 12,
+    background: "#f8fafc",
+  };
+
+  const activityIconBoxStyle: React.CSSProperties = {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    background: "#f1f5f9",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  };
+
+  const securityBtnStyle: React.CSSProperties = {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    padding: 12,
+    borderRadius: 12,
+    background: "#f8fafc",
+    border: "none",
+    cursor: "pointer",
+    textAlign: "left",
+    transition: "background 0.2s",
+  };
+
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div style={{ padding: "0 0 32px 0" }}>
+      <div style={headerStyle}>
+        <div style={headerOverlayRadial1} />
+        <div style={headerOverlayRadial2} />
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 16, position: "relative", zIndex: 1 }}>
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">My Profile</h1>
-            <p className="text-[#475569] text-[13px]">
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#fff", margin: "0 0 4px 0" }}>My Profile</h1>
+            <p style={{ color: "rgba(255,255,255,0.8)", fontSize: 13, margin: 0 }}>
               Manage your account settings, preferences, and personal information
             </p>
           </div>
           <button
             onClick={() => setEditing(!editing)}
-            className="btn btn-primary"
+            style={btnPrimaryStyle}
           >
-            <Edit className="w-4 h-4" />
+            <Edit style={{ width: 16, height: 16 }} />
             {editing ? "Cancel" : "Edit Profile"}
           </button>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="card shadow-sm"
-        >
-          <div className="flex flex-col items-center text-center">
-            <div className="relative mb-5">
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 2fr)", gap: 24, padding: "24px 16px 0" }}>
+        {/* Left Column - Profile Card */}
+        <div style={cardStyle}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+            <div style={{ position: "relative", marginBottom: 20 }}>
               {userImage ? (
                 <img
                   src={userImage}
                   alt={userName}
-                  className="w-28 h-28 rounded-full object-cover ring-4 ring-white shadow-lg"
+                  style={{ width: 112, height: 112, borderRadius: "50%", objectFit: "cover", border: "4px solid #fff", boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}
                 />
               ) : (
-                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-4xl font-bold ring-4 ring-white shadow-lg">
+                <div style={{
+                  width: 112,
+                  height: 112,
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, #0a2a6e, #0055ff)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff",
+                  fontSize: 36,
+                  fontWeight: 700,
+                  border: "4px solid #fff",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+                }}>
                   {initials}
                 </div>
               )}
-              <label className="absolute bottom-0 right-0 w-10 h-10 rounded-xl bg-[var(--primary)] flex items-center justify-center cursor-pointer hover:bg-[var(--blue-2)] transition-all shadow-lg border-2 border-white">
-                <Camera className="w-4 h-4 text-white" />
-                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+              <label style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                width: 40,
+                height: 40,
+                borderRadius: 12,
+                background: "#0a2a6e",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                boxShadow: "0 4px 12px rgba(10,42,110,0.3)",
+                border: "2px solid #fff",
+              }}>
+                <Camera style={{ width: 16, height: 16, color: "#fff" }} />
+                <input type="file" accept="image/*" style={{ display: "none" }} onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
                   if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5MB"); return; }
@@ -248,161 +484,188 @@ export default function ProfilePage() {
                 }} />
               </label>
             </div>
-            <h3 className="text-[#1a1a2e] text-xl font-bold">{userName}</h3>
-            <p className="text-[var(--primary)] text-[13px] font-medium mt-1">{(session?.user as any)?.roles?.[0]?.name || "User"}</p>
+            <h3 style={{ color: "#1a1a2e", fontSize: 20, fontWeight: 700, margin: 0 }}>{userName}</h3>
+            <p style={{ color: "#0a2a6e", fontSize: 13, fontWeight: 500, marginTop: 4 }}>
+              {(session?.user as any)?.roles?.[0]?.name || "User"}
+            </p>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-[#e2e8f0] space-y-3">
-            <div className="flex items-center gap-3">
-              <Mail className="w-4 h-4 text-[#64748b]" />
-              <span className="text-[#475569] text-[13px]">{userEmail || "No email"}</span>
+          <div style={{ marginTop: 24, paddingTop: 24, borderTop: "1px solid #e2e8f0", display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <Mail style={{ width: 16, height: 16, color: "#64748b" }} />
+              <span style={{ color: "#475569", fontSize: 13 }}>{userEmail || "No email"}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <Phone className="w-4 h-4 text-[#64748b]" />
-              <span className="text-[#475569] text-[13px]">{SCHOOL_CONFIG.phone}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <Phone style={{ width: 16, height: 16, color: "#64748b" }} />
+              <span style={{ color: "#475569", fontSize: 13 }}>{SCHOOL_CONFIG.phone}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <MapPin className="w-4 h-4 text-[#64748b]" />
-              <span className="text-[#475569] text-[13px]">{SCHOOL_CONFIG.address}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <MapPin style={{ width: 16, height: 16, color: "#64748b" }} />
+              <span style={{ color: "#475569", fontSize: 13 }}>{SCHOOL_CONFIG.address}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-[#64748b]" />
-              <span className="text-[#475569] text-[13px]">Joined September 2018</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <Calendar style={{ width: 16, height: 16, color: "#64748b" }} />
+              <span style={{ color: "#475569", fontSize: 13 }}>Joined September 2018</span>
             </div>
-            <div className="flex items-center gap-3">
-              <Briefcase className="w-4 h-4 text-[#64748b]" />
-              <span className="text-[#475569] text-[13px]">{(session?.user as any)?.roles?.[0]?.name || "User"}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <Briefcase style={{ width: 16, height: 16, color: "#64748b" }} />
+              <span style={{ color: "#475569", fontSize: 13 }}>{(session?.user as any)?.roles?.[0]?.name || "User"}</span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="lg:col-span-2 space-y-6"
-        >
-          <div className="card shadow-sm">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-6">Personal Information</h3>
-            <div className="grid sm:grid-cols-2 gap-4">
+        {/* Right Column */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          {/* Personal Information */}
+          <div style={cardStyle}>
+            <div style={sectionHeaderStyle}>
+              <div style={sectionOverlayRadial} />
+              <h3 style={{ color: "#fff", fontWeight: 600, fontSize: 18, margin: 0, position: "relative", zIndex: 1 }}>Personal Information</h3>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
               <div>
-                <label className="text-[#475569] text-[13px] mb-2 block">Full Name</label>
+                <label style={labelStyle}>Full Name</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   readOnly={!editing}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={{ ...inputStyle, cursor: editing ? "text" : "default", background: editing ? "#fff" : "#f8fafc" }}
+                  onFocus={(e) => { if (editing) e.currentTarget.style.borderColor = "#0a2a6e"; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; }}
                 />
               </div>
               <div>
-                <label className="text-[#475569] text-[13px] mb-2 block">Email</label>
+                <label style={labelStyle}>Email</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   readOnly={!editing}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={{ ...inputStyle, cursor: editing ? "text" : "default", background: editing ? "#fff" : "#f8fafc" }}
+                  onFocus={(e) => { if (editing) e.currentTarget.style.borderColor = "#0a2a6e"; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; }}
                 />
               </div>
               <div>
-                <label className="text-[#475569] text-[13px] mb-2 block">Phone</label>
+                <label style={labelStyle}>Phone</label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   readOnly={!editing}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={{ ...inputStyle, cursor: editing ? "text" : "default", background: editing ? "#fff" : "#f8fafc" }}
+                  onFocus={(e) => { if (editing) e.currentTarget.style.borderColor = "#0a2a6e"; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; }}
                 />
               </div>
               <div>
-                <label className="text-[#475569] text-[13px] mb-2 block">Address</label>
+                <label style={labelStyle}>Address</label>
                 <input
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   readOnly={!editing}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={{ ...inputStyle, cursor: editing ? "text" : "default", background: editing ? "#fff" : "#f8fafc" }}
+                  onFocus={(e) => { if (editing) e.currentTarget.style.borderColor = "#0a2a6e"; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; }}
                 />
               </div>
             </div>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="mt-4 btn btn-primary disabled:opacity-50"
+              style={{ ...btnPrimaryStyle, marginTop: 16, opacity: saving ? 0.6 : 1 }}
             >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              {saving ? <Loader2 style={{ width: 16, height: 16, ...spinnerStyle }} /> : <Save style={{ width: 16, height: 16 }} />}
               {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
 
-          <div className="card shadow-sm">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Recent Activity</h3>
-            <div className="space-y-3">
+          {/* Recent Activity */}
+          <div style={cardStyle}>
+            <div style={sectionHeaderStyle}>
+              <div style={sectionOverlayRadial} />
+              <h3 style={{ color: "#fff", fontWeight: 600, fontSize: 18, margin: 0, position: "relative", zIndex: 1 }}>Recent Activity</h3>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {activityLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 text-[var(--primary)] animate-spin" />
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
+                  <Loader2 style={{ width: 24, height: 24, color: "#0a2a6e", ...spinnerStyle }} />
                 </div>
               ) : recentActivity.length > 0 ? (
                 recentActivity.map((activity, i) => {
                   const Icon = getActivityIcon(activity.action);
                   return (
-                    <div key={activity.id || i} className="flex items-center gap-4 p-3 rounded-xl bg-[#f8fafc]">
-                      <div className="w-8 h-8 rounded-lg bg-[#f1f5f9] flex items-center justify-center">
-                        <Icon className="w-4 h-4 text-[#64748b]" />
+                    <div key={activity.id || i} style={activityItemStyle}>
+                      <div style={activityIconBoxStyle}>
+                        <Icon style={{ width: 16, height: 16, color: "#64748b" }} />
                       </div>
-                      <div className="flex-1">
-                        <p className="text-[#1a1a2e] text-[13px]">{activity.action}</p>
+                      <div style={{ flex: 1 }}>
+                        <p style={{ color: "#1a1a2e", fontSize: 13, margin: 0 }}>{activity.action}</p>
                       </div>
-                      <span className="text-[#94a3b8] text-[12px]">{getTimeAgo(activity.timestamp)}</span>
+                      <span style={{ color: "#94a3b8", fontSize: 12 }}>{getTimeAgo(activity.timestamp)}</span>
                     </div>
                   );
                 })
               ) : (
-                <div className="text-center py-8">
-                  <p className="text-[#64748b] text-[13px]">No recent activity</p>
+                <div style={{ textAlign: "center", padding: 32 }}>
+                  <p style={{ color: "#64748b", fontSize: 13, margin: 0 }}>No recent activity</p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6">
-            <div className="card shadow-sm">
-              <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Security</h3>
-              <div className="space-y-3">
+          {/* Security & Notifications Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 24 }}>
+            {/* Security */}
+            <div style={cardStyle}>
+              <div style={sectionHeaderStyle}>
+                <div style={sectionOverlayRadial} />
+                <h3 style={{ color: "#fff", fontWeight: 600, fontSize: 18, margin: 0, position: "relative", zIndex: 1 }}>Security</h3>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <button
                   onClick={() => setShowPasswordModal(true)}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all text-left"
+                  style={securityBtnStyle}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#f8fafc"; }}
                 >
-                  <Key className="w-5 h-5 text-[#64748b]" />
+                  <Key style={{ width: 20, height: 20, color: "#64748b" }} />
                   <div>
-                    <p className="text-[#1a1a2e] text-[13px] font-medium">Change Password</p>
-                    <p className="text-[#64748b] text-[12px]">Last changed 3 days ago</p>
+                    <p style={{ color: "#1a1a2e", fontSize: 13, fontWeight: 500, margin: 0 }}>Change Password</p>
+                    <p style={{ color: "#64748b", fontSize: 12, margin: "2px 0 0 0" }}>Last changed 3 days ago</p>
                   </div>
                 </button>
                 <button
                   onClick={() => setShow2FAModal(true)}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all text-left"
+                  style={securityBtnStyle}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#f8fafc"; }}
                 >
-                  <Shield className="w-5 h-5 text-[#64748b]" />
+                  <Shield style={{ width: 20, height: 20, color: "#64748b" }} />
                   <div>
-                    <p className="text-[#1a1a2e] text-[13px] font-medium">Two-Factor Auth</p>
-                    <p className="text-[#64748b] text-[12px]">Enabled</p>
+                    <p style={{ color: "#1a1a2e", fontSize: 13, fontWeight: 500, margin: 0 }}>Two-Factor Auth</p>
+                    <p style={{ color: "#64748b", fontSize: 12, margin: "2px 0 0 0" }}>Enabled</p>
                   </div>
                 </button>
               </div>
             </div>
 
-            <div className="card shadow-sm">
-              <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Notifications</h3>
-              <div className="space-y-3">
+            {/* Notifications */}
+            <div style={cardStyle}>
+              <div style={sectionHeaderStyle}>
+                <div style={sectionOverlayRadial} />
+                <h3 style={{ color: "#fff", fontWeight: 600, fontSize: 18, margin: 0, position: "relative", zIndex: 1 }}>Notifications</h3>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {[
                   { key: "email" as const, label: "Email Notifications" },
                   { key: "sms" as const, label: "SMS Notifications" },
                   { key: "push" as const, label: "Push Notifications" },
                 ].map((notif) => (
-                  <div key={notif.key} className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
-                    <span className="text-[#1a1a2e] text-[13px]">{notif.label}</span>
+                  <div key={notif.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: 12, borderRadius: 12, background: "#f8fafc" }}>
+                    <span style={{ color: "#1a1a2e", fontSize: 13 }}>{notif.label}</span>
                     <button
                       type="button"
                       onClick={async () => {
@@ -419,132 +682,162 @@ export default function ProfilePage() {
                           // preferences update is best-effort
                         }
                       }}
-                      className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${notifications[notif.key] ? "bg-[var(--accent)]" : "bg-[#e2e8f0]"}`}
+                      style={toggleBg(notifications[notif.key])}
                     >
-                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${notifications[notif.key] ? "left-[22px]" : "left-0.5"}`} />
+                      <div style={toggleDot(notifications[notif.key])} />
                     </button>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Change Password Modal */}
-      <AnimatePresence>
-        {showPasswordModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowPasswordModal(false)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl mx-4 p-6 rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl"
-          
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Change Password</h3>
+      {showPasswordModal && (
+        <div style={modalOverlayStyle} onClick={() => setShowPasswordModal(false)}>
+          <div style={modalCardStyle} onClick={(e) => e.stopPropagation()}>
+            <div style={modalHeaderBannerStyle}>
+              <div style={sectionOverlayRadial} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                <h3 style={{ color: "#fff", fontWeight: 600, fontSize: 18, margin: 0 }}>Change Password</h3>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="w-8 h-8 rounded-lg bg-[#f1f5f9] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#e2e8f0] transition-all"
+                  style={modalCloseBtnStyle}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.35)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.2)"; }}
                 >
-                  <X className="w-4 h-4" />
+                  <X style={{ width: 16, height: 16 }} />
                 </button>
               </div>
-              <div className="space-y-4">
+            </div>
+            <div style={{ padding: 24 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <div>
-                  <label className="text-[#475569] text-[13px] mb-2 block">Current Password</label>
+                  <label style={labelStyle}>Current Password</label>
                   <input
                     type="password"
                     value={passwordData.currentPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    style={inputStyle}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = "#0a2a6e"; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; }}
                   />
                 </div>
                 <div>
-                  <label className="text-[#475569] text-[13px] mb-2 block">New Password</label>
+                  <label style={labelStyle}>New Password</label>
                   <input
                     type="password"
                     value={passwordData.newPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    style={inputStyle}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = "#0a2a6e"; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; }}
                   />
                 </div>
                 <div>
-                  <label className="text-[#475569] text-[13px] mb-2 block">Confirm New Password</label>
+                  <label style={labelStyle}>Confirm New Password</label>
                   <input
                     type="password"
                     value={passwordData.confirmPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    style={inputStyle}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = "#0a2a6e"; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = "#e5e7eb"; }}
                   />
                 </div>
               </div>
-              <div className="modal-footer">
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 24, paddingTop: 16, borderTop: "1px solid #e2e8f0" }}>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="btn btn-secondary"
+                  style={btnSecondaryStyle}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleChangePassword}
                   disabled={changingPassword}
-                  className="btn btn-primary disabled:opacity-50"
+                  style={{ ...btnPrimaryStyle, opacity: changingPassword ? 0.6 : 1 }}
                 >
-                  {changingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
+                  {changingPassword ? <Loader2 style={{ width: 16, height: 16, ...spinnerStyle }} /> : <Key style={{ width: 16, height: 16 }} />}
                   {changingPassword ? "Changing..." : "Change Password"}
                 </button>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {show2FAModal && (
-        <div className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShow2FAModal(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md mx-4 p-6 rounded-2xl bg-white border border-[#e2e8f0] shadow-2xl">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-[#1a1a2e] font-semibold text-lg">Two-Factor Authentication</h3>
-              <button onClick={() => setShow2FAModal(false)} className="w-8 h-8 rounded-lg bg-[#f1f5f9] flex items-center justify-center text-[#64748b] hover:text-[#1a1a2e] hover:bg-[#e2e8f0] transition-all">
-                <X className="w-4 h-4" />
-              </button>
             </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f8fafc]">
-                <span className="text-[#1a1a2e] text-[13px]">Enable 2FA</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTwoFAEnabled(!twoFAEnabled);
-                    if (!twoFAEnabled) toast.success("2FA setup link will be sent to your email");
-                  }}
-                  className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${twoFAEnabled ? "bg-[var(--accent)]" : "bg-[#e2e8f0]"}`}
-                >
-                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${twoFAEnabled ? "left-[22px]" : "left-0.5"}`} />
-                </button>
-              </div>
-              {twoFAEnabled && (
-                <p className="text-[#64748b] text-[12px] text-center">2FA setup link will be sent to your email address</p>
-              )}
-              <div className="modal-footer">
-                <button onClick={() => setShow2FAModal(false)}
-                  className="flex-1 btn btn-secondary">
-                  Close
-                </button>
-              </div>
-            </div>
-          </motion.div>
+          </div>
         </div>
       )}
+
+      {/* 2FA Modal */}
+      {show2FAModal && (
+        <div style={modalOverlayStyle} onClick={() => setShow2FAModal(false)}>
+          <div style={{ ...modalCardStyle, maxWidth: 420 }} onClick={(e) => e.stopPropagation()}>
+            <div style={modalHeaderBannerStyle}>
+              <div style={sectionOverlayRadial} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                <h3 style={{ color: "#fff", fontWeight: 600, fontSize: 18, margin: 0 }}>Two-Factor Authentication</h3>
+                <button
+                  onClick={() => setShow2FAModal(false)}
+                  style={modalCloseBtnStyle}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.35)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.2)"; }}
+                >
+                  <X style={{ width: 16, height: 16 }} />
+                </button>
+              </div>
+            </div>
+            <div style={{ padding: 24 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: 12, borderRadius: 12, background: "#f8fafc" }}>
+                  <span style={{ color: "#1a1a2e", fontSize: 13 }}>Enable 2FA</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTwoFAEnabled(!twoFAEnabled);
+                      if (!twoFAEnabled) toast.success("2FA setup link will be sent to your email");
+                    }}
+                    style={toggleBg(twoFAEnabled)}
+                  >
+                    <div style={toggleDot(twoFAEnabled)} />
+                  </button>
+                </div>
+                {twoFAEnabled && (
+                  <p style={{ color: "#64748b", fontSize: 12, textAlign: "center", margin: 0 }}>
+                    2FA setup link will be sent to your email address
+                  </p>
+                )}
+                <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: 16, borderTop: "1px solid #e2e8f0" }}>
+                  <button onClick={() => setShow2FAModal(false)} style={{ ...btnSecondaryStyle, width: "100%", justifyContent: "center" }}>
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense
+      fallback={
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+          <Loader2 style={{ width: 32, height: 32, color: "#0a2a6e", animation: "spin 1s linear infinite" }} />
+        </div>
+      }
+    >
+      <ProfilePageInner />
+    </Suspense>
   );
 }

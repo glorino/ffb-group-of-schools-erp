@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import {
   Users,
   Plus,
@@ -18,6 +17,8 @@ import {
   Loader2,
   Download,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
@@ -45,6 +46,17 @@ interface ClinicStats {
   lowStockAlerts: number;
 }
 
+const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 16px", borderRadius: "12px", backgroundColor: "#ffffff", border: "1px solid #e2e8f0", color: "#1a1a2e", fontSize: "13px", outline: "none" };
+const inputFocus = (e: React.FocusEvent<HTMLInputElement>) => { e.currentTarget.style.borderColor = "#0055ff"; };
+const inputBlur = (e: React.FocusEvent<HTMLInputElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; };
+const labelStyle: React.CSSProperties = { color: "#475569", fontSize: "13px", marginBottom: "6px", display: "block" };
+const btnStyle = (bg: string, disabled?: boolean): React.CSSProperties => ({ padding: "8px 16px", borderRadius: "12px", backgroundColor: bg, color: "#ffffff", fontSize: "13px", fontWeight: 500, border: "none", cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1, display: "inline-flex", alignItems: "center", gap: "6px" });
+const cardStyle: React.CSSProperties = { background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" };
+const modalOverlay: React.CSSProperties = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" };
+const modalCard: React.CSSProperties = { background: "#ffffff", borderRadius: "20px", width: "100%", maxWidth: "500px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 25px 80px rgba(0,0,0,0.25)" };
+
+const ROWS_PER_PAGE = 20;
+
 export default function ClinicPage() {
   const [visits, setVisits] = useState<ClinicVisit[]>([]);
   const [stats, setStats] = useState<ClinicStats>({ totalVisits: 0, recentVisits: 0, totalMedications: 0, lowStockAlerts: 0 });
@@ -54,6 +66,7 @@ export default function ClinicPage() {
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ studentId: "", reason: "", diagnosis: "", treatment: "", medication: "" });
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchData();
@@ -127,11 +140,22 @@ export default function ClinicPage() {
     );
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredVisits.length / ROWS_PER_PAGE));
+  const safePage = Math.min(page, totalPages);
+  const paginatedVisits = filteredVisits.slice((safePage - 1) * ROWS_PER_PAGE, safePage * ROWS_PER_PAGE);
+
+  const kpiColors = [
+    "linear-gradient(135deg, #0055ff, #0033cc)",
+    "linear-gradient(135deg, #10b981, #059669)",
+    "linear-gradient(135deg, #8b5cf6, #7c3aed)",
+    "linear-gradient(135deg, #f59e0b, #d97706)",
+  ];
+
   const statCards = [
-    { label: "Total Visits", value: stats.totalVisits, icon: Users, color: "from-blue-500 to-blue-600" },
-    { label: "Recent Visits", value: stats.recentVisits, icon: Clock, color: "from-emerald-500 to-emerald-600" },
-    { label: "Medications", value: stats.totalMedications, icon: Pill, color: "from-purple-500 to-purple-600" },
-    { label: "Alerts", value: stats.lowStockAlerts, icon: AlertTriangle, color: "from-orange-500 to-orange-600" },
+    { label: "Total Visits", value: stats.totalVisits, icon: Users, bg: kpiColors[0] },
+    { label: "Recent Visits", value: stats.recentVisits, icon: Clock, bg: kpiColors[1] },
+    { label: "Medications", value: stats.totalMedications, icon: Pill, bg: kpiColors[2] },
+    { label: "Alerts", value: stats.lowStockAlerts, icon: AlertTriangle, bg: kpiColors[3] },
   ];
 
   const handleExport = () => {
@@ -149,137 +173,124 @@ export default function ClinicPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--primary)]" />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "400px" }}>
+        <Loader2 style={{ width: "32px", height: "32px", color: "#0055ff", animation: "spin 1s linear infinite" }} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div style={{ padding: "24px 32px", minHeight: "100vh", background: "#f8fafc" }}>
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "16px", padding: "32px", margin: "32px 16px 0", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-50%", right: "-20%", width: "300px", height: "300px", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", bottom: "-30%", left: "-10%", width: "200px", height: "200px", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Clinic / Medical Records</h1>
-            <p className="text-[#475569] text-[13px]">
-              Manage student visits, medications, allergies, and health records
-            </p>
+            <h1 style={{ color: "#ffffff", fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Clinic / Medical Records</h1>
+            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>Manage student visits, medications, allergies, and health records</p>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleExport}
-              className="btn btn-secondary"
-            >
-              <Download className="w-4 h-4" />
-              Export
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button onClick={handleExport} style={{ ...btnStyle("rgba(255,255,255,0.15)", false), backdropFilter: "blur(8px)" }}>
+              <Download style={{ width: "16px", height: "16px" }} /> Export
             </button>
-            <button
-              onClick={() => setShowModal(true)}
-              className="btn btn-primary"
-            >
-              <Plus className="w-4 h-4" />
-              New Visit
+            <button onClick={() => setShowModal(true)} style={{ ...btnStyle("#ffffff"), color: "#0a2a6e" }}>
+              <Plus style={{ width: "16px", height: "16px" }} /> New Visit
             </button>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", margin: "24px 16px 0" }}>
         {statCards.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
-              </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
-              </div>
+          <div key={i} style={{ ...cardStyle, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <p style={{ margin: 0, fontSize: "12px", fontWeight: 500, color: "#64748b" }}>{stat.label}</p>
+              <p style={{ margin: "6px 0 0", fontSize: "28px", fontWeight: 800, color: "#1a1a2e" }}>{stat.value}</p>
             </div>
-          </motion.div>
+            <div style={{ width: "48px", height: "48px", borderRadius: "14px", background: stat.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <stat.icon style={{ width: "22px", height: "22px", color: "#ffffff" }} />
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 card"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg">Recent Visits</h3>
-            <div className="flex gap-3">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "24px", margin: "24px 16px 0" }}>
+        <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#1a1a2e" }}>Recent Visits</h3>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <div style={{ position: "relative" }}>
+                <Search style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", width: "14px", height: "14px", color: "#94a3b8" }} />
                 <input
                   type="text"
                   placeholder="Search patients..."
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  style={{ ...inputStyle, paddingLeft: "36px", padding: "10px 14px 10px 36px", fontSize: "12px", width: "200px" }}
+                  onFocus={inputFocus}
+                  onBlur={inputBlur}
                 />
               </div>
-              <button title="Filter using search above" className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]">
-                <Filter className="w-4 h-4" />
+              <button title="Filter using search above" style={{ padding: "8px 12px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#475569", cursor: "pointer" }}>
+                <Filter style={{ width: "14px", height: "14px" }} />
               </button>
             </div>
           </div>
-          <div className="space-y-3">
-            {filteredVisits.map((visit) => (
-              <div key={visit.id} className="flex items-center gap-4 p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#dcfce7] text-[#16a34a]">
-                  <Stethoscope className="w-5 h-5" />
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", flex: 1 }}>
+            {paginatedVisits.map((visit) => (
+              <div key={visit.id} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "14px 16px", borderRadius: "12px", background: "#f8fafc", transition: "background 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f1f5f9")} onMouseLeave={(e) => (e.currentTarget.style.background = "#f8fafc")}>
+                <div style={{ width: "40px", height: "40px", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", background: "#dcfce7", color: "#16a34a", flexShrink: 0 }}>
+                  <Stethoscope style={{ width: "18px", height: "18px" }} />
                 </div>
-                <div className="flex-1">
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{visit.student.firstName} {visit.student.lastName}</p>
-                  <p className="text-[#64748b] text-[12px]">{visit.reason} • {visit.diagnosis}</p>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, color: "#1a1a2e", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{visit.student.firstName} {visit.student.lastName}</p>
+                  <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#64748b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{visit.reason} · {visit.diagnosis}</p>
                 </div>
-                <div className="text-right">
-                  <span className="px-2 py-1 rounded-lg text-[12px] font-medium bg-[#dcfce7] text-[#16a34a]">
-                    treated
-                  </span>
-                  <p className="text-[#94a3b8] text-[12px] mt-1">{new Date(visit.date).toLocaleDateString()}</p>
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <span style={{ padding: "3px 10px", borderRadius: "8px", fontSize: "11px", fontWeight: 600, background: "#dcfce7", color: "#16a34a" }}>treated</span>
+                  <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#94a3b8" }}>{new Date(visit.date).toLocaleDateString()}</p>
                 </div>
               </div>
             ))}
-            {filteredVisits.length === 0 && (
-              <div className="text-center py-8 text-[#64748b] text-[13px]">No visits found</div>
+            {paginatedVisits.length === 0 && (
+              <div style={{ textAlign: "center", padding: "40px 16px", color: "#94a3b8", fontSize: "13px" }}>No visits found</div>
             )}
           </div>
-        </motion.div>
+          {filteredVisits.length > ROWS_PER_PAGE && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f1f5f9" }}>
+              <span style={{ fontSize: "12px", color: "#94a3b8" }}>
+                Showing {(safePage - 1) * ROWS_PER_PAGE + 1}–{Math.min(safePage * ROWS_PER_PAGE, filteredVisits.length)} of {filteredVisits.length}
+              </span>
+              <div style={{ display: "flex", gap: "6px" }}>
+                <button disabled={safePage <= 1} onClick={() => setPage(safePage - 1)} style={{ ...btnStyle(safePage <= 1 ? "#e2e8f0" : "#f8fafc"), color: safePage <= 1 ? "#cbd5e1" : "#475569", border: "1px solid #e2e8f0", padding: "6px 10px", opacity: 1 }}>
+                  <ChevronLeft style={{ width: "14px", height: "14px" }} />
+                </button>
+                <span style={{ padding: "6px 12px", fontSize: "12px", color: "#475569", fontWeight: 500, display: "flex", alignItems: "center" }}>
+                  {safePage} / {totalPages}
+                </span>
+                <button disabled={safePage >= totalPages} onClick={() => setPage(safePage + 1)} style={{ ...btnStyle(safePage >= totalPages ? "#e2e8f0" : "#f8fafc"), color: safePage >= totalPages ? "#cbd5e1" : "#475569", border: "1px solid #e2e8f0", padding: "6px 10px", opacity: 1 }}>
+                  <ChevronRight style={{ width: "14px", height: "14px" }} />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="space-y-6"
-        >
-          <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Medications Stock</h3>
-            <div className="space-y-3">
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div style={cardStyle}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#1a1a2e" }}>Medications Stock</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {medications.length === 0 ? (
-                <p className="text-[#64748b] text-[13px] text-center py-4">No medications recorded yet</p>
+                <p style={{ textAlign: "center", padding: "20px 0", color: "#94a3b8", fontSize: "13px", margin: 0 }}>No medications recorded yet</p>
               ) : (
                 medications.map((med, i) => (
-                  <div key={i} className="p-3 rounded-xl bg-[#f8fafc]">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[#1a1a2e] text-[13px] font-medium">{med.name}</span>
-                      <span className="text-[#64748b] text-[12px]">{med.category}</span>
+                  <div key={i} style={{ padding: "12px 14px", borderRadius: "12px", background: "#f8fafc" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+                      <span style={{ fontSize: "13px", fontWeight: 500, color: "#1a1a2e" }}>{med.name}</span>
+                      <span style={{ fontSize: "11px", color: "#64748b" }}>{med.category}</span>
                     </div>
-                    <div className="flex items-center justify-between text-[12px] mb-1">
-                      <span className="text-[#64748b]">Used: {med.used} times</span>
+                    <div style={{ fontSize: "12px", color: "#64748b" }}>
+                      Used: {med.used} times
                     </div>
                   </div>
                 ))
@@ -287,26 +298,26 @@ export default function ClinicPage() {
             </div>
           </div>
 
-          <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Health Alerts</h3>
-            <div className="space-y-2">
+          <div style={cardStyle}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#1a1a2e" }}>Health Alerts</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               {stats.lowStockAlerts === 0 && stats.totalVisits === 0 ? (
-                <p className="text-[#64748b] text-[13px] text-center py-4">No alerts at this time</p>
+                <p style={{ textAlign: "center", padding: "20px 0", color: "#94a3b8", fontSize: "13px", margin: 0 }}>No alerts at this time</p>
               ) : (
                 <>
                   {stats.lowStockAlerts > 0 && (
-                    <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20">
-                      <div className="flex items-center gap-3">
-                        <AlertTriangle className="w-4 h-4 text-orange-400" />
-                        <span className="text-[#1a1a2e] text-[13px]">{stats.lowStockAlerts} medications have been used recently</span>
+                    <div style={{ padding: "12px 14px", borderRadius: "12px", background: "rgba(249,115,22,0.08)", border: "1px solid rgba(249,115,22,0.15)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <AlertTriangle style={{ width: "14px", height: "14px", color: "#f97316" }} />
+                        <span style={{ fontSize: "13px", color: "#1a1a2e" }}>{stats.lowStockAlerts} medications have been used recently</span>
                       </div>
                     </div>
                   )}
                   {stats.recentVisits > 5 && (
-                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-                      <div className="flex items-center gap-3">
-                        <AlertTriangle className="w-4 h-4 text-[#dc2626]" />
-                        <span className="text-[#1a1a2e] text-[13px]">High clinic activity: {stats.recentVisits} visits this week</span>
+                    <div style={{ padding: "12px 14px", borderRadius: "12px", background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.12)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <AlertTriangle style={{ width: "14px", height: "14px", color: "#dc2626" }} />
+                        <span style={{ fontSize: "13px", color: "#1a1a2e" }}>High clinic activity: {stats.recentVisits} visits this week</span>
                       </div>
                     </div>
                   )}
@@ -314,91 +325,97 @@ export default function ClinicPage() {
               )}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="modal-content"
-          >
-            <div className="modal-header">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">New Clinic Visit</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
-              </button>
+        <div style={modalOverlay} onClick={() => setShowModal(false)}>
+          <div style={modalCard} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px 20px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "20px 20px 0 0", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#ffffff" }}>New Clinic Visit</h2>
+                  <p style={{ margin: "4px 0 0", fontSize: "12px", color: "rgba(255,255,255,0.7)" }}>Record a student medical visit</p>
+                </div>
+                <button onClick={() => setShowModal(false)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "none", background: "rgba(255,255,255,0.15)", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <X style={{ width: "16px", height: "16px" }} />
+                </button>
+              </div>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} style={{ padding: "24px 28px 28px", display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Student ID</label>
+                <label style={labelStyle}>Student ID <span style={{ color: "#ef4444" }}>*</span></label>
                 <input
                   type="text"
                   value={form.studentId}
                   onChange={(e) => setForm({ ...form, studentId: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={inputStyle}
+                  onFocus={inputFocus}
+                  onBlur={inputBlur}
                   placeholder="e.g. STU-001"
                 />
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Reason for Visit</label>
+                <label style={labelStyle}>Reason for Visit <span style={{ color: "#ef4444" }}>*</span></label>
                 <input
                   type="text"
                   value={form.reason}
                   onChange={(e) => setForm({ ...form, reason: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={inputStyle}
+                  onFocus={inputFocus}
+                  onBlur={inputBlur}
                   placeholder="e.g. Headache"
                 />
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Diagnosis</label>
+                <label style={labelStyle}>Diagnosis</label>
                 <input
                   type="text"
                   value={form.diagnosis}
                   onChange={(e) => setForm({ ...form, diagnosis: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={inputStyle}
+                  onFocus={inputFocus}
+                  onBlur={inputBlur}
                   placeholder="e.g. Malaria"
                 />
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Treatment</label>
+                <label style={labelStyle}>Treatment</label>
                 <input
                   type="text"
                   value={form.treatment}
                   onChange={(e) => setForm({ ...form, treatment: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={inputStyle}
+                  onFocus={inputFocus}
+                  onBlur={inputBlur}
                   placeholder="e.g. Medication prescribed"
                 />
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Medication</label>
+                <label style={labelStyle}>Medication</label>
                 <input
                   type="text"
                   value={form.medication}
                   onChange={(e) => setForm({ ...form, medication: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={inputStyle}
+                  onFocus={inputFocus}
+                  onBlur={inputBlur}
                   placeholder="e.g. Paracetamol"
                 />
               </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 btn btn-secondary"
-                >
+              <div style={{ height: "1px", background: "#f1f5f9" }} />
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button type="button" onClick={() => setShowModal(false)} style={{ flex: 1, padding: "10px 16px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 btn btn-primary"
-                >
-                  {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Record Visit"}
+                <button type="submit" disabled={submitting} style={{ flex: 1, ...btnStyle(submitting ? "#93c5fd" : "#0055ff", submitting), justifyContent: "center" }}>
+                  {submitting && <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />}
+                  Record Visit
                 </button>
               </div>
             </form>
-          </motion.div>
+          </div>
         </div>
       )}
     </div>

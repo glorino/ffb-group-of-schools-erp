@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Package,
   Warehouse,
@@ -52,6 +51,76 @@ interface InventoryStats {
   categories: number;
 }
 
+const ITEMS_PER_PAGE = 20;
+
+const cardStyle: React.CSSProperties = {
+  backgroundColor: '#ffffff',
+  borderRadius: '16px',
+  border: '1px solid #e2e8f0',
+  padding: '24px',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+};
+
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '10px 16px',
+  borderRadius: '12px',
+  backgroundColor: '#ffffff',
+  border: '1px solid #e2e8f0',
+  color: '#1a1a2e',
+  fontSize: '13px',
+  outline: 'none',
+};
+
+const labelStyle: React.CSSProperties = {
+  color: '#475569',
+  fontSize: '13px',
+  marginBottom: '6px',
+  display: 'block',
+};
+
+function btnStyle(bg: string, disabled?: boolean): React.CSSProperties {
+  return {
+    padding: '8px 16px',
+    borderRadius: '12px',
+    backgroundColor: bg,
+    color: '#ffffff',
+    fontSize: '13px',
+    fontWeight: 500,
+    border: 'none',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    opacity: disabled ? 0.5 : 1,
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+  };
+}
+
+const thStyle: React.CSSProperties = {
+  textAlign: 'left',
+  fontSize: '11px',
+  fontWeight: 600,
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  color: '#64748b',
+  paddingBottom: '12px',
+  paddingLeft: '12px',
+  paddingRight: '12px',
+};
+
+const tdStyle: React.CSSProperties = {
+  padding: '12px',
+  fontSize: '13px',
+  color: '#334155',
+};
+
+const statCardGradients: Record<string, React.CSSProperties> = {
+  blue: { background: 'linear-gradient(135deg, #3b82f6, #2563eb)' },
+  green: { background: 'linear-gradient(135deg, #10b981, #059669)' },
+  orange: { background: 'linear-gradient(135deg, #f97316, #ea580c)' },
+  purple: { background: 'linear-gradient(135deg, #a855f7, #9333ea)' },
+};
+
 export default function InventoryPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [stats, setStats] = useState<InventoryStats>({ total: 0, lowStock: 0, totalValue: 0, categories: 0 });
@@ -66,6 +135,7 @@ export default function InventoryPage() {
   const [showBarcodeScan, setShowBarcodeScan] = useState(false);
   const [barcodeInput, setBarcodeInput] = useState("");
   const [barcodeResult, setBarcodeResult] = useState<InventoryItem | null>(null);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchData();
@@ -122,15 +192,19 @@ export default function InventoryPage() {
     item.category.toLowerCase().includes(search.toLowerCase())
   );
 
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
+  const safePage = Math.min(page, totalPages);
+  const paginatedItems = filteredItems.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE);
+
   const allPurchases = items.flatMap((item) =>
     (item.purchases || []).map((p) => ({ ...p, itemName: item.name }))
   );
 
   const statCards = [
-    { label: "Total Items", value: stats.total, icon: Package, color: "from-blue-500 to-blue-600" },
-    { label: "Categories", value: stats.categories, icon: Warehouse, color: "from-emerald-500 to-emerald-600" },
-    { label: "Low Stock", value: stats.lowStock, icon: AlertTriangle, color: "from-orange-500 to-orange-600" },
-    { label: "Total Value", value: formatCurrencyCompact(stats.totalValue), icon: TrendingUp, color: "from-purple-500 to-purple-600" },
+    { label: "Total Items", value: stats.total, icon: Package, gradient: statCardGradients.blue },
+    { label: "Categories", value: stats.categories, icon: Warehouse, gradient: statCardGradients.green },
+    { label: "Low Stock", value: stats.lowStock, icon: AlertTriangle, gradient: statCardGradients.orange },
+    { label: "Total Value", value: formatCurrencyCompact(stats.totalValue), icon: TrendingUp, gradient: statCardGradients.purple },
   ];
 
   const handleExport = () => {
@@ -149,135 +223,121 @@ export default function InventoryPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--primary)]" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
+        <Loader2 style={{ width: '32px', height: '32px', color: '#0055ff', animation: 'spin 1s linear infinite' }} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Inventory Management</h1>
-            <p className="text-[#475569] text-[13px]">
-              Manage assets, warehouse, purchases, and barcode scanning
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleExport}
-              className="btn btn-secondary"
-            >
-              <Download className="w-4 h-4" />
-              Export
-            </button>
-            <button
-              onClick={() => setShowBarcodeScan(true)}
-              className="btn btn-secondary"
-            >
-              <Barcode className="w-4 h-4" />
-              Scan
-            </button>
-            <button
-              onClick={() => setShowModal(true)}
-              className="btn btn-primary"
-            >
-              <Plus className="w-4 h-4" />
-              Add Item
-            </button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ background: 'linear-gradient(135deg, #0a2a6e, #0055ff)', borderRadius: '16px', padding: '32px', margin: '32px 16px 0', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '-50%', right: '-20%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', bottom: '-30%', left: '-10%', width: '200px', height: '200px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+            <div>
+              <h1 style={{ color: '#ffffff', fontSize: '24px', fontWeight: 700, marginBottom: '4px' }}>Inventory Management</h1>
+              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Manage assets, warehouse, purchases, and barcode scanning</p>
+            </div>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button onClick={handleExport} style={{ ...btnStyle('rgba(255,255,255,0.15)') }}>
+                <Download style={{ width: '16px', height: '16px' }} />
+                Export
+              </button>
+              <button onClick={() => setShowBarcodeScan(true)} style={{ ...btnStyle('rgba(255,255,255,0.15)') }}>
+                <Barcode style={{ width: '16px', height: '16px' }} />
+                Scan
+              </button>
+              <button onClick={() => setShowModal(true)} style={btnStyle('#0055ff')}>
+                <Plus style={{ width: '16px', height: '16px' }} />
+                Add Item
+              </button>
+            </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
         {statCards.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card"
-          >
-            <div className="flex items-start justify-between">
+          <div key={i} style={cardStyle}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
               <div>
-                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
+                <p style={{ color: '#64748b', fontSize: '12px', marginBottom: '4px' }}>{stat.label}</p>
+                <p style={{ fontSize: '30px', fontWeight: 700, color: '#1a1a2e' }}>{stat.value}</p>
               </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', ...stat.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <stat.icon style={{ width: '24px', height: '24px', color: '#ffffff' }} />
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 card"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg">Inventory Items</h3>
-            <div className="flex gap-3">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', margin: '0 16px' }}>
+        <div style={cardStyle}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+            <h3 style={{ color: '#1a1a2e', fontWeight: 600, fontSize: '18px' }}>Inventory Items</h3>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <div style={{ position: 'relative' }}>
+                <Search style={{ width: '16px', height: '16px', position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
                 <input
                   type="text"
                   placeholder="Search items..."
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  style={{ ...inputStyle, paddingLeft: '36px', width: '200px' }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
                 />
               </div>
-              <button title="Filter using search above" className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]">
-                <Filter className="w-4 h-4" />
+              <button title="Filter using search above" style={{ padding: '8px', borderRadius: '12px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Filter style={{ width: '16px', height: '16px' }} />
               </button>
             </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%' }}>
               <thead>
-                <tr className="border-b-2 border-[#e2e8f0] bg-[#f8fafc]">
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Item</th>
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Category</th>
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Quantity</th>
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Unit Price</th>
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Status</th>
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Actions</th>
+                <tr style={{ borderBottom: '2px solid #e2e8f0', backgroundColor: '#f8fafc' }}>
+                  <th style={thStyle}>Item</th>
+                  <th style={thStyle}>Category</th>
+                  <th style={thStyle}>Quantity</th>
+                  <th style={thStyle}>Unit Price</th>
+                  <th style={thStyle}>Status</th>
+                  <th style={thStyle}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredItems.map((item) => (
-                  <tr key={item.id} className="border-b border-[#f1f5f9] hover:bg-[#f8fafc] transition-colors">
-                    <td className="py-3 px-3 text-[13px] text-[#334155] font-medium">{item.name}</td>
-                    <td className="py-3 px-3">
-                      <span className="px-2 py-1 rounded-lg bg-[#f1f5f9] text-[#475569] text-[12px]">{item.category}</span>
+                {paginatedItems.map((item) => (
+                  <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    <td style={{ ...tdStyle, fontWeight: 500 }}>{item.name}</td>
+                    <td style={tdStyle}>
+                      <span style={{ padding: '4px 8px', borderRadius: '8px', backgroundColor: '#f1f5f9', color: '#475569', fontSize: '12px' }}>{item.category}</span>
                     </td>
-                    <td className="py-3 px-3 text-[13px] text-[#334155]">{item.quantity} {item.unit}</td>
-                    <td className="py-3 px-3 text-[13px] text-[#334155]">{formatCurrency(item.unitPrice)}</td>
-                    <td className="py-3 px-3">
-                      <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                        item.status === "ok" || item.status === "in_stock" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#fee2e2] text-[#dc2626]"
-                      }`}>
+                    <td style={tdStyle}>{item.quantity} {item.unit}</td>
+                    <td style={tdStyle}>{formatCurrency(item.unitPrice)}</td>
+                    <td style={tdStyle}>
+                      <span style={{
+                        padding: '4px 8px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        backgroundColor: item.status === "ok" || item.status === "in_stock" ? "#dcfce7" : "#fee2e2",
+                        color: item.status === "ok" || item.status === "in_stock" ? "#16a34a" : "#dc2626",
+                      }}>
                         {item.status === "ok" || item.status === "in_stock" ? "In Stock" : "Low Stock"}
                       </span>
                     </td>
-                    <td className="py-3 px-3">
-                      <div className="flex gap-1">
+                    <td style={tdStyle}>
+                      <div style={{ display: 'flex', gap: '4px' }}>
                         <button
                           onClick={() => setViewItem(item)}
-                          className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#334155] transition-colors"
+                          style={{ padding: '6px', borderRadius: '8px', backgroundColor: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; e.currentTarget.style.color = '#334155'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#64748b'; }}
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye style={{ width: '16px', height: '16px' }} />
                         </button>
                         <button
                           onClick={() => {
@@ -289,232 +349,278 @@ export default function InventoryPage() {
                               location: item.location || "", status: item.status || "in_stock",
                             });
                           }}
-                          className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#334155] transition-colors"
+                          style={{ padding: '6px', borderRadius: '8px', backgroundColor: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; e.currentTarget.style.color = '#334155'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#64748b'; }}
                         >
-                          <Edit className="w-4 h-4" />
+                          <Edit style={{ width: '16px', height: '16px' }} />
                         </button>
                       </div>
                     </td>
                   </tr>
                 ))}
-                {filteredItems.length === 0 && (
+                {paginatedItems.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-[#64748b] text-[13px]">No items found</td>
+                    <td colSpan={6} style={{ textAlign: 'center', padding: '32px', color: '#64748b', fontSize: '13px' }}>No items found</td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-        </motion.div>
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
+              <span style={{ fontSize: '13px', color: '#64748b' }}>
+                Showing {((safePage - 1) * ITEMS_PER_PAGE) + 1}–{Math.min(safePage * ITEMS_PER_PAGE, filteredItems.length)} of {filteredItems.length}
+              </span>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={safePage === 1}
+                  style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: safePage === 1 ? '#f8fafc' : '#ffffff', color: safePage === 1 ? '#cbd5e1' : '#475569', cursor: safePage === 1 ? 'not-allowed' : 'pointer', fontSize: '13px' }}
+                >
+                  Prev
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '8px',
+                      border: '1px solid',
+                      borderColor: p === safePage ? '#0055ff' : '#e2e8f0',
+                      backgroundColor: p === safePage ? '#0055ff' : '#ffffff',
+                      color: p === safePage ? '#ffffff' : '#475569',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: p === safePage ? 600 : 400,
+                    }}
+                  >
+                    {p}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={safePage === totalPages}
+                  style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: safePage === totalPages ? '#f8fafc' : '#ffffff', color: safePage === totalPages ? '#cbd5e1' : '#475569', cursor: safePage === totalPages ? 'not-allowed' : 'pointer', fontSize: '13px' }}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="space-y-6"
-        >
-          <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Recent Purchases</h3>
-            <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={cardStyle}>
+            <h3 style={{ color: '#1a1a2e', fontWeight: 600, fontSize: '18px', marginBottom: '16px' }}>Recent Purchases</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {allPurchases.slice(0, 4).map((purchase) => (
-                <div key={purchase.id} className="p-3 rounded-xl bg-[#f8fafc]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[#1a1a2e] text-[13px] font-medium">{purchase.itemName}</span>
-                    <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                      purchase.status === "delivered" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-orange-500/20 text-orange-400"
-                    }`}>
+                <div key={purchase.id} style={{ padding: '12px', borderRadius: '12px', backgroundColor: '#f8fafc' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ color: '#1a1a2e', fontSize: '13px', fontWeight: 500 }}>{purchase.itemName}</span>
+                    <span style={{
+                      padding: '4px 8px',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      backgroundColor: purchase.status === "delivered" ? "#dcfce7" : "rgba(249,115,22,0.2)",
+                      color: purchase.status === "delivered" ? "#16a34a" : "#fb923c",
+                    }}>
                       {purchase.status}
                     </span>
                   </div>
-                  <p className="text-[#64748b] text-[12px]">{purchase.vendor}</p>
-                  <div className="flex items-center justify-between mt-2 text-[12px]">
-                    <span className="text-[#94a3b8]">{new Date(purchase.date).toLocaleDateString()}</span>
-                    <span className="text-[#475569]">{formatCurrency(purchase.amount)}</span>
+                  <p style={{ color: '#64748b', fontSize: '12px' }}>{purchase.vendor}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px', fontSize: '12px' }}>
+                    <span style={{ color: '#94a3b8' }}>{new Date(purchase.date).toLocaleDateString()}</span>
+                    <span style={{ color: '#475569' }}>{formatCurrency(purchase.amount)}</span>
                   </div>
                 </div>
               ))}
               {allPurchases.length === 0 && (
-                <p className="text-center py-4 text-[#64748b] text-[13px]">No purchases yet</p>
+                <p style={{ textAlign: 'center', padding: '16px', color: '#64748b', fontSize: '13px' }}>No purchases yet</p>
               )}
             </div>
           </div>
 
-          <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Warehouse</h3>
-            <div className="grid grid-cols-2 gap-3">
+          <div style={cardStyle}>
+            <h3 style={{ color: '#1a1a2e', fontWeight: 600, fontSize: '18px', marginBottom: '16px' }}>Warehouse</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               {[
-                { name: "Main Store", items: stats.total, status: "ok" },
-                { name: "Stationery", items: items.filter((i) => i.category === "Stationery").length, status: "ok" },
-                { name: "Electronics", items: items.filter((i) => i.category === "Electronics").length, status: "ok" },
-                { name: "Medical", items: items.filter((i) => i.category === "Medical").length, status: "ok" },
+                { name: "Main Store", items: stats.total },
+                { name: "Stationery", items: items.filter((i) => i.category === "Stationery").length },
+                { name: "Electronics", items: items.filter((i) => i.category === "Electronics").length },
+                { name: "Medical", items: items.filter((i) => i.category === "Medical").length },
               ].map((warehouse, i) => (
-                <div key={i} className="p-3 rounded-xl bg-[#f8fafc] text-center">
-                  <Warehouse className="w-6 h-6 text-[#64748b] mx-auto mb-2" />
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{warehouse.name}</p>
-                  <p className="text-[#64748b] text-[12px]">{warehouse.items} items</p>
+                <div key={i} style={{ padding: '12px', borderRadius: '12px', backgroundColor: '#f8fafc', textAlign: 'center' }}>
+                  <Warehouse style={{ width: '24px', height: '24px', color: '#64748b', margin: '0 auto 8px' }} />
+                  <p style={{ color: '#1a1a2e', fontSize: '13px', fontWeight: 500 }}>{warehouse.name}</p>
+                  <p style={{ color: '#64748b', fontSize: '12px' }}>{warehouse.items} items</p>
                 </div>
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="modal-content"
-          >
-            <div className="modal-header">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Inventory Item</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
-              </button>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div style={{ width: '100%', maxWidth: '500px', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+            <div style={{ background: 'linear-gradient(135deg, #0a2a6e, #0055ff)', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2 style={{ color: '#ffffff', fontSize: '18px', fontWeight: 600 }}>Add Inventory Item</h2>
+              <button onClick={() => setShowModal(false)} style={{ color: 'rgba(255,255,255,0.7)', background: 'none', border: 'none', cursor: 'pointer' }}><X style={{ width: '20px', height: '20px' }} /></button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Item Name</label>
+                <label style={labelStyle}>Item Name</label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={inputStyle}
                   placeholder="e.g. Whiteboard Markers"
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1">Category</label>
+                  <label style={labelStyle}>Category</label>
                   <select
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    style={{ colorScheme: "light" }}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    style={{ ...inputStyle, colorScheme: 'light' }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
                   >
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Stationery</option>
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Electronics</option>
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Medical</option>
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Furniture</option>
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Cleaning</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }}>Stationery</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }}>Electronics</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }}>Medical</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }}>Furniture</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }}>Cleaning</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1">Unit</label>
+                  <label style={labelStyle}>Unit</label>
                   <select
                     value={form.unit}
                     onChange={(e) => setForm({ ...form, unit: e.target.value })}
-                    style={{ colorScheme: "light" }}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    style={{ ...inputStyle, colorScheme: 'light' }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
                   >
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>pieces</option>
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>boxes</option>
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>kits</option>
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>units</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }}>pieces</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }}>boxes</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }}>kits</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }}>units</option>
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1">Quantity</label>
+                  <label style={labelStyle}>Quantity</label>
                   <input
                     type="number"
                     value={form.quantity}
                     onChange={(e) => setForm({ ...form, quantity: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    style={inputStyle}
                     placeholder="e.g. 500"
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
                   />
                 </div>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1">Unit Price (₦)</label>
+                  <label style={labelStyle}>Unit Price (₦)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={form.unitPrice}
                     onChange={(e) => setForm({ ...form, unitPrice: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                    style={inputStyle}
                     placeholder="e.g. 250"
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Location</label>
+                <label style={labelStyle}>Location</label>
                 <input
                   type="text"
                   value={form.location}
                   onChange={(e) => setForm({ ...form, location: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  style={inputStyle}
                   placeholder="e.g. Main Store"
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
                 />
               </div>
-              <div className="modal-footer">
+              <div style={{ display: 'flex', gap: '12px', paddingTop: '8px' }}>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 btn btn-secondary"
+                  style={{ flex: 1, ...btnStyle('#64748b') }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 btn btn-primary"
+                  style={{ flex: 1, ...btnStyle('#0055ff', submitting) }}
                 >
-                  {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Add Item"}
+                  {submitting ? <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> : "Add Item"}
                 </button>
               </div>
             </form>
-          </motion.div>
+          </div>
         </div>
       )}
 
       {viewItem && (
-        <div className="modal-overlay">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg rounded-2xl bg-white border border-[#e2e8f0] p-6"
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewItem.name}</h2>
-              <button onClick={() => setViewItem(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
-              </button>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div style={{ width: '100%', maxWidth: '500px', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+            <div style={{ background: 'linear-gradient(135deg, #0a2a6e, #0055ff)', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2 style={{ color: '#ffffff', fontSize: '18px', fontWeight: 600 }}>{viewItem.name}</h2>
+              <button onClick={() => setViewItem(null)} style={{ color: 'rgba(255,255,255,0.7)', background: 'none', border: 'none', cursor: 'pointer' }}><X style={{ width: '20px', height: '20px' }} /></button>
             </div>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#64748b] text-[12px] mb-1">Category</p>
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewItem.category}</p>
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ padding: '12px', borderRadius: '12px', backgroundColor: '#f8fafc' }}>
+                  <p style={{ color: '#64748b', fontSize: '12px', marginBottom: '4px' }}>Category</p>
+                  <p style={{ color: '#1a1a2e', fontSize: '13px', fontWeight: 500 }}>{viewItem.category}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#64748b] text-[12px] mb-1">Quantity</p>
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewItem.quantity} {viewItem.unit}</p>
+                <div style={{ padding: '12px', borderRadius: '12px', backgroundColor: '#f8fafc' }}>
+                  <p style={{ color: '#64748b', fontSize: '12px', marginBottom: '4px' }}>Quantity</p>
+                  <p style={{ color: '#1a1a2e', fontSize: '13px', fontWeight: 500 }}>{viewItem.quantity} {viewItem.unit}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#64748b] text-[12px] mb-1">Unit Price</p>
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{formatCurrency(viewItem.unitPrice)}</p>
+                <div style={{ padding: '12px', borderRadius: '12px', backgroundColor: '#f8fafc' }}>
+                  <p style={{ color: '#64748b', fontSize: '12px', marginBottom: '4px' }}>Unit Price</p>
+                  <p style={{ color: '#1a1a2e', fontSize: '13px', fontWeight: 500 }}>{formatCurrency(viewItem.unitPrice)}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#64748b] text-[12px] mb-1">Location</p>
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewItem.location}</p>
+                <div style={{ padding: '12px', borderRadius: '12px', backgroundColor: '#f8fafc' }}>
+                  <p style={{ color: '#64748b', fontSize: '12px', marginBottom: '4px' }}>Location</p>
+                  <p style={{ color: '#1a1a2e', fontSize: '13px', fontWeight: 500 }}>{viewItem.location}</p>
                 </div>
               </div>
               {viewItem.purchases && viewItem.purchases.length > 0 && (
                 <div>
-                  <h4 className="text-[#475569] text-[13px] font-medium mb-3">Recent Purchases</h4>
-                  <div className="space-y-2 max-h-[200px] overflow-y-auto">
+                  <h4 style={{ color: '#475569', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Recent Purchases</h4>
+                  <div style={{ maxHeight: '200px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {viewItem.purchases.map((p) => (
-                      <div key={p.id} className="p-3 rounded-xl bg-[#f8fafc]">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[#1a1a2e] text-[13px]">{p.vendor}</span>
-                          <span className={`px-2 py-1 rounded-lg text-[12px] ${
-                            p.status === "delivered" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-orange-500/20 text-orange-400"
-                          }`}>{p.status}</span>
+                      <div key={p.id} style={{ padding: '12px', borderRadius: '12px', backgroundColor: '#f8fafc' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                          <span style={{ color: '#1a1a2e', fontSize: '13px' }}>{p.vendor}</span>
+                          <span style={{
+                            padding: '4px 8px',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            backgroundColor: p.status === "delivered" ? "#dcfce7" : "rgba(249,115,22,0.2)",
+                            color: p.status === "delivered" ? "#16a34a" : "#fb923c",
+                          }}>{p.status}</span>
                         </div>
-                        <div className="flex items-center justify-between text-[12px]">
-                          <span className="text-[#94a3b8]">{new Date(p.date).toLocaleDateString()}</span>
-                          <span className="text-[#475569]">{formatCurrency(p.amount)}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px' }}>
+                          <span style={{ color: '#94a3b8' }}>{new Date(p.date).toLocaleDateString()}</span>
+                          <span style={{ color: '#475569' }}>{formatCurrency(p.amount)}</span>
                         </div>
                       </div>
                     ))}
@@ -522,124 +628,141 @@ export default function InventoryPage() {
                 </div>
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
-      {/* Edit Inventory Modal */}
-      <AnimatePresence>
-        {editItem && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="modal-overlay">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditItem(null)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-8 shadow-2xl">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Inventory Item</h3>
-                <button onClick={() => setEditItem(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
+
+      {editItem && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div style={{ width: '100%', maxWidth: '500px', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+            <div style={{ background: 'linear-gradient(135deg, #0a2a6e, #0055ff)', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2 style={{ color: '#ffffff', fontSize: '18px', fontWeight: 600 }}>Edit Inventory Item</h2>
+              <button onClick={() => setEditItem(null)} style={{ color: 'rgba(255,255,255,0.7)', background: 'none', border: 'none', cursor: 'pointer' }}><X style={{ width: '20px', height: '20px' }} /></button>
+            </div>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                const res = await fetch("/api/inventory", {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ id: editItem.id, ...editForm, quantity: Number(editForm.quantity), unitPrice: Number(editForm.unitPrice) }),
+                });
+                if (!res.ok) throw new Error("Failed");
+                toast.success("Item updated");
+                setEditItem(null);
+                fetch("/api/inventory").then(r => r.json()).then(d => setItems(d.items || []));
+              } catch { toast.error("Failed to update"); }
+            }} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={labelStyle}>Name *</label>
+                <input type="text" required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  style={inputStyle}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                />
               </div>
-              <form onSubmit={async (e) => {
-                e.preventDefault();
-                try {
-                  const res = await fetch("/api/inventory", {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: editItem.id, ...editForm, quantity: Number(editForm.quantity), unitPrice: Number(editForm.unitPrice) }),
-                  });
-                  if (!res.ok) throw new Error("Failed");
-                  toast.success("Item updated");
-                  setEditItem(null);
-                  fetch("/api/inventory").then(r => r.json()).then(d => setItems(d.items || []));
-                } catch { toast.error("Failed to update"); }
-              }} className="space-y-4">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Name *</label>
-                  <input type="text" required value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                  <label style={labelStyle}>Category</label>
+                  <input type="text" value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                    style={inputStyle}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                  />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Category</label>
-                    <input type="text" value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Quantity *</label>
-                    <input type="number" min="0" required value={editForm.quantity} onChange={(e) => setEditForm({ ...editForm, quantity: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Unit Price</label>
-                    <input type="number" min="0" value={editForm.unitPrice} onChange={(e) => setEditForm({ ...editForm, unitPrice: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Unit</label>
-                    <input type="text" value={editForm.unit} onChange={(e) => setEditForm({ ...editForm, unit: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
-                  </div>
+                <div>
+                  <label style={labelStyle}>Quantity *</label>
+                  <input type="number" min="0" required value={editForm.quantity} onChange={(e) => setEditForm({ ...editForm, quantity: e.target.value })}
+                    style={inputStyle}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                  />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Location</label>
-                    <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
-                  </div>
-                  <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Status</label>
-                    <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                      style={{ colorScheme: "light" }}>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="in_stock">In Stock</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="low_stock">Low Stock</option>
-                      <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="out_of_stock">Out of Stock</option>
-                    </select>
-                  </div>
+                <div>
+                  <label style={labelStyle}>Unit Price</label>
+                  <input type="number" min="0" value={editForm.unitPrice} onChange={(e) => setEditForm({ ...editForm, unitPrice: e.target.value })}
+                    style={inputStyle}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                  />
                 </div>
-                <div className="flex justify-end gap-3 pt-2">
-                  <button type="button" onClick={() => setEditItem(null)} className="btn btn-secondary">Cancel</button>
-                  <button type="submit" className="btn btn-primary">Save Changes</button>
+                <div>
+                  <label style={labelStyle}>Unit</label>
+                  <input type="text" value={editForm.unit} onChange={(e) => setEditForm({ ...editForm, unit: e.target.value })}
+                    style={inputStyle}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                  />
                 </div>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={labelStyle}>Location</label>
+                  <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                    style={inputStyle}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Status</label>
+                  <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                    style={{ ...inputStyle, colorScheme: 'light' }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                  >
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }} value="in_stock">In Stock</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }} value="low_stock">Low Stock</option>
+                    <option style={{ background: '#ffffff', color: '#1a1a2e' }} value="out_of_stock">Out of Stock</option>
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '8px' }}>
+                <button type="button" onClick={() => setEditItem(null)} style={btnStyle('#64748b')}>Cancel</button>
+                <button type="submit" style={btnStyle('#0055ff')}>Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {showBarcodeScan && (
-        <div className="modal-overlay" onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            onClick={(e) => e.stopPropagation()}
-            className="modal-content">
-            <div className="modal-header">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">Barcode Scanner</h2>
-              <button onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }} onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }}>
+          <div style={{ width: '100%', maxWidth: '500px', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ background: 'linear-gradient(135deg, #0a2a6e, #0055ff)', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2 style={{ color: '#ffffff', fontSize: '18px', fontWeight: 600 }}>Barcode Scanner</h2>
+              <button onClick={() => { setShowBarcodeScan(false); setBarcodeResult(null); setBarcodeInput(""); }} style={{ color: 'rgba(255,255,255,0.7)', background: 'none', border: 'none', cursor: 'pointer' }}><X style={{ width: '20px', height: '20px' }} /></button>
             </div>
-            <input
-              type="text"
-              autoFocus
-              value={barcodeInput}
-              onChange={(e) => setBarcodeInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && barcodeInput.trim()) {
-                  const found = items.find(i => i.name.toLowerCase().includes(barcodeInput.toLowerCase()) || i.id === barcodeInput.trim());
-                  setBarcodeResult(found || null);
-                  if (!found) toast.error("Item not found for barcode: " + barcodeInput);
-                }
-              }}
-              placeholder="Scan or type barcode..."
-              className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-            />
-            <p className="text-[#94a3b8] text-[12px] mt-2">Press Enter to search</p>
-            {barcodeResult && (
-              <div className="mt-4 p-4 rounded-xl bg-[#f8fafc] space-y-2">
-                <p className="text-[#1a1a2e] font-medium text-[14px]">{barcodeResult.name}</p>
-                <p className="text-[#64748b] text-[13px]">Category: {barcodeResult.category}</p>
-                <p className="text-[#64748b] text-[13px]">Qty: {barcodeResult.quantity} {barcodeResult.unit}</p>
-                <p className="text-[#64748b] text-[13px]">{formatCurrency(barcodeResult.unitPrice)}</p>
-                <p className="text-[#64748b] text-[13px]">Location: {barcodeResult.location}</p>
-              </div>
-            )}
-          </motion.div>
+            <div style={{ padding: '24px' }}>
+              <input
+                type="text"
+                autoFocus
+                value={barcodeInput}
+                onChange={(e) => setBarcodeInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && barcodeInput.trim()) {
+                    const found = items.find(i => i.name.toLowerCase().includes(barcodeInput.toLowerCase()) || i.id === barcodeInput.trim());
+                    setBarcodeResult(found || null);
+                    if (!found) toast.error("Item not found for barcode: " + barcodeInput);
+                  }
+                }}
+                placeholder="Scan or type barcode..."
+                style={inputStyle}
+                onFocus={(e) => { e.currentTarget.style.borderColor = '#0055ff'; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
+              />
+              <p style={{ color: '#94a3b8', fontSize: '12px', marginTop: '8px' }}>Press Enter to search</p>
+              {barcodeResult && (
+                <div style={{ marginTop: '16px', padding: '16px', borderRadius: '12px', backgroundColor: '#f8fafc', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <p style={{ color: '#1a1a2e', fontWeight: 500, fontSize: '14px' }}>{barcodeResult.name}</p>
+                  <p style={{ color: '#64748b', fontSize: '13px' }}>Category: {barcodeResult.category}</p>
+                  <p style={{ color: '#64748b', fontSize: '13px' }}>Qty: {barcodeResult.quantity} {barcodeResult.unit}</p>
+                  <p style={{ color: '#64748b', fontSize: '13px' }}>{formatCurrency(barcodeResult.unitPrice)}</p>
+                  <p style={{ color: '#64748b', fontSize: '13px' }}>Location: {barcodeResult.location}</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

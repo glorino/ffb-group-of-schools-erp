@@ -1,111 +1,156 @@
 "use client";
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { Lock, Eye, EyeOff, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { Eye, EyeOff, Lock, ArrowLeft, CheckCircle, AlertTriangle } from "lucide-react";
 
 export default function ChangePasswordPage() {
-  const { update } = useSession();
   const router = useRouter();
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [show, setShow] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [msgType, setMsgType] = useState<"success" | "error">("success");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const headerStyle: React.CSSProperties = {
+    background: "linear-gradient(135deg, #0a2a6e, #0055ff)",
+    borderRadius: 16,
+    padding: 32,
+    marginBottom: 32,
+    color: "#fff",
+    position: "relative",
+    overflow: "hidden",
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    padding: 12,
+    borderRadius: 10,
+    border: "2px solid #e5e7eb",
+    fontSize: 14,
+    background: "#fff",
+    outline: "none",
+    transition: "border-color 0.2s",
+  };
+
+  const btnPrimary: React.CSSProperties = {
+    background: "linear-gradient(135deg, #0055ff, #0033cc)",
+    color: "#fff",
+    border: "none",
+    padding: "14px 28px",
+    borderRadius: 10,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontSize: 14,
+    width: "100%",
+    opacity: loading ? 0.6 : 1,
+  };
+
+  const handleChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) { toast.error("Password must be at least 6 characters"); return; }
-    if (password !== confirm) { toast.error("Passwords do not match"); return; }
+    if (newPassword !== confirmPassword) {
+      setMsgType("error");
+      setMsg("New passwords do not match.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setMsgType("error");
+      setMsg("New password must be at least 6 characters.");
+      return;
+    }
     setLoading(true);
+    setMsg("");
     try {
-      const res = await fetch("/api/users", {
-        method: "PUT",
+      const r = await fetch("/api/user/change-password", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ changePassword: true, newPassword: password }),
+        body: JSON.stringify({ currentPassword, newPassword }),
       });
-      if (res.ok) {
-        await update({ mustChangePassword: false } as any);
-        toast.success("Password changed successfully");
-        router.push("/dashboard");
+      const d = await r.json();
+      if (r.ok) {
+        setMsgType("success");
+        setMsg("Password changed successfully!");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
       } else {
-        const d = await res.json();
-        toast.error(d.error || "Failed to change password");
+        setMsgType("error");
+        setMsg(d.error || "Failed to change password.");
       }
-    } catch { toast.error("Failed to change password"); }
-    setLoading(false);
+    } catch {
+      setMsgType("error");
+      setMsg("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-animated flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <div className="card" style={{ padding: "40px 36px" }}>
-          <div style={{ textAlign: "center", marginBottom: "32px" }}>
-            <div style={{ width: "64px", height: "64px", borderRadius: "16px", background: "rgba(0, 85, 255, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px auto" }}>
-              <Lock style={{ width: "32px", height: "32px", color: "var(--primary)" }} />
+    <div style={{ padding: "24px 24px 0 24px", maxWidth: 600, margin: "0 auto" }}>
+      <div style={headerStyle}>
+        <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.05)" }} />
+        <div style={{ position: "absolute", bottom: -40, left: -20, width: 150, height: 150, borderRadius: "50%", background: "rgba(255,255,255,0.03)" }} />
+        <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 16 }}>
+          <button onClick={() => router.back()} style={{ background: "rgba(255,255,255,0.15)", border: "none", borderRadius: 10, padding: 10, cursor: "pointer", display: "flex", color: "#fff" }}>
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Change Password</h1>
+            <p style={{ margin: "4px 0 0", opacity: 0.85, fontSize: 14 }}>Update your account password</p>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ background: "#fff", borderRadius: 16, padding: 32, boxShadow: "0 1px 3px rgba(0,0,0,0.08)", border: "1px solid #f0f0f0" }}>
+        {msg && (
+          <div style={{ padding: 14, borderRadius: 10, marginBottom: 20, display: "flex", alignItems: "center", gap: 10, background: msgType === "success" ? "#d1fae5" : "#fef2f2", color: msgType === "success" ? "#065f46" : "#dc2626" }}>
+            {msgType === "success" ? <CheckCircle size={18} /> : <AlertTriangle size={18} />}
+            <span style={{ fontWeight: 500, fontSize: 14 }}>{msg}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleChange}>
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ display: "block", fontWeight: 600, fontSize: 13, color: "#374151", marginBottom: 6 }}>Current Password</label>
+            <div style={{ position: "relative" }}>
+              <Lock size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#9ca3af" }} />
+              <input type={showCurrent ? "text" : "password"} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} placeholder="Enter current password" required style={{ ...inputStyle, paddingLeft: 38 }} onFocus={e => (e.currentTarget.style.borderColor = "#0055ff")} onBlur={e => (e.currentTarget.style.borderColor = "#e5e7eb")} />
+              <button type="button" onClick={() => setShowCurrent(!showCurrent)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#9ca3af", padding: 4 }}>
+                {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
-            <h1 style={{ fontSize: "22px", fontWeight: 700, color: "#1a1a2e", margin: "0 0 8px 0" }}>Change Your Password</h1>
-            <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>You must change your default password before continuing</p>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: "20px" }}>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#374151", marginBottom: "6px" }}>New Password</label>
-              <div style={{ position: "relative" }}>
-                <input
-                  type={show ? "text" : "password"}
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="Enter new password"
-                  style={{
-                    width: "100%", padding: "12px 44px 12px 16px", borderRadius: "12px",
-                    border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "14px",
-                    color: "#1a1a2e", outline: "none", boxSizing: "border-box"
-                  }}
-                />
-                <button type="button" onClick={() => setShow(!show)} style={{
-                  position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)",
-                  background: "none", border: "none", cursor: "pointer", padding: "4px", color: "#94a3b8"
-                }}>
-                  {show ? <EyeOff style={{ width: "18px", height: "18px" }} /> : <Eye style={{ width: "18px", height: "18px" }} />}
-                </button>
-              </div>
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ display: "block", fontWeight: 600, fontSize: 13, color: "#374151", marginBottom: 6 }}>New Password</label>
+            <div style={{ position: "relative" }}>
+              <Lock size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#9ca3af" }} />
+              <input type={showNew ? "text" : "password"} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Enter new password" required style={{ ...inputStyle, paddingLeft: 38 }} onFocus={e => (e.currentTarget.style.borderColor = "#0055ff")} onBlur={e => (e.currentTarget.style.borderColor = "#e5e7eb")} />
+              <button type="button" onClick={() => setShowNew(!showNew)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#9ca3af", padding: 4 }}>
+                {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
+          </div>
 
-            <div style={{ marginBottom: "28px" }}>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#374151", marginBottom: "6px" }}>Confirm Password</label>
-              <input
-                type={show ? "text" : "password"}
-                value={confirm}
-                onChange={e => setConfirm(e.target.value)}
-                placeholder="Confirm new password"
-                style={{
-                  width: "100%", padding: "12px 16px", borderRadius: "12px",
-                  border: "1px solid #e2e8f0", background: "#ffffff", fontSize: "14px",
-                  color: "#1a1a2e", outline: "none", boxSizing: "border-box"
-                }}
-              />
+          <div style={{ marginBottom: 28 }}>
+            <label style={{ display: "block", fontWeight: 600, fontSize: 13, color: "#374151", marginBottom: 6 }}>Confirm New Password</label>
+            <div style={{ position: "relative" }}>
+              <Lock size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#9ca3af" }} />
+              <input type={showConfirm ? "text" : "password"} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Confirm new password" required style={{ ...inputStyle, paddingLeft: 38 }} onFocus={e => (e.currentTarget.style.borderColor = "#0055ff")} onBlur={e => (e.currentTarget.style.borderColor = "#e5e7eb")} />
+              <button type="button" onClick={() => setShowConfirm(!showConfirm)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#9ca3af", padding: 4 }}>
+                {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: "100%", padding: "12px", borderRadius: "12px",
-                background: "linear-gradient(135deg, var(--primary), #0039a6)",
-                color: "#ffffff", fontSize: "15px", fontWeight: 600,
-                border: "none", cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.5 : 1,
-                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px"
-              }}
-            >
-              {loading ? <Loader2 style={{ width: "18px", height: "18px", animation: "spin 1s linear infinite" }} /> : <Lock style={{ width: "18px", height: "18px" }} />}
-              Change Password
-            </button>
-          </form>
-        </div>
-      </motion.div>
+          <button type="submit" disabled={loading || !currentPassword || !newPassword || !confirmPassword} style={btnPrimary}>
+            {loading ? "Changing Password..." : "Change Password"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

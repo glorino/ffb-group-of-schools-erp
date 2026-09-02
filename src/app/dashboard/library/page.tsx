@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
 import { formatCurrency } from "@/lib/school-config";
 import {
   BookOpen,
@@ -20,6 +19,8 @@ import {
   Loader2,
   Download,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
@@ -50,6 +51,82 @@ interface LibraryStats {
   borrowed: number;
 }
 
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "10px 16px",
+  borderRadius: "12px",
+  backgroundColor: "#ffffff",
+  border: "1px solid #e2e8f0",
+  color: "#1a1a2e",
+  fontSize: "13px",
+  outline: "none",
+};
+
+const labelStyle: React.CSSProperties = {
+  color: "#475569",
+  fontSize: "13px",
+  marginBottom: "6px",
+  display: "block",
+};
+
+const btnStyle = (bg: string, disabled?: boolean): React.CSSProperties => ({
+  padding: "8px 16px",
+  borderRadius: "12px",
+  backgroundColor: bg,
+  color: "#ffffff",
+  fontSize: "13px",
+  fontWeight: 500,
+  border: "none",
+  cursor: disabled ? "not-allowed" : "pointer",
+  opacity: disabled ? 0.5 : 1,
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "6px",
+});
+
+const cardStyle: React.CSSProperties = {
+  backgroundColor: "#ffffff",
+  borderRadius: "16px",
+  border: "1px solid #e2e8f0",
+  padding: "24px",
+};
+
+const thStyle: React.CSSProperties = {
+  textAlign: "left",
+  padding: "12px",
+  fontSize: "11px",
+  fontWeight: 600,
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+  color: "#64748b",
+};
+
+const tdStyle: React.CSSProperties = {
+  padding: "12px",
+  fontSize: "13px",
+  color: "#334155",
+};
+
+const statusActive: React.CSSProperties = {
+  backgroundColor: "#dcfce7",
+  color: "#16a34a",
+  padding: "4px 8px",
+  borderRadius: "8px",
+  fontSize: "12px",
+  fontWeight: 500,
+};
+
+const statusOverdue: React.CSSProperties = {
+  backgroundColor: "#fee2e2",
+  color: "#dc2626",
+  padding: "4px 8px",
+  borderRadius: "8px",
+  fontSize: "12px",
+  fontWeight: 500,
+};
+
+const BOOKS_PER_PAGE = 20;
+
 export default function LibraryPage() {
   const { data: session } = useSession();
   const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
@@ -71,6 +148,7 @@ export default function LibraryPage() {
   const [showPenalties, setShowPenalties] = useState(false);
   const [showIssueModal, setShowIssueModal] = useState(false);
   const [issueForm, setIssueForm] = useState({ studentId: "", bookId: "", dueDate: "" });
+  const [bookPage, setBookPage] = useState(1);
 
   useEffect(() => {
     const defaultDueDate = new Date();
@@ -184,11 +262,15 @@ export default function LibraryPage() {
     b.category.toLowerCase().includes(search.toLowerCase())
   );
 
+  const bookStartIdx = (bookPage - 1) * BOOKS_PER_PAGE;
+  const paginatedBooks = filteredBooks.slice(bookStartIdx, bookStartIdx + BOOKS_PER_PAGE);
+  const totalBookPages = Math.max(1, Math.ceil(filteredBooks.length / BOOKS_PER_PAGE));
+
   const statCards = [
-    { label: "Total Titles", value: stats.totalTitles, icon: BookOpen, color: "from-blue-500 to-blue-600" },
-    { label: "Borrowed", value: stats.borrowed, icon: ArrowUpDown, color: "from-emerald-500 to-emerald-600" },
-    { label: "Available", value: stats.availableBooks, icon: CheckCircle, color: "from-purple-500 to-purple-600" },
-    { label: "Overdue", value: borrowings.filter((b) => b.status === "overdue").length, icon: AlertCircle, color: "from-red-500 to-red-600" },
+    { label: "Total Titles", value: stats.totalTitles, icon: BookOpen, color: "linear-gradient(135deg, #0055ff, #0033cc)" },
+    { label: "Borrowed", value: stats.borrowed, icon: ArrowUpDown, color: "linear-gradient(135deg, #10b981, #059669)" },
+    { label: "Available", value: stats.availableBooks, icon: CheckCircle, color: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
+    { label: "Overdue", value: borrowings.filter((b) => b.status === "overdue").length, icon: AlertCircle, color: "linear-gradient(135deg, #ef4444, #dc2626)" },
   ];
 
   const handleExport = () => {
@@ -207,133 +289,112 @@ export default function LibraryPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--primary)]" />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "400px" }}>
+        <Loader2 style={{ width: "32px", height: "32px", color: "#0055ff", animation: "spin 1s linear infinite" }} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Library Management</h1>
-            <p className="text-[#475569] text-[13px]">
-              Manage books, borrowing, reservations, and penalties
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleExport}
-              className="btn btn-secondary"
-            >
-              <Download className="w-4 h-4" />
-              Export
-            </button>
-            {!isReadOnly && (
-              <>
-                <button
-                  onClick={() => setShowIssueModal(true)}
-                  className="btn btn-success"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  Issue Book
-                </button>
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="btn btn-primary"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Book
-                </button>
-              </>
-            )}
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "16px", padding: "32px", marginTop: "32px", margin: "0 16px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-50%", right: "-20%", width: "300px", height: "300px", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", bottom: "-30%", left: "-10%", width: "200px", height: "200px", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)" }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
+            <div>
+              <h1 style={{ color: "#ffffff", fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Library Management</h1>
+              <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>
+                Manage books, borrowing, reservations, and penalties
+              </p>
+            </div>
+            <div style={{ display: "flex", gap: "12px" }}>
+              <button onClick={handleExport} style={btnStyle("#64748b")}>
+                <Download style={{ width: "16px", height: "16px" }} />
+                Export
+              </button>
+              {!isReadOnly && (
+                <>
+                  <button onClick={() => setShowIssueModal(true)} style={btnStyle("#10b981")}>
+                    <BookOpen style={{ width: "16px", height: "16px" }} />
+                    Issue Book
+                  </button>
+                  <button onClick={() => setShowModal(true)} style={btnStyle("#0055ff")}>
+                    <Plus style={{ width: "16px", height: "16px" }} />
+                    Add Book
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
         {statCards.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card"
-          >
-            <div className="flex items-start justify-between">
+          <div key={i} style={cardStyle}>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
               <div>
-                <p className="text-[#64748b] text-[12px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
+                <p style={{ color: "#64748b", fontSize: "12px", marginBottom: "4px" }}>{stat.label}</p>
+                <p style={{ fontSize: "30px", fontWeight: 700, color: "#1a1a2e" }}>{stat.value}</p>
               </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+              <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: stat.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <stat.icon style={{ width: "24px", height: "24px", color: "#ffffff" }} />
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 card"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg">Book Catalog</h3>
-            <div className="flex gap-3">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "24px" }}>
+        <div style={{ ...cardStyle, display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+            <h3 style={{ color: "#1a1a2e", fontWeight: 600, fontSize: "18px" }}>Book Catalog</h3>
+            <div style={{ display: "flex", gap: "12px" }}>
+              <div style={{ position: "relative" }}>
+                <Search style={{ width: "16px", height: "16px", position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
                 <input
                   type="text"
                   placeholder="Search books..."
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+                  onChange={(e) => { setSearch(e.target.value); setBookPage(1); }}
+                  style={{ ...inputStyle, paddingLeft: "36px" }}
                 />
               </div>
-              <button title="Filter using search above" className="p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#475569] hover:bg-[#f1f5f9]">
-                <Filter className="w-4 h-4" />
+              <button title="Filter using search above" style={{ ...inputStyle, width: "auto", padding: "10px 12px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <Filter style={{ width: "16px", height: "16px", color: "#475569" }} />
               </button>
             </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr className="border-b-2 border-[#e2e8f0] bg-[#f8fafc]">
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Title</th>
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Author</th>
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Category</th>
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Copies</th>
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Available</th>
-                  <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Actions</th>
+                <tr style={{ borderBottom: "2px solid #e2e8f0", backgroundColor: "#f8fafc" }}>
+                  <th style={thStyle}>Title</th>
+                  <th style={thStyle}>Author</th>
+                  <th style={thStyle}>Category</th>
+                  <th style={thStyle}>Copies</th>
+                  <th style={thStyle}>Available</th>
+                  <th style={thStyle}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredBooks.map((book) => (
-                  <tr key={book.id} className="border-b border-[#f1f5f9] hover:bg-[#f8fafc] transition-colors">
-                    <td className="py-3 px-3 text-[13px] text-[#334155] font-medium">{book.title}</td>
-                    <td className="py-3 px-3 text-[13px] text-[#334155]">{book.author}</td>
-                    <td className="py-3 px-3">
-                      <span className="px-2 py-1 rounded-lg bg-[#f1f5f9] text-[#475569] text-[12px]">{book.category}</span>
+                {paginatedBooks.map((book) => (
+                  <tr key={book.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    <td style={{ ...tdStyle, fontWeight: 500 }}>{book.title}</td>
+                    <td style={tdStyle}>{book.author}</td>
+                    <td style={tdStyle}>
+                      <span style={{ backgroundColor: "#f1f5f9", color: "#475569", padding: "4px 8px", borderRadius: "8px", fontSize: "12px" }}>{book.category}</span>
                     </td>
-                    <td className="py-3 px-3 text-[13px] text-[#334155]">{book.copies}</td>
-                    <td className="py-3 px-3 text-[13px] text-[#334155]">{book.available}</td>
-                    <td className="py-3 px-3">
-                      <div className="flex gap-1">
+                    <td style={tdStyle}>{book.copies}</td>
+                    <td style={tdStyle}>{book.available}</td>
+                    <td style={tdStyle}>
+                      <div style={{ display: "flex", gap: "4px" }}>
                         <button
                           onClick={() => setViewBook(book)}
-                          className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#334155] transition-colors"
+                          style={{ padding: "6px", borderRadius: "8px", background: "none", border: "none", color: "#64748b", cursor: "pointer" }}
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye style={{ width: "16px", height: "16px" }} />
                         </button>
                         {!isReadOnly && (
                           <button
@@ -345,54 +406,71 @@ export default function LibraryPage() {
                                 available: String(book.available ?? ""), location: "",
                               });
                             }}
-                            className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#334155] transition-colors"
+                            style={{ padding: "6px", borderRadius: "8px", background: "none", border: "none", color: "#64748b", cursor: "pointer" }}
                           >
-                            <Edit className="w-4 h-4" />
+                            <Edit style={{ width: "16px", height: "16px" }} />
                           </button>
                         )}
                       </div>
                     </td>
                   </tr>
                 ))}
-                {filteredBooks.length === 0 && (
+                {paginatedBooks.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-[#64748b] text-[13px]">No books found</td>
+                    <td colSpan={6} style={{ textAlign: "center", padding: "32px", color: "#64748b", fontSize: "13px" }}>No books found</td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-        </motion.div>
+          {filteredBooks.length > 0 && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f1f5f9" }}>
+              <p style={{ color: "#64748b", fontSize: "13px" }}>
+                Showing {bookStartIdx + 1}–{Math.min(bookStartIdx + BOOKS_PER_PAGE, filteredBooks.length)} of {filteredBooks.length}
+              </p>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <button
+                  onClick={() => setBookPage((p) => Math.max(1, p - 1))}
+                  disabled={bookPage === 1}
+                  style={btnStyle("#f1f5f9", bookPage === 1)}
+                >
+                  <ChevronLeft style={{ width: "16px", height: "16px", color: bookPage === 1 ? "#cbd5e1" : "#475569" }} />
+                </button>
+                <span style={{ fontSize: "13px", color: "#64748b" }}>{bookPage} / {totalBookPages}</span>
+                <button
+                  onClick={() => setBookPage((p) => Math.min(totalBookPages, p + 1))}
+                  disabled={bookPage >= totalBookPages}
+                  style={btnStyle("#f1f5f9", bookPage >= totalBookPages)}
+                >
+                  <ChevronRight style={{ width: "16px", height: "16px", color: bookPage >= totalBookPages ? "#cbd5e1" : "#475569" }} />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="space-y-6"
-        >
-          <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Recent Borrowings</h3>
-            <div className="space-y-3">
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          <div style={cardStyle}>
+            <h3 style={{ color: "#1a1a2e", fontWeight: 600, fontSize: "18px", marginBottom: "16px" }}>Recent Borrowings</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {borrowings.map((borrow) => (
-                <div key={borrow.id} className="p-3 rounded-xl bg-[#f8fafc]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[#1a1a2e] text-[13px] font-medium">{borrow.student.firstName} {borrow.student.lastName}</span>
-                    <span className={`px-2 py-1 rounded-lg text-[12px] font-medium ${
-                      borrow.status === "active" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#fee2e2] text-[#dc2626]"
-                    }`}>
+                <div key={borrow.id} style={{ padding: "12px", borderRadius: "12px", backgroundColor: "#f8fafc" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                    <span style={{ color: "#1a1a2e", fontSize: "13px", fontWeight: 500 }}>{borrow.student.firstName} {borrow.student.lastName}</span>
+                    <span style={borrow.status === "active" ? statusActive : statusOverdue}>
                       {borrow.status}
                     </span>
                   </div>
-                  <p className="text-[#64748b] text-[12px]">{borrow.book.title}</p>
-                  <div className="flex items-center justify-between gap-1 mt-1">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-[#94a3b8]" />
-                      <span className="text-[#94a3b8] text-[12px]">Due: {new Date(borrow.dueDate).toLocaleDateString()}</span>
+                  <p style={{ color: "#64748b", fontSize: "12px" }}>{borrow.book.title}</p>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "4px", marginTop: "4px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      <Clock style={{ width: "12px", height: "12px", color: "#94a3b8" }} />
+                      <span style={{ color: "#94a3b8", fontSize: "12px" }}>Due: {new Date(borrow.dueDate).toLocaleDateString()}</span>
                     </div>
                     {borrow.status === "active" && !isReadOnly && (
                       <button
                         onClick={() => handleReturnBook(borrow.id)}
-                        className="px-2 py-1 rounded-lg bg-[#dcfce7] text-[#16a34a] text-[11px] font-medium hover:bg-emerald-500/30 transition-all"
+                        style={{ padding: "4px 8px", borderRadius: "8px", backgroundColor: "#dcfce7", color: "#16a34a", fontSize: "11px", fontWeight: 500, border: "none", cursor: "pointer" }}
                       >
                         Return
                       </button>
@@ -401,263 +479,251 @@ export default function LibraryPage() {
                 </div>
               ))}
               {borrowings.length === 0 && (
-                <p className="text-center py-4 text-[#64748b] text-[13px]">No borrowings yet</p>
+                <p style={{ textAlign: "center", padding: "16px", color: "#64748b", fontSize: "13px" }}>No borrowings yet</p>
               )}
             </div>
           </div>
 
-          <div className="card">
-            <h3 className="text-[#1a1a2e] font-semibold text-lg mb-4">Penalties</h3>
-            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="w-4 h-4 text-[#dc2626]" />
-                <span className="text-[#dc2626] text-[13px] font-medium">{borrowings.filter((b) => b.status === "overdue").length} Overdue Books</span>
+          <div style={cardStyle}>
+            <h3 style={{ color: "#1a1a2e", fontWeight: 600, fontSize: "18px", marginBottom: "16px" }}>Penalties</h3>
+            <div style={{ padding: "16px", borderRadius: "12px", backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                <AlertCircle style={{ width: "16px", height: "16px", color: "#dc2626" }} />
+                <span style={{ color: "#dc2626", fontSize: "13px", fontWeight: 500 }}>{borrowings.filter((b) => b.status === "overdue").length} Overdue Books</span>
               </div>
-              <p className="text-[#64748b] text-[12px]">Total penalties: {formatCurrency(borrowings.filter((b) => b.status === "overdue").length * 500)}</p>
+              <p style={{ color: "#64748b", fontSize: "12px" }}>Total penalties: {formatCurrency(borrowings.filter((b) => b.status === "overdue").length * 500)}</p>
               <button
                 onClick={() => setShowPenalties(true)}
-                className="mt-3 w-full py-2 rounded-lg bg-[#fee2e2] text-[#dc2626] text-[13px] hover:bg-red-500/30 transition-all"
+                style={{ marginTop: "12px", width: "100%", padding: "8px", borderRadius: "8px", backgroundColor: "#fee2e2", color: "#dc2626", fontSize: "13px", border: "none", cursor: "pointer" }}
               >
                 View Details
               </button>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {showModal && (
-        <div className="modal-overlay bg-black/60 backdrop-blur-sm">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="modal-content"
-          >
-            <div className="modal-header">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">Add Book</h2>
-              <button onClick={() => setShowModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ width: "100%", maxWidth: "500px", backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 600 }}>Add Book</h2>
+              <button onClick={() => setShowModal(false)} style={{ color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer" }}>
+                <X style={{ width: "20px", height: "20px" }} />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Title</label>
-                <input
-                  type="text"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                  placeholder="e.g. Mathematics for Junior Secondary"
-                />
-              </div>
-              <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Author</label>
-                <input
-                  type="text"
-                  value={form.author}
-                  onChange={(e) => setForm({ ...form, author: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                  placeholder="e.g. A.O. Adesoji"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+            <div style={{ padding: "24px" }}>
+              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1">ISBN</label>
+                  <label style={labelStyle}>Title</label>
                   <input
                     type="text"
-                    value={form.isbn}
-                    onChange={(e) => setForm({ ...form, isbn: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    placeholder="978-0123456789"
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    style={inputStyle}
+                    placeholder="e.g. Mathematics for Junior Secondary"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1">Copies</label>
+                  <label style={labelStyle}>Author</label>
                   <input
-                    type="number"
-                    value={form.copies}
-                    onChange={(e) => setForm({ ...form, copies: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                    placeholder="e.g. 50"
+                    type="text"
+                    value={form.author}
+                    onChange={(e) => setForm({ ...form, author: e.target.value })}
+                    style={inputStyle}
+                    placeholder="e.g. A.O. Adesoji"
                   />
                 </div>
-              </div>
-              <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Category</label>
-                <select
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  style={{ colorScheme: "light" }}
-                  className="w-full px-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                >
-                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Textbook</option>
-                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Literature</option>
-                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Exam Prep</option>
-                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Reference</option>
-                  <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Practical</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Publisher</label>
-                <input
-                  type="text"
-                  value={form.publisher}
-                  onChange={(e) => setForm({ ...form, publisher: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                  placeholder="e.g. Heinemann"
-                />
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 btn btn-secondary"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 btn btn-primary"
-                >
-                  {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Add Book"}
-                </button>
-              </div>
-            </form>
-          </motion.div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div>
+                    <label style={labelStyle}>ISBN</label>
+                    <input
+                      type="text"
+                      value={form.isbn}
+                      onChange={(e) => setForm({ ...form, isbn: e.target.value })}
+                      style={inputStyle}
+                      placeholder="978-0123456789"
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Copies</label>
+                    <input
+                      type="number"
+                      value={form.copies}
+                      onChange={(e) => setForm({ ...form, copies: e.target.value })}
+                      style={inputStyle}
+                      placeholder="e.g. 50"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label style={labelStyle}>Category</label>
+                  <select
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    style={{ ...inputStyle, colorScheme: "light" }}
+                  >
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Textbook</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Literature</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Exam Prep</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Reference</option>
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }}>Practical</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={labelStyle}>Publisher</label>
+                  <input
+                    type="text"
+                    value={form.publisher}
+                    onChange={(e) => setForm({ ...form, publisher: e.target.value })}
+                    style={inputStyle}
+                    placeholder="e.g. Heinemann"
+                  />
+                </div>
+                <div style={{ display: "flex", gap: "12px", paddingTop: "8px" }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    style={{ ...btnStyle("#f1f5f9"), flex: 1, color: "#475569" }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    style={{ ...btnStyle("#0055ff", submitting), flex: 1 }}
+                  >
+                    {submitting ? <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> : "Add Book"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       )}
 
       {showIssueModal && (
-        <div className="modal-overlay bg-black/60 backdrop-blur-sm">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="modal-content"
-          >
-            <div className="modal-header">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">Issue Book</h2>
-              <button onClick={() => setShowIssueModal(false)} className="text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ width: "100%", maxWidth: "500px", backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 600 }}>Issue Book</h2>
+              <button onClick={() => setShowIssueModal(false)} style={{ color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer" }}>
+                <X style={{ width: "20px", height: "20px" }} />
               </button>
             </div>
-            <form onSubmit={handleIssueBook} className="space-y-4">
-              <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Student ID *</label>
-                <input
-                  type="text"
-                  value={issueForm.studentId}
-                  onChange={(e) => setIssueForm({ ...issueForm, studentId: e.target.value })}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                  placeholder="e.g. STU-2024-001"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Book *</label>
-                <select
-                  value={issueForm.bookId}
-                  onChange={(e) => setIssueForm({ ...issueForm, bookId: e.target.value })}
-                  style={{ colorScheme: "light" }}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                  required
-                >
-                  <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">Select a book</option>
-                  {books.filter((b) => b.available > 0).map((book) => (
-                    <option key={book.id} style={{ background: "#ffffff", color: "#1a1a2e" }} value={book.id}>
-                      {book.title} ({book.available} available)
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-[#475569] text-[13px] mb-1">Due Date *</label>
-                <input
-                  type="date"
-                  value={issueForm.dueDate}
-                  onChange={(e) => setIssueForm({ ...issueForm, dueDate: e.target.value })}
-                  style={{ colorScheme: "light" }}
-                  className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
-                  required
-                />
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  onClick={() => setShowIssueModal(false)}
-                  className="flex-1 btn btn-secondary"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 btn btn-primary"
-                >
-                  {submitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Issue Book"}
-                </button>
-              </div>
-            </form>
-          </motion.div>
+            <div style={{ padding: "24px" }}>
+              <form onSubmit={handleIssueBook} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div>
+                  <label style={labelStyle}>Student ID *</label>
+                  <input
+                    type="text"
+                    value={issueForm.studentId}
+                    onChange={(e) => setIssueForm({ ...issueForm, studentId: e.target.value })}
+                    style={inputStyle}
+                    placeholder="e.g. STU-2024-001"
+                    required
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Book *</label>
+                  <select
+                    value={issueForm.bookId}
+                    onChange={(e) => setIssueForm({ ...issueForm, bookId: e.target.value })}
+                    style={{ ...inputStyle, colorScheme: "light" }}
+                    required
+                  >
+                    <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">Select a book</option>
+                    {books.filter((b) => b.available > 0).map((book) => (
+                      <option key={book.id} style={{ background: "#ffffff", color: "#1a1a2e" }} value={book.id}>
+                        {book.title} ({book.available} available)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label style={labelStyle}>Due Date *</label>
+                  <input
+                    type="date"
+                    value={issueForm.dueDate}
+                    onChange={(e) => setIssueForm({ ...issueForm, dueDate: e.target.value })}
+                    style={{ ...inputStyle, colorScheme: "light" }}
+                    required
+                  />
+                </div>
+                <div style={{ display: "flex", gap: "12px", paddingTop: "8px" }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowIssueModal(false)}
+                    style={{ ...btnStyle("#f1f5f9"), flex: 1, color: "#475569" }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    style={{ ...btnStyle("#0055ff", submitting), flex: 1 }}
+                  >
+                    {submitting ? <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> : "Issue Book"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       )}
 
       {viewBook && (
-        <div className="modal-overlay">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg rounded-2xl bg-white border border-[#e2e8f0] p-6"
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">{viewBook.title}</h2>
-              <button onClick={() => setViewBook(null)} className="text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ width: "100%", maxWidth: "500px", backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 600 }}>{viewBook.title}</h2>
+              <button onClick={() => setViewBook(null)} style={{ color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer" }}>
+                <X style={{ width: "20px", height: "20px" }} />
               </button>
             </div>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#64748b] text-[12px] mb-1">Author</p>
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewBook.author}</p>
+            <div style={{ padding: "24px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div style={{ padding: "12px", borderRadius: "12px", backgroundColor: "#f8fafc" }}>
+                  <p style={{ color: "#64748b", fontSize: "12px", marginBottom: "4px" }}>Author</p>
+                  <p style={{ color: "#1a1a2e", fontSize: "13px", fontWeight: 500 }}>{viewBook.author}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#64748b] text-[12px] mb-1">ISBN</p>
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewBook.isbn}</p>
+                <div style={{ padding: "12px", borderRadius: "12px", backgroundColor: "#f8fafc" }}>
+                  <p style={{ color: "#64748b", fontSize: "12px", marginBottom: "4px" }}>ISBN</p>
+                  <p style={{ color: "#1a1a2e", fontSize: "13px", fontWeight: 500 }}>{viewBook.isbn}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#64748b] text-[12px] mb-1">Category</p>
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewBook.category}</p>
+                <div style={{ padding: "12px", borderRadius: "12px", backgroundColor: "#f8fafc" }}>
+                  <p style={{ color: "#64748b", fontSize: "12px", marginBottom: "4px" }}>Category</p>
+                  <p style={{ color: "#1a1a2e", fontSize: "13px", fontWeight: 500 }}>{viewBook.category}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#64748b] text-[12px] mb-1">Copies</p>
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewBook.copies}</p>
+                <div style={{ padding: "12px", borderRadius: "12px", backgroundColor: "#f8fafc" }}>
+                  <p style={{ color: "#64748b", fontSize: "12px", marginBottom: "4px" }}>Copies</p>
+                  <p style={{ color: "#1a1a2e", fontSize: "13px", fontWeight: 500 }}>{viewBook.copies}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#64748b] text-[12px] mb-1">Available</p>
-                  <p className="text-[#1a1a2e] text-[13px] font-medium">{viewBook.available}</p>
+                <div style={{ padding: "12px", borderRadius: "12px", backgroundColor: "#f8fafc" }}>
+                  <p style={{ color: "#64748b", fontSize: "12px", marginBottom: "4px" }}>Available</p>
+                  <p style={{ color: "#1a1a2e", fontSize: "13px", fontWeight: 500 }}>{viewBook.available}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-[#f8fafc]">
-                  <p className="text-[#64748b] text-[12px] mb-1">Status</p>
-                  <p className={`text-[13px] font-medium ${viewBook.status === "available" ? "text-[#16a34a]" : "text-[#dc2626]"}`}>{viewBook.status}</p>
+                <div style={{ padding: "12px", borderRadius: "12px", backgroundColor: "#f8fafc" }}>
+                  <p style={{ color: "#64748b", fontSize: "12px", marginBottom: "4px" }}>Status</p>
+                  <p style={{ fontSize: "13px", fontWeight: 500, color: viewBook.status === "available" ? "#16a34a" : "#dc2626" }}>{viewBook.status}</p>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
 
-      {/* Edit Book Modal */}
-      <AnimatePresence>
-        {editBook && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="modal-overlay">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditBook(null)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-8 shadow-2xl">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Book</h3>
-                <button onClick={() => setEditBook(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>
-              </div>
+      {editBook && (
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div onClick={() => setEditBook(null)} style={{ position: "absolute", inset: 0 }} />
+          <div style={{ position: "relative", width: "100%", maxWidth: "560px", backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)" }}>
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 600 }}>Edit Book</h2>
+              <button onClick={() => setEditBook(null)} style={{ color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer" }}>
+                <X style={{ width: "20px", height: "20px" }} />
+              </button>
+            </div>
+            <div style={{ padding: "24px" }}>
               <form onSubmit={async (e) => {
                 e.preventDefault();
                 try {
@@ -671,90 +737,92 @@ export default function LibraryPage() {
                   setEditBook(null);
                   fetch("/api/library").then(r => r.json()).then(d => setBooks(d.books || []));
                 } catch { toast.error("Failed to update"); }
-              }} className="space-y-4">
+              }} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 <div>
-                  <label className="block text-[#475569] text-[13px] mb-1.5">Title *</label>
+                  <label style={labelStyle}>Title *</label>
                   <input type="text" required value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                    className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                    style={inputStyle} />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                   <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Author</label>
+                    <label style={labelStyle}>Author</label>
                     <input type="text" value={editForm.author} onChange={(e) => setEditForm({ ...editForm, author: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      style={inputStyle} />
                   </div>
                   <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">ISBN</label>
+                    <label style={labelStyle}>ISBN</label>
                     <input type="text" value={editForm.isbn} onChange={(e) => setEditForm({ ...editForm, isbn: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      style={inputStyle} />
                   </div>
                   <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Category</label>
+                    <label style={labelStyle}>Category</label>
                     <input type="text" value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      style={inputStyle} />
                   </div>
                   <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Copies</label>
+                    <label style={labelStyle}>Copies</label>
                     <input type="number" min="0" value={editForm.copies} onChange={(e) => setEditForm({ ...editForm, copies: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      style={inputStyle} />
                   </div>
                   <div>
-                    <label className="block text-[#475569] text-[13px] mb-1.5">Available</label>
+                    <label style={labelStyle}>Available</label>
                     <input type="number" min="0" value={editForm.available} onChange={(e) => setEditForm({ ...editForm, available: e.target.value })}
-                      className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
+                      style={inputStyle} />
                   </div>
                 </div>
-                <div className="flex justify-end gap-3 pt-2">
-                  <button type="button" onClick={() => setEditBook(null)} className="btn btn-secondary">Cancel</button>
-                  <button type="submit" className="btn btn-primary">Save Changes</button>
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", paddingTop: "8px" }}>
+                  <button type="button" onClick={() => setEditBook(null)} style={btnStyle("#f1f5f9")}>Cancel</button>
+                  <button type="submit" style={btnStyle("#0055ff")}>Save Changes</button>
                 </div>
               </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showPenalties && (
-        <div className="modal-overlay bg-black/60 backdrop-blur-sm" onClick={() => setShowPenalties(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            onClick={(e) => e.stopPropagation()}
-            className="modal-content">
-            <div className="modal-header">
-              <h2 className="text-[#1a1a2e] text-lg font-semibold">Penalty Details</h2>
-              <button onClick={() => setShowPenalties(false)} className="text-[#64748b] hover:text-[#1a1a2e]"><X className="w-5 h-5" /></button>
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }} onClick={() => setShowPenalties(false)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "600px", backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 600 }}>Penalty Details</h2>
+              <button onClick={() => setShowPenalties(false)} style={{ color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer" }}>
+                <X style={{ width: "20px", height: "20px" }} />
+              </button>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2 border-[#e2e8f0] bg-[#f8fafc]">
-                    <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Student</th>
-                    <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Book</th>
-                    <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Due Date</th>
-                    <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Days Overdue</th>
-                    <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-[#64748b] pb-3 px-3">Penalty</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {borrowings.filter(b => b.status === "overdue").map((borrow) => {
-                    const daysOverdue = Math.max(0, Math.ceil((Date.now() - new Date(borrow.dueDate).getTime()) / 86400000));
-                    const penalty = daysOverdue * 100;
-                    return (
-                      <tr key={borrow.id} className="border-b border-[#f1f5f9] hover:bg-[#f8fafc] transition-colors">
-                        <td className="py-3 px-3 text-[13px] text-[#334155]">{borrow.student.firstName} {borrow.student.lastName}</td>
-                        <td className="py-3 px-3 text-[13px] text-[#334155]">{borrow.book.title}</td>
-                        <td className="py-3 px-3 text-[13px] text-[#334155]">{new Date(borrow.dueDate).toLocaleDateString()}</td>
-                        <td className="py-3 px-3 text-[13px] text-[#dc2626]">{daysOverdue}</td>
-                        <td className="py-3 px-3 text-[13px] text-[#dc2626] font-medium">{formatCurrency(penalty)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              {borrowings.filter(b => b.status === "overdue").length === 0 && (
-                <p className="text-center py-8 text-[#64748b] text-[13px]">No overdue books</p>
-              )}
+            <div style={{ padding: "24px" }}>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "2px solid #e2e8f0", backgroundColor: "#f8fafc" }}>
+                      <th style={thStyle}>Student</th>
+                      <th style={thStyle}>Book</th>
+                      <th style={thStyle}>Due Date</th>
+                      <th style={thStyle}>Days Overdue</th>
+                      <th style={thStyle}>Penalty</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {borrowings.filter(b => b.status === "overdue").map((borrow) => {
+                      const daysOverdue = Math.max(0, Math.ceil((Date.now() - new Date(borrow.dueDate).getTime()) / 86400000));
+                      const penalty = daysOverdue * 100;
+                      return (
+                        <tr key={borrow.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                          <td style={tdStyle}>{borrow.student.firstName} {borrow.student.lastName}</td>
+                          <td style={tdStyle}>{borrow.book.title}</td>
+                          <td style={tdStyle}>{new Date(borrow.dueDate).toLocaleDateString()}</td>
+                          <td style={{ ...tdStyle, color: "#dc2626" }}>{daysOverdue}</td>
+                          <td style={{ ...tdStyle, color: "#dc2626", fontWeight: 500 }}>{formatCurrency(penalty)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {borrowings.filter(b => b.status === "overdue").length === 0 && (
+                  <p style={{ textAlign: "center", padding: "32px", color: "#64748b", fontSize: "13px" }}>No overdue books</p>
+                )}
+              </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
     </div>

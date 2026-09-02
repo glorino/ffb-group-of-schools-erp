@@ -1,8 +1,7 @@
 ﻿"use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { motion } from "framer-motion";
 import {
   Calendar,
   Plus,
@@ -28,8 +27,9 @@ interface EventItem {
 }
 
 const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+const ROWS_PER_PAGE = 20;
 
-export default function EventsPage() {
+export function EventsPageInner() {
   const { data: session } = useSession();
   const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
   const canManage = userRoles.some(r => ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"].includes(r));
@@ -37,6 +37,10 @@ export default function EventsPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState<EventItem | null>(null);
   const [saving, setSaving] = useState(false);
@@ -48,10 +52,12 @@ export default function EventsPage() {
   const [imageFile, setImageFile] = useState("");
   const [featured, setFeatured] = useState(false);
 
-  const fetchEvents = async () => {
+  const fetchEvents = async (page = 1, searchQuery = "") => {
     setLoading(true);
     try {
-      const res = await fetch("/api/events");
+      const params = new URLSearchParams({ page: String(page), limit: String(ROWS_PER_PAGE) });
+      if (searchQuery) params.set("search", searchQuery);
+      const res = await fetch(`/api/events?${params.toString()}`);
       const data = await res.json();
       const items = (data.events || []).map((e: any) => ({
         id: e.id,
@@ -69,6 +75,8 @@ export default function EventsPage() {
         },
       }));
       setEvents(items);
+      setTotalPages(data.totalPages || Math.ceil((data.total || items.length) / ROWS_PER_PAGE));
+      setTotalCount(data.total || items.length);
     } catch {
       toast.error("Failed to load events");
     } finally {
@@ -76,16 +84,12 @@ export default function EventsPage() {
     }
   };
 
-  useEffect(() => { fetchEvents(); }, []);
-
-  const filtered = events.filter(e =>
-    e.title.toLowerCase().includes(search.toLowerCase()) ||
-    e.content.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => { fetchEvents(currentPage, search); }, []);
+  useEffect(() => { setCurrentPage(1); fetchEvents(1, search); }, [search]);
 
   const now = new Date();
   const stats = {
-    total: events.length,
+    total: totalCount,
     upcoming: events.filter(e => e.target?.eventDate && new Date(e.target.eventDate) >= now).length,
     past: events.filter(e => e.target?.eventDate && new Date(e.target.eventDate) < now).length,
   };
@@ -165,7 +169,7 @@ export default function EventsPage() {
         toast.success("Event created");
       }
       setShowModal(false);
-      fetchEvents();
+      fetchEvents(currentPage, search);
     } catch {
       toast.error("Failed to save event");
     } finally {
@@ -179,7 +183,7 @@ export default function EventsPage() {
       const res = await fetch(`/api/events?id=${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
       toast.success("Event deleted");
-      fetchEvents();
+      fetchEvents(currentPage, search);
     } catch {
       toast.error("Failed to delete");
     }
@@ -193,172 +197,287 @@ export default function EventsPage() {
     }
   };
 
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "10px 16px", borderRadius: "12px",
+    backgroundColor: "#ffffff", border: "1px solid #e2e8f0", color: "#1a1a2e",
+    fontSize: "13px", outline: "none",
+  };
+
+  const labelStyle: React.CSSProperties = {
+    color: "#475569", fontSize: "13px", marginBottom: "6px", display: "block",
+  };
+
+  const btnStyle = (bg: string, disabled?: boolean): React.CSSProperties => ({
+    padding: "8px 16px", borderRadius: "12px", backgroundColor: bg,
+    color: "#ffffff", fontSize: "13px", fontWeight: 500, border: "none",
+    cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1,
+    display: "inline-flex", alignItems: "center", gap: "6px",
+  });
+
+  const statCardConfigs = [
+    { label: "Total Events", value: stats.total, gradient: "linear-gradient(135deg, #3b82f6, #2563eb)" },
+    { label: "Upcoming", value: stats.upcoming, gradient: "linear-gradient(135deg, #10b981, #059669)" },
+    { label: "Past", value: stats.past, gradient: "linear-gradient(135deg, #94a3b8, #64748b)" },
+  ];
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchEvents(page, search);
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="mt-8 mx-4 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
-        <div>
-          <h1 className="text-2xl font-bold text-white">Events Management</h1>
-          <p className="text-white/70 text-[13px]">Create and manage school events and activities</p>
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "16px", padding: "32px", margin: "32px 16px 0", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-50%", right: "-20%", width: "300px", height: "300px", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", bottom: "-30%", left: "-10%", width: "200px", height: "200px", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)" }} />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <h1 style={{ color: "#ffffff", fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Events Management</h1>
+            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>Create and manage school events and activities</p>
+          </div>
+          {canManage && (
+            <button onClick={openCreate} style={{ padding: "10px 20px", borderRadius: "12px", backgroundColor: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff", fontSize: "13px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+              <Plus style={{ width: "16px", height: "16px" }} />
+              New Event
+            </button>
+          )}
         </div>
-        {canManage && (
-          <button onClick={openCreate} className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all">
-            <Plus className="w-4 h-4" />
-            New Event
-          </button>
-        )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[
-          { label: "Total Events", value: stats.total, color: "from-emerald-500 to-emerald-600" },
-          { label: "Upcoming", value: stats.upcoming, color: "from-blue-500 to-blue-600" },
-          { label: "Past", value: stats.past, color: "from-[#94a3b8] to-[#64748b]" },
-        ].map((stat, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="card shadow-sm">
-            <div className="flex items-start justify-between">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", padding: "0 16px" }}>
+        {statCardConfigs.map((stat, i) => (
+          <div key={i} style={{ backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
               <div>
-                <p className="text-[#64748b] text-[13px] mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-[#1a1a2e]">{stat.value}</p>
+                <p style={{ color: "#64748b", fontSize: "13px", marginBottom: "4px" }}>{stat.label}</p>
+                <p style={{ fontSize: "30px", fontWeight: 700, color: "#1a1a2e" }}>{stat.value}</p>
               </div>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                <Calendar className="w-6 h-6 text-white" />
+              <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: stat.gradient, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Calendar style={{ width: "24px", height: "24px", color: "#ffffff" }} />
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="card shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-[#1a1a2e] font-semibold text-lg">All Events</h3>
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+      <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", margin: "0 16px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+          <h3 style={{ color: "#1a1a2e", fontSize: "18px", fontWeight: 600 }}>All Events</h3>
+          <div style={{ position: "relative" }}>
+            <Search style={{ width: "16px", height: "16px", position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
             <input
               type="text"
               placeholder="Search events..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]"
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              style={{ ...inputStyle, paddingLeft: "36px", width: "220px", borderColor: searchFocused ? "#0055ff" : "#e2e8f0" }}
             />
           </div>
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-[#64748b] animate-spin" />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}>
+            <Loader2 style={{ width: "32px", height: "32px", color: "#64748b", animation: "spin 1s linear infinite" }} />
           </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20 text-[#64748b]">
-            <CalendarDays className="w-12 h-12 mx-auto mb-3 opacity-40" />
-            <p className="text-[13px]">No events found</p>
+        ) : events.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "80px 0", color: "#64748b" }}>
+            <CalendarDays style={{ width: "48px", height: "48px", margin: "0 auto 12px", opacity: 0.4 }} />
+            <p style={{ fontSize: "13px" }}>No events found</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {filtered.map((item) => {
-              const eventDate = item.target?.eventDate;
-              const dateObj = eventDate ? new Date(eventDate) : null;
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {events.map((item) => {
+              const evDate = item.target?.eventDate;
+              const dateObj = evDate ? new Date(evDate) : null;
               const day = dateObj ? dateObj.getDate() : "–";
               const month = dateObj ? MONTHS[dateObj.getMonth()] : "–";
               const img = item.target?.imageUrl;
               return (
-                <div key={item.id} className="flex items-start gap-4 p-4 rounded-xl bg-[#f8fafc] hover:bg-[#f1f5f9] transition-all">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 flex flex-col items-center justify-center shrink-0">
-                    <span className="text-[#16a34a] text-[18px] font-bold leading-none">{day}</span>
-                    <span className="text-[#16a34a]/70 text-[10px] uppercase">{month}</span>
+                <div key={item.id} style={{ display: "flex", alignItems: "flex-start", gap: "16px", padding: "16px", borderRadius: "12px", backgroundColor: "#f8fafc", transition: "background-color 0.15s" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f1f5f9")}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#f8fafc")}
+                >
+                  <div style={{ width: "56px", height: "56px", borderRadius: "12px", background: "linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0.3))", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <span style={{ color: "#16a34a", fontSize: "18px", fontWeight: 700, lineHeight: 1 }}>{day}</span>
+                    <span style={{ color: "rgba(22,163,74,0.7)", fontSize: "10px", textTransform: "uppercase" }}>{month}</span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-[#1a1a2e] font-medium text-[14px] truncate">{item.title}</h4>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                      <h4 style={{ color: "#1a1a2e", fontSize: "14px", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</h4>
                       {item.target?.featured && (
-                        <span className="px-2 py-0.5 rounded-full bg-yellow-500/20 text-[#ca8a04] text-[11px] font-medium shrink-0">Featured</span>
+                        <span style={{ padding: "2px 8px", borderRadius: "9999px", backgroundColor: "rgba(234,179,8,0.2)", color: "#ca8a04", fontSize: "11px", fontWeight: 500, flexShrink: 0 }}>Featured</span>
                       )}
                     </div>
-                    <p className="text-[#64748b] text-[13px] line-clamp-1 mb-1">{item.content}</p>
-                    {eventDate && (
-                      <div className="flex items-center gap-1 text-[#94a3b8] text-[12px]">
-                        <Clock className="w-3 h-3" />
-                        {formatDate(eventDate)}
+                    <p style={{ color: "#64748b", fontSize: "13px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: "4px" }}>{item.content}</p>
+                    {evDate && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "#94a3b8", fontSize: "12px" }}>
+                        <Clock style={{ width: "12px", height: "12px" }} />
+                        {formatDate(evDate)}
                       </div>
                     )}
                   </div>
                   {img && (
-                    <div className="w-20 h-14 rounded-lg overflow-hidden shrink-0 hidden sm:block">
-                      <img src={img} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    <div style={{ width: "80px", height: "56px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, display: "none" }}>
+                      <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                     </div>
                   )}
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button onClick={() => openEdit(item)} className="p-1.5 rounded-lg hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e] transition-all">
-                      <Edit className="w-4 h-4" />
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+                    <button onClick={() => openEdit(item)} style={{ padding: "6px", borderRadius: "8px", backgroundColor: "transparent", border: "none", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#f1f5f9"; e.currentTarget.style.color = "#1a1a2e"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#64748b"; }}
+                    >
+                      <Edit style={{ width: "16px", height: "16px" }} />
                     </button>
-                    <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-[#64748b] hover:text-[#dc2626] transition-all">
-                      <Trash2 className="w-4 h-4" />
+                    <button onClick={() => handleDelete(item.id)} style={{ padding: "6px", borderRadius: "8px", backgroundColor: "transparent", border: "none", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(220,38,38,0.1)"; e.currentTarget.style.color = "#dc2626"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#64748b"; }}
+                    >
+                      <Trash2 style={{ width: "16px", height: "16px" }} />
                     </button>
                   </div>
                 </div>
               );
             })}
+
+            {totalPages > 1 && (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "8px", paddingTop: "16px", borderTop: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "13px", color: "#64748b" }}>
+                  Showing {((currentPage - 1) * ROWS_PER_PAGE) + 1}–{Math.min(currentPage * ROWS_PER_PAGE, totalCount)} of {totalCount}
+                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <button
+                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid #e2e8f0", backgroundColor: "#ffffff", color: "#475569", fontSize: "13px", cursor: currentPage === 1 ? "not-allowed" : "pointer", opacity: currentPage === 1 ? 0.5 : 1 }}
+                  >
+                    Prev
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      style={{
+                        padding: "6px 12px", borderRadius: "8px", border: "1px solid #e2e8f0",
+                        backgroundColor: currentPage === page ? "#0055ff" : "#ffffff",
+                        color: currentPage === page ? "#ffffff" : "#475569",
+                        fontSize: "13px", fontWeight: currentPage === page ? 500 : 400, cursor: "pointer",
+                      }}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid #e2e8f0", backgroundColor: "#ffffff", color: "#475569", fontSize: "13px", cursor: currentPage === totalPages ? "not-allowed" : "pointer", opacity: currentPage === totalPages ? 0.5 : 1 }}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
-      </motion.div>
+      </div>
 
       {showModal && (
-        <div className="modal-overlay">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="modal-content shadow-sm">
-            <div className="modal-header">
-              <h3 className="text-[#1a1a2e] font-semibold text-lg">{editItem ? "Edit Event" : "New Event"}</h3>
-              <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#1a1a2e]">
-                <X className="w-5 h-5" />
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ width: "100%", maxWidth: "500px", backgroundColor: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+            <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 600 }}>{editItem ? "Edit Event" : "New Event"}</h2>
+              <button onClick={() => setShowModal(false)} style={{ color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center" }}>
+                <X style={{ width: "20px", height: "20px" }} />
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1.5">Title *</label>
-                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" placeholder="Enter event title" />
+                <label style={labelStyle}>Title *</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  style={inputStyle}
+                  placeholder="Enter event title"
+                />
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1.5">Content *</label>
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={3} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)] resize-none" placeholder="Write event description..." />
+                <label style={labelStyle}>Content *</label>
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={4}
+                  style={{ ...inputStyle, resize: "none" }}
+                  placeholder="Write event description..."
+                />
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1.5">Event Date *</label>
-                <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="w-full px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" style={{ colorScheme: "light" }} />
+                <label style={labelStyle}>Event Date *</label>
+                <input
+                  type="date"
+                  value={eventDate}
+                  onChange={(e) => setEventDate(e.target.value)}
+                  style={{ ...inputStyle, colorScheme: "light" }}
+                />
               </div>
               <div>
-                <label className="block text-[#475569] text-[13px] mb-1.5">Event Image</label>
-                <div className="flex gap-3">
-                  <input type="text" value={imageUrl} onChange={(e) => { setImageUrl(e.target.value); setImageFile(""); }} placeholder="Image URL" className="flex-1 px-5 py-2.5 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] focus:outline-none focus:border-[var(--primary)]" />
-                  <label className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#f8fafc] border border-dashed border-[#e2e8f0] text-[#64748b] text-[13px] cursor-pointer hover:bg-[#f1f5f9]">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <label style={labelStyle}>Event Image</label>
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <input
+                    type="text"
+                    value={imageUrl}
+                    onChange={(e) => { setImageUrl(e.target.value); setImageFile(""); }}
+                    placeholder="Image URL"
+                    style={{ ...inputStyle, flex: 1 }}
+                  />
+                  <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "10px 16px", borderRadius: "12px", backgroundColor: "#f8fafc", border: "1px dashed #e2e8f0", color: "#64748b", fontSize: "13px", cursor: "pointer" }}>
+                    <svg style={{ width: "16px", height: "16px" }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                     Upload
-                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleImageUpload} />
                   </label>
                 </div>
                 {(imageFile || imageUrl) && (
-                  <div className="mt-2 relative inline-block">
-                    <img src={imageFile || imageUrl} alt="Preview" className="h-20 rounded-lg object-cover" />
-                    <button onClick={() => { setImageFile(""); setImageUrl(""); }} className="absolute -top-1 -right-1 p-1 rounded-full bg-red-500 text-white">
-                      <X className="w-3 h-3" />
+                  <div style={{ marginTop: "8px", position: "relative", display: "inline-block" }}>
+                    <img src={imageFile || imageUrl} alt="Preview" style={{ height: "80px", borderRadius: "8px", objectFit: "cover" }} />
+                    <button onClick={() => { setImageFile(""); setImageUrl(""); }} style={{ position: "absolute", top: "-4px", right: "-4px", padding: "4px", borderRadius: "9999px", backgroundColor: "#dc2626", color: "#ffffff", border: "none", cursor: "pointer", display: "flex", alignItems: "center" }}>
+                      <X style={{ width: "12px", height: "12px" }} />
                     </button>
                   </div>
                 )}
               </div>
-              <label className="flex items-center gap-2 text-[#475569] text-[13px] cursor-pointer">
-                <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="rounded border-[#e2e8f0]" />
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", color: "#475569", fontSize: "13px", cursor: "pointer" }}>
+                <input
+                  type="checkbox"
+                  checked={featured}
+                  onChange={(e) => setFeatured(e.target.checked)}
+                  style={{ accentColor: "#0055ff" }}
+                />
                 Mark as featured
               </label>
             </div>
 
-            <div className="modal-footer">
-              <button onClick={() => setShowModal(false)} className="btn btn-secondary">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="btn btn-primary disabled:opacity-50 flex items-center gap-2">
-                {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+            <div style={{ padding: "16px 24px", borderTop: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "12px" }}>
+              <button onClick={() => setShowModal(false)} style={btnStyle("#f1f5f9", false)}>
+                <span style={{ color: "#475569" }}>Cancel</span>
+              </button>
+              <button onClick={handleSave} disabled={saving} style={btnStyle("#0055ff", saving)}>
+                {saving && <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} />}
                 {editItem ? "Update" : "Create"}
               </button>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
     </div>
+  );
+}
+
+export default function EventsPage() {
+  return (
+    <Suspense fallback={<div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 0" }}><Loader2 style={{ width: "32px", height: "32px", color: "#64748b", animation: "spin 1s linear infinite" }} /></div>}>
+      <EventsPageInner />
+    </Suspense>
   );
 }
