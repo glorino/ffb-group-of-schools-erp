@@ -361,7 +361,7 @@ export default function IncomePage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
+              className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-8 max-h-[85vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-bold text-lg">Record New Income</h3>

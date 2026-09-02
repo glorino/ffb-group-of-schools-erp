@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
-import { requireAuth } from "@/lib/api-rbac";
+import { prisma } from "@/lib/prisma";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 4 * 1024 * 1024;
 const ALLOWED_TYPES = [
   "application/pdf",
   "image/jpeg",
@@ -15,41 +13,42 @@ const ALLOWED_TYPES = [
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "PARENT"]);
-    if (authResult.error) return authResult.error;
-
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     const docType = formData.get("docType") as string | null;
+    const applicantId = formData.get("applicantId") as string | null;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: "File size exceeds 5MB limit" }, { status: 400 });
+      return NextResponse.json({ error: "File size exceeds 4MB limit" }, { status: 400 });
     }
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json({ error: "File type not allowed. Use PDF, JPG, PNG, GIF, or WebP" }, { status: 400 });
     }
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "admissions");
-    await mkdir(uploadDir, { recursive: true });
-
-    const timestamp = Date.now();
-    const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const filename = `${timestamp}_${sanitizedName}`;
-    const filepath = path.join(uploadDir, filename);
-
     const bytes = await file.arrayBuffer();
-    await writeFile(filepath, Buffer.from(bytes));
+    const base64 = Buffer.from(bytes).toString("base64");
+    const dataUrl = `data:${file.type};base64,${base64}`;
 
-    const url = `/uploads/admissions/${filename}`;
+    if (applicantId) {
+      await prisma.applicantDocument.create({
+        data: {
+          applicantId,
+          name: file.name,
+          type: docType || file.type,
+          url: dataUrl,
+          size: file.size,
+        },
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      url,
+      url: dataUrl,
       name: file.name,
       type: docType || file.type,
       mimeType: file.type,

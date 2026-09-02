@@ -532,7 +532,7 @@ export default function InventoryPage() {
             className="modal-overlay">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditItem(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-2xl">
+              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-8 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-semibold text-lg">Edit Inventory Item</h3>
                 <button onClick={() => setEditItem(null)} className="p-1 rounded-lg hover:bg-[#f1f5f9] text-[#64748b]"><X className="w-5 h-5" /></button>

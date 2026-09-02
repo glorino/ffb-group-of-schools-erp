@@ -7,7 +7,7 @@ import { sendApplicationSubmittedEmail } from "@/lib/resend";
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
+    const authResult = await requireAuth(["OWNER", "SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
     if (authResult.error) return authResult.error;
 
     const { searchParams } = new URL(request.url);
@@ -31,19 +31,26 @@ export async function GET(request: NextRequest) {
 
     if (status) where.status = status;
 
-    const [applicants, total] = await Promise.all([
-      prisma.applicant.findMany({
-        where,
-        include: {
-          documents: true,
-          student: true,
-        },
-        skip,
-        take: limit,
-        orderBy: { submittedAt: "desc" },
-      }),
-      prisma.applicant.count({ where }),
-    ]);
+    let applicants: any[] = [];
+    let total = 0;
+    try {
+      [applicants, total] = await Promise.all([
+        prisma.applicant.findMany({
+          where,
+          skip,
+          take: limit,
+          orderBy: { submittedAt: "desc" },
+        }),
+        prisma.applicant.count({ where }),
+      ]);
+    } catch (queryErr: any) {
+      console.error("Applicant query failed, trying without relations:", queryErr?.message);
+      applicants = await (prisma as any).$queryRawUnsafe(
+        `SELECT * FROM "Applicant" ORDER BY "submittedAt" DESC LIMIT ${limit} OFFSET ${skip}`
+      );
+      const countResult: any[] = await (prisma as any).$queryRawUnsafe(`SELECT COUNT(*) as count FROM "Applicant"`);
+      total = Number(countResult?.[0]?.count ?? 0);
+    }
 
     return NextResponse.json({
       applicants,
@@ -57,7 +64,7 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error("GET /api/admissions error:", error);
     return NextResponse.json(
-      { error: error?.message?.includes("does not exist") ? "Admissions table not found. Please run database migration." : "Failed to fetch admissions" },
+      { error: "Failed to fetch admissions", details: error?.message },
       { status: 500 }
     );
   }
@@ -67,6 +74,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const validated = AdmissionSchema.parse(body);
+    const documents: { name: string; type: string; url: string; size?: number }[] = (body as any).documents || [];
 
     const applicationNumber = `APP/${new Date().getFullYear()}/${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
 
@@ -93,10 +101,6 @@ export async function POST(request: NextRequest) {
         bloodGroup: validated.bloodGroup,
       },
     });
-
-    const documents = (body as any).documents as
-      | { name: string; type: string; url: string; size?: number }[]
-      | undefined;
 
     if (Array.isArray(documents) && documents.length > 0) {
       await prisma.applicantDocument.createMany({

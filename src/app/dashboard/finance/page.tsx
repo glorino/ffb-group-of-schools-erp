@@ -302,10 +302,10 @@ export default function FinancePage() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: "Total Collected", value: formatCurrency(totalCollected || 48200000), change: `+${verifiedPayments || 6}`, up: true, icon: Wallet, color: "from-emerald-500 to-emerald-700" },
-              { label: "Outstanding", value: formatCurrency(totalOutstanding || 12800000), change: `-${pendingPayments || 0}`, up: false, icon: Receipt, color: "from-amber-500 to-amber-700" },
-              { label: "Total Payments", value: String(payments.length || 8), change: `+${payments.length}`, up: true, icon: TrendingUp, color: "from-blue-500 to-blue-700" },
-              { label: "Pending Invoices", value: String(invoices.filter(i => i.status !== "paid").length || 4), change: "+0", up: false, icon: AlertCircle, color: "from-red-500 to-red-700" },
+              { label: "Total Collected", value: formatCurrency(totalCollected), change: `+${verifiedPayments}`, up: true, icon: Wallet, color: "from-emerald-500 to-emerald-700" },
+              { label: "Outstanding", value: formatCurrency(totalOutstanding), change: `-${pendingPayments}`, up: false, icon: Receipt, color: "from-amber-500 to-amber-700" },
+              { label: "Total Payments", value: String(payments.length), change: `+${payments.length}`, up: true, icon: TrendingUp, color: "from-blue-500 to-blue-700" },
+              { label: "Pending Invoices", value: String(invoices.filter(i => i.status !== "paid").length), change: "+0", up: false, icon: AlertCircle, color: "from-red-500 to-red-700" },
             ].map((stat, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-3">
@@ -356,8 +356,8 @@ export default function FinancePage() {
               <h3 className="text-[#1a1a2e] font-semibold text-[15px] mb-4">Payment Status</h3>
               <div className="space-y-3">
                 {[
-                  { label: "Verified", count: verifiedPayments || 6, color: "bg-emerald-500" },
-                  { label: "Pending", count: pendingPayments || 2, color: "bg-amber-500" },
+                  { label: "Verified", count: verifiedPayments, color: "bg-emerald-500" },
+                  { label: "Pending", count: pendingPayments, color: "bg-amber-500" },
                 ].map((item, i) => (
                   <div key={i} className="p-3 rounded-xl bg-[#f8fafc]">
                     <div className="flex items-center justify-between mb-2">

@@ -139,46 +139,50 @@ export default function ApplyPage() {
     setSubmitError("");
     setUploadingDocs(true);
     try {
-      const docsToUpload = docFields.filter((d) => fileObjects[d.key]);
-      const uploadedDocs: UploadedDoc[] = [];
-
-      for (const doc of docsToUpload) {
-        const file = fileObjects[doc.key];
-        if (!file) continue;
-        const result = await uploadFile(file, doc.label);
-        if (result) {
-          uploadedDocs.push(result);
-        } else {
-          setSubmitError(`Failed to upload ${doc.label}. Please try again.`);
-          setSubmitting(false);
-          setUploadingDocs(false);
-          return;
-        }
-      }
-
-      setUploadingDocs(false);
+      const formPayload: Record<string, string> = {
+        firstName: form.firstName, lastName: form.lastName, middleName: form.middleName,
+        email: "", phone: "", dateOfBirth: form.dateOfBirth, gender: form.gender,
+        classAppliedFor: form.classApplying, previousSchool: form.previousSchool,
+        guardianName: form.guardianName, guardianPhone: form.guardianPhone,
+        guardianEmail: form.guardianEmail, guardianRelationship: form.guardianRelationship,
+        address: form.homeAddress, nationality: form.nationality,
+        stateOfOrigin: form.stateOfOrigin, bloodGroup: form.bloodGroup,
+      };
 
       const res = await fetch("/api/admissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: form.firstName, lastName: form.lastName, middleName: form.middleName,
-          email: "", phone: "", dateOfBirth: form.dateOfBirth, gender: form.gender,
-          classAppliedFor: form.classApplying, previousSchool: form.previousSchool,
-          guardianName: form.guardianName, guardianPhone: form.guardianPhone,
-          guardianEmail: form.guardianEmail, guardianRelationship: form.guardianRelationship,
-          address: form.homeAddress, nationality: form.nationality,
-          stateOfOrigin: form.stateOfOrigin, bloodGroup: form.bloodGroup,
-          documents: uploadedDocs,
-        }),
+        body: JSON.stringify(formPayload),
       });
       const data = await res.json();
-      if (data.success) {
-        setAppNumber(data.applicationNumber);
-        setSubmitted(true);
-      } else {
+      if (!data.success) {
         setSubmitError(data.error || "Submission failed. Please try again.");
+        setSubmitting(false);
+        setUploadingDocs(false);
+        return;
       }
+
+      const applicantId = data.applicant?.id;
+
+      if (applicantId) {
+        for (const doc of docFields) {
+          const file = fileObjects[doc.key];
+          if (!file) continue;
+          try {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("docType", doc.label);
+            formData.append("applicantId", applicantId);
+            await fetch("/api/admissions/documents", { method: "POST", body: formData });
+          } catch {
+            console.warn(`Failed to upload ${doc.label}, skipping`);
+          }
+        }
+      }
+
+      setUploadingDocs(false);
+      setAppNumber(data.applicationNumber);
+      setSubmitted(true);
     } catch {
       setSubmitError("Network error. Please check your connection and try again.");
     }
@@ -191,7 +195,7 @@ export default function ApplyPage() {
 
   if (submitted) {
     return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", position: "relative" }}>
+      <div className="bg-animated" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", position: "relative" }}>
         {particles.map((p) => (
           <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
         ))}

@@ -337,13 +337,13 @@ export default function CbtPage() {
     try {
       const answerArray = Object.entries(answers).map(([questionId, response]) => ({
         questionId,
-        response,
+        answer: response,
       }));
 
       const res = await fetch(`/api/cbt/exams/${currentExam.id}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, answers: answerArray }),
+        body: JSON.stringify({ sessionId, responses: answerArray }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to submit exam");
@@ -435,6 +435,7 @@ export default function CbtPage() {
         subject: newQuestion.subject,
         topic: newQuestion.topic,
         difficulty: newQuestion.difficulty,
+        manual: !editingQuestion,
       };
       const url = editingQuestion
         ? `/api/cbt/practice/${editingQuestion.id}`

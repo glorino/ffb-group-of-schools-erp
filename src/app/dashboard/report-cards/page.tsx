@@ -33,6 +33,9 @@ export default function ReportCardsPage() {
   const [showPreview, setShowPreview] = useState(false);
   const [termId, setTermId] = useState("");
   const [terms, setTerms] = useState<any[]>([]);
+  const [notifying, setNotifying] = useState(false);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [selectedClass, setSelectedClass] = useState("");
 
   useEffect(() => {
     fetch("/api/students?limit=100")
@@ -52,6 +55,7 @@ export default function ReportCardsPage() {
 
   useEffect(() => {
     fetch("/api/calendar").then(r => r.json()).then(d => setTerms(d.terms || [])).catch(() => {});
+    fetch("/api/classes").then(r => r.json()).then(d => setClasses(d.classes || d || [])).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -130,6 +134,28 @@ export default function ReportCardsPage() {
     s.admissionNumber?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const notifyParents = async () => {
+    if (!selectedClass || !termId) {
+      alert("Please select a class and term first");
+      return;
+    }
+    setNotifying(true);
+    try {
+      const res = await fetch("/api/reports/notify-parents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ classId: selectedClass, termId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to notify parents");
+      alert(data.message || "Parents notified successfully");
+    } catch (err: any) {
+      alert(err.message || "Failed to notify parents");
+    } finally {
+      setNotifying(false);
+    }
+  };
+
   return (
     <motion.div {...fadeIn} className="space-y-5">
       <div className="mt-8 mx-4 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
@@ -156,6 +182,29 @@ export default function ReportCardsPage() {
           <p className="text-[18px] font-bold text-[#1a1a2e] mt-1">{generating ? "Generating..." : reportData ? "Ready" : "Select student"}</p>
         </div>
       </div>
+
+      {!isReadOnly && (
+        <div className="mx-4 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-4 shadow-sm flex flex-wrap items-center gap-4">
+          <p className="text-[#1a1a2e] text-[13px] font-semibold">Notify Parents:</p>
+          <select
+            value={selectedClass}
+            onChange={(e) => setSelectedClass(e.target.value)}
+            className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] outline-none"
+          >
+            <option value="">Select Class</option>
+            {classes.map((c: any) => (
+              <option key={c.id} value={c.id}>{c.displayName || c.name}</option>
+            ))}
+          </select>
+          <button
+            onClick={notifyParents}
+            disabled={notifying || !selectedClass || !termId}
+            className="px-4 py-2 rounded-xl bg-emerald-500 text-white text-[12px] font-medium hover:bg-emerald-600 transition disabled:opacity-50"
+          >
+            {notifying ? "Sending..." : "Send Report Card Emails"}
+          </button>
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-5 gap-5">
         {/* Student List - hidden for students/parents (auto-selected) */}

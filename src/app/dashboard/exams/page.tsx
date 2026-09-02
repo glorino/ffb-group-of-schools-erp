@@ -62,13 +62,7 @@ export default function ExamsPage() {
   const [subjectSearch, setSubjectSearch] = useState("");
   const [allSubjects, setAllSubjects] = useState<{name: string; questions: number}[]>([]);
 
-  const questionBank: QuestionBankItem[] = [
-    { subject: "Mathematics", questions: 450, difficulty: "Mixed", lastUpdated: "2 days ago" },
-    { subject: "English Language", questions: 380, difficulty: "Mixed", lastUpdated: "1 week ago" },
-    { subject: "Physics", questions: 320, difficulty: "Advanced", lastUpdated: "3 days ago" },
-    { subject: "Chemistry", questions: 290, difficulty: "Intermediate", lastUpdated: "5 days ago" },
-    { subject: "Biology", questions: 310, difficulty: "Mixed", lastUpdated: "1 week ago" },
-  ];
+  const questionBank: QuestionBankItem[] = [];
 
   useEffect(() => {
     fetchExams();

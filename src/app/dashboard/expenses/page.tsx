@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
 import { formatCurrency } from "@/lib/school-config";
+import { useSession } from "next-auth/react";
 
 interface Expense {
   id: string;
@@ -52,7 +53,10 @@ const categories = [
 ];
 
 export default function ExpensesPage() {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const { data: session } = useSession();
+  const userRoles: string[] = (session?.user as any)?.roles?.map((r: any) => r.name) || [];
+  const canApprove = userRoles.some((r: string) => ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"].includes(r));
+  const canCreate = userRoles.some((r: string) => ["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"].includes(r));  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [stats, setStats] = useState<ExpenseStats>({ totalAmount: 0, pendingAmount: 0, totalCount: 0, pendingCount: 0 });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -224,13 +228,15 @@ export default function ExpensesPage() {
               <Download className="w-4 h-4" />
               Export
             </button>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              Record Expense
-            </button>
+            {canCreate && (
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[13px] font-medium hover:bg-white/20 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                Record Expense
+              </button>
+            )}
           </div>
         </div>
       </motion.div>
@@ -339,7 +345,7 @@ export default function ExpensesPage() {
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        {expense.status === "pending" && (
+                        {expense.status === "pending" && canApprove && (
                           <div className="flex gap-1">
                             <button
                               onClick={() => handleStatusUpdate(expense.id, "approved")}
@@ -454,7 +460,8 @@ export default function ExpensesPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
+              className="w-full max-w-xl bg-white border border-[#e2e8f0] rounded-3xl max-h-[85vh] overflow-y-auto"
+              style={{ padding: "32px" }}
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#1a1a2e] font-bold text-lg">Record New Expense</h3>
@@ -465,7 +472,7 @@ export default function ExpensesPage() {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4" style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
                 <div>
                   <label className="block text-[#64748b] text-[12px] mb-1.5">Title *</label>
                   <input

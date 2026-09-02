@@ -24,12 +24,20 @@ export async function GET(request: NextRequest) {
     const exams = await prisma.cBTExam.findMany({
       where,
       include: {
+        questions: true,
         _count: { select: { questions: true, sessions: true } },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ exams });
+    const questions = exams.flatMap((exam) =>
+      exam.questions.map((q) => ({
+        ...q,
+        subject: exam.subject,
+      }))
+    );
+
+    return NextResponse.json({ exams, questions });
   } catch (error) {
     console.error("GET /api/cbt/practice error:", error);
     return NextResponse.json(
@@ -41,16 +49,66 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["STUDENT"]);
+    const authResult = await requireAuth(["STUDENT", "OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER"]);
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const { subject, topic, count, difficulty } = body as {
+    const { subject, topic, count, difficulty, manual, question, options, correct } = body as {
       subject: string;
       topic: string;
       count: number;
       difficulty: string;
+      manual?: boolean;
+      question?: string;
+      options?: string[];
+      correct?: string;
     };
+
+    if (manual && question && options && correct) {
+      const schoolId = (authResult.session!.user as any).schoolId;
+      const existingExam = await prisma.cBTExam.findFirst({
+        where: { type: "practice", subject, schoolId },
+      });
+
+      let examId: string;
+      if (existingExam) {
+        examId = existingExam.id;
+      } else {
+        const exam = await prisma.cBTExam.create({
+          data: {
+            schoolId,
+            title: `Practice: ${subject}`,
+            subject,
+            duration: 30,
+            totalQuestions: 0,
+            passingScore: 50,
+            type: "practice",
+            status: "published",
+          },
+        });
+        examId = exam.id;
+      }
+
+      const newQuestion = await prisma.cBTQuestion.create({
+        data: {
+          examId,
+          question,
+          type: "objective",
+          options,
+          answer: correct,
+          difficulty: difficulty || "medium",
+          topic: topic || "",
+          marks: 1,
+        },
+      });
+
+      await prisma.cBTExam.update({
+        where: { id: examId },
+        data: { totalQuestions: { increment: 1 } },
+      });
+
+      return NextResponse.json({ question: newQuestion }, { status: 201 });
+    }
 
     if (!subject || !topic) {
       return NextResponse.json(

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-rbac";
 import { DisciplineSchema } from "@/lib/validations";
+import { sendEmail } from "@/lib/resend";
+import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 export async function GET(request: NextRequest) {
   try {
@@ -63,6 +65,45 @@ export async function POST(request: NextRequest) {
       },
       include: { student: { select: { id: true, firstName: true, lastName: true } } },
     });
+
+    try {
+      const guardians = await prisma.guardian.findMany({
+        where: { studentId, email: { not: null } },
+        select: { email: true, firstName: true },
+      });
+      if (guardians.length > 0) {
+        const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
+        const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
+        const guardianEmails = guardians.map(g => g.email).filter(Boolean) as string[];
+        await sendEmail(
+          guardianEmails,
+          `Discipline Notice - ${schoolName}`,
+          `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a1628; color: #fff; border-radius: 16px; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #dc2626, #ef4444); padding: 30px; text-align: center;">
+              <h1 style="font-size: 22px; font-weight: 700; margin: 0;">Discipline Notice</h1>
+            </div>
+            <div style="padding: 30px;">
+              <p style="color: rgba(255,255,255,0.7); line-height: 1.7;">Dear Parent/Guardian,</p>
+              <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-top: 15px;">
+                We wish to inform you that <strong>${record.student.firstName} ${record.student.lastName}</strong> has been involved in a discipline matter.
+              </p>
+              <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin: 20px 0;">
+                <p style="color: rgba(255,255,255,0.7); margin: 5px 0;"><strong>Type:</strong> ${type}</p>
+                <p style="color: rgba(255,255,255,0.7); margin: 5px 0;"><strong>Issue:</strong> ${title}</p>
+                ${validated.description ? `<p style="color: rgba(255,255,255,0.7); margin: 5px 0;"><strong>Details:</strong> ${validated.description}</p>` : ""}
+                <p style="color: rgba(255,255,255,0.7); margin: 5px 0;"><strong>Action:</strong> ${validated.action || "pending"}</p>
+              </div>
+              <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 20px;">
+                Please contact the school if you have any questions.
+              </p>
+              <p style="color: rgba(255,255,255,0.5); margin-top: 20px;">Warm regards,<br/><strong>${schoolName} Administration</strong></p>
+            </div>
+          </div>`
+        );
+      }
+    } catch (emailError) {
+      console.error("Failed to send discipline notification:", emailError);
+    }
 
     return NextResponse.json({ success: true, record }, { status: 201 });
   } catch (error) {

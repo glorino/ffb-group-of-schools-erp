@@ -286,8 +286,8 @@ export default function LandingPage() {
           <motion.div className="modal-content" onClick={(e) => e.stopPropagation()} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
             <button className="modal-close" onClick={() => setNewsModal(null)}>&times;</button>
             <img src={newsItems[newsModal].image} alt={newsItems[newsModal].title} className="w-full h-[200px] object-cover rounded-2xl mb-5" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop"; }} />
-            <h2 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "15px", color: "#ffffff" }}>{newsItems[newsModal].title}</h2>
-            <p style={{ color: "rgba(255,255,255,0.8)", lineHeight: 1.8 }}>{newsItems[newsModal].full}</p>
+            <h2 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "15px", color: "#1a1a2e" }}>{newsItems[newsModal].title}</h2>
+            <p style={{ color: "#475569", lineHeight: 1.8 }}>{newsItems[newsModal].full}</p>
           </motion.div>
         </div>
       )}

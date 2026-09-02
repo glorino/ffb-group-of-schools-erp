@@ -873,7 +873,6 @@ export default function SettingsPage() {
                     <div>
                       <p className="text-[#1a1a2e] text-[13px] font-medium">Two-Factor Authentication</p>
                       <p className="text-[#64748b] text-[11px] mt-0.5">Add an extra layer of security to admin accounts</p>
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-yellow-500/20 text-[#ca8a04] text-[10px] font-medium">Coming Soon</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer opacity-50">
                       <input
@@ -890,7 +889,6 @@ export default function SettingsPage() {
                 <div className="p-4 rounded-xl bg-[#f8fafc]">
                   <div className="flex items-center gap-2 mb-3">
                     <p className="text-[#1a1a2e] text-[13px] font-medium">Password Policy</p>
-                    <span className="px-2 py-0.5 rounded-full bg-yellow-500/20 text-[#ca8a04] text-[10px] font-medium">Coming Soon</span>
                   </div>
                   <div className="space-y-3">
                     <div className="grid sm:grid-cols-2 gap-4">

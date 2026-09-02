@@ -215,16 +215,9 @@ function TeacherDashboard() {
     fetch("/api/teacher/dashboard").then(r => r.json()).then(d => { if (d.success) setTeacherData(d); }).catch(() => {});
   }, []);
 
-  const attendanceTrend = teacherData.attendanceTrend?.length > 0 ? teacherData.attendanceTrend : [
-    { week: "Week 1", rate: 85 }, { week: "Week 2", rate: 90 }, { week: "Week 3", rate: 88 },
-    { week: "Week 4", rate: 92 }, { week: "Week 5", rate: 87 }, { week: "Week 6", rate: 94 },
-  ];
+  const attendanceTrend = teacherData.attendanceTrend?.length > 0 ? teacherData.attendanceTrend : [];
 
-  const gradeDistribution = teacherData.gradeDistribution?.length > 0 ? teacherData.gradeDistribution : [
-    { name: "A", value: 24, color: "#28ff9c" }, { name: "B", value: 35, color: "#0055ff" },
-    { name: "C", value: 20, color: "#f59e0b" }, { name: "D", value: 12, color: "#ff6b35" },
-    { name: "F", value: 9, color: "#ff4444" },
-  ];
+  const gradeDistribution = teacherData.gradeDistribution?.length > 0 ? teacherData.gradeDistribution : [];
 
   const classPerf = teacherData.classPerformance?.length > 0 ? teacherData.classPerformance : (stats.classPerformance || []);
 
@@ -477,12 +470,8 @@ function VicePrincipalDashboard() {
     { label: "Resolved", value: discipline.resolved, color: "#28ff9c" },
     { label: "Pending Review", value: discipline.pending, color: "#f59e0b" },
   ];
-  const disciplineByType = discipline.byType?.length > 0 ? discipline.byType : [
-    { type: "Lateness", count: 12 }, { type: "Uniform", count: 8 }, { type: "Conduct", count: 5 }, { type: "Academic", count: 3 },
-  ];
-  const disciplineTrend = discipline.monthlyTrend?.length > 0 ? discipline.monthlyTrend : [
-    { month: "Sep", incidents: 18 }, { month: "Oct", incidents: 14 }, { month: "Nov", incidents: 22 }, { month: "Dec", incidents: 10 }, { month: "Jan", incidents: 8 }, { month: "Feb", incidents: 12 },
-  ];
+  const disciplineByType = discipline.byType?.length > 0 ? discipline.byType : [];
+  const disciplineTrend = discipline.monthlyTrend?.length > 0 ? discipline.monthlyTrend : [];
   const teacherSupervision = [
     { label: "Total Teachers", value: stats.totalTeachers || 0 },
     { label: "Active Classes", value: stats.totalClasses || 0 },
@@ -1079,7 +1068,7 @@ function PorterDashboard() {
 
       {showVisitorLog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-white border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-md mx-4">
+          <div className="bg-white border border-[#e2e8f0] rounded-2xl p-8 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-[#1a1a2e] font-semibold text-[16px]">Log Visitor</h3>
               <button onClick={() => setShowVisitorLog(false)} className="text-[#64748b] hover:text-[#475569]"><X className="w-5 h-5" /></button>
@@ -1234,7 +1223,7 @@ function AlumniDashboard() {
 
       {showDonateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowDonateModal(false)}>
-          <div className="bg-white border border-[#e2e8f0] rounded-2xl p-6 w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
+          <div className="bg-white border border-[#e2e8f0] rounded-2xl p-8 w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
                 <DollarSign className="w-5 h-5 text-[#7c3aed]" />
@@ -1397,7 +1386,7 @@ function ParentDashboard() {
         </DashboardCard>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mt-4">
-        <Link href="/dashboard/finance" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
+        <Link href="/dashboard/parent-payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r bg-[#dbeafe] border-[#bfdbfe] text-[#1a1a2e] hover:bg-[#bfdbfe] transition-all group">
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#93c5fd] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
           <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Pay Fees</p><p className="text-[#64748b] text-[9px] sm:text-[10px]">View & pay fees</p></div>
         </Link>

@@ -381,7 +381,7 @@ export default function AlumniPage() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6 max-h-[85vh] overflow-y-auto shadow-sm"
+            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-8 max-h-[85vh] overflow-y-auto shadow-sm"
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-bold text-lg">Add Alumni Record</h3>
@@ -489,7 +489,7 @@ export default function AlumniPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-6 shadow-sm"
+            className="w-full max-w-lg bg-white border border-[#e2e8f0] rounded-3xl p-8 shadow-sm"
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[#1a1a2e] font-bold text-lg">Send Message</h3>

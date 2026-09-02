@@ -65,7 +65,8 @@ const navSections: { title: string; items: NavItem[] }[] = [
     title: "Finance & Fees",
     items: [
       { label: "Fees & Invoices", href: "/dashboard/finance", emoji: "💰", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT", "AUDITOR"] },
-      { label: "My Fees", href: "/dashboard/finance", emoji: "💰", roles: ["STUDENT", "PARENT"] },
+      { label: "My Fees", href: "/dashboard/finance", emoji: "💰", roles: ["STUDENT"] },
+      { label: "Pay Fees", href: "/dashboard/parent-payments", emoji: "💰", roles: ["PARENT"] },
       { label: "Payments", href: "/dashboard/payments", emoji: "💳", roles: ["OWNER", "ADMINISTRATOR", "PRINCIPAL", "ACCOUNTANT"] },
       { label: "Income", href: "/dashboard/income", emoji: "📈", roles: ["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"] },
       { label: "Expenses", href: "/dashboard/expenses", emoji: "📉", roles: ["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"] },

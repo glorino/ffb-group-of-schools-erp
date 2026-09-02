@@ -16,6 +16,7 @@ const publicPaths = [
   "/api/auth",
   "/api/seed-auto",
   "/api/seed-news",
+  "/api/admissions",
   "/api/admissions/track",
   "/api/payments/callback",
   "/api/auth/error",

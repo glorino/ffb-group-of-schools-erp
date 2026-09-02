@@ -4,6 +4,8 @@ import { SCHOOL_CONFIG } from "@/lib/school-config";
 import { requireAuth } from "@/lib/api-rbac";
 import { getDefaultSchoolId } from "@/lib/school";
 import { sendApplicationStatusUpdateEmail } from "@/lib/resend";
+import { generateAdmissionNumber } from "@/lib/utils";
+import bcrypt from "bcryptjs";
 
 export async function GET(
   request: NextRequest,
@@ -49,7 +51,10 @@ export async function PUT(
     const body = await request.json();
     const { status, reason } = body;
 
-    const existing = await prisma.applicant.findUnique({ where: { id } });
+    const existing = await prisma.applicant.findUnique({
+      where: { id },
+      include: { student: true },
+    });
     if (!existing) {
       return NextResponse.json({ error: "Application not found" }, { status: 404 });
     }
@@ -120,6 +125,73 @@ export async function PUT(
       },
     });
 
+    // Auto-create Student + User account when admitted
+    let studentCredentials = null;
+    if (newStatus === "admitted" && !existing.student) {
+      const admissionNumber = generateAdmissionNumber();
+      const defaultPassword = existing.dateOfBirth
+        ? `${existing.firstName.toLowerCase()}${new Date(existing.dateOfBirth).getFullYear()}`
+        : `${existing.firstName.toLowerCase()}${new Date().getFullYear()}`;
+
+      let userId: string | null = null;
+      if (existing.email) {
+        const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+        const user = await prisma.user.upsert({
+          where: { email: existing.email },
+          update: {},
+          create: {
+            email: existing.email,
+            name: `${existing.firstName} ${existing.lastName}`,
+            password: hashedPassword,
+            phone: existing.phone,
+            schoolId: existing.schoolId,
+            mustChangePassword: true,
+          },
+        });
+        userId = user.id;
+
+        const studentRole = await prisma.role.findFirst({ where: { name: "STUDENT" } });
+        if (studentRole) {
+          const existingUserRole = await prisma.userRole.findFirst({
+            where: { userId: user.id, roleId: studentRole.id },
+          });
+          if (!existingUserRole) {
+            await prisma.userRole.create({
+              data: { userId: user.id, roleId: studentRole.id },
+            });
+          }
+        }
+
+        studentCredentials = {
+          email: existing.email,
+          password: defaultPassword,
+          admissionNumber,
+        };
+      }
+
+      const student = await prisma.student.create({
+        data: {
+          admissionNumber,
+          firstName: existing.firstName,
+          lastName: existing.lastName,
+          middleName: existing.middleName,
+          dateOfBirth: existing.dateOfBirth,
+          gender: existing.gender,
+          bloodGroup: existing.bloodGroup,
+          nationality: existing.nationality || "Nigerian",
+          stateOfOrigin: existing.stateOfOrigin,
+          address: existing.address,
+          phone: existing.phone,
+          email: existing.email,
+          photo: existing.photo,
+          schoolId: existing.schoolId,
+          classId: assignedClassId,
+          userId: userId || undefined,
+          applicantId: existing.id,
+        },
+      });
+    }
+
     if (newStatus === "admitted" && existing.email) {
       try {
         const RESEND_API_KEY = process.env.RESEND_API_KEY;
@@ -127,6 +199,12 @@ export async function PUT(
           const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
           const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
           const schoolPhone = process.env.SCHOOL_PHONE || SCHOOL_CONFIG.phone;
+
+          const emailRecipients = [existing.email];
+          if (existing.guardianEmail && existing.guardianEmail !== existing.email) {
+            emailRecipients.push(existing.guardianEmail);
+          }
+
           await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
@@ -135,7 +213,7 @@ export async function PUT(
             },
             body: JSON.stringify({
               from: `${schoolName} <${schoolEmail}>`,
-              to: [existing.email],
+              to: emailRecipients,
               subject: `Admission Offer - ${schoolName} (${existing.applicationNumber})`,
               html: `
                 <div style="font-family: 'Poppins', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a1628; color: #fff; border-radius: 16px; overflow: hidden;">
@@ -150,6 +228,15 @@ export async function PUT(
                     <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 20px;">
                       We are pleased to inform you that your application (<strong>${existing.applicationNumber}</strong>) has been approved and you have been admitted into <strong>${existing.classAppliedFor}</strong> at ${schoolName} for the ${new Date().getFullYear()}/${new Date().getFullYear() + 1} academic session.
                     </p>
+                    <div style="background: rgba(40,255,156,0.08); border: 1px solid rgba(40,255,156,0.2); border-radius: 12px; padding: 20px; margin: 20px 0;">
+                      <p style="color: #28ff9c; font-weight: 700; margin-bottom: 8px;">Your Login Credentials:</p>
+                      <table style="color: rgba(255,255,255,0.7); line-height: 1.8; width: 100%;">
+                        <tr><td style="padding-right: 10px;">Email:</td><td><strong style="color: #fff;">${existing.email}</strong></td></tr>
+                        <tr><td style="padding-right: 10px;">Password:</td><td><strong style="color: #fff;">${studentCredentials?.password || ""}</strong></td></tr>
+                        <tr><td style="padding-right: 10px;">Admission No:</td><td><strong style="color: #fff;">${studentCredentials?.admissionNumber || ""}</strong></td></tr>
+                      </table>
+                      <p style="color: rgba(255,255,255,0.4); font-size: 11px; margin-top: 10px;">You will be required to change your password on first login.</p>
+                    </div>
                     <div style="background: rgba(40,255,156,0.08); border: 1px solid rgba(40,255,156,0.2); border-radius: 12px; padding: 20px; margin: 20px 0;">
                       <p style="color: #28ff9c; font-weight: 700; margin-bottom: 8px;">Next Steps:</p>
                       <ul style="color: rgba(255,255,255,0.7); line-height: 1.8; padding-left: 20px;">
@@ -181,6 +268,7 @@ export async function PUT(
         if (RESEND_API_KEY) {
           const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
           const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
+          const rejectRecipients = [existing.email, existing.guardianEmail].filter(Boolean) as string[];
           await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
@@ -189,7 +277,7 @@ export async function PUT(
             },
             body: JSON.stringify({
               from: `${schoolName} <${schoolEmail}>`,
-              to: [existing.email || existing.guardianEmail],
+              to: rejectRecipients,
               subject: `Application Update - ${schoolName} (${existing.applicationNumber})`,
               html: `
                 <div style="font-family: 'Poppins', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a1628; color: #fff; border-radius: 16px; overflow: hidden;">

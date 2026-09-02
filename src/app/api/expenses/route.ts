@@ -6,7 +6,7 @@ import { ExpenseSchema } from "@/lib/validations";
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"]);
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
     if (authResult.error) return authResult.error;
 
     const { searchParams } = new URL(request.url);
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
         date: date ? new Date(date) : new Date(),
         notes: validated.description || undefined,
         approvedBy: session?.user?.name || undefined,
-        status: validated.status || "pending",
+        status: "pending",
       },
     });
 
@@ -80,14 +80,25 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "ACCOUNTANT", "AUDITOR"]);
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
     if (authResult.error) return authResult.error;
+    const { session } = authResult;
 
     const body = await request.json();
     const { id, status: newStatus } = body;
     if (!id || !newStatus) return NextResponse.json({ error: "Missing id or status" }, { status: 400 });
 
-    const expense = await prisma.expense.update({ where: { id }, data: { status: newStatus } });
+    if (newStatus !== "approved" && newStatus !== "rejected") {
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    }
+
+    const expense = await prisma.expense.update({
+      where: { id },
+      data: {
+        status: newStatus,
+        approvedBy: session?.user?.name || undefined,
+      },
+    });
     return NextResponse.json({ success: true, expense });
   } catch (error) {
     console.error("PUT /api/expenses error:", error);

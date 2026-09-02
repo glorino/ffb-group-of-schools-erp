@@ -60,24 +60,24 @@ export default function ForgotPasswordPage() {
           {!isSent ? (
             <>
               <h2 className="text-[26px] font-bold text-white mb-3 tracking-tight">Reset Password</h2>
-              <p className="text-white/50 mb-10 text-[14px] leading-relaxed">
+              <p className="text-white/70 mb-10 text-[14px] leading-relaxed">
                 Enter your email address and we&apos;ll send you a link to reset your password
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div>
-                  <label className="block text-white/70 text-[13px] font-medium mb-3">
+                  <label className="block text-white text-[13px] font-medium mb-3">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="admin@ffb.edu.ng"
                       required
-                      className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/[0.07] border border-white/15 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all text-[14px]"
+                      className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/[0.07] border border-white/15 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all text-[14px]"
                     />
                   </div>
                 </div>

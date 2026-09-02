@@ -15,10 +15,12 @@ const stagger = { animate: { transition: { staggerChildren: 0.1 } } };
 const item = { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4 } };
 
 const teamMembers = [
-  { role: "Director of Education", name: "Dr Adebayo Okafor", desc: "Oversees academic programmes and curriculum development across all school levels." },
-  { role: "Head of Operations", name: "Mrs Funke Adeyemi", desc: "Manages school operations, logistics and administrative affairs." },
-  { role: "Student Affairs", name: "Mr Tunde Balogun", desc: "Coordinates student welfare, guidance counselling and extracurricular activities." },
-  { role: "Innovation Lead", name: "Miss Amara Nwosu", desc: "Leads STEM programmes, digital learning initiatives and innovation hub." },
+  { role: "Director of Education", name: "Dr Adebayo Okafor", desc: "Oversees academic programmes and curriculum development across all school levels.", photo: "https://i.pravatar.cc/200?img=68" },
+  { role: "Head of Operations", name: "Mrs Funke Adeyemi", desc: "Manages school operations, logistics and administrative affairs.", photo: "https://i.pravatar.cc/200?img=47" },
+  { role: "Student Affairs", name: "Mr Tunde Balogun", desc: "Coordinates student welfare, guidance counselling and extracurricular activities.", photo: "https://i.pravatar.cc/200?img=60" },
+  { role: "Innovation Lead", name: "Miss Amara Nwosu", desc: "Leads STEM programmes, digital learning initiatives and innovation hub.", photo: "https://i.pravatar.cc/200?img=44" },
+  { role: "Academic Dean", name: "Prof Chidi Eze", desc: "Coordinates academic standards, teacher development and student assessment frameworks.", photo: "https://i.pravatar.cc/200?img=59" },
+  { role: "Finance Director", name: "Mr Olumide Akinwale", desc: "Manages financial planning, budgeting and resource allocation across all school campuses.", photo: "https://i.pravatar.cc/200?img=53" },
 ];
 
 const milestones = [
@@ -115,9 +117,7 @@ export default function AboutPage() {
         <motion.div className="features-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
           {teamMembers.map((t, i) => (
             <motion.div key={i} className="feature-card" variants={item} style={{ textAlign: "center" }}>
-              <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "linear-gradient(135deg, #0039a6, #28ff9c)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 15px", fontSize: "28px", fontWeight: 800 }}>
-                {t.name.split(" ").map((n) => n[0]).join("")}
-              </div>
+              <img src={t.photo} alt={t.name} style={{ width: "90px", height: "90px", borderRadius: "50%", objectFit: "cover", margin: "0 auto 15px", border: "3px solid rgba(40,255,156,0.3)" }} />
               <h3 style={{ fontSize: "16px", marginBottom: "4px", color: "#ffffff" }}>{t.name}</h3>
               <p style={{ color: "#28ff9c", fontSize: "12px", fontWeight: 600, marginBottom: "10px" }}>{t.role}</p>
               <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.8)" }}>{t.desc}</p>

@@ -83,12 +83,25 @@ export async function POST(request: NextRequest) {
       try {
         const student = await prisma.student.findUnique({
           where: { id: updatedPayment.studentId },
-          select: { firstName: true, lastName: true, email: true },
+          select: { firstName: true, lastName: true, email: true, id: true },
         });
         if (student?.email) {
           await sendPaymentReceipt(
             `${student.firstName} ${student.lastName}`,
             student.email,
+            updatedPayment.amount,
+            updatedPayment.reference
+          );
+        }
+        const guardians = await prisma.guardian.findMany({
+          where: { studentId: student!.id, email: { not: null } },
+          select: { email: true },
+        });
+        const guardianEmails = guardians.map(g => g.email).filter(Boolean) as string[];
+        for (const gEmail of guardianEmails) {
+          await sendPaymentReceipt(
+            `${student!.firstName} ${student!.lastName}`,
+            gEmail,
             updatedPayment.amount,
             updatedPayment.reference
           );
@@ -188,12 +201,25 @@ export async function GET(request: NextRequest) {
       try {
         const student = await prisma.student.findUnique({
           where: { id: updatedPayment.studentId },
-          select: { firstName: true, lastName: true, email: true },
+          select: { firstName: true, lastName: true, email: true, id: true },
         });
         if (student?.email) {
           await sendPaymentReceipt(
             `${student.firstName} ${student.lastName}`,
             student.email,
+            updatedPayment.amount,
+            updatedPayment.reference
+          );
+        }
+        const guardians = await prisma.guardian.findMany({
+          where: { studentId: student!.id, email: { not: null } },
+          select: { email: true },
+        });
+        const guardianEmails = guardians.map(g => g.email).filter(Boolean) as string[];
+        for (const gEmail of guardianEmails) {
+          await sendPaymentReceipt(
+            `${student!.firstName} ${student!.lastName}`,
+            gEmail,
             updatedPayment.amount,
             updatedPayment.reference
           );

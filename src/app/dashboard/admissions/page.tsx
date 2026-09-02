@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -80,6 +80,7 @@ export default function AdmissionsPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [pushingSchema, setPushingSchema] = useState(false);
+  const schemaAttempted = useRef(false);
 
   const fetchApplicants = useCallback(async () => {
     setLoading(true);
@@ -115,7 +116,9 @@ export default function AdmissionsPage() {
     setPushingSchema(false);
   };
 
-  useEffect(() => { fetchApplicants(); }, [fetchApplicants]);
+  useEffect(() => {
+    fetchApplicants();
+  }, []);
 
   const workflowSteps = [
     { step: "pending", label: "New", count: applicants.filter((a) => a.status === "pending").length, color: "bg-yellow-500" },
@@ -450,7 +453,7 @@ export default function AdmissionsPage() {
       <AnimatePresence>
         {showActionModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay" onClick={() => { setShowActionModal(null); setActionNote(""); }}>
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-xl bg-white border border-[#e2e8f0] rounded-3xl p-6 shadow-xl">
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-xl bg-white border border-[#e2e8f0] rounded-3xl p-8 shadow-xl">
               <h3 className="text-[#1a1a2e] font-bold text-lg mb-2">Review Application</h3>
               <p className="text-[#64748b] text-[13px] mb-4">Add a note for the applicant (optional)</p>
               <textarea value={actionNote} onChange={(e) => setActionNote(e.target.value)} placeholder="Enter notes, instructions or reason..." rows={4} className="w-full p-3 rounded-xl bg-[#ffffff] border border-[#e2e8f0] text-[#1a1a2e] text-[13px] outline-none focus:border-[var(--primary)]/50 resize-none" />

@@ -282,7 +282,7 @@ export default function ParentsPage() {
             className="modal-overlay">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setViewGuardian(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-6 shadow-xl">
+              className="relative w-full max-w-xl bg-white border border-[#e2e8f0] rounded-2xl p-8 shadow-xl">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-white text-lg font-bold">

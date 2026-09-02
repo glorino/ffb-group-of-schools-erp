@@ -2,13 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { initializePayment } from "@/lib/flutterwave";
+import { requireAuth } from "@/lib/api-rbac";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "PARENT"]);
+    if (authResult.error) return authResult.error;
 
     const body = await request.json();
     const { studentId, amount, email, name, invoiceId } = body as {
