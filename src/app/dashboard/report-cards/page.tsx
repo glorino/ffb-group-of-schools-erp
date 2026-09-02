@@ -2,20 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { motion } from "framer-motion";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import {
-  FileText, Download, Eye, Printer, QrCode, CheckCircle, Clock, Users, Search,
+  FileText, Download, Eye, Printer, QrCode, Search,
 } from "lucide-react";
 import { ReportCardPDF, ReportCardProps } from "@/components/reports/report-card-pdf";
 import { downloadPDF } from "@/lib/exports";
+import { toast } from "sonner";
 
-const fadeIn = {
-  initial: { opacity: 0, y: 12 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.35 },
-};
+const inputStyle: React.CSSProperties = { width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1.5px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box", background: "#f8fafc", transition: "border-color 0.2s, box-shadow 0.2s" };
+const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#0055ff"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,85,255,0.1)"; e.currentTarget.style.background = "#ffffff"; };
+const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "#f8fafc"; };
+const labelStyle: React.CSSProperties = { display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" };
+const btnStyle = (bg: string, hover?: string): React.CSSProperties => ({ padding: "10px 20px", borderRadius: "12px", border: "none", background: bg, color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s" });
 
 export default function ReportCardsPage() {
   const { data: session } = useSession();
@@ -38,19 +38,15 @@ export default function ReportCardsPage() {
   const [selectedClass, setSelectedClass] = useState("");
 
   useEffect(() => {
-    fetch("/api/students?limit=100")
-      .then(r => r.json())
-      .then(d => {
-        const studentList = d.students || [];
-        setStudents(studentList);
-        if (isReadOnly) {
-          const userEmail = (session?.user as any)?.email || "";
-          const matched = studentList.find((s: any) => s.email === userEmail || s.user?.email === userEmail);
-          if (matched) setSelectedStudent(matched.id);
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    fetch("/api/students?limit=100").then(r => r.json()).then(d => {
+      const list = d.students || [];
+      setStudents(list);
+      if (isReadOnly) {
+        const email = (session?.user as any)?.email || "";
+        const matched = list.find((s: any) => s.email === email || s.user?.email === email);
+        if (matched) setSelectedStudent(matched.id);
+      }
+    }).catch(() => {}).finally(() => setLoading(false));
   }, [isReadOnly, session]);
 
   useEffect(() => {
@@ -59,310 +55,240 @@ export default function ReportCardsPage() {
   }, []);
 
   useEffect(() => {
-    if (terms.length > 0 && !termId) {
-      const current = terms.find((t: any) => t.isCurrent) || terms[0];
-      if (current) setTermId(current.id);
-    }
+    if (terms.length > 0 && !termId) { const current = terms.find((t: any) => t.isCurrent) || terms[0]; if (current) setTermId(current.id); }
   }, [terms, termId]);
 
   useEffect(() => {
     if (!selectedStudent) { setReportData(null); return; }
     setGenerating(true);
     fetch(`/api/reports/report-card?studentId=${selectedStudent}&termId=${termId || "current"}`)
-      .then(r => r.json())
-      .then(d => {
+      .then(r => r.json()).then(d => {
         if (d.student) {
           setReportData({
-            studentData: {
-              id: d.student.id,
-              name: `${d.student.firstName} ${d.student.lastName}`,
-              admissionNumber: d.student.admissionNumber,
-              className: d.student.class?.displayName || d.student.class?.name || "",
-              photo: d.student.photo,
-              qrCode: d.student.qrCode,
-            },
-            termData: {
-              id: d.term?.id || "",
-              name: d.term?.name || "Current Term",
-              academicYear: d.term?.academicYear || "2025/2026",
-            },
-            school: {
-              name: d.school?.name || process.env.NEXT_PUBLIC_SCHOOL_NAME || SCHOOL_CONFIG.name,
-              address: d.school?.address,
-              logo: d.school?.logo,
-            },
-            grades: (d.grades || []).map((g: any) => ({
-              subject: g.subject?.name || g.subject,
-              subjectCode: g.subject?.code || "",
-              teacher: g.teacher || "",
-              ca1: g.ca1 || 0,
-              ca2: g.ca2 || 0,
-              ca3: g.ca3 || 0,
-              exam: g.exam || 0,
-              total: g.total || 0,
-              grade: g.grade || "",
-              remark: g.remark || "",
-            })),
-            gradingScale: d.gradingScale || [
-              { name: "A1", minScore: 75, maxScore: 100, grade: "A1", remark: "Excellent" },
-              { name: "B2", minScore: 70, maxScore: 74, grade: "B2", remark: "Very Good" },
-              { name: "B3", minScore: 65, maxScore: 69, grade: "B3", remark: "Good" },
-              { name: "C4", minScore: 60, maxScore: 64, grade: "C4", remark: "Credit" },
-              { name: "C5", minScore: 55, maxScore: 59, grade: "C5", remark: "Credit" },
-              { name: "C6", minScore: 50, maxScore: 54, grade: "C6", remark: "Credit" },
-              { name: "D7", minScore: 45, maxScore: 49, grade: "D7", remark: "Pass" },
-              { name: "E8", minScore: 40, maxScore: 44, grade: "E8", remark: "Pass" },
-              { name: "F9", minScore: 0, maxScore: 39, grade: "F9", remark: "Fail" },
-            ],
+            studentData: { id: d.student.id, name: `${d.student.firstName} ${d.student.lastName}`, admissionNumber: d.student.admissionNumber, className: d.student.class?.displayName || d.student.class?.name || "", photo: d.student.photo, qrCode: d.student.qrCode },
+            termData: { id: d.term?.id || "", name: d.term?.name || "Current Term", academicYear: d.term?.academicYear || "2025/2026" },
+            school: { name: d.school?.name || process.env.NEXT_PUBLIC_SCHOOL_NAME || SCHOOL_CONFIG.name, address: d.school?.address, logo: d.school?.logo },
+            grades: (d.grades || []).map((g: any) => ({ subject: g.subject?.name || g.subject, subjectCode: g.subject?.code || "", teacher: g.teacher || "", ca1: g.ca1 || 0, ca2: g.ca2 || 0, ca3: g.ca3 || 0, exam: g.exam || 0, total: g.total || 0, grade: g.grade || "", remark: g.remark || "" })),
+            gradingScale: d.gradingScale || [{ name: "A1", minScore: 75, maxScore: 100, grade: "A1", remark: "Excellent" }, { name: "B2", minScore: 70, maxScore: 74, grade: "B2", remark: "Very Good" }, { name: "B3", minScore: 65, maxScore: 69, grade: "B3", remark: "Good" }, { name: "C4", minScore: 60, maxScore: 64, grade: "C4", remark: "Credit" }, { name: "C5", minScore: 55, maxScore: 59, grade: "C5", remark: "Credit" }, { name: "C6", minScore: 50, maxScore: 54, grade: "C6", remark: "Credit" }, { name: "D7", minScore: 45, maxScore: 49, grade: "D7", remark: "Pass" }, { name: "E8", minScore: 40, maxScore: 44, grade: "E8", remark: "Pass" }, { name: "F9", minScore: 0, maxScore: 39, grade: "F9", remark: "Fail" }],
             attendance: d.attendance || { totalDays: 120, present: 110, absent: 10 },
-            behaviour: d.behaviour,
-            psychomotor: d.psychomotor,
-            teacherComment: d.teacherComment,
-            principalComment: d.principalComment,
-            classTeacher: d.classTeacher,
-            position: d.position,
-            classSize: d.classSize,
+            behaviour: d.behaviour, psychomotor: d.psychomotor, teacherComment: d.teacherComment, principalComment: d.principalComment, classTeacher: d.classTeacher, position: d.position, classSize: d.classSize,
           });
         }
-      })
-      .catch(() => setReportData(null))
-      .finally(() => setGenerating(false));
+      }).catch(() => setReportData(null)).finally(() => setGenerating(false));
   }, [selectedStudent, termId]);
 
-  const filteredStudents = students.filter(s =>
-    !search || `${s.firstName} ${s.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
-    s.admissionNumber?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredStudents = students.filter(s => !search || `${s.firstName} ${s.lastName}`.toLowerCase().includes(search.toLowerCase()) || s.admissionNumber?.toLowerCase().includes(search.toLowerCase()));
 
   const notifyParents = async () => {
-    if (!selectedClass || !termId) {
-      alert("Please select a class and term first");
-      return;
-    }
+    if (!selectedClass || !termId) { toast.error("Please select a class and term first"); return; }
     setNotifying(true);
     try {
-      const res = await fetch("/api/reports/notify-parents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ classId: selectedClass, termId }),
-      });
+      const res = await fetch("/api/reports/notify-parents", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ classId: selectedClass, termId }) });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to notify parents");
-      alert(data.message || "Parents notified successfully");
-    } catch (err: any) {
-      alert(err.message || "Failed to notify parents");
-    } finally {
-      setNotifying(false);
-    }
+      if (!res.ok) throw new Error(data.error || "Failed");
+      toast.success(data.message || "Parents notified successfully");
+    } catch (err: any) { toast.error(err.message || "Failed"); } finally { setNotifying(false); }
   };
 
+  const getGradeColor = (total: number) => total >= 70 ? "#16a34a" : total >= 50 ? "#2563eb" : "#dc2626";
+  const getGradeBg = (total: number) => total >= 70 ? "#dcfce7" : total >= 50 ? "#eff6ff" : "#fef2f2";
+
+  const kpis = [
+    { label: "Total Students", value: students.length, bg: "linear-gradient(135deg, #0055ff, #0033cc)" },
+    { label: "Selected", value: selectedStudent ? 1 : 0, bg: "linear-gradient(135deg, #10b981, #059669)" },
+    { label: "Status", value: generating ? "Generating..." : reportData ? "Ready" : "Select student", bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)", isText: true },
+  ];
+
+  const avatarGradients = [
+    "linear-gradient(135deg, #0055ff, #0033cc)",
+    "linear-gradient(135deg, #8b5cf6, #7c3aed)",
+    "linear-gradient(135deg, #10b981, #059669)",
+    "linear-gradient(135deg, #f59e0b, #d97706)",
+    "linear-gradient(135deg, #ef4444, #dc2626)",
+    "linear-gradient(135deg, #06b6d4, #0891b2)",
+  ];
+
   return (
-    <motion.div {...fadeIn} className="space-y-5">
-      <div className="mt-8 mx-4 bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] rounded-2xl p-8 border border-white/10 flex items-center justify-between" style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}>
-        <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-            <FileText className="w-6 h-6" />
-            Report Cards
+    <div style={{ padding: "24px 32px", minHeight: "100vh", background: "#f8fafc" }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", borderRadius: "20px", padding: "28px 32px", marginBottom: "28px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 20%, rgba(255,255,255,0.12) 0%, transparent 60%), radial-gradient(circle at 10% 80%, rgba(255,255,255,0.08) 0%, transparent 50%)" }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", display: "flex", alignItems: "center", gap: "12px" }}>
+            <FileText style={{ width: "28px", height: "28px" }} /> Report Cards
           </h1>
-          <p className="text-white/70 text-[13px] mt-1">Generate, preview, and download report cards with QR verification</p>
+          <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Generate, preview, and download report cards with QR verification</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-          <p className="text-[#64748b] text-[12px]">Total Students</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{students.length}</p>
-        </div>
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-          <p className="text-[#64748b] text-[12px]">Selected</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{selectedStudent ? "1" : "0"}</p>
-        </div>
-        <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-          <p className="text-[#64748b] text-[12px]">Status</p>
-          <p className="text-[18px] font-bold text-[#1a1a2e] mt-1">{generating ? "Generating..." : reportData ? "Ready" : "Select student"}</p>
-        </div>
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "24px" }}>
+        {kpis.map((stat, i) => (
+          <div key={i} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 22px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+            <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, color: "#64748b" }}>{stat.label}</p>
+            <p style={{ margin: "6px 0 0", fontSize: stat.isText ? "18px" : "28px", fontWeight: 800, color: "#0f172a" }}>{stat.value}</p>
+          </div>
+        ))}
       </div>
 
+      {/* Notify Parents Bar */}
       {!isReadOnly && (
-        <div className="mx-4 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-4 shadow-sm flex flex-wrap items-center gap-4">
-          <p className="text-[#1a1a2e] text-[13px] font-semibold">Notify Parents:</p>
-          <select
-            value={selectedClass}
-            onChange={(e) => setSelectedClass(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] outline-none"
-          >
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "16px 24px", marginBottom: "24px", display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+          <p style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#0f172a" }}>Notify Parents:</p>
+          <select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} style={{ ...inputStyle, width: "auto", minWidth: "180px", padding: "10px 14px", cursor: "pointer", colorScheme: "light" }} onFocus={inputFocus} onBlur={inputBlur}>
             <option value="">Select Class</option>
-            {classes.map((c: any) => (
-              <option key={c.id} value={c.id}>{c.displayName || c.name}</option>
-            ))}
+            {classes.map((c: any) => <option key={c.id} value={c.id}>{c.displayName || c.name}</option>)}
           </select>
-          <button
-            onClick={notifyParents}
-            disabled={notifying || !selectedClass || !termId}
-            className="px-4 py-2 rounded-xl bg-emerald-500 text-white text-[12px] font-medium hover:bg-emerald-600 transition disabled:opacity-50"
-          >
+          <button onClick={notifyParents} disabled={notifying || !selectedClass || !termId} style={{ ...btnStyle(notifying || !selectedClass ? "#94a3b8" : "#10b981"), opacity: notifying || !selectedClass ? 0.6 : 1, cursor: notifying || !selectedClass ? "not-allowed" : "pointer" }}>
             {notifying ? "Sending..." : "Send Report Card Emails"}
           </button>
         </div>
       )}
 
-      <div className="grid lg:grid-cols-5 gap-5">
-        {/* Student List - hidden for students/parents (auto-selected) */}
+      {/* Main Content */}
+      <div style={{ display: "grid", gridTemplateColumns: isReadOnly ? "1fr" : "2fr 3fr", gap: "24px" }}>
+        {/* Student List */}
         {!isReadOnly && (
-          <div className="lg:col-span-2 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-            <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">Select Student</h3>
-            <div className="relative mb-3">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
-              <input
-                type="text"
-                placeholder="Search students..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] placeholder-[#94a3b8] outline-none focus:border-[var(--primary)]/50"
-              />
+          <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+            <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9" }}>
+              <h3 style={{ margin: "0 0 12px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Select Student</h3>
+              <div style={{ position: "relative" }}>
+                <Search style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", width: "16px", height: "16px", color: "#94a3b8" }} />
+                <input type="text" placeholder="Search students..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ ...inputStyle, paddingLeft: "36px", padding: "10px 14px 10px 36px" }} onFocus={inputFocus} onBlur={inputBlur} />
+              </div>
             </div>
-            <div className="space-y-1 max-h-[400px] overflow-y-auto">
+            <div style={{ maxHeight: "480px", overflowY: "auto", padding: "8px" }}>
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-12 rounded-xl bg-[#f8fafc] animate-pulse" />
+                  <div key={i} style={{ height: "52px", borderRadius: "12px", background: "#f8fafc", marginBottom: "6px" }} />
                 ))
               ) : filteredStudents.length === 0 ? (
-                <p className="text-[#94a3b8] text-[12px] text-center py-8">No students found</p>
+                <p style={{ textAlign: "center", padding: "32px 0", fontSize: "13px", color: "#94a3b8" }}>No students found</p>
               ) : (
-                filteredStudents.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => setSelectedStudent(s.id)}
-                    className={`w-full flex items-center gap-3 px-5 py-2.5 rounded-xl text-left transition ${
-                      selectedStudent === s.id
-                        ? "bg-[var(--primary)]/20 border border-[var(--primary)]/40"
-                        : "hover:bg-[#f8fafc] border border-transparent"
-                    }`}
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
-                      {s.firstName?.[0]}{s.lastName?.[0]}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[#1a1a2e] text-[12px] font-medium truncate">{s.firstName} {s.lastName}</p>
-                      <p className="text-[#94a3b8] text-[10px]">{s.class?.displayName || s.class?.name || "—"} · {s.admissionNumber}</p>
-                    </div>
-                  </button>
-                ))
+                filteredStudents.map((s, idx) => {
+                  const isSelected = selectedStudent === s.id;
+                  return (
+                    <button key={s.id} onClick={() => setSelectedStudent(s.id)} style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: isSelected ? "1.5px solid rgba(0,85,255,0.3)" : "1.5px solid transparent", background: isSelected ? "rgba(0,85,255,0.06)" : "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: "12px", textAlign: "left", transition: "all 0.15s", marginBottom: "4px" }} onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.background = "#f8fafc"; }} onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = "transparent"; }}>
+                      <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: avatarGradients[idx % avatarGradients.length], display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <span style={{ fontSize: "12px", fontWeight: 700, color: "#ffffff" }}>{s.firstName?.[0]}{s.lastName?.[0]}</span>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.firstName} {s.lastName}</p>
+                        <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#94a3b8" }}>{s.class?.displayName || s.class?.name || "—"} · {s.admissionNumber}</p>
+                      </div>
+                      {isSelected && <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#0055ff", flexShrink: 0 }} />}
+                    </button>
+                  );
+                })
               )}
             </div>
           </div>
         )}
 
         {/* Preview Area */}
-        <div className="lg:col-span-3 space-y-4">
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {reportData ? (
             <>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowPreview(!showPreview)}
-                  className="btn btn-secondary flex items-center gap-2"
-                >
-                  <Eye className="w-4 h-4" /> {showPreview ? "Hide Preview" : "Preview"}
+              {/* Action Buttons */}
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <button onClick={() => setShowPreview(!showPreview)} style={btnStyle("#ffffff")}>
+                  <span style={{ color: "#475569" }}><Eye style={{ width: "16px", height: "16px", display: "inline" }} /></span> <span style={{ color: "#475569" }}>{showPreview ? "Hide Preview" : "Preview"}</span>
                 </button>
                 <PDFDownloadLink
                   document={<ReportCardPDF {...reportData} />}
                   fileName={`report_card_${reportData.studentData.admissionNumber}.pdf`}
-                  className="btn btn-primary flex items-center gap-2"
+                  style={{ ...btnStyle("#0055ff"), textDecoration: "none" }}
                 >
-                  {({ loading }) => loading ? "Generating..." : <><Download className="w-4 h-4" /> Download PDF</>}
+                  {({ loading: l }) => l ? "Generating..." : <><Download style={{ width: "16px", height: "16px" }} /> Download PDF</>}
                 </PDFDownloadLink>
-                <button
-                  onClick={() => {
-                    downloadPDF(
-                      `Report Card - ${reportData.studentData.name}`,
-                      `<table><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th></tr>${
-                        reportData.grades.map(g => `<tr><td>${g.subject}</td><td>${g.ca1}</td><td>${g.ca2}</td><td>${g.exam}</td><td>${g.total}</td><td>${g.grade}</td></tr>`).join("")
-                      }</table><p><strong>Attendance:</strong> ${reportData.attendance.present}/${reportData.attendance.totalDays} days</p>`
-                    );
-                  }}
-                  className="btn btn-secondary flex items-center gap-2"
-                >
-                  <Printer className="w-4 h-4" /> Print
+                <button onClick={() => {
+                  downloadPDF(
+                    `Report Card - ${reportData.studentData.name}`,
+                    `<table><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th></tr>${reportData.grades.map(g => `<tr><td>${g.subject}</td><td>${g.ca1}</td><td>${g.ca2}</td><td>${g.exam}</td><td>${g.total}</td><td>${g.grade}</td></tr>`).join("")}</table><p><strong>Attendance:</strong> ${reportData.attendance.present}/${reportData.attendance.totalDays} days</p>`
+                  );
+                }} style={btnStyle("#ffffff")}>
+                  <span style={{ color: "#475569" }}><Printer style={{ width: "16px", height: "16px", display: "inline" }} /></span> <span style={{ color: "#475569" }}>Print</span>
                 </button>
               </div>
 
+              {/* PDF Preview */}
               {showPreview && (
-                <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden" style={{ height: "700px" }}>
+                <div style={{ borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden", height: "700px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
                   <PDFViewer width="100%" height="100%" showToolbar={false}>
                     <ReportCardPDF {...reportData} />
                   </PDFViewer>
                 </div>
               )}
 
+              {/* Report Card Details */}
               {!showPreview && (
-                <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-                  <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">Report Card Details</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 rounded-xl bg-[#f8fafc]">
-                      <p className="text-[#64748b] text-[10px]">Student</p>
-                      <p className="text-[#1a1a2e] text-[13px] font-medium">{reportData.studentData.name}</p>
-                    </div>
-                    <div className="p-3 rounded-xl bg-[#f8fafc]">
-                      <p className="text-[#64748b] text-[10px]">Class</p>
-                      <p className="text-[#1a1a2e] text-[13px] font-medium">{reportData.studentData.className}</p>
-                    </div>
-                    <div className="p-3 rounded-xl bg-[#f8fafc]">
-                      <p className="text-[#64748b] text-[10px]">Term</p>
-                      <p className="text-[#1a1a2e] text-[13px] font-medium">{reportData.termData.name}</p>
-                    </div>
-                    <div className="p-3 rounded-xl bg-[#f8fafc]">
-                      <p className="text-[#64748b] text-[10px]">Session</p>
-                      <p className="text-[#1a1a2e] text-[13px] font-medium">{reportData.termData.academicYear}</p>
-                    </div>
+                <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+                  <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9" }}>
+                    <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Report Card Details</h3>
                   </div>
-                  {reportData.grades.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-[#64748b] text-[10px] mb-2">Subjects ({reportData.grades.length})</p>
-                      <div className="space-y-1">
-                        {reportData.grades.map((g, i) => (
-                          <div key={i} className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#f8fafc]">
-                            <span className="text-[#475569] text-[11px]">{g.subject}</span>
-                            <div className="flex items-center gap-3">
-                              <span className="text-[#64748b] text-[10px]">CA: {g.ca1 + g.ca2}</span>
-                              <span className="text-[#64748b] text-[10px]">Exam: {g.exam}</span>
-                              <span className="text-[#1a1a2e] text-[11px] font-semibold">{g.total}%</span>
-                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                                g.total >= 70 ? "bg-[#dcfce7] text-[#16a34a]" :
-                                g.total >= 50 ? "bg-[#dbeafe] text-[#2563eb]" :
-                                "bg-[#fee2e2] text-[#dc2626]"
-                              }`}>{g.grade}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                  <div style={{ padding: "20px 24px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "20px" }}>
+                      {[
+                        { label: "Student", value: reportData.studentData.name },
+                        { label: "Class", value: reportData.studentData.className },
+                        { label: "Term", value: reportData.termData.name },
+                        { label: "Session", value: reportData.termData.academicYear },
+                      ].map((item, i) => (
+                        <div key={i} style={{ padding: "14px 16px", borderRadius: "12px", background: "#f8fafc", border: "1px solid #f1f5f9" }}>
+                          <p style={{ margin: 0, fontSize: "10px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.label}</p>
+                          <p style={{ margin: "6px 0 0", fontSize: "14px", fontWeight: 600, color: "#0f172a" }}>{item.value}</p>
+                        </div>
+                      ))}
                     </div>
-                  )}
+
+                    {reportData.grades.length > 0 && (
+                      <div>
+                        <p style={{ margin: "0 0 12px", fontSize: "12px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>Subjects ({reportData.grades.length})</p>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                          {reportData.grades.map((g, i) => (
+                            <div key={i} style={{ padding: "12px 16px", borderRadius: "10px", background: "#f8fafc", display: "flex", alignItems: "center", justifyContent: "space-between", transition: "background 0.1s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f1f5f9")} onMouseLeave={(e) => (e.currentTarget.style.background = "#f8fafc")}>
+                              <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{g.subject}</span>
+                              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                <span style={{ fontSize: "12px", color: "#64748b" }}>CA: {g.ca1 + g.ca2}</span>
+                                <span style={{ fontSize: "12px", color: "#64748b" }}>Exam: {g.exam}</span>
+                                <span style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", minWidth: "36px", textAlign: "right" }}>{g.total}%</span>
+                                <span style={{ padding: "3px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 700, background: getGradeBg(g.total), color: getGradeColor(g.total) }}>{g.grade}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
-              {/* QR Code */}
-              <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-5 shadow-sm">
-                <h3 className="text-[#1a1a2e] font-semibold text-[14px] mb-3">QR Verification</h3>
-                <div className="flex items-center gap-4">
-                  <div className="w-24 h-24 rounded-xl bg-white flex items-center justify-center">
-                    <QrCode className="w-16 h-16 text-[var(--blue-1)]" />
+              {/* QR Verification */}
+              <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "24px" }}>
+                <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>QR Verification</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                  <div style={{ width: "80px", height: "80px", borderRadius: "16px", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <QrCode style={{ width: "40px", height: "40px", color: "#0055ff" }} />
                   </div>
                   <div>
-                    <p className="text-[#475569] text-[12px]">Each report card includes a unique QR code for third-party verification.</p>
-                    <p className="text-[#94a3b8] text-[10px] mt-1">Scan to verify authenticity of this report card.</p>
+                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#475569" }}>Each report card includes a unique QR code for third-party verification.</p>
+                    <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#94a3b8" }}>Scan to verify authenticity of this report card.</p>
                   </div>
                 </div>
               </div>
             </>
           ) : (
-            <div className="bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] p-12 text-center shadow-sm">
-              <FileText className="w-16 h-16 text-[#94a3b8] mx-auto mb-4" />
-              <p className="text-[#94a3b8] text-[14px]">Select a student to generate their report card</p>
-              <p className="text-[#94a3b8] text-[11px] mt-1">The report card will be generated with real data from the database</p>
+            /* Empty State */
+            <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", padding: "80px 40px", textAlign: "center" }}>
+              <div style={{ width: "80px", height: "80px", borderRadius: "20px", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+                <FileText style={{ width: "36px", height: "36px", color: "#cbd5e1" }} />
+              </div>
+              <p style={{ margin: 0, fontSize: "16px", fontWeight: 600, color: "#94a3b8" }}>Select a student to generate their report card</p>
+              <p style={{ margin: "6px 0 0", fontSize: "13px", color: "#cbd5e1" }}>The report card will be generated with real data from the database</p>
             </div>
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
