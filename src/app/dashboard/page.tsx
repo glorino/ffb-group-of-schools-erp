@@ -61,92 +61,112 @@ function AdminDashboard() {
     fetch("/api/dashboard/stats").then(r => r.json()).then(d => { if (d.success) setStats(d); }).catch(() => {});
   }, []);
 
+  const statCards = [
+    { label: "Total Students", value: stats.totalStudents, icon: "👥", color: "#0055ff", bg: "#eff6ff" },
+    { label: "Total Teachers", value: stats.totalTeachers, icon: "👩‍🏫", color: "#7c3aed", bg: "#f5f3ff" },
+    { label: "Total Revenue", value: formatCurrencyCompact(stats.totalRevenue), icon: "💰", color: "#059669", bg: "#ecfdf5" },
+    { label: "Active Classes", value: stats.totalClasses, icon: "🏫", color: "#ea580c", bg: "#fff7ed" },
+  ];
+
+  const secondaryCards = [
+    { label: "Pending Admissions", value: stats.pendingAdmissions, sub: "Needs review", icon: "📋", color: "#d97706", bg: "#fffbeb" },
+    { label: "Attendance Today", value: `${stats.attendance?.rate || 0}%`, sub: `${stats.attendance?.present || 0} present`, icon: "✅", color: "#059669", bg: "#ecfdf5" },
+    { label: "Fee Collection", value: formatCurrencyCompact(stats.totalRevenue), sub: "Total collected", icon: "💵", color: "#0055ff", bg: "#eff6ff" },
+  ];
+
   return (
-    <>
-      <div className="stats-grid-4">
-        <DashboardCard>
-          <p className="text-[#64748b] text-[12px] font-medium">Total Students</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalStudents}</p>
-        </DashboardCard>
-        <DashboardCard>
-          <p className="text-[#64748b] text-[12px] font-medium">Total Teachers</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalTeachers}</p>
-        </DashboardCard>
-        <DashboardCard>
-          <p className="text-[#64748b] text-[12px] font-medium">Total Revenue</p>
-          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
-        </DashboardCard>
-        <DashboardCard>
-          <p className="text-[#64748b] text-[12px] font-medium">Active Classes</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.totalClasses}</p>
-        </DashboardCard>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      {/* Primary Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+        {statCards.map((card) => (
+          <div key={card.label} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 22px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", transition: "box-shadow 0.2s, transform 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"; e.currentTarget.style.transform = "none"; }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                <span style={{ fontSize: "12px", fontWeight: 600, color: "#64748b" }}>{card.label}</span>
+                <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: card.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>{card.icon}</div>
+              </div>
+              <p style={{ margin: 0, fontSize: "28px", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>{card.value}</p>
+            </div>
+        ))}
       </div>
-      <div className="stats-grid-3">
-        <DashboardCard>
-          <p className="text-[#64748b] text-[12px] font-medium">Pending Admissions</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.pendingAdmissions}</p>
-          <p className="text-[#ffd700] text-[11px] mt-1">Needs review</p>
-        </DashboardCard>
-        <DashboardCard>
-          <p className="text-[#64748b] text-[12px] font-medium">Attendance Today</p>
-          <p className="text-[28px] font-bold text-[#1a1a2e] mt-1">{stats.attendance?.rate || 0}%</p>
-          <p className="text-[#22c55e] text-[11px] mt-1">{stats.attendance?.present || 0} present</p>
-        </DashboardCard>
-        <DashboardCard>
-          <p className="text-[#64748b] text-[12px] font-medium">Fee Collection</p>
-          <p className="text-[22px] font-bold text-[#1a1a2e] mt-1">{formatCurrencyCompact(stats.totalRevenue)}</p>
-          <p className="text-[#22c55e] text-[11px] mt-1">Total collected</p>
-        </DashboardCard>
+
+      {/* Secondary Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+        {secondaryCards.map((card) => (
+          <div key={card.label} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "18px 22px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                <span style={{ fontSize: "12px", fontWeight: 600, color: "#64748b" }}>{card.label}</span>
+                <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: card.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>{card.icon}</div>
+              </div>
+              <p style={{ margin: 0, fontSize: "24px", fontWeight: 800, color: "#0f172a" }}>{card.value}</p>
+              {card.sub && <p style={{ margin: "4px 0 0", fontSize: "12px", color: card.color, fontWeight: 500 }}>{card.sub}</p>}
+            </div>
+        ))}
       </div>
-      <div className="charts-grid">
-        <DashboardCard>
-          <CardTitle title="Class Performance" subtitle="Students per class" />
+
+      {/* Charts Row */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "16px" }}>
+        {/* Class Performance */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+          <div style={{ marginBottom: "18px" }}>
+            <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Class Performance</h3>
+            <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#94a3b8" }}>Students per class</p>
+          </div>
           {stats.classPerformance?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={stats.classPerformance} barGap={4}>
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={stats.classPerformance} barGap={6}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip />} cursor={false} />
-                <Bar dataKey="students" name="Students" fill="#0055ff" radius={[6, 6, 0, 0]} maxBarSize={36} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0,85,255,0.04)" }} />
+                <Bar dataKey="students" name="Students" fill="#0055ff" radius={[6, 6, 0, 0]} maxBarSize={40} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[220px] text-[#94a3b8] text-[13px]">No class data yet</div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "240px", color: "#94a3b8", fontSize: "13px" }}>No class data yet</div>
           )}
-        </DashboardCard>
-        <DashboardCard>
-          <CardTitle title="Attendance Today" />
+        </div>
+
+        {/* Attendance Pie */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+          <div style={{ marginBottom: "18px" }}>
+            <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Attendance Today</h3>
+          </div>
           <ResponsiveContainer width="100%" height={160}>
             <PieChart>
               <Pie data={[
                 { name: "Present", value: stats.attendance?.present || 0, color: "#10b981" },
                 { name: "Absent", value: stats.attendance?.absent || 0, color: "#ef4444" },
                 { name: "Late", value: stats.attendance?.late || 0, color: "#f59e0b" },
-              ]} cx="50%" cy="50%" innerRadius={50} outerRadius={70} paddingAngle={3} dataKey="value">
+              ]} cx="50%" cy="50%" innerRadius={48} outerRadius={68} paddingAngle={3} dataKey="value">
                 {[{ color: "#10b981" }, { color: "#ef4444" }, { color: "#f59e0b" }].map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
             </PieChart>
           </ResponsiveContainer>
-          <div className="grid grid-cols-3 gap-1.5 mt-2">
+          <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginTop: "12px" }}>
             {[
               { label: "Present", value: stats.attendance?.present || 0, color: "#10b981" },
               { label: "Absent", value: stats.attendance?.absent || 0, color: "#ef4444" },
               { label: "Late", value: stats.attendance?.late || 0, color: "#f59e0b" },
             ].map((item) => (
-              <div key={item.label} className="flex items-center gap-1.5 text-[10px] min-w-0">
-                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                <span className="text-[#64748b] truncate">{item.label}</span>
-                <span className="text-[#475569] font-medium ml-auto flex-shrink-0">{item.value}</span>
+              <div key={item.label} style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px" }}>
+                <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: item.color }} />
+                <span style={{ color: "#64748b" }}>{item.label}</span>
+                <span style={{ color: "#0f172a", fontWeight: 600 }}>{item.value}</span>
               </div>
             ))}
           </div>
-        </DashboardCard>
+        </div>
       </div>
-      <div className="charts-grid-equal">
-        <DashboardCard>
-          <CardTitle title="Revenue Trend" subtitle="6-month overview" />
+
+      {/* Bottom Row */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+        {/* Revenue Trend */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+          <div style={{ marginBottom: "18px" }}>
+            <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Revenue Trend</h3>
+            <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#94a3b8" }}>6-month overview</p>
+          </div>
           {stats.monthlyRevenue?.length > 0 ? (
             <ResponsiveContainer width="100%" height={200}>
               <AreaChart data={stats.monthlyRevenue}>
@@ -159,51 +179,53 @@ function AdminDashboard() {
                 <XAxis dataKey="month" tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#0055ff" fill="url(#gRev)" strokeWidth={2} dot={false} />
+                <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#0055ff" fill="url(#gRev)" strokeWidth={2.5} dot={false} />
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[200px] text-[#94a3b8] text-[13px]">No revenue data yet</div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "200px", color: "#94a3b8", fontSize: "13px" }}>No revenue data yet</div>
           )}
-        </DashboardCard>
-        <DashboardCard>
-          <CardTitle title="Recent Activity" />
-          <div className="space-y-2">
+        </div>
+
+        {/* Recent Activity */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+          <div style={{ marginBottom: "18px" }}>
+            <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Recent Activity</h3>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
             {stats.recentActivities?.length > 0 ? stats.recentActivities.slice(0, 5).map((item: any, i: number) => (
-              <div key={i} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#f1f5f9] transition min-w-0">
-                <div className={`w-7 h-7 rounded-md ${item.type === "payment" ? "bg-[#dcfce7] text-[#16a34a]" : "bg-[#dbeafe] text-[#2563eb]"} flex items-center justify-center flex-shrink-0 text-[10px] font-bold`}>
-                  {i + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[#475569] text-[12px] leading-relaxed truncate">{item.description}</p>
-                  <p className="text-[#94a3b8] text-[10px] mt-0.5">{new Date(item.time).toLocaleDateString()}</p>
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "12px", padding: "10px 12px", borderRadius: "10px", transition: "background 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f8fafc"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: item.type === "payment" ? "#ecfdf5" : "#eff6ff", color: item.type === "payment" ? "#059669" : "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ margin: 0, fontSize: "13px", color: "#334155", lineHeight: 1.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.description}</p>
+                  <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#94a3b8" }}>{new Date(item.time).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}</p>
                 </div>
               </div>
             )) : (
-              <p className="text-[#94a3b8] text-[12px] text-center py-4">No recent activity</p>
+              <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8", textAlign: "center", padding: "24px 0" }}>No recent activity</p>
             )}
           </div>
-        </DashboardCard>
+        </div>
       </div>
-      <div className="stats-grid-4">
-        <Link href="/dashboard/admissions" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#0055ff] to-[#0033cc] border border-[#1a1a2e] text-[#ffffff] hover:bg-gradient-to-r transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#1a1a2e] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">➕</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Add Student</p><p className="text-[#ffffff] text-[9px] sm:text-[10px]">New admissions</p></div>
-        </Link>
-        <Link href="/dashboard/classes" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#1e40af] to-[#1e3a8a] border border-[#1a1a2e] text-[#ffffff] hover:bg-gradient-to-r transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#1a1a2e] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">🏫</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Manage Classes</p><p className="text-[#ffffff] text-[9px] sm:text-[10px]">Organize classes</p></div>
-        </Link>
-        <Link href="/dashboard/payments" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#06b6d4] border border-[#1a1a2e] text-[#ffffff] hover:bg-gradient-to-r transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#1a1a2e] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">💰</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">View Payments</p><p className="text-[#ffffff] text-[9px] sm:text-[10px]">Fee records</p></div>
-        </Link>
-        <Link href="/dashboard/announcements" className="flex items-center gap-3 flex-wrap px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#0055ff] to-[#3b82f6] border border-[#1a1a2e] text-[#ffffff] hover:bg-gradient-to-r transition-all group">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#1a1a2e] flex items-center justify-center text-[14px] sm:text-[16px] group-hover:scale-110 transition-transform shrink-0">📢</span>
-          <div className="min-w-0"><p className="text-[12px] sm:text-[13px] font-semibold truncate">Send Announcement</p><p className="text-[#ffffff] text-[9px] sm:text-[10px]">Broadcast to all</p></div>
-        </Link>
+
+      {/* Quick Actions */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+        {[
+          { href: "/dashboard/admissions", label: "New Admission", sub: "Add a student", icon: "➕", gradient: "linear-gradient(135deg, #0055ff, #0033cc)" },
+          { href: "/dashboard/classes", label: "Manage Classes", sub: "Organize sections", icon: "🏫", gradient: "linear-gradient(135deg, #1e40af, #1e3a8a)" },
+          { href: "/dashboard/payments", label: "Payments", sub: "Fee records", icon: "💰", gradient: "linear-gradient(135deg, #059669, #047857)" },
+          { href: "/dashboard/announcements", label: "Announcements", sub: "Broadcast", icon: "📢", gradient: "linear-gradient(135deg, #7c3aed, #6d28d9)" },
+        ].map((action) => (
+          <Link key={action.href} href={action.href} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "16px 18px", borderRadius: "14px", background: action.gradient, color: "#ffffff", textDecoration: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.12)", transition: "box-shadow 0.2s, transform 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.18)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.12)"; e.currentTarget.style.transform = "none"; }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: "rgba(255,255,255,0.18)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", flexShrink: 0 }}>{action.icon}</div>
+            <div>
+              <p style={{ margin: 0, fontSize: "14px", fontWeight: 600 }}>{action.label}</p>
+              <p style={{ margin: "2px 0 0", fontSize: "11px", opacity: 0.75 }}>{action.sub}</p>
+            </div>
+          </Link>
+        ))}
       </div>
-    </>
+    </div>
   );
 }
 
