@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useState, useMemo, Suspense, lazy } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   TrendingUp,
@@ -76,15 +76,6 @@ interface Student {
   [key: string]: unknown;
 }
 
-interface KpiData {
-  label: string;
-  value: string;
-  change: string;
-  trend: string;
-  icon: typeof Users;
-  color: string;
-}
-
 interface ClassPerf {
   class: string;
   avg: number;
@@ -105,8 +96,8 @@ interface MonthlyRevenue {
 
 function ChartFallback() {
   return (
-    <div className="flex items-center justify-center h-[260px]">
-      <Loader2 className="w-6 h-6 text-[var(--primary)] animate-spin" />
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "260px" }}>
+      <Loader2 style={{ width: "24px", height: "24px", color: "#0055ff", animation: "spin 1s linear infinite" }} />
     </div>
   );
 }
@@ -131,138 +122,73 @@ function AnalyticsCharts({
     XAxis, YAxis, CartesianGrid,
   } = require("recharts");
 
+  const cardStyle: React.CSSProperties = { background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" };
+
   return (
     <>
-      <div className="charts-grid-equal">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="dashboard-card"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Gender Distribution</h3>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} style={cardStyle}>
+          <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Gender Distribution</h3>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
-              <Pie
-                data={genderData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={4}
-                dataKey="value"
-                label={({ name, percent }: any) => `${name || ""} ${((percent || 0) * 100).toFixed(0)}%`}
-              >
+              <Pie data={genderData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value" label={({ name, percent }: any) => `${name || ""} ${((percent || 0) * 100).toFixed(0)}%`}>
                 {genderData.map((_entry: any, index: number) => (
-                  <Cell key={`cell-${index}`} fill={PIE_COLORS[index]} />
+                  <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip
-                contentStyle={{
-                  background: "#ffffff",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "12px",
-                  color: "#1a1a2e",
-                }}
-              />
-              <Legend wrapperStyle={{ color: "#64748b" }} />
+              <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", color: "#1a1a2e" }} />
+              <Legend wrapperStyle={{ color: "#64748b", fontSize: "12px" }} />
             </PieChart>
           </ResponsiveContainer>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="dashboard-card"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Attendance Overview</h3>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} style={cardStyle}>
+          <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Attendance Overview</h3>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
-              <Pie
-                data={attendanceData}
-                cx="50%"
-                cy="50%"
-                innerRadius={70}
-                outerRadius={100}
-                paddingAngle={4}
-                dataKey="value"
-                label={({ name, value }: any) => `${name} ${value}%`}
-              >
+              <Pie data={attendanceData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={4} dataKey="value">
                 {attendanceData.map((_entry: any, index: number) => (
-                  <Cell key={`cell-${index}`} fill={ATTENDANCE_COLORS[index]} />
+                  <Cell key={`cell-${index}`} fill={ATTENDANCE_COLORS[index % ATTENDANCE_COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip
-                contentStyle={{
-                  background: "#ffffff",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "12px",
-                  color: "#1a1a2e",
-                }}
-              />
-              <Legend wrapperStyle={{ color: "#64748b" }} />
+              <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", color: "#1a1a2e" }} />
+              <Legend wrapperStyle={{ color: "#64748b", fontSize: "12px" }} />
             </PieChart>
           </ResponsiveContainer>
+          <div style={{ display: "flex", justifyContent: "center", gap: "24px", marginTop: "8px" }}>
+            {attendanceData.map((item, i) => (
+              <div key={item.name} style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px" }}>
+                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: ATTENDANCE_COLORS[i % ATTENDANCE_COLORS.length] }} />
+                <span style={{ color: "#64748b" }}>{item.name}</span>
+                <span style={{ color: "#0f172a", fontWeight: 600 }}>{item.value}</span>
+              </div>
+            ))}
+          </div>
         </motion.div>
       </div>
 
-      <div className="charts-grid-equal">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-          className="dashboard-card"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Payment Trend</h3>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }} style={cardStyle}>
+          <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Payment Trend</h3>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={monthlyRevenue}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="month" stroke="#94a3b8" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
-              <Tooltip
-                contentStyle={{
-                  background: "#ffffff",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "12px",
-                  color: "#1a1a2e",
-                }}
-              />
-              <Legend wrapperStyle={{ color: "#64748b" }} />
-              <Line
-                type="monotone"
-                dataKey="amount"
-                stroke="#a78bfa"
-                strokeWidth={3}
-                dot={{ fill: "#a78bfa", strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-                name={`Collection (${formatCurrencyCompact(0).charAt(0)}M)`}
-              />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="month" stroke="#94a3b8" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", color: "#1a1a2e" }} />
+              <Line type="monotone" dataKey="amount" stroke="#a78bfa" strokeWidth={3} dot={{ fill: "#a78bfa", strokeWidth: 2 }} activeDot={{ r: 6 }} name="Revenue" />
             </LineChart>
           </ResponsiveContainer>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
-          className="dashboard-card"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Class Performance</h3>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.0 }} style={cardStyle}>
+          <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Class Performance</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={classPerformance}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="class" stroke="#94a3b8" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
-              <Tooltip
-                contentStyle={{
-                  background: "#ffffff",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "12px",
-                  color: "#1a1a2e",
-                }}
-              />
-              <Legend wrapperStyle={{ color: "#64748b" }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="class" stroke="#94a3b8" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", color: "#1a1a2e" }} />
               <Bar dataKey="avg" fill="#34d399" radius={[6, 6, 0, 0]} name="Avg Score %" />
             </BarChart>
           </ResponsiveContainer>
@@ -352,38 +278,10 @@ export default function AnalyticsPage() {
     const totalRevenue = filteredPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
 
     return [
-      {
-        label: "Total Students",
-        value: totalStudents > 0 ? String(totalStudents) : "\u2014",
-        change: totalStudents > 0 ? `+${Math.round(totalStudents * 0.05)}` : "+0",
-        trend: "up",
-        icon: Users,
-        color: "from-blue-500 to-blue-600",
-      },
-      {
-        label: "Pass Rate",
-        value: passRate > 0 ? `${passRate}%` : "\u2014",
-        change: passRate > 0 ? `+${Math.min(5, Math.round(passRate * 0.03))}%` : "+0%",
-        trend: "up",
-        icon: GraduationCap,
-        color: "from-emerald-500 to-emerald-600",
-      },
-      {
-        label: "Revenue",
-        value: totalRevenue > 0 ? formatCurrencyCompact(totalRevenue) : "\u2014",
-        change: totalRevenue > 0 ? "+18%" : "+0%",
-        trend: "up",
-        icon: TrendingUp,
-        color: "from-purple-500 to-purple-600",
-      },
-      {
-        label: "Avg Score",
-        value: avgScore > 0 ? `${avgScore.toFixed(1)}%` : "\u2014",
-        change: avgScore > 0 ? `+${Math.min(5, Math.round(avgScore * 0.02))}%` : "+0%",
-        trend: "up",
-        icon: Calendar,
-        color: "from-[var(--accent)] to-emerald-400",
-      },
+      { label: "Total Students", value: totalStudents > 0 ? String(totalStudents) : "\u2014", change: totalStudents > 0 ? `+${Math.round(totalStudents * 0.05)}` : "+0", trend: "up", icon: Users, color: "#0055ff", bg: "#eff6ff" },
+      { label: "Pass Rate", value: passRate > 0 ? `${passRate}%` : "\u2014", change: passRate > 0 ? `+${Math.min(5, Math.round(passRate * 0.03))}%` : "+0%", trend: "up", icon: GraduationCap, color: "#059669", bg: "#ecfdf5" },
+      { label: "Revenue", value: totalRevenue > 0 ? formatCurrencyCompact(totalRevenue) : "\u2014", change: totalRevenue > 0 ? "+18%" : "+0%", trend: "up", icon: TrendingUp, color: "#7c3aed", bg: "#f5f3ff" },
+      { label: "Avg Score", value: avgScore > 0 ? `${avgScore.toFixed(1)}%` : "\u2014", change: avgScore > 0 ? `+${Math.min(5, Math.round(avgScore * 0.02))}%` : "+0%", trend: "up", icon: Calendar, color: "#0891b2", bg: "#ecfeff" },
     ];
   }, [rawStats, filteredGrades, filteredPayments]);
 
@@ -458,7 +356,7 @@ export default function AnalyticsPage() {
     const lastFiveMonths = monthNames.slice(0, 5);
     return lastFiveMonths.map((m) => ({
       month: m,
-      amount: revenueByMonth[m] ? Math.round((revenueByMonth[m] / 1000000) * 10) / 10 : 0,
+      amount: revenueByMonth[m] || 0,
     }));
   }, [filteredPayments]);
 
@@ -502,248 +400,161 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-[var(--primary)] animate-spin" />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+        <Loader2 style={{ width: "32px", height: "32px", color: "#0055ff", animation: "spin 1s linear infinite" }} />
       </div>
     );
   }
 
+  const cardStyle: React.CSSProperties = { background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" };
+
   return (
-    <div className="space-y-5">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="dashboard-card bg-gradient-to-r from-[#0a2a6e] to-[#0055ff] border-white/10 mt-8 mx-4 p-8"
-        style={{ background: "linear-gradient(to right, #0a2a6e, #0055ff)" }}
-      >
-        <div className="section-header">
+    <div style={{ padding: "0 16px 32px", maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "20px" }}>
+      {/* Header */}
+      <div style={{ marginTop: "32px", borderRadius: "20px", padding: "32px 36px", background: "linear-gradient(135deg, #0a2a6e, #0055ff)", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
           <div>
-            <h1 className="section-title">Analytics Dashboard</h1>
-            <p className="section-subtitle">Charts, KPIs, heatmaps, and trend analysis for data-driven decisions</p>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", letterSpacing: "-0.02em" }}>Analytics Dashboard</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>Charts, KPIs, and trend analysis for data-driven decisions</p>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={() => setShowFilter(!showFilter)}
-              className={`btn ${showFilter ? "btn-primary" : "btn-secondary"}`}
-            >
-              <Filter className="w-4 h-4" />
-              Filter
-              {(filterClass || filterSubject || filterDateFrom || filterDateTo) && (
-                <span className="ml-1 w-2 h-2 rounded-full bg-red-500 inline-block" />
-              )}
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button onClick={() => setShowFilter(!showFilter)} style={{ padding: "10px 20px", borderRadius: "12px", background: showFilter ? "#ffffff" : "rgba(255,255,255,0.12)", border: showFilter ? "none" : "1px solid rgba(255,255,255,0.2)", color: showFilter ? "#0f172a" : "#ffffff", fontSize: "13px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "all 0.2s" }}>
+              <Filter style={{ width: "14px", height: "14px" }} /> Filter
+              {(filterClass || filterSubject || filterDateFrom || filterDateTo) && <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ef4444" }} />}
             </button>
-            <button
-              onClick={() => {
-                const data = kpiData.map((kpi) => ({
-                  Metric: kpi.label,
-                  Value: kpi.value,
-                  Change: kpi.change,
-                  Trend: kpi.trend,
-                }));
-                downloadCSV(data, "analytics_report");
-              }}
-              className="btn btn-primary"
-            >
-              <Download className="w-4 h-4" />
-              Export Report
+            <button onClick={() => {
+              const data = kpiData.map((kpi) => ({ Metric: kpi.label, Value: kpi.value, Change: kpi.change, Trend: kpi.trend }));
+              downloadCSV(data, "analytics_report");
+            }} style={{ padding: "10px 20px", borderRadius: "12px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff", fontSize: "13px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "all 0.2s" }}>
+              <Download style={{ width: "14px", height: "14px" }} /> Export Report
             </button>
           </div>
         </div>
-      </motion.div>
+      </div>
 
+      {/* Filter Panel */}
       <AnimatePresence>
         {showFilter && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="dashboard-card border-[var(--primary)]/20">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[#1a1a2e] font-semibold text-[15px]">Filter Analytics</h3>
-                <button
-                  onClick={() => {
-                    setFilterDateFrom("");
-                    setFilterDateTo("");
-                    setFilterClass("");
-                    setFilterSubject("");
-                    setShowFilter(false);
-                  }}
-                  className="text-[#64748b] hover:text-[#1a1a2e] text-[12px] font-medium"
-                >
-                  Clear all
-                </button>
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} style={{ overflow: "hidden" }}>
+            <div style={{ ...cardStyle, borderColor: "rgba(0,85,255,0.2)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+                <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 600, color: "#0f172a" }}>Filter Analytics</h3>
+                <button onClick={() => { setFilterDateFrom(""); setFilterDateTo(""); setFilterClass(""); setFilterSubject(""); setShowFilter(false); }} style={{ background: "none", border: "none", color: "#64748b", fontSize: "12px", fontWeight: 500, cursor: "pointer" }}>Clear all</button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+                {[
+                  { label: "Date From", value: filterDateFrom, onChange: setFilterDateFrom, type: "date" },
+                  { label: "Date To", value: filterDateTo, onChange: setFilterDateTo, type: "date" },
+                ].map((field) => (
+                  <div key={field.label}>
+                    <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>{field.label}</label>
+                    <input type={field.type} value={field.value} onChange={(e) => field.onChange(e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "12px", color: "#0f172a", outline: "none", boxSizing: "border-box", colorScheme: "light" }} />
+                  </div>
+                ))}
                 <div>
-                  <label className="block text-[#475569] text-[11px] font-medium mb-1.5">Date From</label>
-                  <input
-                    type="date"
-                    value={filterDateFrom}
-                    onChange={(e) => setFilterDateFrom(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] focus:outline-none focus:border-[var(--primary)]"
-                    style={{ colorScheme: "light" }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#475569] text-[11px] font-medium mb-1.5">Date To</label>
-                  <input
-                    type="date"
-                    value={filterDateTo}
-                    onChange={(e) => setFilterDateTo(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] focus:outline-none focus:border-[var(--primary)]"
-                    style={{ colorScheme: "light" }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#475569] text-[11px] font-medium mb-1.5">Class</label>
-                  <select
-                    value={filterClass}
-                    onChange={(e) => setFilterClass(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] focus:outline-none focus:border-[var(--primary)]"
-                    style={{ colorScheme: "light" }}
-                  >
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">All Classes</option>
-                    {uniqueClasses.map((c) => (
-                      <option key={c} style={{ background: "#ffffff", color: "#1a1a2e" }} value={c}>{c}</option>
-                    ))}
+                  <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>Class</label>
+                  <select value={filterClass} onChange={(e) => setFilterClass(e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "12px", color: "#0f172a", outline: "none", colorScheme: "light" }}>
+                    <option value="">All Classes</option>
+                    {uniqueClasses.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#475569] text-[11px] font-medium mb-1.5">Subject</label>
-                  <select
-                    value={filterSubject}
-                    onChange={(e) => setFilterSubject(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#1a1a2e] text-[12px] focus:outline-none focus:border-[var(--primary)]"
-                    style={{ colorScheme: "light" }}
-                  >
-                    <option style={{ background: "#ffffff", color: "#1a1a2e" }} value="">All Subjects</option>
-                    {uniqueSubjects.map((s) => (
-                      <option key={s} style={{ background: "#ffffff", color: "#1a1a2e" }} value={s}>{s}</option>
-                    ))}
+                  <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>Subject</label>
+                  <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "12px", color: "#0f172a", outline: "none", colorScheme: "light" }}>
+                    <option value="">All Subjects</option>
+                    {uniqueSubjects.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </div>
-              <div className="flex justify-end mt-4 pt-3 border-t border-[#e2e8f0]">
-                <button
-                  onClick={() => setShowFilter(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--primary)] text-white text-[12px] font-semibold hover:brightness-110 transition-all"
-                >
-                  Apply Filters
-                </button>
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "16px", paddingTop: "14px", borderTop: "1px solid #f1f5f9" }}>
+                <button onClick={() => setShowFilter(false)} style={{ padding: "10px 24px", borderRadius: "10px", background: "var(--primary, #0055ff)", color: "#ffffff", fontSize: "12px", fontWeight: 600, border: "none", cursor: "pointer" }}>Apply Filters</button>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="stats-grid-4">
-        {kpiData.map((kpi, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="stat-card"
-          >
-            <div className={`stat-card-icon bg-gradient-to-br ${kpi.color}`}>
-              <kpi.icon className="w-6 h-6 text-white" />
-            </div>
-            <div className="stat-card-content">
-              <p className="stat-card-label">{kpi.label}</p>
-              <p className="stat-card-value">{kpi.value}</p>
-              <div className="flex items-center gap-1 mt-1">
-                {kpi.trend === "up" ? (
-                  <ArrowUpRight className="w-3 h-3 text-[#16a34a]" />
-                ) : (
-                  <ArrowDownRight className="w-3 h-3 text-[#dc2626]" />
-                )}
-                <span className={`text-[11px] font-medium ${kpi.trend === "up" ? "text-[#16a34a]" : "text-[#dc2626]"}`}>
-                  {kpi.change}
-                </span>
+      {/* KPI Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+        {kpiData.map((kpi, i) => {
+          const Icon = kpi.icon;
+          return (
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "20px 22px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", transition: "box-shadow 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"; }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                <span style={{ fontSize: "12px", fontWeight: 600, color: "#64748b" }}>{kpi.label}</span>
+                <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: kpi.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Icon style={{ width: "18px", height: "18px", color: kpi.color }} />
+                </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
+              <p style={{ margin: 0, fontSize: "28px", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>{kpi.value}</p>
+              <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "6px" }}>
+                {kpi.trend === "up" ? <ArrowUpRight style={{ width: "14px", height: "14px", color: "#059669" }} /> : <ArrowDownRight style={{ width: "14px", height: "14px", color: "#dc2626" }} />}
+                <span style={{ fontSize: "12px", fontWeight: 600, color: kpi.trend === "up" ? "#059669" : "#dc2626" }}>{kpi.change}</span>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
-      <div className="charts-grid-equal">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="dashboard-card"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Class Performance</h3>
-          <div className="space-y-3">
+      {/* Performance Bars */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} style={cardStyle}>
+          <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Class Performance</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {classPerformance.map((cls, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="text-[#475569] text-[12px] w-12 flex-shrink-0">{cls.class}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex gap-0.5">
-                    <div className="bg-emerald-500/80 h-5 rounded-l" style={{ width: `${cls.pass}%` }} />
-                    <div className="bg-red-500/80 h-5 rounded-r" style={{ width: `${cls.fail}%` }} />
-                  </div>
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ fontSize: "12px", color: "#475569", width: "48px", flexShrink: 0, fontWeight: 500 }}>{cls.class}</span>
+                <div style={{ flex: 1, height: "20px", background: "#f1f5f9", borderRadius: "10px", overflow: "hidden", display: "flex" }}>
+                  <div style={{ width: `${cls.pass}%`, height: "100%", background: "linear-gradient(90deg, #22c55e, #16a34a)", borderRadius: "10px 0 0 10px", transition: "width 0.5s" }} />
+                  <div style={{ width: `${cls.fail}%`, height: "100%", background: "linear-gradient(90deg, #ef4444, #dc2626)", borderRadius: "0 10px 10px 0", transition: "width 0.5s" }} />
                 </div>
-                <span className="text-[#64748b] text-[11px] w-14 text-right flex-shrink-0">{cls.avg}% avg</span>
+                <span style={{ fontSize: "11px", color: "#64748b", width: "56px", textAlign: "right", flexShrink: 0 }}>{cls.avg}% avg</span>
               </div>
             ))}
           </div>
+          <div style={{ display: "flex", gap: "16px", marginTop: "14px", paddingTop: "12px", borderTop: "1px solid #f1f5f9" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px" }}><span style={{ width: "10px", height: "10px", borderRadius: "3px", background: "#22c55e" }} /><span style={{ color: "#64748b" }}>Pass</span></div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px" }}><span style={{ width: "10px", height: "10px", borderRadius: "3px", background: "#ef4444" }} /><span style={{ color: "#64748b" }}>Fail</span></div>
+          </div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="dashboard-card"
-        >
-          <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Subject Performance</h3>
-          <div className="space-y-3">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} style={cardStyle}>
+          <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Subject Performance</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {subjectPerformance.map((subject, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="text-[#475569] text-[12px] w-24 flex-shrink-0 truncate">{subject.subject}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="progress-bar">
-                    <div
-                      className="progress-bar-fill bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]"
-                      style={{ width: `${subject.avg}%` }}
-                    />
-                  </div>
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ fontSize: "12px", color: "#475569", width: "96px", flexShrink: 0, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{subject.subject}</span>
+                <div style={{ flex: 1, height: "8px", background: "#f1f5f9", borderRadius: "4px", overflow: "hidden" }}>
+                  <div style={{ width: `${subject.avg}%`, height: "100%", background: "linear-gradient(90deg, #0055ff, #22d3ee)", borderRadius: "4px", transition: "width 0.5s" }} />
                 </div>
-                <span className="text-[#64748b] text-[11px] w-10 text-right flex-shrink-0">{subject.avg}%</span>
-                {subject.trend === "up" ? (
-                  <ArrowUpRight className="w-3 h-3 text-[#16a34a] flex-shrink-0" />
-                ) : (
-                  <ArrowDownRight className="w-3 h-3 text-[#dc2626] flex-shrink-0" />
-                )}
+                <span style={{ fontSize: "11px", color: "#64748b", width: "36px", textAlign: "right", flexShrink: 0 }}>{subject.avg}%</span>
+                {subject.trend === "up" ? <ArrowUpRight style={{ width: "14px", height: "14px", color: "#059669", flexShrink: 0 }} /> : <ArrowDownRight style={{ width: "14px", height: "14px", color: "#dc2626", flexShrink: 0 }} />}
               </div>
             ))}
           </div>
         </motion.div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="dashboard-card"
-      >
-        <h3 className="text-[#1a1a2e] font-semibold text-[16px] mb-5">Monthly Revenue Trend</h3>
-        <div className="flex items-end justify-between h-48 gap-4">
-          {monthlyRevenue.map((month, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center">
-              <span className="text-[#64748b] text-[11px] mb-2">{formatCurrencyCompact(month.amount * 1000000)}</span>
-              <div
-                className="w-full bg-gradient-to-t from-[var(--primary)] to-[var(--accent)] rounded-t-lg transition-all duration-500"
-                style={{ height: `${month.amount > 0 ? Math.max((month.amount / 50) * 100, 5) : 2}%` }}
-              />
-              <span className="text-[#64748b] text-[11px] mt-2">{month.month}</span>
-            </div>
-          ))}
+      {/* Monthly Revenue */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} style={cardStyle}>
+        <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Monthly Revenue Trend</h3>
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", height: "180px", gap: "12px" }}>
+          {monthlyRevenue.map((month, i) => {
+            const maxAmount = Math.max(...monthlyRevenue.map((m) => m.amount), 1);
+            const heightPct = month.amount > 0 ? Math.max((month.amount / maxAmount) * 100, 4) : 2;
+            return (
+              <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
+                <span style={{ fontSize: "11px", color: "#64748b", marginBottom: "6px", fontWeight: 500 }}>{formatCurrencyCompact(month.amount)}</span>
+                <div style={{ width: "100%", background: month.amount > 0 ? "linear-gradient(to top, #0055ff, #22d3ee)" : "#f1f5f9", borderRadius: "8px 8px 4px 4px", height: `${heightPct}%`, transition: "height 0.5s", minHeight: "4px" }} />
+                <span style={{ fontSize: "11px", color: "#64748b", marginTop: "8px", fontWeight: 500 }}>{month.month}</span>
+              </div>
+            );
+          })}
         </div>
       </motion.div>
 
+      {/* Charts */}
       <AnalyticsChartsLazy
         genderData={genderData}
         attendanceData={attendanceData}
