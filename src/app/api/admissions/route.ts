@@ -86,6 +86,23 @@ export async function POST(request: NextRequest) {
       retries++;
     }
 
+    const schoolId = validated.schoolId || await getDefaultSchoolId();
+
+    const schoolClass = await prisma.schoolClass.findFirst({
+      where: { schoolId, name: validated.classAppliedFor },
+      select: { capacity: true, name: true },
+    });
+
+    if (schoolClass) {
+      const [enrolledCount, admittedCount] = await Promise.all([
+        prisma.student.count({ where: { classId: schoolClass.name, schoolId } }),
+        prisma.applicant.count({ where: { schoolId, classAppliedFor: schoolClass.name, status: "admitted" } }),
+      ]);
+      if (enrolledCount + admittedCount >= schoolClass.capacity) {
+        return NextResponse.json({ error: `Sorry, ${schoolClass.name} is full. No more applications can be accepted for this class.` }, { status: 400 });
+      }
+    }
+
     const applicant = await prisma.applicant.create({
       data: {
         applicationNumber,

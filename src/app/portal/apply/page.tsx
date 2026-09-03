@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
@@ -11,6 +11,17 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
 }));
 
 const steps = ["Personal Info", "Academic Info", "Guardian Info", "Documents", "Review"];
+
+interface ClassCapacity {
+  name: string;
+  displayName: string;
+  capacity: number;
+  enrolled: number;
+  pendingAdmissions: number;
+  totalOccupied: number;
+  isFull: boolean;
+  remaining: number;
+}
 
 const classOptions = [
   { section: "Crèche & Nursery", classes: ["Crèche", "Nursery 1", "Nursery 2", "Nursery 3"] },
@@ -59,6 +70,7 @@ export default function ApplyPage() {
     medicalCert: null,
   });
   const [uploadingDocs, setUploadingDocs] = useState(false);
+  const [classCapacity, setClassCapacity] = useState<ClassCapacity[]>([]);
   const [form, setForm] = useState({
     firstName: "", lastName: "", middleName: "", email: "", phone: "", dateOfBirth: "", gender: "", bloodGroup: "", nationality: "Nigerian", stateOfOrigin: "", homeAddress: "",
     previousSchool: "", classApplying: "",
@@ -68,6 +80,26 @@ export default function ApplyPage() {
   const update = (field: string, value: string) => {
     setForm({ ...form, [field]: value });
     if (errors[field]) setErrors({ ...errors, [field]: "" });
+  };
+
+  useEffect(() => {
+    fetch("/api/admissions/classes")
+      .then((r) => r.json())
+      .then((data) => setClassCapacity(data.classes || []))
+      .catch(() => {});
+  }, []);
+
+  const isClassFull = (className: string) => {
+    const c = classCapacity.find((x) => x.name === className);
+    return c ? c.isFull : false;
+  };
+
+  const getClassLabel = (className: string) => {
+    const c = classCapacity.find((x) => x.name === className);
+    if (!c) return className;
+    if (c.isFull) return `${className} — Full (${c.enrolled}/${c.capacity})`;
+    if (c.remaining <= 5) return `${className} — ${c.remaining} spot${c.remaining === 1 ? "" : "s"} left`;
+    return className;
   };
 
   const handleFileChange = (key: DocKey, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,6 +153,7 @@ export default function ApplyPage() {
     }
     if (step === 1) {
       if (!form.classApplying) e.classApplying = "Required";
+      if (form.classApplying && isClassFull(form.classApplying)) e.classApplying = "This class is full. Please select another class.";
     }
     if (step === 2) {
       if (!form.guardianName.trim()) e.guardianName = "Required";
@@ -300,7 +333,7 @@ export default function ApplyPage() {
               <div>
                 <h2 style={{ fontSize: "20px", fontWeight: 700, marginBottom: "20px", color: "#fff" }}>Academic Information</h2>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-                  <div style={{ gridColumn: "1 / -1" }}><label style={labelStyle}>Class Applying For *</label><select style={errors.classApplying ? inputErrorStyle : inputStyle} value={form.classApplying} onChange={(e) => update("classApplying", e.target.value)}><option value="">Select a class</option>{classOptions.map((section) => (<optgroup key={section.section} label={section.section}>{section.classes.map((c) => (<option key={c} value={c}>{c}</option>))}</optgroup>))}</select>{errors.classApplying && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.classApplying}</span>}</div>
+                  <div style={{ gridColumn: "1 / -1" }}><label style={labelStyle}>Class Applying For *</label><select style={errors.classApplying ? inputErrorStyle : inputStyle} value={form.classApplying} onChange={(e) => update("classApplying", e.target.value)}><option value="">Select a class</option>{classOptions.map((section) => (<optgroup key={section.section} label={section.section}>{section.classes.map((c) => (<option key={c} value={c} disabled={isClassFull(c)}>{getClassLabel(c)}</option>))}</optgroup>))}</select>{errors.classApplying && <span style={{ color: "#ef4444", fontSize: "11px" }}>{errors.classApplying}</span>}</div>
                   <div style={{ gridColumn: "1 / -1" }}><label style={labelStyle}>Previous School</label><input style={inputStyle} value={form.previousSchool} onChange={(e) => update("previousSchool", e.target.value)} placeholder="Enter previous school name" /></div>
                 </div>
               </div>
