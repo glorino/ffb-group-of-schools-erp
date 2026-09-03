@@ -218,9 +218,13 @@ export default function ApplyPage() {
           <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginBottom: "25px" }}>
             Use this number to track your admission status.
           </p>
-          <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/portal/track" className="btn-primary" style={{ display: "inline-block", color: "#ffffff" }}>Track Application</Link>
-            <Link href="/" className="btn-primary" style={{ display: "inline-block", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff" }}>Return Home</Link>
+          <div style={{ display: "flex", gap: "14px", justifyContent: "center", flexWrap: "wrap" }}>
+            <Link href="/portal/track" style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", borderRadius: "12px", background: "linear-gradient(135deg, #28ff9c, #00c97b)", color: "#001f5f", fontSize: "14px", fontWeight: 700, textDecoration: "none", transition: "transform 0.15s, box-shadow 0.15s", boxShadow: "0 4px 14px rgba(40,255,156,0.3)" }} onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(40,255,156,0.4)"; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(40,255,156,0.3)"; }}>
+              Track Application
+            </Link>
+            <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", borderRadius: "12px", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff", fontSize: "14px", fontWeight: 600, textDecoration: "none", transition: "transform 0.15s, background 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.background = "rgba(255,255,255,0.14)"; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}>
+              Return Home
+            </Link>
           </div>
         </motion.div>
       </div>
