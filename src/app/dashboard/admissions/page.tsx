@@ -112,6 +112,8 @@ export default function AdmissionsPage() {
   const [loadError, setLoadError] = useState("");
   const [pushingSchema, setPushingSchema] = useState(false);
   const [docPreview, setDocPreview] = useState<ApplicantDocument | null>(null);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const fetchApplicants = useCallback(async () => {
     setLoading(true);
@@ -161,6 +163,7 @@ export default function AdmissionsPage() {
   };
 
   useEffect(() => {
+    setPage(1);
     fetchApplicants();
   }, [fetchApplicants]);
 
@@ -257,6 +260,9 @@ export default function AdmissionsPage() {
 
   const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#fff", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" };
 
+  const totalPages = Math.ceil(applicants.length / PAGE_SIZE);
+  const paginatedApplicants = applicants.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   return (
     <div style={{ padding: "0 16px 32px", maxWidth: "1200px", margin: "0 auto" }}>
       {/* Header */}
@@ -329,7 +335,7 @@ export default function AdmissionsPage() {
             <p style={{ margin: 0, fontSize: "14px", color: "#94a3b8" }}>No applications found</p>
           </div>
         ) : (
-          applicants.map((a) => {
+          paginatedApplicants.map((a) => {
             const sc = statusConfig[a.status] || statusConfig.pending;
             const nextActions = nextStatusMap[a.status] || [];
             return (
@@ -371,6 +377,32 @@ export default function AdmissionsPage() {
           })
         )}
       </div>
+
+      {/* Pagination */}
+      {applicants.length > PAGE_SIZE && (
+        <div style={{ marginTop: "20px", background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontSize: "13px", color: "#64748b" }}>
+            Showing {((page - 1) * PAGE_SIZE) + 1} - {Math.min(page * PAGE_SIZE, applicants.length)} of {applicants.length} applications
+          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} style={{ padding: "8px 14px", borderRadius: "8px", border: "1px solid #e2e8f0", background: page === 1 ? "#f8fafc" : "#ffffff", color: page === 1 ? "#d1d5db" : "#475569", fontSize: "12px", fontWeight: 500, cursor: page === 1 ? "not-allowed" : "pointer" }}>
+              Previous
+            </button>
+            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+              const pageNum = page <= 3 ? i + 1 : page + i - 2;
+              if (pageNum < 1 || pageNum > totalPages) return null;
+              return (
+                <button key={pageNum} onClick={() => setPage(pageNum)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: pageNum === page ? "1px solid #0055ff" : "1px solid #e2e8f0", background: pageNum === page ? "#0055ff" : "#ffffff", color: pageNum === page ? "#ffffff" : "#475569", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>
+                  {pageNum}
+                </button>
+              );
+            })}
+            <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} style={{ padding: "8px 14px", borderRadius: "8px", border: "1px solid #e2e8f0", background: page === totalPages ? "#f8fafc" : "#ffffff", color: page === totalPages ? "#d1d5db" : "#475569", fontSize: "12px", fontWeight: 500, cursor: page === totalPages ? "not-allowed" : "pointer" }}>
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Detail Modal */}
       {selectedApplicant && (

@@ -23,8 +23,17 @@ export async function GET(
         where: { id },
         include: {
           documents: {
+            select: {
+              id: true,
+              name: true,
+              type: true,
+              size: true,
+              uploadedAt: true,
+            },
             orderBy: { uploadedAt: "asc" },
           },
+          exams: true,
+          student: true,
         },
       });
     } catch (qErr: any) {
@@ -43,7 +52,7 @@ export async function GET(
     if (!applicant.documents) {
       try {
         applicant.documents = await (prisma as any).$queryRawUnsafe(
-          `SELECT * FROM "ApplicantDocument" WHERE "applicantId" = $1 ORDER BY "uploadedAt" ASC`, id
+          `SELECT "id", "name", "type", "size", "uploadedAt" FROM "ApplicantDocument" WHERE "applicantId" = $1 ORDER BY "uploadedAt" ASC`, id
         );
       } catch (docErr: any) {
         console.error("Failed to fetch documents:", docErr?.message);
@@ -51,15 +60,11 @@ export async function GET(
       }
     }
 
-    // Strip base64 from documents to keep response small
+    // Add hasContent flag for each document
     if (applicant.documents && Array.isArray(applicant.documents)) {
       applicant.documents = applicant.documents.map((doc: any) => ({
-        id: doc.id,
-        name: doc.name,
-        type: doc.type,
-        size: doc.size,
-        uploadedAt: doc.uploadedAt,
-        hasContent: !!doc.url,
+        ...doc,
+        hasContent: true,
       }));
     }
 
