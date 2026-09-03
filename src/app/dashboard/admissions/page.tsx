@@ -178,6 +178,7 @@ export default function AdmissionsPage() {
 
   const openActionModal = (applicantId: string, newStatus: string) => {
     setActionTarget({ applicantId, newStatus });
+    setShowActionModal(applicantId);
     setActionNote("");
     setExamDate("");
     setExamStartTime("10:00 AM");
