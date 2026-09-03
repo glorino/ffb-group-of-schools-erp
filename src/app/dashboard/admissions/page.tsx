@@ -256,7 +256,8 @@ export default function AdmissionsPage() {
   };
 
   const isImageDoc = (doc: ApplicantDocument): boolean => {
-    return (doc.url && doc.url.startsWith("data:image/")) || doc.url?.startsWith("blob:") || getDocFileType(doc.name) === "image";
+    if (doc.url && doc.url.startsWith("data:image/")) return true;
+    return getDocFileType(doc.name) === "image";
   };
 
   const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "#fff", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" };
@@ -489,8 +490,11 @@ export default function AdmissionsPage() {
                                   try {
                                     const res = await fetch(docUrl);
                                     if (res.ok) {
-                                      const blob = await res.blob();
-                                      const url = URL.createObjectURL(blob);
+                                      const rawBlob = await res.blob();
+                                      const ext = doc.name.split(".").pop()?.toLowerCase() || "";
+                                      const mime = ext === "pdf" ? "application/pdf" : ["jpg", "jpeg", "png", "gif", "webp"].includes(ext) ? `image/${ext === "jpg" ? "jpeg" : ext}` : rawBlob.type || "application/octet-stream";
+                                      const typedBlob = new Blob([await rawBlob.arrayBuffer()], { type: mime });
+                                      const url = URL.createObjectURL(typedBlob);
                                       setDocPreview({ ...doc, url } as any);
                                     }
                                   } catch {}
@@ -568,7 +572,7 @@ export default function AdmissionsPage() {
             <div style={{ flex: 1, overflow: "auto", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px", background: "#f8fafc", minHeight: "300px" }}>
               {isImageDoc(docPreview) ? (
                 <img src={docPreview.url} alt={docPreview.name} style={{ maxWidth: "100%", maxHeight: "70vh", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
-              ) : (docPreview.url?.startsWith("data:application/pdf") || docPreview.url?.startsWith("blob:")) && getDocFileType(docPreview.name) === "pdf" ? (
+              ) : getDocFileType(docPreview.name) === "pdf" && docPreview.url ? (
                 <iframe src={docPreview.url} style={{ width: "100%", height: "70vh", border: "none", borderRadius: "8px", background: "#ffffff" }} title={docPreview.name} />
               ) : (
                 <div style={{ textAlign: "center", padding: "40px" }}>
