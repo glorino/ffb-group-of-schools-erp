@@ -516,6 +516,7 @@ model Applicant {
   school    School              @relation(fields: [schoolId], references: [id])
   documents ApplicantDocument[]
   exams     ApplicantExam[]
+  entranceExam EntranceExam?
   student   Student?
 
   @@index([schoolId])
@@ -545,6 +546,31 @@ model ApplicantExam {
   createdAt   DateTime @default(now())
 
   applicant Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+}
+
+model EntranceExam {
+  id            String    @id @default(cuid())
+  applicantId   String    @unique
+  token         String    @unique
+  examDate      DateTime
+  startTime     String
+  endTime       String
+  durationMins  Int       @default(60)
+  subjects      Json      @default("[]")
+  questions     Json      @default("[]")
+  answers       Json?
+  score         Float?
+  totalQuestions Int?
+  passed        Boolean?
+  status        String    @default("pending")
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+
+  applicant Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([applicantId])
 }
 
 // ═══════════════════════════════════════════════════════════
