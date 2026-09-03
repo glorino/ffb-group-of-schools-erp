@@ -440,7 +440,8 @@ export async function sendApplicationSubmittedEmail(
 export async function sendApplicationStatusUpdateEmail(
   applicantData: ApplicantForEmail,
   newStatus: string,
-  note?: string
+  note?: string,
+  extra?: { interviewDate?: string; interviewTime?: string }
 ): Promise<EmailResponse | null> {
   const schoolName = process.env.SCHOOL_NAME || SCHOOL_CONFIG.name;
   const schoolEmail = process.env.SCHOOL_EMAIL || "noreply@ffb.edu.ng";
@@ -451,10 +452,14 @@ export async function sendApplicationStatusUpdateEmail(
   const recipients = [applicantData.email, applicantData.guardianEmail].filter(Boolean);
   if (recipients.length === 0) return null;
 
+  const interviewDateStr = extra?.interviewDate
+    ? new Date(extra.interviewDate).toLocaleDateString("en-NG", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
+    : "";
+
   const statusMessages: Record<string, { title: string; message: string; color: string }> = {
     under_review: {
       title: "Application Under Review",
-      message: "Your application is now under review by our admissions team.",
+      message: "Your application is now being carefully reviewed by our admissions team. We will notify you of the next steps shortly.",
       color: "#0055ff",
     },
     exam: {
@@ -464,7 +469,9 @@ export async function sendApplicationStatusUpdateEmail(
     },
     interview: {
       title: "Interview Scheduled",
-      message: "Your application has progressed to the interview stage. An interview date has been scheduled.",
+      message: interviewDateStr
+        ? `Congratulations! Your application has progressed to the interview stage. Your interview has been scheduled for <strong>${interviewDateStr}${extra?.interviewTime ? ` at ${extra.interviewTime}` : ""}</strong>.`
+        : "Your application has progressed to the interview stage. An interview date has been scheduled.",
       color: "#0d9488",
     },
   };
@@ -493,6 +500,9 @@ export async function sendApplicationStatusUpdateEmail(
         .info-box { background: #f0f9ff; border-left: 4px solid ${statusInfo.color}; padding: 20px 24px; border-radius: 0 8px 8px 0; margin: 20px 0; }
         .info-box p { margin: 6px 0; color: #0c4a6e; font-size: 14px; }
         .info-box strong { color: #0039a6; font-weight: 600; }
+        .interview-box { background: #f0fdfa; border: 2px solid ${statusInfo.color}; border-radius: 12px; padding: 24px; margin: 20px 0; text-align: center; }
+        .interview-box .date { font-size: 20px; font-weight: 700; color: ${statusInfo.color}; margin: 8px 0; }
+        .interview-box .label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
         .note-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; }
         .note-box p { margin: 0; color: #78350f; font-size: 14px; }
         .footer { background: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #e2e8f0; }
@@ -509,10 +519,19 @@ export async function sendApplicationStatusUpdateEmail(
           <h2>${statusInfo.title}</h2>
           <p>Dear ${fullName},</p>
           <p>${statusInfo.message}</p>
+          ${newStatus === "interview" && interviewDateStr ? `
+          <div class="interview-box">
+            <p class="label">Interview Date</p>
+            <p class="date">${interviewDateStr}</p>
+            ${extra?.interviewTime ? `<p style="margin:4px 0 0;font-size:14px;color:#475569;">Time: ${extra.interviewTime}</p>` : ""}
+          </div>
+          <p>Please come with the following documents for verification:</p>
+          <p style="padding-left:16px;">1. Original birth certificate<br>2. Previous school report card<br>3. Medical fitness certificate<br>4. Passport photographs (4 copies)<br>5. Parent/Guardian ID</p>
+          ` : ""}
           <div class="info-box">
             <p><strong>Application Number:</strong> ${applicantData.applicationNumber}</p>
             <p><strong>Student Name:</strong> ${fullName}</p>
-            <p><strong>Current Status:</strong> ${newStatus}</p>
+            <p><strong>Current Status:</strong> ${newStatus.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}</p>
             ${applicantData.guardianName ? `<p><strong>Guardian:</strong> ${applicantData.guardianName}</p>` : ""}
           </div>
           ${note ? `<div class="note-box"><p><strong>Admissions Note:</strong> ${note}</p></div>` : ""}

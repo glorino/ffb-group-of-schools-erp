@@ -358,7 +358,13 @@ export async function PUT(
             guardianPhone: existing.guardianPhone,
           },
           newStatus,
-          body.decisionNote
+          body.decisionNote,
+          newStatus === "interview"
+            ? {
+                interviewDate: body.interviewDate || existing.interviewDate?.toISOString(),
+                interviewTime: body.interviewTime,
+              }
+            : undefined
         );
       } catch (emailError) {
         console.error("Failed to send status update email:", emailError);
