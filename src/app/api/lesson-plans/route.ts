@@ -37,19 +37,35 @@ export async function POST(request: NextRequest) {
     if (authResult.error) return authResult.error;
 
     const body = await request.json();
-    const validated = LessonPlanSchema.parse(body);
-    const { teacherId, subject, classId, title, objective, content } = validated;
+    const { session } = authResult;
+
+    const teacherId = body.teacherId || session?.user?.id;
+    if (!teacherId) return NextResponse.json({ error: "Teacher is required" }, { status: 400 });
+
+    const subject = body.subject;
+    const className = body.className || body.classId;
+    const topic = body.topic || body.title;
+    const objectives = body.objectives || body.objective;
+    const content = body.content;
+    const resources = body.resources;
+    const startDate = body.startDate || body.date;
+    const endDate = body.endDate || body.date;
+
+    if (!subject || !className || !topic || !content) {
+      return NextResponse.json({ error: "Subject, class, topic, and content are required" }, { status: 400 });
+    }
 
     const plan = await prisma.lessonPlan.create({
       data: {
         teacherId,
         subject,
-        className: classId,
-        topic: title,
-        objectives: objective || undefined,
+        className,
+        topic,
+        objectives: objectives || undefined,
         content,
-        startDate: validated.date ? new Date(validated.date) : new Date(),
-        endDate: validated.date ? new Date(validated.date) : new Date(),
+        resources: resources || undefined,
+        startDate: startDate ? new Date(startDate) : new Date(),
+        endDate: endDate ? new Date(endDate) : new Date(),
       },
       include: {
         teacher: { select: { id: true, firstName: true, lastName: true } },
