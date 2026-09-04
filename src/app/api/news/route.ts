@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         type: "news",
         priority: priority || "medium",
         published: published !== undefined ? published : true,
-        target: target ? JSON.stringify(target) : undefined,
+        target: target || undefined,
       },
     });
 
@@ -64,7 +64,12 @@ export async function PUT(request: NextRequest) {
     if (!id) return NextResponse.json({ error: "Missing news ID" }, { status: 400 });
 
     const existing = await prisma.announcement.findUnique({ where: { id } });
-    let mergedTarget = existing?.target as Record<string, any> | undefined;
+    let mergedTarget: Record<string, any> | undefined;
+    if (existing?.target) {
+      mergedTarget = typeof existing.target === "string"
+        ? JSON.parse(existing.target as string)
+        : (existing.target as Record<string, any>);
+    }
     if (target) {
       mergedTarget = { ...(mergedTarget || {}), ...target };
     }
@@ -76,7 +81,7 @@ export async function PUT(request: NextRequest) {
         ...(content && { content }),
         ...(priority && { priority }),
         ...(published !== undefined && { published }),
-        ...(mergedTarget && { target: JSON.stringify(mergedTarget) }),
+        ...(mergedTarget && { target: mergedTarget }),
       },
     });
 

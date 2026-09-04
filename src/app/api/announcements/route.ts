@@ -67,7 +67,12 @@ export async function PUT(request: NextRequest) {
     if (!id) return NextResponse.json({ error: "Missing announcement ID" }, { status: 400 });
 
     const existing = await prisma.announcement.findUnique({ where: { id } });
-    let target = existing?.target as Record<string, any> | undefined;
+    let target: Record<string, any> | undefined;
+    if (existing?.target) {
+      target = typeof existing.target === "string"
+        ? JSON.parse(existing.target as string)
+        : (existing.target as Record<string, any>);
+    }
     if (imageUrl !== undefined || featured !== undefined || eventDate !== undefined) {
       target = { ...(target || {}) };
       if (imageUrl !== undefined) target.imageUrl = imageUrl;
@@ -83,7 +88,7 @@ export async function PUT(request: NextRequest) {
         ...(type && { type }),
         ...(priority && { priority }),
         ...(published !== undefined && { published }),
-        ...(target && { target: JSON.stringify(target) }),
+        ...(target && { target }),
       },
     });
 
