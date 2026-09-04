@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const particles = Array.from({ length: 80 }, (_, i) => ({
@@ -10,14 +9,26 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
   delay: `${Math.random() * 10}s`, size: `${3 + Math.random() * 3}px`,
 }));
 
-const stagger = { animate: { transition: { staggerChildren: 0.1 } } };
-const item = { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4 } };
-
 export default function ContactPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+  const [faqs, setFaqs] = useState<{q: string; a: string}[]>([]);
+
+  useEffect(() => {
+    fetch("/api/public/faqs")
+      .then((res) => res.json())
+      .then((data) => {
+        const items = (data.faqs || []).map((f: any) => ({ q: f.question, a: f.answer }));
+        setFaqs(items.length > 0 ? items : [
+          { q: "What is the admission process?", a: "Visit our Apply page to fill out the admission form. Shortlisted candidates will be contacted for an entrance examination and interview." },
+          { q: "Do you offer boarding facilities?", a: "Yes, we provide comfortable boarding facilities for students." },
+          { q: "How can I track my child's progress?", a: "Parents can track their child's academic progress through the school portal." },
+        ]);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,38 +77,38 @@ export default function ContactPage() {
       </div>
 
       <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#fff" }}>
+        <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#fff" }}>
           Get In <span className="accent">Touch</span>
-        </motion.h1>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
+        </h1>
+        <p style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
           Have questions? Reach out to us and we will respond promptly.
-        </motion.p>
+        </p>
       </section>
 
       <section className="glass-section">
-        <motion.div variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "20px", marginBottom: "40px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "20px", marginBottom: "40px" }}>
           {[
             { icon: "📍", title: "Address", text: SCHOOL_CONFIG.address },
             { icon: "📞", title: "Phone", text: SCHOOL_CONFIG.phone },
             { icon: "✉️", title: "Email", text: SCHOOL_CONFIG.email },
             { icon: "⏰", title: "Working Hours", text: SCHOOL_CONFIG.workingHours },
           ].map((c, i) => (
-            <motion.div key={i} variants={item} whileHover={{ y: -3 }} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "20px", padding: "25px", textAlign: "center", border: "1px solid rgba(255,255,255,0.08)", cursor: "default" }}>
+            <div key={i} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "20px", padding: "25px", textAlign: "center", border: "1px solid rgba(255,255,255,0.08)", cursor: "default" }}>
               <div style={{ fontSize: "32px", marginBottom: "12px" }}>{c.icon}</div>
               <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "8px", color: "#fff" }}>{c.title}</h3>
               <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.8)", lineHeight: 1.5 }}>{c.text}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "30px", alignItems: "start" }}>
-          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+          <div>
             <h2 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "8px", color: "#fff" }}>Send Us A Message</h2>
             <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "14px", marginBottom: "25px" }}>Fill out the form and our team will get back to you within 24 hours.</p>
             {sent && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} style={{ background: "rgba(40,255,156,0.1)", border: "1px solid rgba(40,255,156,0.3)", borderRadius: "12px", padding: "14px 18px", marginBottom: "20px", color: "#28ff9c", fontSize: "14px", fontWeight: 600 }}>
+              <div style={{ background: "rgba(40,255,156,0.1)", border: "1px solid rgba(40,255,156,0.3)", borderRadius: "12px", padding: "14px 18px", marginBottom: "20px", color: "#28ff9c", fontSize: "14px", fontWeight: 600 }}>
                 Message sent successfully! We will get back to you soon.
-              </motion.div>
+              </div>
             )}
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
@@ -109,32 +120,26 @@ export default function ContactPage() {
                 <input className="input-glass" placeholder="Subject" required value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} />
               </div>
               <textarea className="input-glass" placeholder="Your Message" rows={5} required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} style={{ resize: "vertical", minHeight: "120px" }} />
-              <motion.button type="submit" className="btn-primary" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={sending} style={{ width: "100%", padding: "16px", opacity: sending ? 0.7 : 1, color: "#ffffff" }}>
+              <button type="submit" className="btn-primary" disabled={sending} style={{ width: "100%", padding: "16px", opacity: sending ? 0.7 : 1, color: "#ffffff" }}>
                 {sending ? "Sending..." : "Send Message"}
-              </motion.button>
+              </button>
             </form>
-          </motion.div>
+          </div>
 
-          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} style={{ borderRadius: "25px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)" }}>
-            <iframe src="https://www.google.com/maps?q=Lagos+Nigeria&output=embed" style={{ width: "100%", height: "450px", border: "none", borderRadius: "25px" }}></iframe>
-          </motion.div>
+          <div style={{ borderRadius: "25px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)" }}>
+            <iframe src={`https://www.google.com/maps?q=${SCHOOL_CONFIG.googleMapsQuery}&output=embed`} style={{ width: "100%", height: "450px", border: "none", borderRadius: "25px" }}></iframe>
+          </div>
         </div>
       </section>
 
-      {/* FAQ */}
       <section className="glass-section">
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={{ color: "#fff" }}>Frequently Asked Questions</motion.h2>
+        <h2 className="section-title" style={{ color: "#fff" }}>Frequently Asked Questions</h2>
         <div style={{ maxWidth: "700px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "12px" }}>
-          {[
-            { q: "What is the admission process?", a: "Visit our Apply page to fill out the admission form. Shortlisted candidates will be contacted for an entrance examination and interview." },
-            { q: "Do you offer boarding facilities?", a: `Yes, ${SCHOOL_CONFIG.name} provides comfortable boarding facilities for students from Junior Secondary upwards.` },
-            { q: "What extracurricular activities are available?", a: "We offer sports, clubs, debates, science exhibitions, cultural events and leadership programmes." },
-            { q: "How can I track my child's progress?", a: "Parents can track their child's academic progress through the school portal using their login credentials." },
-          ].map((faq, i) => (
-            <motion.details key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} style={{ background: "rgba(255,255,255,0.04)", borderRadius: "16px", padding: "18px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
+          {faqs.map((faq, i) => (
+            <details key={i} style={{ background: "rgba(255,255,255,0.04)", borderRadius: "16px", padding: "18px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
               <summary style={{ cursor: "pointer", fontWeight: 600, fontSize: "14px", listStyle: "none", color: "#fff" }}>{faq.q}</summary>
               <p style={{ marginTop: "10px", fontSize: "13px", color: "rgba(255,255,255,0.8)", lineHeight: 1.6 }}>{faq.a}</p>
-            </motion.details>
+            </details>
           ))}
         </div>
       </section>

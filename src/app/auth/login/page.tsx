@@ -36,6 +36,9 @@ export default function LoginPage() {
     setError("");
 
     try {
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
       const { signIn } = await import("next-auth/react");
       let result = await signIn("credentials", { email, password, redirect: false });
 

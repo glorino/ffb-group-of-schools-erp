@@ -22,6 +22,8 @@ const publicPaths = [
   "/api/seed/demo-reports",
   "/api/payments/callback",
   "/api/auth/error",
+  "/api/verify-transcript",
+  "/api/public",
 ];
 
 export function middleware(request: NextRequest) {
@@ -47,10 +49,25 @@ export function middleware(request: NextRequest) {
   }
 
   // Check for session token cookie (NextAuth v5 uses authjs.session-token)
+  // Also check for old bloated JWT cookies and clear them
   const sessionToken = request.cookies.get("authjs.session-token")?.value
     || request.cookies.get("__Secure-authjs.session-token")?.value
     || request.cookies.get("next-auth.session-token")?.value
     || request.cookies.get("__Secure-next-auth.session-token")?.value;
+
+  // If cookie is oversized (>4KB), it's an old bloated JWT - clear it and redirect to login
+  if (sessionToken && sessionToken.length > 4000) {
+    console.warn("[MIDDLEWARE] Clearing oversized session cookie, length:", sessionToken.length);
+    const response = NextResponse.redirect(new URL("/auth/login", request.url));
+    response.cookies.delete("authjs.session-token");
+    response.cookies.delete("__Secure-authjs.session-token");
+    response.cookies.delete("next-auth.session-token");
+    response.cookies.delete("__Secure-next-auth.session-token");
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Session expired, please login again" }, { status: 401 });
+    }
+    return response;
+  }
 
   if (!sessionToken) {
     // API routes get 401

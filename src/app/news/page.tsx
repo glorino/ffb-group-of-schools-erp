@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const particles = Array.from({ length: 80 }, (_, i) => ({
@@ -10,24 +9,38 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
   delay: `${Math.random() * 10}s`, size: `${3 + Math.random() * 3}px`,
 }));
 
-const newsItems = [
-  { title: "Academic Excellence Award", desc: "Our students received national recognition for outstanding WAEC results.", full: `${SCHOOL_CONFIG.name} has once again demonstrated academic excellence as our students received national recognition for their outstanding WAEC results. With a 98% pass rate and multiple distinctions across key subjects, our school has been ranked among the top performing institutions in the state.`, date: "June 2025", category: "Achievement", gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)", image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=400&fit=crop" },
-  { title: "New Science Laboratory", desc: "A state-of-the-art science laboratory was commissioned.", full: `A new state-of-the-art science laboratory has been commissioned at ${SCHOOL_CONFIG.name}. The laboratory features modern equipment for Physics, Chemistry and Biology practical sessions. This facility will provide students with hands-on experience and improve their understanding of scientific concepts.`, date: "May 2025", category: "Infrastructure", gradient: "linear-gradient(135deg, #164e63, #06b6d4)", image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=400&fit=crop" },
-  { title: "Leadership Bootcamp", desc: "Students trained in leadership development and innovation.", full: `Over 150 students participated in the annual Leadership Bootcamp organized by ${SCHOOL_CONFIG.name}. The programme covered topics including public speaking, project management, entrepreneurship and digital literacy. Participants gained practical skills that will serve them in academics and future careers.`, date: "April 2025", category: "Programme", gradient: "linear-gradient(135deg, #312e81, #6366f1)", image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop" },
-  { title: "Cultural Day Celebration", desc: "Students showcased diverse Nigerian cultures through presentations.", full: `The annual Cultural Day celebration at ${SCHOOL_CONFIG.name} was a vibrant display of Nigerian cultural heritage. Students from different backgrounds presented traditional dances, songs, food and attire, fostering unity and appreciation for cultural diversity.`, date: "March 2025", category: "Event", gradient: "linear-gradient(135deg, #7c2d12, #f97316)", image: "https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=600&h=400&fit=crop" },
-  { title: "Sports Festival Results", desc: "Our athletes excelled at the zonal sports competition.", full: "FFB students brought home 12 gold medals, 8 silver medals and 6 bronze medals from the zonal sports competition. The school came first overall, demonstrating exceptional athletic ability and sportsmanship.", date: "February 2025", category: "Sports", gradient: "linear-gradient(135deg, #065f46, #10b981)", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&h=400&fit=crop" },
-  { title: "Digital Learning Platform Launch", desc: "Students now have access to online learning resources.", full: `${SCHOOL_CONFIG.name} has officially launched its digital learning platform, providing students with access to e-books, video lessons, practice tests and interactive quizzes. The platform supports both in-school and remote learning.`, date: "January 2025", category: "Technology", gradient: "linear-gradient(135deg, #581c87, #a855f7)", image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop" },
-];
-
-const categories = ["All", "Achievement", "Infrastructure", "Programme", "Event", "Sports", "Technology"];
-
-const stagger = { animate: { transition: { staggerChildren: 0.1 } } };
-const item = { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4 } };
-
 export default function NewsPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [filter, setFilter] = useState("All");
   const [modal, setModal] = useState<number | null>(null);
+  const [newsItems, setNewsItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/public/announcements?type=news&limit=20")
+      .then((res) => res.json())
+      .then((data) => {
+        const items = (data.announcements || []).map((a: any) => {
+          const target = typeof a.target === "string" ? JSON.parse(a.target) : (a.target || {});
+          return {
+            title: a.title,
+            desc: a.content,
+            full: a.content,
+            date: new Date(a.createdAt).toLocaleDateString("en-NG", { month: "long", year: "numeric" }),
+            category: target.category || "General",
+            gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)",
+            image: target.imageUrl || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop",
+          };
+        });
+        setNewsItems(items.length > 0 ? items : [
+          { title: "Welcome to FFB", desc: "Stay tuned for the latest news and updates from our school.", full: "Welcome to FFB Group of Schools. We keep you updated with the latest news, achievements and events.", date: new Date().toLocaleDateString("en-NG", { month: "long", year: "numeric" }), category: "General", gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)", image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop" }
+        ]);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const categories = ["All", ...Array.from(new Set(newsItems.map((n) => n.category)))];
 
   const filtered = filter === "All" ? newsItems : newsItems.filter((n) => n.category === filter);
 
@@ -57,12 +70,12 @@ export default function NewsPage() {
       </div>
 
       <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#ffffff" }}>
+        <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#ffffff" }}>
           School <span className="accent">News</span>
-        </motion.h1>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
+        </h1>
+        <p style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
           Stay updated with the latest happenings, achievements and events at {SCHOOL_CONFIG.name}.
-        </motion.p>
+        </p>
       </section>
 
       <section className="glass-section">
@@ -74,9 +87,9 @@ export default function NewsPage() {
           ))}
         </div>
 
-        <motion.div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "20px" }} variants={stagger} initial="initial" animate="animate">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "20px" }}>
           {filtered.map((n, i) => (
-            <motion.div key={i} variants={item} whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "25px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)", cursor: "pointer", transition: "0.3s" }} onClick={() => setModal(i)}>
+            <div key={i} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "25px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)", cursor: "pointer", transition: "0.3s" }} onClick={() => setModal(i)}>
               <img src={n.image} alt={n.title} className="w-full h-[200px] object-cover" />
               <div style={{ padding: "22px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
@@ -87,27 +100,25 @@ export default function NewsPage() {
                 <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)", lineHeight: 1.6, marginBottom: "12px" }}>{n.desc}</p>
                 <span style={{ color: "#28ff9c", fontSize: "13px", fontWeight: 600 }}>Read More →</span>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
-      <AnimatePresence>
-        {modal !== null && (
-          <motion.div className="modal" style={{ display: "flex", position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(10px)", alignItems: "center", justifyContent: "center", padding: "20px" }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setModal(null)}>
-            <motion.div onClick={(e) => e.stopPropagation()} initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 20 }} transition={{ duration: 0.3 }} style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "30px", padding: "30px", maxWidth: "600px", width: "100%", maxHeight: "80vh", overflowY: "auto" }}>
-              <button onClick={() => setModal(null)} style={{ position: "absolute", top: "15px", right: "20px", background: "none", border: "none", color: "#1a1a2e", fontSize: "28px", cursor: "pointer" }}>×</button>
-              <img src={newsItems[modal].image} alt={newsItems[modal].title} className="w-full h-[200px] object-cover rounded-2xl mb-5" />
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-                <span style={{ padding: "4px 12px", borderRadius: "8px", background: "#f1f5f9", fontSize: "11px", fontWeight: 600, color: "#475569" }}>{newsItems[modal].category}</span>
-                <span style={{ fontSize: "12px", color: "#94a3b8" }}>{newsItems[modal].date}</span>
-              </div>
-              <h2 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "15px", color: "#1a1a2e" }}>{newsItems[modal].title}</h2>
-              <p style={{ color: "#475569", lineHeight: 1.8, fontSize: "14px" }}>{newsItems[modal].full}</p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {modal !== null && (
+        <div className="modal" style={{ display: "flex", position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(10px)", alignItems: "center", justifyContent: "center", padding: "20px" }} onClick={() => setModal(null)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "30px", padding: "30px", maxWidth: "600px", width: "100%", maxHeight: "80vh", overflowY: "auto", position: "relative" }}>
+            <button onClick={() => setModal(null)} style={{ position: "absolute", top: "15px", right: "20px", background: "none", border: "none", color: "#1a1a2e", fontSize: "28px", cursor: "pointer" }}>×</button>
+            <img src={newsItems[modal].image} alt={newsItems[modal].title} className="w-full h-[200px] object-cover rounded-2xl mb-5" />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+              <span style={{ padding: "4px 12px", borderRadius: "8px", background: "#f1f5f9", fontSize: "11px", fontWeight: 600, color: "#475569" }}>{newsItems[modal].category}</span>
+              <span style={{ fontSize: "12px", color: "#94a3b8" }}>{newsItems[modal].date}</span>
+            </div>
+            <h2 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "15px", color: "#1a1a2e" }}>{newsItems[modal].title}</h2>
+            <p style={{ color: "#475569", lineHeight: 1.8, fontSize: "14px" }}>{newsItems[modal].full}</p>
+          </div>
+        </div>
+      )}
 
       <footer className="footer">
         <div className="footer-bottom" style={{ color: "rgba(255,255,255,0.6)" }}>© {new Date().getFullYear()} {SCHOOL_CONFIG.name}. All rights reserved.</div>

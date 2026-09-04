@@ -21,7 +21,8 @@ import {
 interface Term {
   id: string;
   name: string;
-  academicYear: string;
+  academicYear: any;
+  academicYearId?: string;
   isCurrent?: boolean;
 }
 
@@ -44,8 +45,9 @@ interface Grade {
   total?: number;
   grade?: string;
   remark?: string;
+  comments?: string;
   termId?: string;
-  term?: { id: string; name: string; academicYear: string };
+  term?: any;
   type?: string;
   score?: number;
   maxScore?: number;
@@ -132,6 +134,12 @@ function getGradeBadge(grade: string): { color: string; bg: string } {
   return { color: "#dc2626", bg: "#fee2e2" };
 }
 
+function getYearName(ay: any): string {
+  if (!ay) return "—";
+  if (typeof ay === "string") return ay;
+  return ay.name || ay.toString() || "—";
+}
+
 export default function TranscriptPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [terms, setTerms] = useState<Term[]>([]);
@@ -145,6 +153,7 @@ export default function TranscriptPage() {
   const [printMode, setPrintMode] = useState(false);
   const [expandedTerms, setExpandedTerms] = useState<Set<string>>(new Set());
   const transcriptRef = useRef<HTMLDivElement>(null);
+  const [schoolData, setSchoolData] = useState<any>(null);
 
   useEffect(() => {
     Promise.all([
@@ -155,6 +164,10 @@ export default function TranscriptPage() {
       fetch("/api/students?limit=100")
         .then((r) => r.json())
         .then((d) => setStudents(d.students || []))
+        .catch(() => {}),
+      fetch("/api/settings")
+        .then((r) => r.json())
+        .then((d) => setSchoolData(d.schoolProfile || {}))
         .catch(() => {}),
     ]).finally(() => setLoading(false));
   }, []);
@@ -180,15 +193,34 @@ export default function TranscriptPage() {
 
     const grouped: Record<string, Grade[]> = {};
     allGrades.forEach((g) => {
-      const tid = g.termId || g.term?.id || "unknown";
-      if (!grouped[tid]) grouped[tid] = [];
-      grouped[tid].push(g);
+      const termKey = String(g.term || "unknown");
+      if (!grouped[termKey]) grouped[termKey] = [];
+      grouped[termKey].push(g);
     });
 
     return terms
-      .filter((t) => grouped[t.id]?.length)
+      .filter((t) => grouped[t.name]?.length)
       .map((term) => {
-        const grades = grouped[term.id];
+        const rawGrades = grouped[term.name];
+        // Aggregate raw grades by subject (each subject has ca1/ca2/ca3/exam rows)
+        const bySubject: Record<string, any> = {};
+        rawGrades.forEach((g) => {
+          const subKey = g.subject?.id || g.subject?.name || "unknown";
+          if (!bySubject[subKey]) {
+            bySubject[subKey] = { id: g.id, subject: g.subject, ca1: 0, ca2: 0, ca3: 0, exam: 0, total: 0, grade: "", remark: "", term: g.term, score: 0, maxScore: 100 };
+          }
+          const entry = bySubject[subKey];
+          const s = g.score ?? 0;
+          if (g.type === "ca1") entry.ca1 = s;
+          else if (g.type === "ca2") entry.ca2 = s;
+          else if (g.type === "ca3") entry.ca3 = s;
+          else if (g.type === "exam") entry.exam = s;
+          entry.total = entry.ca1 + entry.ca2 + entry.ca3 + entry.exam;
+          entry.grade = g.grade || entry.grade;
+          entry.remark = g.comments || entry.remark;
+          entry.score = entry.total;
+        });
+        const grades = Object.values(bySubject);
         const totalScore = grades.reduce((sum, g) => sum + (g.total ?? g.score ?? 0), 0);
         const avgScore = grades.length ? Math.round(totalScore / grades.length) : 0;
         const totalPoints = grades.reduce((sum, g) => {
@@ -251,11 +283,15 @@ export default function TranscriptPage() {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
+    const transcriptId = `TRN-${Date.now().toString(36).toUpperCase()}`;
+    const verifyUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/api/verify-transcript?id=${transcriptId}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(verifyUrl)}`;
+
     const termSections = termGradesData
       .map(
         (tg) => `
       <div class="term-section">
-        <h3>${tg.term.name} (${tg.term.academicYear})</h3>
+        <h3>${tg.term.name} (${getYearName(tg.term.academicYear)})</h3>
         <table>
           <thead>
             <tr>
@@ -297,6 +333,12 @@ export default function TranscriptPage() {
       )
       .join("");
 
+    const schoolName = schoolData?.schoolName || SCHOOL_CONFIG.name;
+    const schoolAddress = schoolData?.address || SCHOOL_CONFIG.address;
+    const schoolPhone = schoolData?.phone || SCHOOL_CONFIG.phone;
+    const schoolEmail = schoolData?.email || SCHOOL_CONFIG.email;
+    const principalSig = schoolData?.principalSignature || "";
+
     printWindow.document.write(`<!DOCTYPE html>
 <html><head><title>Academic Transcript - ${selectedStudent.firstName} ${selectedStudent.lastName}</title>
 <style>
@@ -321,17 +363,23 @@ export default function TranscriptPage() {
   .cumulative-item { text-align: center; padding: 10px; border: 1px solid #ddd; }
   .cumulative-item .value { font-size: 24px; font-weight: bold; color: #003366; }
   .cumulative-item .label { font-size: 11px; color: #666; margin-top: 4px; }
-  .signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 50px; padding-top: 20px; }
+  .verify-section { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ccc; }
+  .verify-left { flex: 1; }
+  .verify-right { text-align: center; }
+  .verify-right img { width: 120px; height: 120px; }
+  .signatures { display: flex; justify-content: flex-end; gap: 80px; margin-top: 40px; padding-top: 20px; }
   .sig-line { text-align: center; }
   .sig-line .line { border-top: 1px solid #333; width: 200px; margin: 0 auto; padding-top: 5px; }
-  .stamp-area { text-align: center; margin-top: 30px; padding: 15px; border: 2px dashed #999; width: 200px; margin-left: auto; margin-right: auto; color: #999; font-size: 11px; }
+  .sig-line .sig-img { max-height: 40px; max-width: 180px; margin-bottom: 5px; }
   .footer-note { text-align: center; margin-top: 30px; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 10px; }
   @media print { body { padding: 20px; } }
 </style></head><body>
   <div class="header">
-    <h1>${SCHOOL_CONFIG.name}</h1>
+    <h1>${schoolName}</h1>
     <h2>Academic Affairs Office</h2>
-    <p>Official Academic Transcript of Record</p>
+    <p>${schoolAddress || ""}</p>
+    <p>${schoolPhone ? "Tel: " + schoolPhone : ""} ${schoolEmail ? "| Email: " + schoolEmail : ""}</p>
+    <p style="margin-top:8px;font-weight:bold;color:#003366;">Official Academic Transcript of Record</p>
   </div>
 
   <div class="transcript-title">STUDENT ACADEMIC TRANSCRIPT</div>
@@ -365,24 +413,29 @@ export default function TranscriptPage() {
     </div>
   </div>
 
+  <div class="verify-section">
+    <div class="verify-left">
+      <p style="margin:0;font-size:12px;"><strong>Transcript ID:</strong> ${transcriptId}</p>
+      <p style="margin:4px 0 0;font-size:11px;color:#666;">Scan the QR code to verify this transcript's authenticity.</p>
+      <p style="margin:4px 0 0;font-size:11px;color:#666;">Verification URL: ${verifyUrl}</p>
+    </div>
+    <div class="verify-right">
+      <img src="${qrUrl}" alt="QR Code" />
+      <p style="font-size:9px;color:#666;margin-top:4px;">Scan to verify</p>
+    </div>
+  </div>
+
   <div class="signatures">
     <div class="sig-line">
-      <div class="line"></div>
-      <p style="font-size:12px; margin-top:5px;"><strong>Dean of Faculty</strong></p>
-      <p style="font-size:10px; color:#666;">Date: _______________</p>
-    </div>
-    <div class="sig-line">
-      <div class="line"></div>
+      ${principalSig ? '<img class="sig-img" src="' + principalSig + '" alt="Principal Signature" />' : '<div class="line"></div>'}
       <p style="font-size:12px; margin-top:5px;"><strong>School Principal</strong></p>
       <p style="font-size:10px; color:#666;">Date: _______________</p>
     </div>
   </div>
 
-  <div class="stamp-area">OFFICIAL STAMP</div>
-
   <div class="footer-note">
-    This is an official academic transcript issued by ${SCHOOL_CONFIG.name}. Any alteration or forgery of this document is prohibited.<br/>
-    Transcript ID: TRN-${Date.now().toString(36).toUpperCase()}
+    This is an official academic transcript issued by ${schoolName}. Any alteration or forgery of this document is prohibited.<br/>
+    Transcript ID: ${transcriptId}
   </div>
 
   <script>window.onload=function(){window.print();}<\/script>
@@ -547,7 +600,7 @@ export default function TranscriptPage() {
                         </div>
                         <div style={{ textAlign: "left" }}>
                           <p style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#0f172a" }}>{tg.term.name}</p>
-                          <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#94a3b8" }}>{tg.term.academicYear}</p>
+                          <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#94a3b8" }}>{getYearName(tg.term.academicYear)}</p>
                         </div>
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
@@ -630,7 +683,7 @@ export default function TranscriptPage() {
                     {termGradesData.map((tg) => (
                       <tr key={tg.term.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
                         <td style={{ padding: "12px", fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{tg.term.name}</td>
-                        <td style={{ padding: "12px", fontSize: "13px", color: "#64748b" }}>{tg.term.academicYear}</td>
+                        <td style={{ padding: "12px", fontSize: "13px", color: "#64748b" }}>{getYearName(tg.term.academicYear)}</td>
                         <td style={{ padding: "12px", fontSize: "13px", color: "#64748b", textAlign: "center" }}>{tg.grades.length}</td>
                         <td style={{ padding: "12px", fontSize: "13px", fontWeight: 700, color: "#0f172a", textAlign: "center" }}>{tg.avgScore}%</td>
                         <td style={{ padding: "12px", fontSize: "13px", fontWeight: 700, color: "#0055ff", textAlign: "center" }}>{tg.termGPA.toFixed(2)}</td>
@@ -653,30 +706,39 @@ export default function TranscriptPage() {
                   ))}
                 </div>
 
-                {/* Signatures */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "60px", paddingTop: "28px", borderTop: "1px solid #e2e8f0" }}>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ width: "200px", margin: "0 auto", borderBottom: "1px solid #94a3b8", marginBottom: "12px" }} />
-                    <PenLine style={{ width: "16px", height: "16px", color: "#94a3b8", marginBottom: "6px" }} />
-                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#475569" }}>Dean of Faculty</p>
-                    <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#94a3b8" }}>Date: _______________</p>
+                {/* QR Verification */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "24px 0", borderTop: "1px solid #e2e8f0", marginTop: "20px" }}>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>Verification</p>
+                    <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#64748b" }}>Scan the QR code to verify this transcript&apos;s authenticity.</p>
+                    <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#94a3b8" }}>Transcript ID: TRN-{selectedStudent.id.slice(-8).toUpperCase()}</p>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <div style={{ width: "200px", margin: "0 auto", borderBottom: "1px solid #94a3b8", marginBottom: "12px" }} />
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(`${typeof window !== "undefined" ? window.location.origin : ""}/api/verify-transcript?id=${selectedStudent.id}`)}`}
+                      alt="QR Verification"
+                      style={{ width: "120px", height: "120px" }}
+                    />
+                    <p style={{ margin: "4px 0 0", fontSize: "9px", color: "#94a3b8" }}>Scan to verify</p>
+                  </div>
+                </div>
+
+                {/* Principal Signature */}
+                <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "28px", borderTop: "1px solid #e2e8f0" }}>
+                  <div style={{ textAlign: "center" }}>
+                    {schoolData?.principalSignature ? (
+                      <img src={schoolData.principalSignature} alt="Principal Signature" style={{ maxHeight: "40px", maxWidth: "180px", marginBottom: "8px" }} />
+                    ) : (
+                      <div style={{ width: "200px", borderBottom: "1px solid #94a3b8", marginBottom: "12px" }} />
+                    )}
                     <PenLine style={{ width: "16px", height: "16px", color: "#94a3b8", marginBottom: "6px" }} />
                     <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#475569" }}>School Principal</p>
                     <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#94a3b8" }}>Date: _______________</p>
                   </div>
                 </div>
 
-                {/* Official Stamp */}
-                <div style={{ marginTop: "28px", padding: "20px", border: "2px dashed #e2e8f0", borderRadius: "12px", textAlign: "center" }}>
-                  <Stamp style={{ width: "28px", height: "28px", color: "#94a3b8", marginBottom: "8px" }} />
-                  <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8" }}>Official School Stamp</p>
-                </div>
-
                 <p style={{ textAlign: "center", fontSize: "11px", color: "#94a3b8", marginTop: "20px" }}>
-                  This is an official academic transcript issued by {SCHOOL_CONFIG.name}. Any alteration or forgery is strictly prohibited.
+                  This is an official academic transcript issued by {schoolData?.schoolName || SCHOOL_CONFIG.name}. Any alteration or forgery is strictly prohibited.
                 </p>
               </div>
             </>

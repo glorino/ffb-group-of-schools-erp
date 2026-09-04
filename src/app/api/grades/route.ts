@@ -8,7 +8,14 @@ export async function GET(request: NextRequest) {
     const authResult = await requireAuth(["OWNER", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL", "TEACHER", "STUDENT", "PARENT"]);
     if (authResult.error) return authResult.error;
 
+    const { searchParams } = new URL(request.url);
+    const studentId = searchParams.get("studentId");
+
+    const where: any = {};
+    if (studentId) where.studentId = studentId;
+
     const grades = await prisma.grade.findMany({
+      where,
       include: {
         student: { select: { id: true, firstName: true, lastName: true, admissionNumber: true } },
         subject: { select: { id: true, name: true } },

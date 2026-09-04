@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const particles = Array.from({ length: 80 }, (_, i) => ({
@@ -46,18 +45,6 @@ function TypewriterCaption() {
   );
 }
 
-const defaultEvents = [
-  { title: "Interhouse Sports", desc: "Annual sports competition showcasing teamwork and athleticism across all houses.", date: "2026-10-17T09:00:00" },
-  { title: "Science Exhibition", desc: "Students present innovative science projects and research findings.", date: "2026-11-14T10:00:00" },
-  { title: "Graduation Ceremony", desc: "Celebrating graduating students and their achievements.", date: "2027-06-28T11:00:00" },
-];
-
-const defaultNewsItems = [
-  { title: "Academic Excellence Award", desc: "Our students received national recognition for outstanding WAEC results.", full: `${SCHOOL_CONFIG.name} has once again demonstrated academic excellence as our students received national recognition for their outstanding WAEC results. With a 98% pass rate and multiple distinctions across key subjects, our school has been ranked among the top performing institutions in the state.`, gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)", image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop" },
-  { title: "New Science Laboratory", desc: "A state-of-the-art science laboratory was commissioned.", full: `A new state-of-the-art science laboratory has been commissioned at ${SCHOOL_CONFIG.name}. The laboratory features modern equipment for Physics, Chemistry, and Biology practical sessions. This facility will provide students with hands-on experience.`, gradient: "linear-gradient(135deg, #164e63, #06b6d4)", image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=400&fit=crop" },
-  { title: "Leadership Bootcamp", desc: "Students trained in leadership development and innovation.", full: `Over 150 students participated in the annual Leadership Bootcamp organized by ${SCHOOL_CONFIG.name}. The programme covered topics including public speaking, project management, entrepreneurship, and digital literacy.`, gradient: "linear-gradient(135deg, #312e81, #6366f1)", image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop" },
-];
-
 function useCountdown(targetDate: string) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, expired: false });
   useEffect(() => {
@@ -90,60 +77,74 @@ function CountdownTimer({ date }: { date: string }) {
   );
 }
 
-const fadeUp = { initial: { opacity: 0, y: 30 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5 } };
-const stagger = { animate: { transition: { staggerChildren: 0.1 } } };
-const item = { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4 } };
-
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [testimonialIdx, setTestimonialIdx] = useState(0);
   const [newsModal, setNewsModal] = useState<number | null>(null);
   const [subscribed, setSubscribed] = useState(false);
   const [email, setEmail] = useState("");
-  const [events, setEvents] = useState(defaultEvents);
-  const [newsItems, setNewsItems] = useState(defaultNewsItems);
-
-  const testimonials = [
-    { text: "FFB transformed my child's confidence and academic performance.", name: "Mrs Adewale" },
-    { text: "The teachers are passionate and supportive.", name: "Mr Johnson" },
-    { text: "A wonderful environment for learning and character development.", name: "Mrs Bello" },
-  ];
+  const [events, setEvents] = useState<any[]>([]);
+  const [newsItems, setNewsItems] = useState<any[]>([]);
+  const [testimonials, setTestimonials] = useState<{text: string; name: string; role?: string}[]>([]);
+  const [schoolData, setSchoolData] = useState<any>(null);
 
   useEffect(() => {
+    if (testimonials.length === 0) return;
     const interval = setInterval(() => setTestimonialIdx((prev) => (prev + 1) % testimonials.length), 4000);
     return () => clearInterval(interval);
   }, [testimonials.length]);
 
   useEffect(() => {
-    fetch("/api/announcements")
+    fetch("/api/public/announcements?type=event")
       .then((res) => res.json())
       .then((data) => {
-        const items = data.announcements || [];
-        const fetchedEvents = items
-          .filter((a: any) => a.type === "event")
-          .map((a: any) => {
-            const target = typeof a.target === "string" ? JSON.parse(a.target) : (a.target || {});
-            return {
-              title: a.title,
-              desc: a.content,
-              date: target.eventDate ? `${target.eventDate}T09:00:00` : new Date(a.createdAt).toISOString(),
-            };
-          });
-        const fetchedNews = items
-          .filter((a: any) => a.type === "news")
-          .map((a: any) => {
-            const target = typeof a.target === "string" ? JSON.parse(a.target) : (a.target || {});
-            return {
-              title: a.title,
-              desc: a.content,
-              full: a.content,
-              gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)",
-              image: target.imageUrl || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop",
-            };
-          });
+        const fetchedEvents = (data.announcements || []).map((a: any) => {
+          const target = typeof a.target === "string" ? JSON.parse(a.target) : (a.target || {});
+          return {
+            title: a.title,
+            desc: a.content,
+            date: target.eventDate ? `${target.eventDate}T09:00:00` : new Date(a.createdAt).toISOString(),
+          };
+        });
         if (fetchedEvents.length > 0) setEvents(fetchedEvents);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/public/announcements?type=news")
+      .then((res) => res.json())
+      .then((data) => {
+        const fetchedNews = (data.announcements || []).map((a: any) => ({
+          title: a.title,
+          desc: a.content,
+          full: a.content,
+          gradient: "linear-gradient(135deg, #1e3a8a, #3b82f6)",
+          image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop",
+        }));
         if (fetchedNews.length > 0) setNewsItems(fetchedNews);
       })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/public/testimonials")
+      .then((res) => res.json())
+      .then((data) => {
+        const fetched = (data.testimonials || []).map((t: any) => ({
+          text: t.text,
+          name: t.name,
+          role: t.role,
+        }));
+        if (fetched.length > 0) setTestimonials(fetched);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/public/stats")
+      .then((res) => res.json())
+      .then((data) => setSchoolData(data))
       .catch(() => {});
   }, []);
 
@@ -162,6 +163,18 @@ export default function LandingPage() {
 
   return (
     <div className="bg-animated" style={{ minHeight: "100vh" }}>
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp 0.6s ease-out forwards; }
+        .fade-up-delay-1 { animation: fadeUp 0.6s ease-out 0.1s forwards; opacity: 0; }
+        .fade-up-delay-2 { animation: fadeUp 0.6s ease-out 0.2s forwards; opacity: 0; }
+        .fade-up-delay-3 { animation: fadeUp 0.6s ease-out 0.3s forwards; opacity: 0; }
+        .fade-up-delay-4 { animation: fadeUp 0.6s ease-out 0.4s forwards; opacity: 0; }
+      `}</style>
+
       {particles.map((p) => (
         <div key={p.id} className="particle" style={{ left: p.left, width: p.size, height: p.size, animationDuration: p.duration, animationDelay: p.delay }} />
       ))}
@@ -189,125 +202,124 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="hero">
         <div className="hero-content container">
-          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+          <h1 className="fade-up">
             Building Leaders<br />For The <TypewriterCaption />
-          </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
+          </h1>
+          <p className="fade-up-delay-1">
             {SCHOOL_CONFIG.name} provides a world-class learning environment where students develop academic excellence, leadership and innovation.
-          </motion.p>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }} style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
+          </p>
+          <div className="fade-up-delay-2" style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/portal/apply" className="hero-btn" style={{ background: "#28ff9c", color: "#000000", fontWeight: 600, padding: "14px 32px", borderRadius: "12px", fontSize: "14px" }}>Apply For Admission</Link>
             <Link href="/auth/login" className="hero-btn" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.3)", color: "#ffffff", fontWeight: 500, padding: "14px 32px", borderRadius: "12px", fontSize: "14px" }}>Portal Login</Link>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* About */}
       <section className="glass-section" id="about-section">
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>About {SCHOOL_CONFIG.name}</motion.h2>
-        <motion.p className="section-subtitle" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <h2 className="section-title fade-up">About {SCHOOL_CONFIG.name}</h2>
+        <p className="section-subtitle fade-up-delay-1">
           {SCHOOL_CONFIG.name} is committed to nurturing future leaders through academic excellence, innovation and strong character development.
-        </motion.p>
-        <motion.div className="features-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
+        </p>
+        <div className="features-grid">
           {[
-            { icon: "🎯", title: "Mission", desc: "To provide quality education that empowers students to become responsible leaders and lifelong learners." },
-            { icon: "🌍", title: "Vision", desc: "To be a leading institution recognized for academic excellence and character development globally." },
-            { icon: "⭐", title: "Core Values", desc: "Integrity, Discipline, Excellence, Innovation and Respect for all members of the school community." },
+            { icon: "🎯", title: "Mission", desc: schoolData?.school?.mission || "To provide quality education that empowers students to become responsible leaders and lifelong learners." },
+            { icon: "🌍", title: "Vision", desc: schoolData?.school?.vision || "To be a leading institution recognized for academic excellence and character development globally." },
+            { icon: "⭐", title: "Core Values", desc: schoolData?.school?.coreValues || "Integrity, Discipline, Excellence, Innovation and Respect for all members of the school community." },
           ].map((f, i) => (
-            <motion.div key={i} className="feature-card" variants={item} style={{ textAlign: "center" }}>
+            <div key={i} className="feature-card fade-up" style={{ textAlign: "center" }}>
               <div style={{ width: "80px", height: "80px", margin: "0 auto 15px", borderRadius: "50%", background: "rgba(40,255,156,0.1)", border: "1px solid rgba(40,255,156,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>{f.icon}</div>
               <h3 style={{ color: "#ffffff" }}>{f.title}</h3>
               <p>{f.desc}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* Founder */}
       <section className="glass-section">
         <div className="founder">
-          <motion.img src="/founder.jpg" alt="Founder" style={{ width: "260px", height: "300px", borderRadius: "20px", objectFit: "cover", border: "2px solid rgba(255,255,255,0.15)" }} initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} />
-          <motion.div className="founder-text" initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+          <img src="/founder.jpg" alt="Founder" style={{ width: "260px", height: "300px", borderRadius: "20px", objectFit: "cover", border: "2px solid rgba(255,255,255,0.15)" }} className="fade-up" />
+          <div className="founder-text fade-up-delay-1">
             <h2 className="section-title" style={{ textAlign: "left", fontSize: "32px" }}>Message From The Founder</h2>
-            <p>Welcome to {SCHOOL_CONFIG.name}. Our mission is to inspire young minds to achieve their highest potential academically and morally. We believe every child deserves access to quality education and mentorship that prepares them for global success.</p>
-            <p>At FFB we focus not only on academic excellence but also on leadership development, discipline and innovation.</p>
+            <p>{schoolData?.school?.founderMessage || `Welcome to ${SCHOOL_CONFIG.name}. Our mission is to inspire young minds to achieve their highest potential academically and morally. We believe every child deserves access to quality education and mentorship that prepares them for global success.`}</p>
             <h4>— Founder, {SCHOOL_CONFIG.name}</h4>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Events with Countdown */}
       <section className="glass-section" id="events-section">
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Upcoming Events</motion.h2>
-        <motion.p className="section-subtitle" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <h2 className="section-title fade-up">Upcoming Events</h2>
+        <p className="section-subtitle fade-up-delay-1">
           Stay updated with our academic calendar, competitions and school activities.
-        </motion.p>
+        </p>
 
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} style={{ textAlign: "center", marginBottom: "40px", padding: "30px", background: "rgba(40,255,156,0.05)", borderRadius: "20px", border: "1px solid rgba(40,255,156,0.15)" }}>
+        <div className="fade-up-delay-2" style={{ textAlign: "center", marginBottom: "40px", padding: "30px", background: "rgba(40,255,156,0.05)", borderRadius: "20px", border: "1px solid rgba(40,255,156,0.15)" }}>
           <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", marginBottom: "5px" }}>NEXT EVENT</p>
-          <h3 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "10px" }}>{nextEvent.title}</h3>
-          <CountdownTimer date={nextEvent.date} />
-        </motion.div>
+          <h3 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "10px" }}>{nextEvent?.title || "No upcoming events"}</h3>
+          {nextEvent && <CountdownTimer date={nextEvent.date} />}
+        </div>
 
-        <motion.div className="events-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
+        <div className="events-grid">
           {events.map((e, i) => (
-            <motion.div key={i} className="event-card" variants={item}>
+            <div key={i} className="event-card fade-up">
               <h3 style={{ color: "#ffffff" }}>{e.title}</h3>
               <p>{e.desc}</p>
               <span className="event-date">{new Date(e.date).toLocaleDateString("en-NG", { month: "long", day: "numeric", year: "numeric" })}</span>
               <CountdownTimer date={e.date} />
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* News with Images + Modal */}
       <section className="glass-section" id="news-section">
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Featured News</motion.h2>
-        <motion.p className="section-subtitle" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <h2 className="section-title fade-up">Featured News</h2>
+        <p className="section-subtitle fade-up-delay-1">
           Stay updated with the latest happenings at {SCHOOL_CONFIG.name}.
-        </motion.p>
-        <motion.div className="news-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
+        </p>
+        <div className="news-grid">
           {newsItems.map((n, i) => (
-            <motion.div key={i} className="news-card" variants={item}>
+            <div key={i} className="news-card fade-up">
               <img src={n.image} alt={n.title} className="w-full h-[200px] object-cover rounded-t-[25px]" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop"; }} />
               <div className="news-content">
                 <h3 style={{ color: "#ffffff" }}>{n.title}</h3>
                 <p>{n.desc}</p>
                 <span className="read-more" onClick={() => setNewsModal(i)}>Read More</span>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* News Modal */}
       {newsModal !== null && (
         <div className="modal" style={{ display: "flex" }} onClick={() => setNewsModal(null)}>
-          <motion.div className="modal-content" onClick={(e) => e.stopPropagation()} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
+          <div className="modal-content fade-up" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setNewsModal(null)}>&times;</button>
             <img src={newsItems[newsModal].image} alt={newsItems[newsModal].title} className="w-full h-[200px] object-cover rounded-2xl mb-5" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop"; }} />
             <h2 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "15px", color: "#1a1a2e" }}>{newsItems[newsModal].title}</h2>
             <p style={{ color: "#475569", lineHeight: 1.8 }}>{newsItems[newsModal].full}</p>
-          </motion.div>
+          </div>
         </div>
       )}
 
       {/* Testimonials */}
       <section className="glass-section">
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Testimonials</motion.h2>
-        <motion.p className="section-subtitle" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <h2 className="section-title fade-up">Testimonials</h2>
+        <p className="section-subtitle fade-up-delay-1">
           What parents and students say about our learning environment.
-        </motion.p>
+        </p>
         <div style={{ textAlign: "center", minHeight: "120px" }}>
           {testimonials.map((t, i) => (
-            <motion.div key={i} style={{ display: i === testimonialIdx ? "block" : "none" }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <div key={i} style={{ display: i === testimonialIdx ? "block" : "none" }} className="fade-up">
               <div style={{ position: "relative", padding: "0 30px" }}>
                 <span style={{ position: "absolute", top: "-20px", left: "50%", transform: "translateX(-50%)", fontSize: "60px", color: "rgba(40,255,156,0.2)", lineHeight: 1, fontFamily: "Georgia, serif" }}>"</span>
                 <p style={{ fontStyle: "italic", fontSize: "22px", lineHeight: 1.8, color: "#ffffff" }}>{t.text}</p>
               </div>
               <h4 style={{ marginTop: "15px", color: "#28ff9c", fontSize: "16px" }}>— {t.name}</h4>
-            </motion.div>
+            </div>
           ))}
         </div>
         <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "25px" }}>
@@ -319,11 +331,11 @@ export default function LandingPage() {
 
       {/* Newsletter */}
       <section className="glass-section">
-        <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Subscribe To Our Newsletter</motion.h2>
-        <motion.p className="section-subtitle" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <h2 className="section-title fade-up">Subscribe To Our Newsletter</h2>
+        <p className="section-subtitle fade-up-delay-1">
           Get updates, school news and event notifications directly to your inbox.
-        </motion.p>
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
+        </p>
+        <div className="fade-up-delay-2">
           {subscribed ? (
             <p style={{ textAlign: "center", color: "#28ff9c", fontWeight: 600 }}>Thank you for subscribing!</p>
           ) : (
@@ -332,13 +344,13 @@ export default function LandingPage() {
               <button type="button" onClick={handleSubscribe}>Subscribe</button>
             </div>
           )}
-        </motion.div>
+        </div>
       </section>
 
       {/* Footer */}
       <footer className="footer">
         <div className="footer-grid">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <div className="fade-up">
             <img src="/logo.svg" alt="FFB" style={{ height: "70px", marginBottom: "15px" }} />
             <p style={{ color: "#ffffff" }}>{SCHOOL_CONFIG.name} is committed to academic excellence, innovation and leadership development.</p>
             <div className="social-icons">
@@ -347,8 +359,8 @@ export default function LandingPage() {
               <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
               <a href="https://youtube.com" target="_blank" rel="noopener noreferrer"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
             </div>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
+          </div>
+          <div className="fade-up-delay-1">
             <h4 style={{ color: "#ffffff" }}>Quick Links</h4>
             <div className="footer-links">
               <Link href="/" style={{ color: "#ffffff" }}>Home</Link>
@@ -358,14 +370,14 @@ export default function LandingPage() {
               <Link href="/contact" style={{ color: "#ffffff" }}>Contact</Link>
               <Link href="/portal/apply" style={{ color: "#ffffff" }}>Apply for Admission</Link>
             </div>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+          </div>
+          <div className="fade-up-delay-2">
             <h4 style={{ color: "#ffffff" }}>Contact</h4>
             <p style={{ color: "#ffffff" }}>{SCHOOL_CONFIG.address}</p>
             <p style={{ marginTop: "8px", color: "#ffffff" }}>Phone: {SCHOOL_CONFIG.phone}</p>
             <p style={{ marginTop: "8px", color: "#ffffff" }}>Email: {SCHOOL_CONFIG.email}</p>
-            <div className="footer-map" style={{ marginTop: "15px" }}><iframe src="https://www.google.com/maps?q=Lagos+Nigeria&output=embed"></iframe></div>
-          </motion.div>
+            <div className="footer-map" style={{ marginTop: "15px" }}><iframe src={`https://www.google.com/maps?q=${SCHOOL_CONFIG.googleMapsQuery}&output=embed`}></iframe></div>
+          </div>
         </div>
         <div className="footer-bottom">{`© ${new Date().getFullYear()} ${SCHOOL_CONFIG.name}. All rights reserved.`}</div>
       </footer>

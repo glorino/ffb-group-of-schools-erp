@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const particles = Array.from({ length: 80 }, (_, i) => ({
@@ -10,17 +9,7 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
   delay: `${Math.random() * 10}s`, size: `${3 + Math.random() * 3}px`,
 }));
 
-const events = [
-  { title: "Interhouse Sports", desc: "Annual sports competition showcasing teamwork and athleticism across all houses.", date: "2026-10-17T09:00:00", icon: "🏅", category: "Sports" },
-  { title: "Science Exhibition", desc: "Students present innovative science projects and research findings to judges and the school community.", date: "2026-11-14T10:00:00", icon: "🔬", category: "Academic" },
-  { title: "Graduation Ceremony", desc: "Celebrating graduating students and their achievements in academics and leadership.", date: "2027-06-28T11:00:00", icon: "🎓", category: "Ceremony" },
-  { title: "Cultural Day", desc: "Students showcase diverse Nigerian cultures through dress, dance, food and art presentations.", date: "2026-12-05T09:00:00", icon: "🎭", category: "Cultural" },
-  { title: "Math Olympiad", desc: "Mathematical competition challenging students to solve complex problems under timed conditions.", date: "2027-01-24T10:00:00", icon: "📐", category: "Academic" },
-  { title: "Career Fair", desc: "Professionals from various fields share career insights and mentorship opportunities.", date: "2027-02-20T10:00:00", icon: "💼", category: "Career" },
-  { title: "Art Exhibition", desc: "Students display creative artwork including paintings, sculptures and digital designs.", date: "2027-03-15T09:00:00", icon: "🎨", category: "Creative" },
-  { title: "Spelling Bee", desc: "Annual spelling competition testing vocabulary and language skills across all grade levels.", date: "2027-04-10T10:00:00", icon: "📝", category: "Academic" },
-  { title: "Quiz Competition", desc: "Inter-class quiz competition covering science, humanities and general knowledge.", date: "2027-05-15T10:00:00", icon: "❓", category: "Academic" },
-];
+
 
 const categoryColors: Record<string, string> = {
   Sports: "#28ff9c", Academic: "#3b82f6", Ceremony: "#a855f7",
@@ -59,12 +48,34 @@ function CountdownTimer({ date }: { date: string }) {
   );
 }
 
-const stagger = { animate: { transition: { staggerChildren: 0.08 } } };
-const item = { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4 } };
-
 export default function EventsPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [filter, setFilter] = useState("All");
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/public/announcements?type=event&limit=20")
+      .then((res) => res.json())
+      .then((data) => {
+        const items = (data.announcements || []).map((a: any) => {
+          const target = typeof a.target === "string" ? JSON.parse(a.target) : (a.target || {});
+          return {
+            title: a.title,
+            desc: a.content,
+            date: target.eventDate ? `${target.eventDate}T09:00:00` : new Date(a.createdAt).toISOString(),
+            icon: "📅",
+            category: target.category || "Event",
+          };
+        });
+        setEvents(items.length > 0 ? items : [
+          { title: "No Events Yet", desc: "Check back soon for upcoming school events.", date: new Date().toISOString(), icon: "📅", category: "General" }
+        ]);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
   const categories = ["All", ...Array.from(new Set(events.map((e) => e.category)))];
   const filtered = filter === "All" ? events : events.filter((e) => e.category === filter);
   const nextEvent = events.find((e) => new Date(e.date).getTime() > Date.now()) || events[0];
@@ -97,21 +108,23 @@ export default function EventsPage() {
       </div>
 
       <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#ffffff" }}>
+        <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#ffffff" }}>
           School <span className="accent">Events</span>
-        </motion.h1>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
+        </h1>
+        <p style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
           Stay updated with our academic calendar, competitions and school activities.
-        </motion.p>
+        </p>
       </section>
 
       <section className="glass-section">
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: "center", marginBottom: "40px", padding: "30px", background: "rgba(40,255,156,0.05)", borderRadius: "20px", border: "1px solid rgba(40,255,156,0.15)" }}>
+        {nextEvent && (
+        <div style={{ textAlign: "center", marginBottom: "40px", padding: "30px", background: "rgba(40,255,156,0.05)", borderRadius: "20px", border: "1px solid rgba(40,255,156,0.15)" }}>
           <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginBottom: "5px" }}>NEXT EVENT</p>
           <h3 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "10px", color: "#ffffff" }}>{nextEvent.icon} {nextEvent.title}</h3>
           <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginBottom: "12px" }}>{nextEvent.desc}</p>
           <CountdownTimer date={nextEvent.date} />
-        </motion.div>
+        </div>
+        )}
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "center", marginBottom: "30px" }}>
           {categories.map((c) => (
@@ -121,9 +134,9 @@ export default function EventsPage() {
           ))}
         </div>
 
-        <motion.div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }} variants={stagger} initial="initial" animate="animate">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }}>
           {filtered.map((e, i) => (
-            <motion.div key={i} variants={item} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "25px", padding: "25px", border: "1px solid rgba(255,255,255,0.08)", transition: "0.3s", cursor: "default" }} whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}>
+            <div key={i} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "25px", padding: "25px", border: "1px solid rgba(255,255,255,0.08)", transition: "0.3s", cursor: "default" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                 <span style={{ fontSize: "32px" }}>{e.icon}</span>
                 <span style={{ padding: "4px 12px", borderRadius: "8px", background: "rgba(40,255,156,0.13)", color: categoryColors[e.category] || "#28ff9c", fontSize: "11px", fontWeight: 600 }}>{e.category}</span>
@@ -134,9 +147,9 @@ export default function EventsPage() {
                 <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>{fmtDate(e.date)}</span>
                 <CountdownTimer date={e.date} />
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       <footer className="footer">

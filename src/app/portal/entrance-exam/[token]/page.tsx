@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
-import { Clock, ChevronLeft, ChevronRight, CheckCircle, XCircle, AlertTriangle, Send, RotateCcw } from "lucide-react";
+import { Clock, ChevronLeft, ChevronRight, CheckCircle, XCircle, AlertTriangle, Send, RotateCcw, Camera, ShieldAlert } from "lucide-react";
+import { useAntiCheat } from "@/hooks/useAntiCheat";
 
 interface ExamData {
   id: string;
@@ -35,6 +36,24 @@ export default function EntranceExamPage() {
   const [submitted, setSubmitted] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<string>("");
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [webcamActive, setWebcamActive] = useState(false);
+
+  const {
+    violations,
+    isBlocked,
+    warningMessage,
+    showWarning,
+    startMonitoring,
+    stopMonitoring,
+    dismissWarning,
+  } = useAntiCheat({
+    maxViolations: 5,
+    onAutoSubmit: () => {
+      handleSubmit();
+    },
+  });
 
   useEffect(() => {
     if (!token) return;
@@ -69,10 +88,24 @@ export default function EntranceExamPage() {
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [started, submitted]);
 
-  const startExam = () => {
+  const startExam = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 160, height: 120, facingMode: "user" },
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setWebcamActive(true);
+    } catch (err) {
+      console.warn("Webcam not available:", err);
+    }
     setStarted(true);
     startTimeRef.current = new Date().toISOString();
     setTimeLeft((exam?.durationMins || 60) * 60);
+    startMonitoring();
   };
 
   const selectAnswer = (qIndex: number, optionIndex: number) => {
@@ -83,6 +116,12 @@ export default function EntranceExamPage() {
     if (submitting || submitted) return;
     setSubmitting(true);
     if (timerRef.current) clearInterval(timerRef.current);
+    stopMonitoring();
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+    setWebcamActive(false);
     try {
       const res = await fetch("/api/admissions/entrance-exam/submit", {
         method: "POST",
@@ -188,6 +227,95 @@ export default function EntranceExamPage() {
   // Exam interface
   return (
     <div style={{ minHeight: "100vh", background: "#f4f6f9" }}>
+      {showWarning && (
+        <div
+          onClick={dismissWarning}
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(220,38,38,0.15)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 100,
+            cursor: "pointer",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: "420px",
+              backgroundColor: "#ffffff",
+              borderRadius: "16px",
+              border: "2px solid #dc2626",
+              overflow: "hidden",
+              boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "#dc2626",
+                padding: "20px 24px",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
+              <ShieldAlert style={{ width: "28px", height: "28px", color: "#ffffff" }} />
+              <h3 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 700, margin: 0 }}>
+                Exam Rule Violation!
+              </h3>
+            </div>
+            <div style={{ padding: "24px", textAlign: "center" }}>
+              <p style={{ color: "#1a1a2e", fontSize: "14px", marginBottom: "12px" }}>
+                {warningMessage}
+              </p>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  backgroundColor: "#fef2f2",
+                  border: "1px solid #fecaca",
+                }}
+              >
+                <AlertTriangle style={{ width: "16px", height: "16px", color: "#dc2626" }} />
+                <span style={{ color: "#dc2626", fontSize: "13px", fontWeight: 600 }}>
+                  Warning {violations} of 5
+                </span>
+              </div>
+              {isBlocked && (
+                <p style={{ color: "#dc2626", fontSize: "13px", fontWeight: 600, marginTop: "12px" }}>
+                  Too many violations. Exam will be submitted automatically.
+                </p>
+              )}
+            </div>
+            <div style={{ padding: "0 24px 24px" }}>
+              <button
+                onClick={dismissWarning}
+                style={{
+                  width: "100%",
+                  padding: "10px 16px",
+                  borderRadius: "10px",
+                  backgroundColor: "#dc2626",
+                  color: "#ffffff",
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                I Understand
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div style={{ background: "linear-gradient(135deg, #0a2a6e, #0055ff)", padding: "16px 24px", position: "sticky", top: 0, zIndex: 50 }}>
         <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -196,6 +324,22 @@ export default function EntranceExamPage() {
             <p style={{ margin: 0, fontSize: 12, opacity: 0.7 }}>{exam.applicant.firstName} {exam.applicant.lastName} | {exam.applicant.applicationNumber}</p>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            {violations > 0 && (
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                backgroundColor: "rgba(251,191,36,0.2)",
+                border: "1px solid rgba(251,191,36,0.4)",
+              }}>
+                <ShieldAlert style={{ width: "14px", height: "14px", color: "#fbbf24" }} />
+                <span style={{ color: "#fbbf24", fontSize: "12px", fontWeight: 600 }}>
+                  {violations} Warning{violations !== 1 ? "s" : ""}
+                </span>
+              </div>
+            )}
             <div style={{ textAlign: "right", color: "#fff" }}>
               <p style={{ margin: 0, fontSize: 11, opacity: 0.7 }}>Time Remaining</p>
               <p style={{ margin: 0, fontSize: 22, fontWeight: 800, fontFamily: "monospace", color: timeLeft < 300 ? "#fbbf24" : "#fff" }}>{formatTime(timeLeft)}</p>
@@ -294,6 +438,64 @@ export default function EntranceExamPage() {
           </div>
         )}
       </div>
+
+      {/* Webcam overlay */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          width: "160px",
+          height: "120px",
+          borderRadius: "12px",
+          overflow: "hidden",
+          border: "3px solid #0055ff",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+          zIndex: 60,
+          backgroundColor: "#000",
+        }}
+      >
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            transform: "scaleX(-1)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "4px",
+            left: "4px",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            padding: "2px 6px",
+            borderRadius: "4px",
+            backgroundColor: "rgba(0,0,0,0.6)",
+          }}
+        >
+          <div
+            style={{
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              backgroundColor: webcamActive ? "#10b981" : "#dc2626",
+              animation: webcamActive ? "blink 1s infinite" : "none",
+            }}
+          />
+          <span style={{ color: "#fff", fontSize: "9px", fontWeight: 500 }}>
+            {webcamActive ? "REC" : "OFF"}
+          </span>
+        </div>
+      </div>
+
+      <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
     </div>
   );
 }

@@ -22,7 +22,12 @@ export async function GET(request: NextRequest) {
     const events = await prisma.calendarEvent.findMany({ where, orderBy: { start: "asc" } });
     const schoolEvents = await prisma.schoolEvent.findMany({ orderBy: { startDate: "asc" } });
 
-    return NextResponse.json({ calendarEvents: events, schoolEvents });
+    const terms = await prisma.term.findMany({
+      include: { academicYear: true },
+      orderBy: { startDate: "asc" },
+    });
+
+    return NextResponse.json({ calendarEvents: events, schoolEvents, terms });
   } catch (error) {
     console.error("GET /api/calendar error:", error);
     return NextResponse.json({ error: "Failed to fetch calendar" }, { status: 500 });

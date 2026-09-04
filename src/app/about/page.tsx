@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
 
 const particles = Array.from({ length: 80 }, (_, i) => ({
@@ -10,30 +9,31 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
   delay: `${Math.random() * 10}s`, size: `${3 + Math.random() * 3}px`,
 }));
 
-const fadeUp = { initial: { opacity: 0, y: 30 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5 } };
-const stagger = { animate: { transition: { staggerChildren: 0.1 } } };
-const item = { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4 } };
-
-const teamMembers = [
-  { role: "Director of Education", name: "Dr Adebayo Okafor", desc: "Oversees academic programmes and curriculum development across all school levels.", photo: "https://i.pravatar.cc/200?img=68" },
-  { role: "Head of Operations", name: "Mrs Funke Adeyemi", desc: "Manages school operations, logistics and administrative affairs.", photo: "https://i.pravatar.cc/200?img=47" },
-  { role: "Student Affairs", name: "Mr Tunde Balogun", desc: "Coordinates student welfare, guidance counselling and extracurricular activities.", photo: "https://i.pravatar.cc/200?img=60" },
-  { role: "Innovation Lead", name: "Miss Amara Nwosu", desc: "Leads STEM programmes, digital learning initiatives and innovation hub.", photo: "https://i.pravatar.cc/200?img=44" },
-  { role: "Academic Dean", name: "Prof Chidi Eze", desc: "Coordinates academic standards, teacher development and student assessment frameworks.", photo: "https://i.pravatar.cc/200?img=59" },
-  { role: "Finance Director", name: "Mr Olumide Akinwale", desc: "Manages financial planning, budgeting and resource allocation across all school campuses.", photo: "https://i.pravatar.cc/200?img=53" },
-];
-
-const milestones = [
-  { year: "2008", event: "School founded with 45 students and 6 teachers" },
-  { year: "2013", event: "First set of WAEC candidates achieved 92% pass rate" },
-  { year: "2016", event: "Expanded to include junior and senior secondary sections" },
-  { year: "2019", event: "State-of-the-art science laboratory commissioned" },
-  { year: "2022", event: "National recognition for academic excellence" },
-  { year: "2024", event: "Digital learning platform launched for all students" },
-];
-
 export default function AboutPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [milestones, setMilestones] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/public/team?limit=10").then(r => r.json()),
+      fetch("/api/public/milestones").then(r => r.json()),
+      fetch("/api/public/stats").then(r => r.json()),
+    ]).then(([teamData, milestoneData, statsData]) => {
+      const team = (teamData.team || []).map((s: any) => ({
+        role: s.position || "Staff",
+        name: `${s.firstName} ${s.lastName}`,
+        desc: s.qualification || s.department || "",
+        photo: s.photo || `https://i.pravatar.cc/200?img=${Math.floor(Math.random() * 70) + 1}`,
+      }));
+      setTeamMembers(team.length > 0 ? team : [
+        { role: "Director of Education", name: "FFB Group of Schools", desc: "Dedicated to academic excellence and leadership development.", photo: "https://i.pravatar.cc/200?img=68" },
+      ]);
+      setMilestones(milestoneData.milestones || []);
+      setStats(statsData);
+    }).catch(() => {});
+  }, []);
 
   return (
     <div className="bg-animated" style={{ minHeight: "100vh" }}>
@@ -62,41 +62,41 @@ export default function AboutPage() {
 
       {/* Hero */}
       <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
-        <motion.h1 {...fadeUp} style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#ffffff" }}>
+        <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#ffffff" }}>
           About <span className="accent">FFB</span> Group of Schools
-        </motion.h1>
-        <motion.p {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.2 }} style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
+        </h1>
+        <p style={{ color: "rgba(255,255,255,0.8)", maxWidth: "650px", margin: "15px auto 0", lineHeight: 1.7 }}>
           Learn about our journey, mission and commitment to nurturing future leaders.
-        </motion.p>
+        </p>
       </section>
 
       {/* Mission / Vision / Values */}
       <section className="glass-section">
-        <motion.h2 className="section-title" style={{ color: "#ffffff" }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Our Foundation</motion.h2>
-        <motion.div className="features-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
+        <h2 className="section-title" style={{ color: "#ffffff" }}>Our Foundation</h2>
+        <div className="features-grid">
           {[
-            { icon: "🎯", title: "Mission", desc: "To provide quality education that empowers students to become responsible leaders and lifelong learners through innovative teaching methods." },
-            { icon: "🌍", title: "Vision", desc: "To be a leading institution recognized for academic excellence, character development and preparing students for global success." },
-            { icon: "⭐", title: "Core Values", desc: `Integrity, Discipline, Excellence, Innovation and Respect. These values guide everything we do at ${SCHOOL_CONFIG.name}.` },
+            { icon: "🎯", title: "Mission", desc: stats?.school?.mission || "To provide quality education that empowers students to become responsible leaders and lifelong learners through innovative teaching methods." },
+            { icon: "🌍", title: "Vision", desc: stats?.school?.vision || "To be a leading institution recognized for academic excellence, character development and preparing students for global success." },
+            { icon: "⭐", title: "Core Values", desc: stats?.school?.coreValues ? `Core values: ${stats.school.coreValues}` : `Integrity, Discipline, Excellence, Innovation and Respect. These values guide everything we do at ${SCHOOL_CONFIG.name}.` },
           ].map((f, i) => (
-            <motion.div key={i} className="feature-card" variants={item} style={{ textAlign: "center" }}>
+            <div key={i} className="feature-card" style={{ textAlign: "center" }}>
               <div style={{ fontSize: "40px", marginBottom: "15px" }}>{f.icon}</div>
               <h3 style={{ color: "#ffffff" }}>{f.title}</h3>
               <p style={{ color: "rgba(255,255,255,0.8)" }}>{f.desc}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* History Timeline */}
       <section className="glass-section">
-        <motion.h2 className="section-title" style={{ color: "#ffffff" }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Our Journey</motion.h2>
-        <motion.p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <h2 className="section-title" style={{ color: "#ffffff" }}>Our Journey</h2>
+        <p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }}>
           From humble beginnings to a leading educational institution.
-        </motion.p>
+        </p>
         <div style={{ maxWidth: "700px", margin: "0 auto" }}>
           {milestones.map((m, i) => (
-            <motion.div key={i} initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} style={{ display: "flex", gap: "20px", marginBottom: "30px", alignItems: "flex-start" }}>
+            <div key={i} style={{ display: "flex", gap: "20px", marginBottom: "30px", alignItems: "flex-start" }}>
               <div style={{ minWidth: "70px", textAlign: "center" }}>
                 <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#28ff9c", margin: "0 auto 8px" }}></div>
                 <span style={{ fontSize: "15px", fontWeight: 700, color: "#28ff9c" }}>{m.year}</span>
@@ -104,56 +104,56 @@ export default function AboutPage() {
               <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: "16px", padding: "18px 22px", flex: 1, borderLeft: "3px solid #28ff9c" }}>
                 <p style={{ fontSize: "14px", lineHeight: 1.6, color: "rgba(255,255,255,0.8)" }}>{m.event}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
 
       {/* Team */}
       <section className="glass-section">
-        <motion.h2 className="section-title" style={{ color: "#ffffff" }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Our Leadership</motion.h2>
-        <motion.p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <h2 className="section-title" style={{ color: "#ffffff" }}>Our Leadership</h2>
+        <p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }}>
           Experienced educators committed to nurturing excellence.
-        </motion.p>
-        <motion.div className="features-grid" variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }}>
+        </p>
+        <div className="features-grid">
           {teamMembers.map((t, i) => (
-            <motion.div key={i} className="feature-card" variants={item} style={{ textAlign: "center" }}>
+            <div key={i} className="feature-card" style={{ textAlign: "center" }}>
               <img src={t.photo} alt={t.name} style={{ width: "90px", height: "90px", borderRadius: "50%", objectFit: "cover", margin: "0 auto 15px", border: "3px solid rgba(40,255,156,0.3)" }} />
               <h3 style={{ fontSize: "16px", marginBottom: "4px", color: "#ffffff" }}>{t.name}</h3>
               <p style={{ color: "#28ff9c", fontSize: "12px", fontWeight: 600, marginBottom: "10px" }}>{t.role}</p>
               <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.8)" }}>{t.desc}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* Stats */}
       <section className="glass-section">
-        <motion.div variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "20px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "20px" }}>
           {[
-            { val: "2000+", label: "Students" },
-            { val: "120+", label: "Teachers" },
+            { val: stats?.totalStudents ? `${stats.totalStudents}+` : "2000+", label: "Students" },
+            { val: stats?.totalTeachers ? `${stats.totalTeachers}+` : "120+", label: "Teachers" },
             { val: "98%", label: "Pass Rate" },
-            { val: "15+", label: "Years" },
+            { val: stats?.yearsSince ? `${stats.yearsSince}+` : "15+", label: "Years" },
           ].map((s, i) => (
-            <motion.div key={i} variants={item} style={{ textAlign: "center", padding: "25px", background: "rgba(40,255,156,0.06)", borderRadius: "20px", border: "1px solid rgba(40,255,156,0.15)" }}>
+            <div key={i} style={{ textAlign: "center", padding: "25px", background: "rgba(40,255,156,0.06)", borderRadius: "20px", border: "1px solid rgba(40,255,156,0.15)" }}>
               <div style={{ fontSize: "32px", fontWeight: 800, color: "#28ff9c" }}>{s.val}</div>
               <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", marginTop: "5px" }}>{s.label}</div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* CTA */}
       <section className="glass-section" style={{ textAlign: "center" }}>
-        <motion.h2 className="section-title" style={{ color: "#ffffff" }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>Join Our Community</motion.h2>
-        <motion.p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <h2 className="section-title" style={{ color: "#ffffff" }}>Join Our Community</h2>
+        <p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }}>
           Give your child the best education and leadership development.
-        </motion.p>
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
+        </p>
+        <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
           <Link href="/portal/apply" className="btn-primary" style={{ padding: "14px 32px", borderRadius: "12px", fontSize: "14px", fontWeight: 600 }}>Apply for Admission</Link>
           <Link href="/contact" style={{ padding: "14px 32px", borderRadius: "12px", fontSize: "14px", fontWeight: 600, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff", textDecoration: "none", transition: "all 0.3s ease" }}>Contact Us</Link>
-        </motion.div>
+        </div>
       </section>
 
       {/* Footer */}

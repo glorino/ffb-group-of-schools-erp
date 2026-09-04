@@ -54,8 +54,6 @@ export async function POST() {
     // 4. Create ReportCard for each student that doesn't have one
     const created = [];
     for (const student of students) {
-      if (!student.grades.length) continue;
-
       const existingRC = await prisma.reportCard.findUnique({
         where: { studentId_termId: { studentId: student.id, termId: term.id } },
       });
@@ -63,6 +61,42 @@ export async function POST() {
       if (existingRC) {
         created.push({ studentId: student.id, name: `${student.firstName} ${student.lastName}`, status: "already exists" });
         continue;
+      }
+
+      // Seed demo grades if student has none
+      const existingGrades = await prisma.grade.findMany({ where: { studentId: student.id } });
+      if (existingGrades.length === 0) {
+        const subjectsData = await prisma.subject.findMany({ where: { schoolId } });
+        const subjectMap = new Map(subjectsData.map((s) => [s.name, s.id]));
+        const subjectNames = ["Mathematics", "English Language", "Civic Education", "Economics", "Government"];
+        const finalScores = [78, 72, 85, 68, 81];
+        const termName = term.name;
+        const sessionName = term.academicYear.name;
+        for (let j = 0; j < subjectNames.length; j++) {
+          const subjectId = subjectMap.get(subjectNames[j]);
+          if (!subjectId) continue;
+          const finalScore = finalScores[j];
+          const ca1 = Math.round(finalScore * 0.15);
+          const ca2 = Math.round(finalScore * 0.15);
+          const ca3 = Math.round(finalScore * 0.10);
+          const exam = finalScore - ca1 - ca2 - ca3;
+          const gradeEntry = GRADE_SCALE.find((g) => finalScore >= g.min && finalScore <= g.max) || GRADE_SCALE[GRADE_SCALE.length - 1];
+          const gradeComment = finalScore >= 70 ? "Excellent" : finalScore >= 50 ? "Good" : "Needs improvement";
+          for (const [type, score] of [["ca1", ca1], ["ca2", ca2], ["ca3", ca3], ["exam", exam]] as const) {
+            await prisma.grade.create({
+              data: {
+                studentId: student.id,
+                subjectId,
+                type,
+                score,
+                grade: type === "exam" ? gradeEntry.grade : undefined,
+                term: termName,
+                session: sessionName,
+                comments: type === "exam" ? gradeComment : undefined,
+              },
+            });
+          }
+        }
       }
 
       // Compute attendance from records

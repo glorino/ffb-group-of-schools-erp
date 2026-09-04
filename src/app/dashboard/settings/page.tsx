@@ -13,6 +13,7 @@ import {
   Loader2,
   Plus,
   Trash2,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -71,6 +72,7 @@ interface SchoolProfileData {
   address: string;
   phone: string;
   email: string;
+  principalSignature: string;
 }
 
 const settingSections = [
@@ -285,6 +287,7 @@ export function SettingsPageInner() {
   const [schoolProfile, setSchoolProfile] = useState<SchoolProfileData>({
     schoolName: "",
     motto: "",
+    principalSignature: "",
     address: "",
     phone: "",
     email: "",
@@ -666,6 +669,32 @@ export function SettingsPageInner() {
                     <label style={labelStyle}>Email</label>
                     <input type="email" value={schoolProfile.email} onChange={(e) => setSchoolProfile((p) => ({ ...p, email: e.target.value }))} style={inputStyle} />
                   </div>
+                </div>
+                <div>
+                  <label style={labelStyle}>Principal&apos;s Signature</label>
+                  <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                    <label style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 18px", background: "#0055ff", color: "#fff", borderRadius: "10px", fontSize: "13px", fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}>
+                      <Upload style={{ width: "14px", height: "14px" }} />
+                      Upload Signature
+                      <input type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (file.size > 2 * 1024 * 1024) { alert("Image must be under 2MB"); return; }
+                        const reader = new FileReader();
+                        reader.onload = () => setSchoolProfile((p) => ({ ...p, principalSignature: reader.result as string }));
+                        reader.readAsDataURL(file);
+                      }} />
+                    </label>
+                    {schoolProfile.principalSignature && (
+                      <button onClick={() => setSchoolProfile((p) => ({ ...p, principalSignature: "" }))} style={{ padding: "10px 14px", background: "#fee2e2", color: "#991b1b", borderRadius: "10px", fontSize: "13px", fontWeight: 600, border: "none", cursor: "pointer" }}>Remove</button>
+                    )}
+                  </div>
+                  {schoolProfile.principalSignature && (
+                    <div style={{ marginTop: "12px", padding: "16px", background: "#f8fafc", borderRadius: "10px", border: "1px solid #e2e8f0", textAlign: "center" }}>
+                      <img src={schoolProfile.principalSignature} alt="Principal Signature" style={{ maxHeight: "60px", maxWidth: "200px", objectFit: "contain" }} />
+                      <p style={{ margin: "6px 0 0", fontSize: "11px", color: "#94a3b8" }}>Signature Preview</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </>

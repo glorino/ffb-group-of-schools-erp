@@ -151,6 +151,11 @@ model School {
   favicon       String?
   website       String?
   motto         String?
+  mission       String?  @db.Text
+  vision        String?  @db.Text
+  coreValues    String?  @db.Text
+  founderMessage String? @db.Text
+  principalSignature String?
   establishedAt DateTime?
   type          String    @default("secondary")
   status        String    @default("active")
@@ -183,9 +188,12 @@ model School {
   exams            Exam[]
   gradingScales    GradingScale[]
   cbtExams         CBTExam[]
-  staffs           Staff[]
+   staffs           Staff[]
+   testimonials     Testimonial[]
+   faqs             FAQ[]
+   milestones       Milestone[]
 
-  @@index([slug])
+   @@index([slug])
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1745,4 +1753,50 @@ model AttendanceUnlockRequest {
   updatedAt  DateTime @updatedAt
 
   teacher User @relation(fields: [teacherId], references: [id])
+}
+
+// ═══════════════════════════════════════════════════════════
+// PUBLIC CONTENT (Testimonials, FAQs, Milestones)
+// ═══════════════════════════════════════════════════════════
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  schoolId  String
+  name      String
+  role      String?
+  text      String   @db.Text
+  rating    Int?     @default(5)
+  photo     String?
+  published Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  school School @relation(fields: [schoolId], references: [id])
+  @@index([schoolId])
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  schoolId  String
+  question  String
+  answer    String   @db.Text
+  category  String?
+  sortOrder Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  school School @relation(fields: [schoolId], references: [id])
+  @@index([schoolId])
+}
+
+model Milestone {
+  id        String   @id @default(cuid())
+  schoolId  String
+  year      String
+  event     String   @db.Text
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  school School @relation(fields: [schoolId], references: [id])
+  @@index([schoolId])
 }

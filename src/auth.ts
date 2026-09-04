@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
@@ -10,6 +11,7 @@ export const {
   auth,
 } = NextAuth({
   trustHost: true,
+  adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
       name: "credentials",
@@ -29,10 +31,9 @@ export const {
             include: {
               roles: {
                 include: {
-                  role: true,
+                  role: { select: { name: true } },
                 },
               },
-              school: true,
             },
           });
 
@@ -67,12 +68,8 @@ export const {
             name: user.name,
             image: user.image,
             mustChangePassword: (user as any).mustChangePassword || false,
-            roles: user.roles.map((r) => ({
-              name: r.role.name,
-              level: r.role.level,
-            })),
+            roles: user.roles.map((r) => ({ name: r.role.name })),
             schoolId: user.schoolId || undefined,
-            schoolName: user.school?.name || undefined,
           };
         } catch (error) {
           console.error("[AUTH] Database error:", error);
@@ -81,32 +78,27 @@ export const {
       },
     }),
   ],
+  session: {
+    strategy: "database",
+    maxAge: 24 * 60 * 60,
+  },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
-      if (user) {
-        token.id = (user as any).id;
-        token.roles = (user as any).roles;
-        token.schoolId = (user as any).schoolId;
-        token.schoolName = (user as any).schoolName;
-        token.image = (user as any).image;
-        token.mustChangePassword = (user as any).mustChangePassword;
-      }
-      if (trigger === "update" && session) {
-        if (session.user?.image) token.image = session.user.image;
-        if (session.user?.name) token.name = session.user.name;
-        if (session.user?.email) token.email = session.user.email;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
-        (session.user as any).roles = token.roles;
-        (session.user as any).schoolId = token.schoolId;
-        (session.user as any).schoolName = token.schoolName;
-        if (token.image) session.user.image = token.image as string;
-        (session.user as any).mustChangePassword = token.mustChangePassword;
-      }
+    async session({ session, user }) {
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        include: {
+          roles: {
+            include: {
+              role: { select: { name: true } },
+            },
+          },
+        },
+      });
+
+      session.user.id = user.id;
+      (session.user as any).roles = dbUser?.roles.map((r) => ({ name: r.role.name })) || [];
+      (session.user as any).schoolId = dbUser?.schoolId || undefined;
+      (session.user as any).mustChangePassword = (dbUser as any)?.mustChangePassword || false;
       return session;
     },
   },

@@ -37,8 +37,12 @@ import {
   Hash,
   Percent,
   Info,
+  ShieldAlert,
+  Camera,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAntiCheat } from "@/hooks/useAntiCheat";
 
 type ViewMode = "list" | "exam" | "results" | "history" | "questionbank";
 
@@ -222,6 +226,24 @@ export default function CbtPage() {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const beforeUnloadRef = useRef<((e: BeforeUnloadEvent) => void) | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [webcamActive, setWebcamActive] = useState(false);
+
+  const {
+    violations,
+    isBlocked,
+    warningMessage,
+    showWarning,
+    startMonitoring,
+    stopMonitoring,
+    dismissWarning,
+  } = useAntiCheat({
+    maxViolations: 5,
+    onAutoSubmit: () => {
+      if (view === "exam") handleSubmitExam();
+    },
+  });
 
   const fetchExams = useCallback(async () => {
     setLoading(true);
@@ -318,6 +340,20 @@ export default function CbtPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to start exam");
 
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: 160, height: 120, facingMode: "user" },
+          audio: false,
+        });
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        setWebcamActive(true);
+      } catch (err) {
+        console.warn("Webcam not available:", err);
+      }
+
       setCurrentExam(exam);
       setSessionId(data.sessionId);
       setQuestions(data.questions || []);
@@ -328,6 +364,7 @@ export default function CbtPage() {
       setTimerRunning(true);
       setSoundPlayed(false);
       setView("exam");
+      startMonitoring();
     } catch (err: any) {
       toast.error(err.message || "Failed to start exam");
     } finally {
@@ -339,6 +376,12 @@ export default function CbtPage() {
     if (timerRef.current) clearInterval(timerRef.current);
     setTimerRunning(false);
     setShowSubmitConfirm(false);
+    stopMonitoring();
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+    setWebcamActive(false);
 
     if (!currentExam) return;
 
@@ -728,6 +771,22 @@ export default function CbtPage() {
               <Timer style={{ width: "20px", height: "20px", color: isTimeCritical ? "#ef4444" : "#64748b" }} />
               {formatTime(timeLeft)}
             </div>
+            {violations > 0 && (
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "8px 12px",
+                borderRadius: "10px",
+                backgroundColor: "#fef2f2",
+                border: "1px solid #fecaca",
+              }}>
+                <ShieldAlert style={{ width: "16px", height: "16px", color: "#dc2626" }} />
+                <span style={{ color: "#dc2626", fontSize: "12px", fontWeight: 600 }}>
+                  {violations} Warning{violations !== 1 ? "s" : ""}
+                </span>
+              </div>
+            )}
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <button onClick={() => setShowQuestionNav(!showQuestionNav)} style={{ padding: "8px 16px", borderRadius: "12px", backgroundColor: "#f8fafc", color: "#475569", fontSize: "13px", fontWeight: 500, border: "1px solid #e2e8f0", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
                 <Grid style={{ width: "16px", height: "16px" }} />
@@ -873,6 +932,151 @@ export default function CbtPage() {
             </div>
           </div>
         )}
+
+        {/* Anti-cheat warning modal */}
+        {showWarning && (
+          <div
+            onClick={dismissWarning}
+            style={{
+              position: "fixed",
+              inset: 0,
+              backgroundColor: "rgba(220,38,38,0.15)",
+              backdropFilter: "blur(4px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 60,
+              cursor: "pointer",
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: "100%",
+                maxWidth: "420px",
+                backgroundColor: "#ffffff",
+                borderRadius: "16px",
+                border: "2px solid #dc2626",
+                overflow: "hidden",
+                boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
+              }}
+            >
+              <div
+                style={{
+                  backgroundColor: "#dc2626",
+                  padding: "20px 24px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                }}
+              >
+                <ShieldAlert style={{ width: "28px", height: "28px", color: "#ffffff" }} />
+                <h3 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 700, margin: 0 }}>
+                  Exam Rule Violation!
+                </h3>
+              </div>
+              <div style={{ padding: "24px", textAlign: "center" }}>
+                <p style={{ color: "#1a1a2e", fontSize: "14px", marginBottom: "12px" }}>
+                  {warningMessage}
+                </p>
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+                    backgroundColor: "#fef2f2",
+                    border: "1px solid #fecaca",
+                  }}
+                >
+                  <AlertTriangle style={{ width: "16px", height: "16px", color: "#dc2626" }} />
+                  <span style={{ color: "#dc2626", fontSize: "13px", fontWeight: 600 }}>
+                    Warning {violations} of 5
+                  </span>
+                </div>
+                {isBlocked && (
+                  <p style={{ color: "#dc2626", fontSize: "13px", fontWeight: 600, marginTop: "12px" }}>
+                    Too many violations. Exam will be submitted automatically.
+                  </p>
+                )}
+              </div>
+              <div style={{ padding: "0 24px 24px" }}>
+                <button
+                  onClick={dismissWarning}
+                  style={{
+                    width: "100%",
+                    padding: "10px 16px",
+                    borderRadius: "10px",
+                    backgroundColor: "#dc2626",
+                    color: "#ffffff",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  I Understand
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Webcam overlay */}
+        <div
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            width: "160px",
+            height: "120px",
+            borderRadius: "12px",
+            overflow: "hidden",
+            border: "3px solid #0055ff",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+            zIndex: 60,
+            backgroundColor: "#000",
+          }}
+        >
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transform: "scaleX(-1)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: "4px",
+              left: "4px",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              padding: "2px 6px",
+              borderRadius: "4px",
+              backgroundColor: "rgba(0,0,0,0.6)",
+            }}
+          >
+            <div
+              style={{
+                width: "6px",
+                height: "6px",
+                borderRadius: "50%",
+                backgroundColor: webcamActive ? "#10b981" : "#dc2626",
+              }}
+            />
+            <span style={{ color: "#fff", fontSize: "9px", fontWeight: 500 }}>
+              {webcamActive ? "REC" : "OFF"}
+            </span>
+          </div>
+        </div>
       </div>
     );
   };

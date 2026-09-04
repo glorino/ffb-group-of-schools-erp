@@ -4,7 +4,7 @@ import { requireAuth } from "@/lib/api-rbac";
 
 export async function POST(req: NextRequest) {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR"]);
+    const authResult = await requireAuth(["OWNER", "SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
     if (authResult.error) return authResult.error;
 
     const body = await req.json();
@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
             state: body.schoolProfile.state || school.state,
             country: body.schoolProfile.country || school.country,
             motto: body.schoolProfile.motto || school.motto,
+            principalSignature: body.schoolProfile.principalSignature !== undefined ? body.schoolProfile.principalSignature : school.principalSignature,
           },
         });
       }
@@ -108,7 +109,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const authResult = await requireAuth(["OWNER", "ADMINISTRATOR"]);
+    const authResult = await requireAuth(["OWNER", "SUPER_ADMIN", "ADMINISTRATOR", "PRINCIPAL", "VICE_PRINCIPAL"]);
     if (authResult.error) return authResult.error;
 
     const school = await prisma.school.findFirst();
@@ -133,6 +134,7 @@ export async function GET() {
         state: school.state,
         country: school.country,
         motto: school.motto,
+        principalSignature: school.principalSignature,
       },
       gradingScales,
     });

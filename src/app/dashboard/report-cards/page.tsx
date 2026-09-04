@@ -1,15 +1,23 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 import { SCHOOL_CONFIG } from "@/lib/school-config";
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import {
   FileText, Download, Eye, Printer, QrCode, Search,
 } from "lucide-react";
 import { ReportCardPDF, ReportCardProps } from "@/components/reports/report-card-pdf";
-import { downloadPDF } from "@/lib/exports";
 import { toast } from "sonner";
+
+const PDFDownloadLink = dynamic(
+  () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
+  { ssr: false }
+);
+const PDFViewer = dynamic(
+  () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
+  { ssr: false }
+);
 
 const inputStyle: React.CSSProperties = { width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1.5px solid #e2e8f0", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box", background: "#f8fafc", transition: "border-color 0.2s, box-shadow 0.2s" };
 const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#0055ff"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,85,255,0.1)"; e.currentTarget.style.background = "#ffffff"; };
@@ -59,16 +67,16 @@ export default function ReportCardsPage() {
   }, [terms, termId]);
 
   useEffect(() => {
-    if (!selectedStudent) { setReportData(null); return; }
+    if (!selectedStudent || !termId) { setReportData(null); return; }
     setGenerating(true);
-    fetch(`/api/reports/report-card?studentId=${selectedStudent}&termId=${termId || "current"}`)
+    fetch(`/api/reports/report-card?studentId=${selectedStudent}&termId=${termId}`)
       .then(r => r.json()).then(d => {
         if (d.student) {
           setReportData({
-            studentData: { id: d.student.id, name: `${d.student.firstName} ${d.student.lastName}`, admissionNumber: d.student.admissionNumber, className: d.student.class?.displayName || d.student.class?.name || "", photo: d.student.photo, qrCode: d.student.qrCode },
+            studentData: { id: d.student.id, name: d.student.name || `${d.student.firstName || ""} ${d.student.lastName || ""}`.trim(), admissionNumber: d.student.admissionNumber, className: d.student.className || d.student.class?.displayName || d.student.class?.name || "", photo: d.student.photo, qrCode: d.student.qrCode },
             termData: { id: d.term?.id || "", name: d.term?.name || "Current Term", academicYear: d.term?.academicYear || "2025/2026" },
-            school: { name: d.school?.name || process.env.NEXT_PUBLIC_SCHOOL_NAME || SCHOOL_CONFIG.name, address: d.school?.address, logo: d.school?.logo },
-            grades: (d.grades || []).map((g: any) => ({ subject: g.subject?.name || g.subject, subjectCode: g.subject?.code || "", teacher: g.teacher || "", ca1: g.ca1 || 0, ca2: g.ca2 || 0, ca3: g.ca3 || 0, exam: g.exam || 0, total: g.total || 0, grade: g.grade || "", remark: g.remark || "" })),
+            school: { name: d.school?.name || process.env.NEXT_PUBLIC_SCHOOL_NAME || SCHOOL_CONFIG.name, address: d.school?.address || SCHOOL_CONFIG.address, logo: d.school?.logo, phone: d.school?.phone || SCHOOL_CONFIG.phone, email: d.school?.email || SCHOOL_CONFIG.email, motto: d.school?.motto || SCHOOL_CONFIG.motto, principalSignature: d.school?.principalSignature },
+            grades: (d.subjects || d.grades || []).map((g: any) => ({ subject: g.subject?.name || g.subject || "", subjectCode: g.subject?.code || g.subjectCode || "", teacher: g.teacher || "", ca1: g.ca1 || 0, ca2: g.ca2 || 0, ca3: g.ca3 || 0, exam: g.exam || 0, total: g.total || 0, grade: g.grade || "", remark: g.remark || "" })),
             gradingScale: d.gradingScale || [{ name: "A1", minScore: 75, maxScore: 100, grade: "A1", remark: "Excellent" }, { name: "B2", minScore: 70, maxScore: 74, grade: "B2", remark: "Very Good" }, { name: "B3", minScore: 65, maxScore: 69, grade: "B3", remark: "Good" }, { name: "C4", minScore: 60, maxScore: 64, grade: "C4", remark: "Credit" }, { name: "C5", minScore: 55, maxScore: 59, grade: "C5", remark: "Credit" }, { name: "C6", minScore: 50, maxScore: 54, grade: "C6", remark: "Credit" }, { name: "D7", minScore: 45, maxScore: 49, grade: "D7", remark: "Pass" }, { name: "E8", minScore: 40, maxScore: 44, grade: "E8", remark: "Pass" }, { name: "F9", minScore: 0, maxScore: 39, grade: "F9", remark: "Fail" }],
             attendance: d.attendance || { totalDays: 120, present: 110, absent: 10 },
             behaviour: d.behaviour, psychomotor: d.psychomotor, teacherComment: d.teacherComment, principalComment: d.principalComment, classTeacher: d.classTeacher, position: d.position, classSize: d.classSize,
@@ -202,10 +210,10 @@ export default function ReportCardsPage() {
                   {({ loading: l }) => l ? "Generating..." : <><Download style={{ width: "16px", height: "16px" }} /> Download PDF</>}
                 </PDFDownloadLink>
                 <button onClick={() => {
-                  downloadPDF(
-                    `Report Card - ${reportData.studentData.name}`,
-                    `<table><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th></tr>${reportData.grades.map(g => `<tr><td>${g.subject}</td><td>${g.ca1}</td><td>${g.ca2}</td><td>${g.exam}</td><td>${g.total}</td><td>${g.grade}</td></tr>`).join("")}</table><p><strong>Attendance:</strong> ${reportData.attendance.present}/${reportData.attendance.totalDays} days</p>`
-                  );
+                  const w = window.open("", "_blank");
+                  if (!w) return;
+                  w.document.write(`<html><head><title>Report Card - ${reportData.studentData.name}</title><style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#1e3a8a;color:white}</style></head><body><h2>${reportData.school?.name || "School"} - Report Card</h2><p><strong>${reportData.studentData.name}</strong> | ${reportData.studentData.admissionNumber} | ${reportData.studentData.className}</p><p>${reportData.termData.name} - ${reportData.termData.academicYear}</p><table><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>CA3</th><th>Exam</th><th>Total</th><th>Grade</th></tr>${reportData.grades.map(g => `<tr><td>${g.subject}</td><td>${g.ca1}</td><td>${g.ca2}</td><td>${g.ca3}</td><td>${g.exam}</td><td>${g.total}</td><td>${g.grade}</td></tr>`).join("")}</table><p><strong>Attendance:</strong> ${reportData.attendance.present}/${reportData.attendance.totalDays} days</p><script>window.onload=function(){window.print()}<\/script></body></html>`);
+                  w.document.close();
                 }} style={btnStyle("#ffffff")}>
                   <span style={{ color: "#475569" }}><Printer style={{ width: "16px", height: "16px", display: "inline" }} /></span> <span style={{ color: "#475569" }}>Print</span>
                 </button>
