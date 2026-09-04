@@ -177,6 +177,7 @@ export default function LandingPage() {
             <Link href="/news">News</Link>
             <Link href="/contact">Contact</Link>
             <Link href="/portal/apply" className="menu-btn apply-btn" style={{ color: "#000000" }}>Admissions</Link>
+            <Link href="/portal/track" className="menu-btn" style={{ color: "#ffffff", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "24px", padding: "8px 20px", fontSize: "14px", fontWeight: 500, textDecoration: "none" }}>Track</Link>
             <Link href="/auth/login" className="menu-btn portal-btn">Portal</Link>
           </div>
           <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
