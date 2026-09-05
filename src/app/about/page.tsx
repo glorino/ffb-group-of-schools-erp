@@ -109,24 +109,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team */}
-      <section className="glass-section">
-        <h2 className="section-title" style={{ color: "#ffffff" }}>Our Leadership</h2>
-        <p className="section-subtitle" style={{ color: "rgba(255,255,255,0.7)" }}>
-          Experienced educators committed to nurturing excellence.
-        </p>
-        <div className="features-grid">
-          {teamMembers.map((t, i) => (
-            <div key={i} className="feature-card" style={{ textAlign: "center" }}>
-              <img src={t.photo} alt={t.name} style={{ width: "90px", height: "90px", borderRadius: "50%", objectFit: "cover", margin: "0 auto 15px", border: "3px solid rgba(40,255,156,0.3)" }} />
-              <h3 style={{ fontSize: "16px", marginBottom: "4px", color: "#ffffff" }}>{t.name}</h3>
-              <p style={{ color: "#28ff9c", fontSize: "12px", fontWeight: 600, marginBottom: "10px" }}>{t.role}</p>
-              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.8)" }}>{t.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Stats */}
       <section className="glass-section">
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "20px" }}>

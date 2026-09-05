@@ -42,8 +42,6 @@ export default function NewsPage() {
 
   const categories = ["All", ...Array.from(new Set(newsItems.map((n) => n.category)))];
 
-  const filtered = filter === "All" ? newsItems : newsItems.filter((n) => n.category === filter);
-
   return (
     <div className="bg-animated" style={{ minHeight: "100vh" }}>
       {particles.map((p) => (
@@ -79,25 +77,20 @@ export default function NewsPage() {
       </section>
 
       <section className="glass-section">
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "center", marginBottom: "30px" }}>
-          {categories.map((c) => (
-            <button key={c} onClick={() => setFilter(c)} style={{ padding: "8px 18px", borderRadius: "20px", border: filter === c ? "none" : "1px solid rgba(255,255,255,0.15)", background: filter === c ? "#28ff9c" : "rgba(255,255,255,0.05)", color: filter === c ? "#001f5f" : "rgba(255,255,255,0.6)", cursor: "pointer", fontSize: "13px", fontWeight: 600, transition: "0.3s" }}>
-              {c}
-            </button>
-          ))}
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "20px" }}>
-          {filtered.map((n, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "25px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)", cursor: "pointer", transition: "0.3s" }} onClick={() => setModal(i)}>
-              <img src={n.image} alt={n.title} className="w-full h-[200px] object-cover" />
-              <div style={{ padding: "22px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "24px" }}>
+          {newsItems.map((n, i) => (
+            <div key={i} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "20px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)", cursor: "pointer", transition: "transform 0.2s, box-shadow 0.2s" }}
+              onClick={() => setModal(i)}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.2)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
+              <img src={n.image} alt={n.title} style={{ width: "100%", height: "260px", objectFit: "cover", display: "block" }} />
+              <div style={{ padding: "24px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                   <span style={{ padding: "4px 12px", borderRadius: "8px", background: "rgba(255,255,255,0.08)", fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.5)" }}>{n.category}</span>
                   <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>{n.date}</span>
                 </div>
-                <h3 style={{ fontSize: "17px", fontWeight: 700, marginBottom: "8px", color: "#ffffff" }}>{n.title}</h3>
-                <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)", lineHeight: 1.6, marginBottom: "12px" }}>{n.desc}</p>
+                <h3 style={{ fontSize: "18px", fontWeight: 700, marginBottom: "10px", color: "#ffffff" }}>{n.title}</h3>
+                <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.65)", lineHeight: 1.6, marginBottom: "14px" }}>{n.desc}</p>
                 <span style={{ color: "#28ff9c", fontSize: "13px", fontWeight: 600 }}>Read More →</span>
               </div>
             </div>

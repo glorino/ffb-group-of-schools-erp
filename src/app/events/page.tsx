@@ -9,13 +9,6 @@ const particles = Array.from({ length: 80 }, (_, i) => ({
   delay: `${Math.random() * 10}s`, size: `${3 + Math.random() * 3}px`,
 }));
 
-
-
-const categoryColors: Record<string, string> = {
-  Sports: "#28ff9c", Academic: "#3b82f6", Ceremony: "#a855f7",
-  Cultural: "#f59e0b", Career: "#06b6d4", Creative: "#ec4899",
-};
-
 function useCountdown(targetDate: string) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, expired: false });
   useEffect(() => {
@@ -31,17 +24,22 @@ function useCountdown(targetDate: string) {
   return timeLeft;
 }
 
-function CountdownTimer({ date }: { date: string }) {
+function CountdownTimer({ date, large }: { date: string; large?: boolean }) {
   const t = useCountdown(date);
-  if (t.expired) return <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "12px" }}>Event passed</span>;
+  if (t.expired) return <span style={{ color: "rgba(255,255,255,0.3)", fontSize: large ? "14px" : "12px" }}>Event passed</span>;
+  const unitStyle = large
+    ? { background: "rgba(40,255,156,0.15)", border: "1px solid rgba(40,255,156,0.3)", borderRadius: "12px", padding: "12px 16px", minWidth: "70px", textAlign: "center" as const }
+    : { background: "rgba(40,255,156,0.15)", border: "1px solid rgba(40,255,156,0.3)", borderRadius: "8px", padding: "4px 8px", minWidth: "36px", textAlign: "center" as const };
+  const numSize = large ? "28px" : "14px";
+  const lblSize = large ? "10px" : "8px";
   return (
-    <div style={{ display: "flex", gap: "6px", justifyContent: "center" }}>
-      {[{ val: t.days, label: "D" }, { val: t.hours, label: "H" }, { val: t.minutes, label: "M" }, { val: t.seconds, label: "S" }].map((u) => (
+    <div style={{ display: "flex", gap: large ? "10px" : "6px", justifyContent: "center" }}>
+      {[{ val: t.days, label: "Days" }, { val: t.hours, label: "Hrs" }, { val: t.minutes, label: "Min" }, { val: t.seconds, label: "Sec" }].map((u) => (
         <div key={u.label} style={{ textAlign: "center" }}>
-          <div style={{ background: "rgba(40,255,156,0.15)", border: "1px solid rgba(40,255,156,0.3)", borderRadius: "8px", padding: "4px 8px", minWidth: "36px" }}>
-            <span style={{ fontSize: "14px", fontWeight: 800, color: "#28ff9c" }}>{String(u.val).padStart(2, "0")}</span>
+          <div style={unitStyle}>
+            <span style={{ fontSize: numSize, fontWeight: 800, color: "#28ff9c" }}>{String(u.val).padStart(2, "0")}</span>
           </div>
-          <span style={{ fontSize: "8px", color: "rgba(255,255,255,0.4)", marginTop: "2px", display: "block" }}>{u.label}</span>
+          <span style={{ fontSize: lblSize, color: "rgba(255,255,255,0.4)", marginTop: "4px", display: "block" }}>{u.label}</span>
         </div>
       ))}
     </div>
@@ -50,9 +48,10 @@ function CountdownTimer({ date }: { date: string }) {
 
 export default function EventsPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [filter, setFilter] = useState("All");
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const nextAcademicSession = "2026-09-21T08:00:00";
 
   useEffect(() => {
     fetch("/api/public/announcements?type=event&limit=20")
@@ -75,10 +74,6 @@ export default function EventsPage() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
-
-  const categories = ["All", ...Array.from(new Set(events.map((e) => e.category)))];
-  const filtered = filter === "All" ? events : events.filter((e) => e.category === filter);
-  const nextEvent = events.find((e) => new Date(e.date).getTime() > Date.now()) || events[0];
 
   const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
@@ -107,7 +102,7 @@ export default function EventsPage() {
         </div>
       </div>
 
-      <section style={{ marginTop: "90px", padding: "80px 20px 40px", textAlign: "center" }}>
+      <section style={{ marginTop: "90px", padding: "60px 20px 40px", textAlign: "center" }}>
         <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: "#ffffff" }}>
           School <span className="accent">Events</span>
         </h1>
@@ -116,40 +111,43 @@ export default function EventsPage() {
         </p>
       </section>
 
-      <section className="glass-section">
-        {nextEvent && (
-        <div style={{ textAlign: "center", marginBottom: "40px", padding: "30px", background: "rgba(40,255,156,0.05)", borderRadius: "20px", border: "1px solid rgba(40,255,156,0.15)" }}>
-          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginBottom: "5px" }}>NEXT EVENT</p>
-          <h3 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "10px", color: "#ffffff" }}>{nextEvent.icon} {nextEvent.title}</h3>
-          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginBottom: "12px" }}>{nextEvent.desc}</p>
-          <CountdownTimer date={nextEvent.date} />
+      {/* Next Academic Session Countdown */}
+      <section style={{ padding: "0 20px 40px", maxWidth: "800px", margin: "0 auto" }}>
+        <div style={{ textAlign: "center", padding: "40px 30px", background: "linear-gradient(135deg, rgba(40,255,156,0.08), rgba(0,85,255,0.08))", borderRadius: "24px", border: "1px solid rgba(40,255,156,0.2)" }}>
+          <p style={{ color: "#28ff9c", fontSize: "13px", fontWeight: 700, letterSpacing: "0.1em", marginBottom: "8px" }}>NEXT ACADEMIC SESSION</p>
+          <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, color: "#ffffff", marginBottom: "8px" }}>2026/2027 Academic Year</h2>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", marginBottom: "24px" }}>Resumption: 21st September, 2026</p>
+          <CountdownTimer date={nextAcademicSession} large />
         </div>
+      </section>
+
+      {/* Events Grid */}
+      <section style={{ padding: "0 20px 60px", maxWidth: "1200px", margin: "0 auto" }}>
+        <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#ffffff", marginBottom: "24px", textAlign: "center" }}>Upcoming Events</h2>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "60px 0" }}>
+            <div style={{ width: "40px", height: "40px", border: "3px solid rgba(255,255,255,0.2)", borderTopColor: "#28ff9c", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "20px" }}>
+            {events.map((e, i) => (
+              <div key={i} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "20px", padding: "24px", border: "1px solid rgba(255,255,255,0.08)", transition: "transform 0.2s, box-shadow 0.2s" }}
+                onMouseEnter={(ev) => { ev.currentTarget.style.transform = "translateY(-4px)"; ev.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.2)"; }}
+                onMouseLeave={(ev) => { ev.currentTarget.style.transform = "translateY(0)"; ev.currentTarget.style.boxShadow = "none"; }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" }}>
+                  <span style={{ fontSize: "36px" }}>{e.icon}</span>
+                  <span style={{ padding: "4px 12px", borderRadius: "8px", background: "rgba(40,255,156,0.13)", color: "#28ff9c", fontSize: "11px", fontWeight: 600 }}>{e.category}</span>
+                </div>
+                <h3 style={{ fontSize: "18px", fontWeight: 700, marginBottom: "8px", color: "#ffffff" }}>{e.title}</h3>
+                <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.65)", marginBottom: "16px", lineHeight: 1.6 }}>{e.desc}</p>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "14px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                  <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>📅 {fmtDate(e.date)}</span>
+                  <CountdownTimer date={e.date} />
+                </div>
+              </div>
+            ))}
+          </div>
         )}
-
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "center", marginBottom: "30px" }}>
-          {categories.map((c) => (
-            <button key={c} onClick={() => setFilter(c)} style={{ padding: "8px 18px", borderRadius: "20px", border: filter === c ? "none" : "1px solid rgba(255,255,255,0.15)", background: filter === c ? "#28ff9c" : "rgba(255,255,255,0.05)", color: filter === c ? "#001f5f" : "rgba(255,255,255,0.6)", cursor: "pointer", fontSize: "13px", fontWeight: 600, transition: "0.3s" }}>
-              {c}
-            </button>
-          ))}
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }}>
-          {filtered.map((e, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,0.06)", borderRadius: "25px", padding: "25px", border: "1px solid rgba(255,255,255,0.08)", transition: "0.3s", cursor: "default" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                <span style={{ fontSize: "32px" }}>{e.icon}</span>
-                <span style={{ padding: "4px 12px", borderRadius: "8px", background: "rgba(40,255,156,0.13)", color: categoryColors[e.category] || "#28ff9c", fontSize: "11px", fontWeight: 600 }}>{e.category}</span>
-              </div>
-              <h3 style={{ fontSize: "18px", fontWeight: 700, marginBottom: "8px", color: "#ffffff" }}>{e.title}</h3>
-              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)", marginBottom: "15px", lineHeight: 1.6 }}>{e.desc}</p>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "15px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>{fmtDate(e.date)}</span>
-                <CountdownTimer date={e.date} />
-              </div>
-            </div>
-          ))}
-        </div>
       </section>
 
       <footer className="footer">

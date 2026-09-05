@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import {
-  CreditCard, Search, Filter, Download, CheckCircle, Clock, TrendingUp, Receipt, Loader2,
+  CreditCard, Search, Filter, Download, CheckCircle, Clock, TrendingUp, Receipt, Loader2, Plus, X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadCSV } from "@/lib/exports";
@@ -35,6 +35,12 @@ export default function PaymentsPage() {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterMethod, setFilterMethod] = useState("");
+  const [showRecordModal, setShowRecordModal] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [studentSearch, setStudentSearch] = useState("");
+  const [studentResults, setStudentResults] = useState<any[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  const [recordForm, setRecordForm] = useState({ amount: "", method: "cash", reference: "", description: "", invoiceId: "" });
 
   const fetchPayments = useCallback(async (page = 1) => {
     try {
@@ -61,6 +67,44 @@ export default function PaymentsPage() {
     toast.success("Payments exported successfully");
   };
 
+  const searchStudents = async (q: string) => {
+    setStudentSearch(q);
+    if (q.length < 2) { setStudentResults([]); return; }
+    try {
+      const res = await fetch(`/api/students?search=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      setStudentResults(data.students || []);
+    } catch { setStudentResults([]); }
+  };
+
+  const handleRecordPayment = async () => {
+    if (!selectedStudent) { toast.error("Select a student"); return; }
+    const amount = parseFloat(recordForm.amount);
+    if (!amount || amount <= 0) { toast.error("Enter a valid amount"); return; }
+    setRecording(true);
+    try {
+      const res = await fetch("/api/finance/payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId: selectedStudent.id,
+          amount,
+          method: recordForm.method,
+          reference: recordForm.reference || undefined,
+          description: recordForm.description || undefined,
+          invoiceId: recordForm.invoiceId || undefined,
+        }),
+      });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Failed"); }
+      toast.success(`Payment of ${formatNaira(amount)} recorded for ${selectedStudent.firstName} ${selectedStudent.lastName}`);
+      setShowRecordModal(false);
+      setSelectedStudent(null);
+      setStudentSearch("");
+      setRecordForm({ amount: "", method: "cash", reference: "", description: "", invoiceId: "" });
+      fetchPayments(1);
+    } catch (err: any) { toast.error(err.message || "Failed to record payment"); } finally { setRecording(false); }
+  };
+
   const totalCollected = payments.filter((p) => p.status === "completed" || p.status === "confirmed").reduce((sum, p) => sum + p.amount, 0);
   const totalPending = payments.filter((p) => p.status === "pending").reduce((sum, p) => sum + p.amount, 0);
 
@@ -81,9 +125,14 @@ export default function PaymentsPage() {
             <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800, color: "#ffffff", display: "flex", alignItems: "center", gap: "12px" }}><CreditCard style={{ width: "28px", height: "28px" }} /> Payments</h1>
             <p style={{ margin: "6px 0 0", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>View payment history, confirm transactions, and manage receipts</p>
           </div>
-          <button onClick={handleExport} style={{ padding: "10px 20px", borderRadius: "12px", border: "1.5px solid rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.1)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}>
-            <Download style={{ width: "16px", height: "16px" }} /> Export
-          </button>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button onClick={() => setShowRecordModal(true)} style={{ padding: "10px 20px", borderRadius: "12px", border: "none", background: "#10b981", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s", boxShadow: "0 4px 14px rgba(16,185,129,0.3)" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#059669")} onMouseLeave={(e) => (e.currentTarget.style.background = "#10b981")}>
+              <Plus style={{ width: "16px", height: "16px" }} /> Record Payment
+            </button>
+            <button onClick={handleExport} style={{ padding: "10px 20px", borderRadius: "12px", border: "1.5px solid rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.1)", color: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", transition: "all 0.15s" }} onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")} onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}>
+              <Download style={{ width: "16px", height: "16px" }} /> Export
+            </button>
+          </div>
         </div>
       </div>
 
@@ -180,6 +229,77 @@ export default function PaymentsPage() {
           </div>
         )}
       </div>
+
+      {/* Record Payment Modal */}
+      {showRecordModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" }} onClick={() => setShowRecordModal(false)}>
+          <div style={{ background: "#ffffff", borderRadius: "20px", width: "100%", maxWidth: "500px", maxHeight: "90vh", overflow: "auto", boxShadow: "0 25px 80px rgba(0,0,0,0.25)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: "24px 28px", borderBottom: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#0f172a" }}>Record Payment</h3>
+              <button onClick={() => setShowRecordModal(false)} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}><X style={{ width: "20px", height: "20px", color: "#64748b" }} /></button>
+            </div>
+            <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: "18px" }}>
+              {/* Student Search */}
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>Student *</label>
+                {selectedStudent ? (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: "#f0fdf4", borderRadius: "10px", border: "1.5px solid #bbf7d0" }}>
+                    <div>
+                      <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "#0f172a" }}>{selectedStudent.firstName} {selectedStudent.lastName}</p>
+                      <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#64748b" }}>{selectedStudent.admissionNumber}</p>
+                    </div>
+                    <button onClick={() => { setSelectedStudent(null); setStudentSearch(""); }} style={{ background: "none", border: "none", cursor: "pointer" }}><X style={{ width: "16px", height: "16px", color: "#64748b" }} /></button>
+                  </div>
+                ) : (
+                  <div>
+                    <input type="text" placeholder="Search by name or admission number..." value={studentSearch} onChange={(e) => searchStudents(e.target.value)} style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+                    {studentResults.length > 0 && (
+                      <div style={{ marginTop: "4px", border: "1px solid #e2e8f0", borderRadius: "10px", maxHeight: "150px", overflow: "auto" }}>
+                        {studentResults.map((s) => (
+                          <button key={s.id} onClick={() => { setSelectedStudent(s); setStudentResults([]); setStudentSearch(""); }} style={{ display: "block", width: "100%", textAlign: "left" as const, padding: "10px 14px", border: "none", background: "transparent", cursor: "pointer", borderBottom: "1px solid #f1f5f9", fontSize: "13px", color: "#0f172a" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent") }}>
+                            {s.firstName} {s.lastName} <span style={{ color: "#94a3b8", fontSize: "11px" }}>({s.admissionNumber})</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+              {/* Amount */}
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>Amount (NGN) *</label>
+                <input type="number" placeholder="e.g. 50000" value={recordForm.amount} onChange={(e) => setRecordForm({ ...recordForm, amount: e.target.value })} style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+              </div>
+              {/* Method */}
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>Payment Method *</label>
+                <select value={recordForm.method} onChange={(e) => setRecordForm({ ...recordForm, method: e.target.value })} style={{ ...inputStyle, cursor: "pointer" }} onFocus={inputFocus} onBlur={inputBlur}>
+                  <option value="cash" style={{ background: "#ffffff" }}>Cash</option>
+                  <option value="bank_transfer" style={{ background: "#ffffff" }}>Bank Transfer</option>
+                  <option value="card" style={{ background: "#ffffff" }}>Card</option>
+                  <option value="online" style={{ background: "#ffffff" }}>Online</option>
+                </select>
+              </div>
+              {/* Reference */}
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>Reference (optional)</label>
+                <input type="text" placeholder="Teller number, transaction ID..." value={recordForm.reference} onChange={(e) => setRecordForm({ ...recordForm, reference: e.target.value })} style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+              </div>
+              {/* Description */}
+              <div>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>Description (optional)</label>
+                <input type="text" placeholder="School fees, transport, etc." value={recordForm.description} onChange={(e) => setRecordForm({ ...recordForm, description: e.target.value })} style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
+              </div>
+            </div>
+            <div style={{ padding: "16px 28px 24px", display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+              <button onClick={() => setShowRecordModal(false)} style={{ padding: "10px 20px", borderRadius: "12px", border: "1.5px solid #e2e8f0", background: "#ffffff", color: "#475569", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+              <button onClick={handleRecordPayment} disabled={recording || !selectedStudent} style={btnStyle("#10b981", recording || !selectedStudent)}>
+                {recording ? <><Loader2 style={{ width: "14px", height: "14px" }} className="animate-spin" /> Recording...</> : <><CheckCircle style={{ width: "14px", height: "14px" }} /> Record Payment</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
