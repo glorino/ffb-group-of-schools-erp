@@ -255,11 +255,14 @@ export default function PaymentsPage() {
                     <input type="text" placeholder="Search by name or admission number..." value={studentSearch} onChange={(e) => searchStudents(e.target.value)} style={inputStyle} onFocus={inputFocus} onBlur={inputBlur} />
                     {studentResults.length > 0 && (
                       <div style={{ marginTop: "4px", border: "1px solid #e2e8f0", borderRadius: "10px", maxHeight: "150px", overflow: "auto" }}>
-                        {studentResults.map((s) => (
-                          <button key={s.id} onClick={() => { setSelectedStudent(s); setStudentResults([]); setStudentSearch(""); }} style={{ display: "block", width: "100%", textAlign: "left" as const, padding: "10px 14px", border: "none", background: "transparent", cursor: "pointer", borderBottom: "1px solid #f1f5f9", fontSize: "13px", color: "#0f172a" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent") }}>
-                            {s.firstName} {s.lastName} <span style={{ color: "#94a3b8", fontSize: "11px" }}>({s.admissionNumber})</span>
-                          </button>
-                        ))}
+                        {studentResults.map((s) => {
+                          const btnStyle2: React.CSSProperties = { display: "block", width: "100%", textAlign: "left", padding: "10px 14px", border: "none", background: "transparent", cursor: "pointer", borderBottom: "1px solid #f1f5f9", fontSize: "13px", color: "#0f172a" };
+                          return (
+                            <button key={s.id} onClick={() => { setSelectedStudent(s); setStudentResults([]); setStudentSearch(""); }} style={btnStyle2} onMouseEnter={(e) => { e.currentTarget.style.background = "#f8fafc"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                              {s.firstName} {s.lastName} <span style={{ color: "#94a3b8", fontSize: "11px" }}>({s.admissionNumber})</span>
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
