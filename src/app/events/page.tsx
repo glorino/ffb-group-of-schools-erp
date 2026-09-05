@@ -53,6 +53,22 @@ export default function EventsPage() {
 
   const nextAcademicSession = "2026-09-07T08:00:00";
 
+  const iconMap: Record<string, string> = {
+    "Academic": "🎓", "Sports": "⚽", "Cultural": "🎭", "Ceremony": "🎉",
+    "Holiday": "🎄", "Career": "💼", "Creative": "🎨", "General": "📅",
+  };
+  const titleIconMap: Record<string, string> = {
+    "Resumption": "🏫", "Exam": "📝", "Break": "🏖️", "Carol": "🎵",
+    "Sports": "⚽", "Science": "🔬", "Cultural": "🎭", "Career": "💼",
+    "Spelling": "🔤", "Art": "🖼️",
+  };
+  const getEventIcon = (title: string, category: string) => {
+    for (const [key, icon] of Object.entries(titleIconMap)) {
+      if (title.toLowerCase().includes(key.toLowerCase())) return icon;
+    }
+    return iconMap[category] || "📅";
+  };
+
   useEffect(() => {
     fetch("/api/public/announcements?type=event&limit=20")
       .then((res) => res.json())
@@ -63,7 +79,7 @@ export default function EventsPage() {
             title: a.title,
             desc: a.content,
             date: target.eventDate ? `${target.eventDate}T09:00:00` : new Date(a.createdAt).toISOString(),
-            icon: "📅",
+            icon: getEventIcon(a.title, target.category || "Event"),
             category: target.category || "Event",
           };
         });
