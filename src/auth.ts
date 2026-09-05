@@ -19,7 +19,6 @@ export const {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          console.error("[AUTH] No credentials provided");
           return null;
         }
 
@@ -35,25 +34,14 @@ export const {
             },
           });
 
-          if (!user) {
-            console.error("[AUTH] User not found:", credentials.email);
-            return null;
-          }
-
-          if (!user.password) {
-            console.error("[AUTH] User has no password:", credentials.email);
-            return null;
-          }
+          if (!user || !user.password) return null;
 
           const isPasswordValid = await bcrypt.compare(
             credentials.password as string,
             user.password
           );
 
-          if (!isPasswordValid) {
-            console.error("[AUTH] Invalid password for:", credentials.email);
-            return null;
-          }
+          if (!isPasswordValid) return null;
 
           await prisma.user.update({
             where: { id: user.id },
@@ -65,9 +53,6 @@ export const {
             email: user.email,
             name: user.name,
             image: user.image,
-            mustChangePassword: (user as any).mustChangePassword || false,
-            roles: user.roles.map((r) => ({ name: r.role.name })),
-            schoolId: user.schoolId || undefined,
           };
         } catch (error) {
           console.error("[AUTH] Database error:", error);
@@ -84,18 +69,23 @@ export const {
     async jwt({ token, user }) {
       if (user) {
         token.id = (user as any).id;
-        token.roles = (user as any).roles?.map((r: any) => typeof r === "string" ? r : r.name) || [];
-        token.schoolId = (user as any).schoolId;
-        token.mustChangePassword = (user as any).mustChangePassword || false;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
+      if (token?.id) {
         session.user.id = token.id as string;
-        (session.user as any).roles = ((token.roles as any) || []).map((r: any) => typeof r === "string" ? { name: r } : r);
-        (session.user as any).schoolId = token.schoolId;
-        (session.user as any).mustChangePassword = token.mustChangePassword;
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          include: {
+            roles: { include: { role: { select: { name: true } } } },
+          },
+        });
+        if (dbUser) {
+          (session.user as any).roles = dbUser.roles.map((r) => ({ name: r.role.name }));
+          (session.user as any).schoolId = dbUser.schoolId || undefined;
+          (session.user as any).mustChangePassword = (dbUser as any).mustChangePassword || false;
+        }
       }
       return session;
     },

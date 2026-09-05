@@ -51,7 +51,7 @@ export default function EventsPage() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const nextAcademicSession = "2026-09-21T08:00:00";
+  const nextAcademicSession = "2026-09-07T08:00:00";
 
   useEffect(() => {
     fetch("/api/public/announcements?type=event&limit=20")
@@ -116,7 +116,7 @@ export default function EventsPage() {
         <div style={{ textAlign: "center", padding: "40px 30px", background: "linear-gradient(135deg, rgba(40,255,156,0.08), rgba(0,85,255,0.08))", borderRadius: "24px", border: "1px solid rgba(40,255,156,0.2)" }}>
           <p style={{ color: "#28ff9c", fontSize: "13px", fontWeight: 700, letterSpacing: "0.1em", marginBottom: "8px" }}>NEXT ACADEMIC SESSION</p>
           <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, color: "#ffffff", marginBottom: "8px" }}>2026/2027 Academic Year</h2>
-          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", marginBottom: "24px" }}>Resumption: 21st September, 2026</p>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", marginBottom: "24px" }}>Resumption: 7th September, 2026</p>
           <CountdownTimer date={nextAcademicSession} large />
         </div>
       </section>
