@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
@@ -11,7 +10,6 @@ export const {
   auth,
 } = NextAuth({
   trustHost: true,
-  adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
       name: "credentials",
@@ -79,26 +77,26 @@ export const {
     }),
   ],
   session: {
-    strategy: "database",
+    strategy: "jwt",
     maxAge: 24 * 60 * 60,
   },
   callbacks: {
-    async session({ session, user }) {
-      const dbUser = await prisma.user.findUnique({
-        where: { id: user.id },
-        include: {
-          roles: {
-            include: {
-              role: { select: { name: true } },
-            },
-          },
-        },
-      });
-
-      session.user.id = user.id;
-      (session.user as any).roles = dbUser?.roles.map((r) => ({ name: r.role.name })) || [];
-      (session.user as any).schoolId = dbUser?.schoolId || undefined;
-      (session.user as any).mustChangePassword = (dbUser as any)?.mustChangePassword || false;
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = (user as any).id;
+        token.roles = (user as any).roles?.map((r: any) => typeof r === "string" ? r : r.name) || [];
+        token.schoolId = (user as any).schoolId;
+        token.mustChangePassword = (user as any).mustChangePassword || false;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string;
+        (session.user as any).roles = ((token.roles as any) || []).map((r: any) => typeof r === "string" ? { name: r } : r);
+        (session.user as any).schoolId = token.schoolId;
+        (session.user as any).mustChangePassword = token.mustChangePassword;
+      }
       return session;
     },
   },
